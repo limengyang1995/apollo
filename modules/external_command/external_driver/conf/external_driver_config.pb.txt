@@ -17,5 +17,6 @@ destination_path: "/apollo/modules/external_command/external_driver/conf/destina
 channel{
     input_camera_channel_name: "/apollo/sensor/camera/front_6mm/image"
     input_camera_channel_name: "/apollo/sensor/camera/front_12mm/image"
+  
 }
 enable_rtc_log:false

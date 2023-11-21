@@ -29,8 +29,8 @@ bool PointCloudMapROIComponent::Init() {
     AERROR << "Get PointCloudMapROIComponentConfig file failed";
     return false;
   }
-  AINFO << "PointCloud map based roi Component Configs: "
-        << comp_config.DebugString();
+  // AINFO << "PointCloud map based roi Component Configs: "
+  //       << comp_config.DebugString();
   // writer
   output_channel_name_ = comp_config.output_channel_name();
   writer_ = node_->CreateWriter<LidarFrameMessage>(output_channel_name_);
@@ -74,9 +74,10 @@ bool PointCloudMapROIComponent::Proc(
   PERF_FUNCTION()
   // internal proc
   bool status = InternalProc(message);
+  // AERROR << "22222 pointcloud_map_based_roi: " << status;
   if (status) {
     writer_->Write(message);
-    AINFO << "Send pointcloud map based roi output message.";
+    // AINFO << "Send pointcloud map based roi output message.";
   }
   return status;
 }

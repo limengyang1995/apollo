@@ -338,7 +338,7 @@ void DataParser::PublishHeading(const MessagePtr message) {
 void DataParser::GpsToTransformStamped(const std::shared_ptr<Gps> &gps,
                                        TransformStamped *transform) {
   transform->mutable_header()->set_timestamp_sec(gps->header().timestamp_sec());
-  AERROR<< "tf time----" <<gps->header().timestamp_sec();
+  // AERROR<< "tf time----" <<gps->header().timestamp_sec();
   transform->mutable_header()->set_frame_id(config_.tf().frame_id());
   transform->set_child_frame_id(config_.tf().child_frame_id());
   auto translation = transform->mutable_transform()->mutable_translation();

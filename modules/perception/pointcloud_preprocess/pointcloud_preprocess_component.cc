@@ -77,9 +77,10 @@ bool PointCloudPreprocessComponent::Proc(
   auto out_message = std::make_shared<onboard::LidarFrameMessage>();
 
   bool status = InternalProc(message, out_message);
+  // AERROR << "11111pointcloud_preprocess status: " << status;
   if (status) {
     writer_->Write(out_message);
-    AINFO << "Send pointcloud preprocess output message.";
+    // AINFO << "Send pointcloud preprocess output message.";
   }
 
   return status;

@@ -273,6 +273,7 @@ Chassis JtController::chassis() {
 
 void JtController::Emergency() {
   set_driving_mode(Chassis::EMERGENCY_MODE);
+  // AERROR << "Emergency";
   ResetProtocol();
   acu4_154_->set_acu4_hazardlamprequest(Acu4_154::ACU4_HAZARDLAMPREQUEST_ON);
 }
@@ -286,7 +287,7 @@ ErrorCode JtController::EnableAutoMode() {
   acu3_153_->set_acu3_gearcontrolflag(Acu3_153::ACU3_GEARCONTROLFLAG_REQUEST);
   acu1_151_->set_acu1_steeringcontrolflag(Acu1_151::ACU1_STEERINGCONTROLFLAG_REQUEST);
   acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
-  //acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
+  // acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
   //acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
   acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
 
@@ -414,6 +415,7 @@ void JtController::Gear(Chassis::GearPosition gear_position) {
       ++gear_count;
     }else if(gear_count != 0){
       acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_NO_REQUEST);  //brakepedal
+      acu3_153_->set_acu3_brakingtargetposition(0);
       gear_count = 0;
     }
   }
@@ -577,21 +579,25 @@ void JtController::Steer(double angle, double angle_spd) {
 
 void JtController::SetEpbBreak(const ControlCommand& command) {
   if (command.parking_brake()) {
-    if (former_parking_brake != command.parking_brake() && epb_count < 3){
+    if (former_parking_brake != command.parking_brake() && epb_count < 10){
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_LOCK);
+      // AERROR <<" send parking_brake " << epb_count << " times";
       ++epb_count;
       return;
     }else{
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST);
       epb_count = 0;
+      // AERROR <<" parking_brake no request 1, former_parking_brake: "<< former_parking_brake ;
     }
   } else {
-    if (former_parking_brake != command.parking_brake()){
+    if (former_parking_brake != command.parking_brake() && epb_count < 10 ){
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_RELEASE);
       ++epb_count;
       return;
     }else{
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST);
+      // AERROR <<" parking_brake no request 2: former_parking_brake : " << former_parking_brake ;
+      epb_count = 0;
     }
     
   }
@@ -683,6 +689,7 @@ void JtController::ResetVin() {
 }
 
 void JtController::ResetProtocol() {
+  // AERROR << "RESET PROTOCOL" ;
   message_manager_->ResetSendMessages();
 }
 

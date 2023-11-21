@@ -31,6 +31,7 @@
 #include "modules/common_msgs/planning_msgs/planning.pb.h"
 #include "modules/common_msgs/control_msgs/control_cmd.pb.h"
 #include "modules/common_msgs/localization_msgs/localization.pb.h"
+#include "modules/common_msgs/chassis_msgs/chassis.pb.h"
 #include "modules/external_command/external_driver/proto/external_driver_config.pb.h"
 
 #include "cyber/component/timer_component.h"
@@ -67,20 +68,22 @@ private:
   apollo::external_command::ExternalDriverConfig config_;
   std::vector< std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
   nlohmann::json point;
-  bool is_start_publish = true;
+  bool is_start_publish = false;
   std::shared_ptr<cyber::Reader<localization::LocalizationEstimate>> localization_reader_pose;
+  std::shared_ptr<cyber::Reader<apollo::canbus::Chassis>> canbus_reader_;
   std::mutex mutex_;
   const nlohmann::json data_to_cloud;
   std::future<void> data_to_cloud_future;
   bool is_stop = false;
   int connect_detect_num = 0;
-  std::vector<std::string> request_camera = {"None"};
+  std::vector<std::string> request_camera;
   
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
 //     bool InternalProc();
     bool InitListener(const ExternalDriverConfig& config);
-    localization::LocalizationEstimate localization_;
+    apollo::localization::LocalizationEstimate localization_;
+    apollo::canbus::Chassis chassis_;
     void SendDataToCloud();
 
 

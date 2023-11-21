@@ -79,12 +79,12 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string came
 }
 void MyListener::OnRtcMessage(RtcMessage& msg) {
     msg_type = msg.msgType;
+    
     if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE){
+        AERROR << "msg info:  " << msg.extra_info;
         recieve_msg = msg.extra_info;
         re_mark = true;
         feed_id = msg.data.feedId;
-    }else{
-        recieve_msg = "";
     }
 }
 

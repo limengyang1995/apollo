@@ -87,6 +87,13 @@ bool ExternalDriver::Init() {
                 localization_.CopyFrom(*localization);
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             });
+    canbus_reader_ = node_->CreateReader<apollo::canbus::Chassis>(
+        FLAGS_chassis_topic, [this](const std::shared_ptr<apollo::canbus::Chassis>& chassis) {
+
+            std::lock_guard<std::mutex> lock(mutex_);
+            chassis_.CopyFrom(*chassis);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        });
 
     return true;
 }
@@ -119,14 +126,34 @@ void ExternalDriver::SendDataToCloud() {
     // AERROR<<"start send data successfully!";
     std::string car_id(getenv("CARID"));
     while (true) {
-        cyber::SleepFor(std::chrono::milliseconds(1000));
-        std::string vehicle_data;
+        cyber::SleepFor(std::chrono::milliseconds(100));
         std::string x = std::to_string(localization_.pose().position().x());
         std::string y = std::to_string(localization_.pose().position().y());
         std::string z = std::to_string(localization_.pose().position().z());
-        vehicle_data = "{\"car_id\":" + car_id + ",\"x\":" + x + ", \"y\":" + y + ", \"z\":" + z + "}";
+        std::string gear = std::to_string(chassis_.gear_location());
+        std::string steer = std::to_string(chassis_.steering_percentage());
+        std::string throttle = std::to_string(chassis_.throttle_percentage());
+        std::string brake = std::to_string(chassis_.brake_percentage());
+        std::string driving_mode = std::to_string(chassis_.driving_mode());
+        std::string speed = std::to_string(chassis_.speed_mps());
+        std::string epb = std::to_string(chassis_.parking_brake());
+
+        
+        nlohmann::json vehicle_data = {
+            {"car_id", car_id},
+            {"x", x},
+            {"y", y},
+            {"z", z},
+            {"gear", gear},
+            {"steer", steer},
+            {"throttle", throttle},
+            {"brake", brake},
+            {"driving_mode", driving_mode},
+            {"speed", speed},
+            {"epb", epb}
+        };
         // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
-        rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.c_str(), "0");
+        rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.dump().c_str(), "0");
 
         AINFO<<vehicle_data;
     }
@@ -152,6 +179,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
     // img_.size()
     
     if (is_start_publish) {
+        // AERROR << "is_start_publish :" << is_start_publish;
         cv::Mat img_front = img_[0];
         cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
         cv::Mat img_left = img_[1];
@@ -212,6 +240,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::imencode(".jpg", images_stitch, buf_stitch);
         
         for (std::string cam : request_camera){
+            AERROR << "camera name :" << cam;
             if (cam == "front"){
                 rtc_client_4_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_front.data()), buf_front.size());
                 AERROR<<"start send front image successfully!";
@@ -253,13 +282,13 @@ bool ExternalDriver::Proc() {
 
     std::string input_command_string;
     nlohmann::json command;
-    AERROR << "recieve msg from remote control \n" << data;
+    // AERROR << "recieve msg from remote control \n" << data;
     
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         
         try{
         command = nlohmann::json::parse(data);
-        AINFO << "recieve msg from remote control \n" << command.dump();
+        
         if (command.contains("action") && !command["action"].is_null()){
         input_command_string = command["action"];
         }
@@ -269,10 +298,13 @@ bool ExternalDriver::Proc() {
         }
         if (command.contains("is_start_publish")){
             if (command["is_start_publish"] == "true"){
+                // AERROR << "recieve msg from remote control \n" << command.dump();
+
                 is_start_publish = true;
-            }else{
-                is_start_publish = false;
             }
+            // else{
+            //     is_start_publish = false;
+            // }
         }
         if (command.contains("active_cameras")){
             request_camera = command["active_cameras"].get<std::vector<std::string>>();

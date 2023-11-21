@@ -72,9 +72,10 @@ bool LidarDetectionComponent::Proc(
   PERF_FUNCTION()
   // internal proc
   bool status = InternalProc(message);
+  // AERROR << "444444lidar_detection: " << status;
   if (status) {
     writer_->Write(message);
-    AINFO << "Send Lidar detection output message.";
+    // AINFO << "Send Lidar detection output message.";
   }
   return status;
 }
@@ -84,8 +85,9 @@ bool LidarDetectionComponent::InternalProc(
   // detector
   PERF_BLOCK("lidar_detector")
   LidarDetectorOptions detection_options;
+  // AERROR << "enter detect !!!";
   if (!detector_->Detect(detection_options, in_message->lidar_frame_.get())) {
-    AERROR << "Lidar detector detect error!";
+    // AERROR << "Lidar detector detect error!";
     return false;
   }
   PERF_BLOCK_END
