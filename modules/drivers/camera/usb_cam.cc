@@ -594,12 +594,405 @@ bool UsbCam::start_capturing(void) {
 
         buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buf.memory = V4L2_MEMORY_MMAP;
-        buf.index = i;
+        buf.index = n_buffers_;
+
+        if (-1 == xioctl(fd_, VIDIOC_QUERYBUF, &buf)) {
+            AERROR << "VIDIOC_QUERYBUF";
+            return false;
+        }
+
+        buffers_[n_buffers_].length = buf.length;
+        buffers_[n_buffers_].start = mmap(NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd_, buf.m.offset);
+
+        if (MAP_FAILED == buffers_[n_buffers_].start) {
+            AERROR << "mmap";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UsbCam::init_userp(unsigned int buffer_size) {
+    struct v4l2_requestbuffers req;
+    unsigned int page_size = 0;
+
+    page_size = getpagesize();
+    buffer_size = (buffer_size + page_size - 1) & ~(page_size - 1);
+
+    CLEAR(req);
+
+    req.count = 4;
+    req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    req.memory = V4L2_MEMORY_USERPTR;
+
+    if (-1 == xioctl(fd_, VIDIOC_REQBUFS, &req)) {
+        if (EINVAL == errno) {
+            AERROR << config_->camera_dev()
+                   << " does not support "
+                      "user pointer i/o";
+            return false;
+        }
+        AERROR << "VIDIOC_REQBUFS";
+        return false;
+    }
+
+    buffers_ = reinterpret_cast<buffer*>(calloc(4, sizeof(*buffers_)));
+
+    if (!buffers_) {
+        AERROR << "Out of memory";
+        return false;
+    }
+
+    for (n_buffers_ = 0; n_buffers_ < 4; ++n_buffers_) {
+        buffers_[n_buffers_].length = buffer_size;
+        buffers_[n_buffers_].start = memalign(/* boundary */ page_size, buffer_size);
+
+        if (!buffers_[n_buffers_].start) {
+            AERROR << "Out of memory";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UsbCam::start_capturing(void) {
+    if (is_capturing_) {
+        return true;
+    }
+
+    unsigned int i = 0;
+    enum v4l2_buf_type type;
+
+    switch (config_->io_method()) {
+    case IO_METHOD_READ:
+        /* Nothing to do. */
+        break;
+
+    case IO_METHOD_MMAP:
+        for (i = 0; i < n_buffers_; ++i) {
+            struct v4l2_buffer buf;
+            CLEAR(buf);
+
+            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_MMAP;
+            buf.index = i;
+            if (-1 == xioctl(fd_, VIDIOC_QBUF, &buf)) {
+                AERROR << "VIDIOC_QBUF";
+                return false;
+            }
+        }
+
+        type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+        if (-1 == xioctl(fd_, VIDIOC_STREAMON, &type)) {
+            AERROR << "VIDIOC_STREAMON";
+            return false;
+        }
+
+        break;
+
+    case IO_METHOD_USERPTR:
+        for (i = 0; i < n_buffers_; ++i) {
+            struct v4l2_buffer buf;
+
+            CLEAR(buf);
+
+            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_USERPTR;
+            buf.index = i;
+            buf.m.userptr = reinterpret_cast<uint64_t>(buffers_[i].start);
+            buf.length = static_cast<unsigned int>(buffers_[i].length);
+
+            if (-1 == xioctl(fd_, VIDIOC_QBUF, &buf)) {
+                AERROR << "VIDIOC_QBUF";
+                return false;
+            }
+        }
+
+        type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+        if (-1 == xioctl(fd_, VIDIOC_STREAMON, &type)) {
+            AERROR << "VIDIOC_STREAMON";
+            return false;
+        }
+
+        break;
+
+    case IO_METHOD_UNKNOWN:
+        AERROR << "unknown IO";
+        return false;
+        break;
+    }
+
+    is_capturing_ = true;
+    return true;
+}
+
+void UsbCam::set_device_config() {
+    if (config_->brightness() >= 0) {
+        set_v4l_parameter("brightness", config_->brightness());
+    }
+
+    if (config_->contrast() >= 0) {
+        set_v4l_parameter("contrast", config_->contrast());
+    }
+
+    if (config_->saturation() >= 0) {
+        set_v4l_parameter("saturation", config_->saturation());
+    }
+
+    if (config_->sharpness() >= 0) {
+        set_v4l_parameter("sharpness", config_->sharpness());
+    }
+
+    if (config_->gain() >= 0) {
+        set_v4l_parameter("gain", config_->gain());
+    }
+
+    // check auto white balance
+    if (config_->auto_white_balance()) {
+        set_v4l_parameter("white_balance_temperature_auto", 1);
+    } else {
+        set_v4l_parameter("white_balance_temperature_auto", 0);
+        set_v4l_parameter("white_balance_temperature", config_->white_balance());
+    }
+
+    // check auto exposure
+    if (!config_->auto_exposure()) {
+        // turn down exposure control (from max of 3)
+        set_v4l_parameter("auto_exposure", 1);
+        // change the exposure level
+        set_v4l_parameter("exposure_absolute", config_->exposure());
+    }
+
+    // check auto focus
+    if (config_->auto_focus()) {
+        set_auto_focus(1);
+        set_v4l_parameter("focus_auto", 1);
+    } else {
+        set_v4l_parameter("focus_auto", 0);
+        if (config_->focus() >= 0) {
+            set_v4l_parameter("focus_absolute", config_->focus());
+        }
+    }
+}
+
+bool UsbCam::uninit_device(void) {
+    unsigned int i = 0;
+
+    switch (config_->io_method()) {
+    case IO_METHOD_READ:
+        free(buffers_[0].start);
+        break;
+
+    case IO_METHOD_MMAP:
+        for (i = 0; i < n_buffers_; ++i) {
+           
+            if (-1 == munmap(buffers_[i].start, buffers_[i].length)) {
+                AERROR << "munmap";
+                return false;
+            }
+            free(buffers_[i].start);
+        }
+     
+        break; 
+
+    case IO_METHOD_USERPTR:
+        for (i = 0; i < n_buffers_; ++i) {
+            free(buffers_[i].start);
+        }
+
+        break;
+
+    case IO_METHOD_UNKNOWN:
+        AERROR << "unknown IO";
+        break;
+    }
+
+    return true;
+}
+
+bool UsbCam::close_device(void) {
+    if (-1 == close(fd_)) {
+        AERROR << "close";
+        return false;
+    }
+
+    fd_ = -1;
+    return true;
+}
+
+bool UsbCam::stop_capturing(void) {
+    if (!is_capturing_) {
+        return true;
+    }
+
+    is_capturing_ = false;
+    enum v4l2_buf_type type;
+
+    switch (config_->io_method()) {
+    case IO_METHOD_READ:
+        /* Nothing to do. */
+        break;
+
+    case IO_METHOD_MMAP:
+    case IO_METHOD_USERPTR:
+        type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+        if (-1 == xioctl(fd_, VIDIOC_STREAMOFF, &type)) {
+            AERROR << "VIDIOC_STREAMOFF";
+            return false;
+        }
+
+        break;
+    case IO_METHOD_UNKNOWN:
+        AERROR << "unknown IO";
+        return false;
+        break;
+    }
+
+    return true;
+}
+
+bool UsbCam::read_frame(CameraImagePtr raw_image, CameraImagePtr sensor_raw_image) {
+    struct v4l2_buffer buf;
+    unsigned int i = 0;
+    int len = 0;
+
+    timeval sample_ts_monotonic;
+    timespec current_ts_monotonic;
+    uint64_t sample_ts_monotonic_ns, current_ts_monotonic_ns, diff_ns, sample_in_systme_time_ns;
+
+    switch (config_->io_method()) {
+    case IO_METHOD_READ:
+        len = static_cast<int>(read(fd_, buffers_[0].start, buffers_[0].length));
+
+        if (len == -1) {
+            switch (errno) {
+            case EAGAIN:
+                AINFO << "EAGAIN";
+                return false;
+
+            case EIO:
+
+                /* Could ignore EIO, see spec. */
+
+                /* fall through */
+
+            default:
+                AERROR << "read";
+                return false;
+            }
+        }
+
+        // process_image(buffers_[0].start, len, raw_image);
+        if (sensor_raw_image->image != nullptr) {
+            memcpy(sensor_raw_image->image, buffers_[0].start, len);
+        }
+        break;
+
+    case IO_METHOD_MMAP:
+        CLEAR(buf);
+
+        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        buf.memory = V4L2_MEMORY_MMAP;
+
+
+        if (-1 == xioctl(fd_, VIDIOC_DQBUF, &buf)) {
+            switch (errno) {
+            case EAGAIN:
+                return false;
+
+            case EIO:
+
+                /* Could ignore EIO, see spec. */
+
+                /* fall through */
+
+            default:
+                AERROR << "VIDIOC_DQBUF";
+                reconnect();
+                return false;
+            }
+        }
+        assert(buf.index < n_buffers_);
+   
+        len = buf.bytesused;
+        if (!config_->hardware_trigger()) {
+            sample_ts_monotonic.tv_sec = static_cast<int>(buf.timestamp.tv_sec);
+            sample_ts_monotonic.tv_usec = static_cast<int>(buf.timestamp.tv_usec);
+            clock_gettime(CLOCK_MONOTONIC, &current_ts_monotonic);
+            sample_ts_monotonic_ns = static_cast<uint64_t>(sample_ts_monotonic.tv_sec * (1000000000))
+                    + static_cast<uint64_t>(sample_ts_monotonic.tv_usec * (1000));
+            current_ts_monotonic_ns = static_cast<uint64_t>(current_ts_monotonic.tv_sec * (1000000000))
+                    + static_cast<uint64_t>(current_ts_monotonic.tv_nsec);
+            diff_ns = static_cast<uint64_t>(current_ts_monotonic_ns - sample_ts_monotonic_ns);
+            sample_in_systme_time_ns = static_cast<uint64_t>(cyber::Time::Now().ToNanosecond() - diff_ns);
+            raw_image->tv_sec = static_cast<int>((sample_in_systme_time_ns) / 1000000000);
+            raw_image->tv_usec = static_cast<int>(((sample_in_systme_time_ns) % 1000000000) / 1000);
+        } else {
+            raw_image->tv_sec = static_cast<int>(buf.timestamp.tv_sec);
+            raw_image->tv_usec = static_cast<int>(buf.timestamp.tv_usec);
+        }
+        {
+            cyber::Time image_time(raw_image->tv_sec, 1000 * raw_image->tv_usec);
+            uint64_t camera_timestamp = image_time.ToNanosecond();
+            if (last_nsec_ == 0) {
+                last_nsec_ = camera_timestamp;
+            } else {
+                double diff = static_cast<double>(camera_timestamp - last_nsec_) / 1e9;
+                // drop image by frame_rate
+                if (diff < frame_drop_interval_) {
+                    AINFO << "drop image:" << camera_timestamp;
+                    if (-1 == xioctl(fd_, VIDIOC_QBUF, &buf)) {
+                        AERROR << "VIDIOC_QBUF ERROR";
+                    }
+                    return false;
+                }
+                if (frame_warning_interval_ < diff) {
+                    AWARN << "stamp jump.last stamp:" << last_nsec_ << " current stamp:" << camera_timestamp;
+                }
+                last_nsec_ = camera_timestamp;
+            }
+
+            double now_s = static_cast<double>(cyber::Time::Now().ToSecond());
+            double image_s = static_cast<double>(camera_timestamp) / 1e9;
+            double diff = now_s - image_s;
+            if (diff > 0.5 || diff < 0) {
+                std::stringstream warning_stream;
+                std::string warning_str;
+                warning_stream << "camera time diff exception,diff:" << diff << ";dev:" << config_->camera_dev();
+                warning_stream >> warning_str;
+                AWARN << warning_str;
+            }
+        }
+        if (len < raw_image->width * raw_image->height) {
+            AERROR << "Wrong Buffer Len: " << len << ", dev: " << config_->camera_dev();
+        } else {
+            if (config_->arm_gpu_acceleration()) {
+                process_image_cuda(buffers_[buf.index].start, len, raw_image);
+                AERROR << "cuda process image: buf size: " << buffers_[buf.index].length;
+                
+            } 
+            else {
+                // process_image(buffers_[buf.index].start, len, raw_image);
+                AERROR << "process image cpu";
+                if(sensor_raw_image->image != nullptr) {
+                    memcpy(sensor_raw_image->image, buffers_[buf.index].start, len);
+                }
+            }
+            // if (sensor_raw_image->image != nullptr) {
+            //     memcpy(sensor_raw_image->image, buffers_[buf.index].start, len);
+            // }
+        }
+
         if (-1 == xioctl(fd_, VIDIOC_QBUF, &buf)) {
           AERROR << "VIDIOC_QBUF";
           return false;
         }
-      }
+        
 
       type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
@@ -693,7 +1086,54 @@ void UsbCam::set_device_config() {
     if (config_->focus() >= 0) {
       set_v4l_parameter("focus_absolute", config_->focus());
     }
-  }
+    int yuv_size = len * sizeof(char);
+    int rgb_image_size = dest->width * dest->height * 3;
+    int yuyv_image_size = dest->width * dest->height * 2;
+    
+    cudaError_t ret= cudaMalloc((void**)&image_yuyv_cuda_, yuyv_image_size*sizeof(char));
+    if (ret != cudaSuccess) {
+        AERROR << "faild to allocate cuda memory: "<< cudaGetErrorString(ret);
+        return false;
+    }
+    ret = cudaMemset((void*)image_yuyv_cuda_, 0, yuyv_image_size*sizeof(char));
+    if (ret != cudaSuccess) {
+        AERROR <<"faild to memset cuda memory: "<< cudaGetErrorString(ret);
+        return false;
+    }
+
+    ret = cudaMalloc((void**)&image_rgb_cuda_, rgb_image_size*sizeof(char));
+    if (ret != cudaSuccess) {
+        AERROR << "faild to allocate cuda memory: "<< cudaGetErrorString(ret);
+        return false;
+    }
+    ret = cudaMemset((void*)image_rgb_cuda_, 0, rgb_image_size*sizeof(char));
+    if (ret != cudaSuccess) {
+        AERROR << "faild to memset cuda memory: "<< cudaGetErrorString(ret);
+        return false;
+    }
+
+    ret = cudaMemcpy(image_yuyv_cuda_, src, yuv_size, cudaMemcpyHostToDevice);
+    if (ret != cudaSuccess) {
+        AERROR << "222cudaMemcpy error: " << cudaGetErrorString(ret);
+        return false;
+    }
+    const int block_size = 256;
+    const int num_blocks = yuv_size / (4 * block_size);
+    YUYV2RGB image_cuda;
+    image_cuda.yuyv2rgb_cuda(image_yuyv_cuda_, image_rgb_cuda_, num_blocks, block_size);
+    int rgb_size = len / 2 * 3 * sizeof(char);
+    ret = cudaMemcpy(dest->image, image_rgb_cuda_, rgb_size, cudaMemcpyDeviceToHost);
+    if (ret != cudaSuccess) {
+        AERROR << "cudaMemcpy error";
+        return false;
+    }
+    cudaFree(image_yuyv_cuda_);
+    cudaFree(image_rgb_cuda_);
+ 
+
+
+    
+    return true;
 }
 
 bool UsbCam::uninit_device(void) {

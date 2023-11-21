@@ -63,5 +63,5 @@ message Config {
     optional string compensator_fnode = 2 [default = ""];
   }
   optional TimeCompensatorConfig time_compensator_conf = 30;
-  optional bool arm_gpu_acceleration = 31 [default = false];
+  optional bool arm_gpu_acceleration = 31 [default = true];
 }

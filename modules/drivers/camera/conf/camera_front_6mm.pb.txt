@@ -23,8 +23,13 @@ trigger_internal: 0
 trigger_fps: 15
 raw_channel_name: "/apollo/sensor/camera/front_6mm/raw/image"
 channel_name: "/apollo/sensor/camera/front_6mm/image"
+<<<<<<< HEAD
 device_wait_ms: 100
 spin_rate: 2000
+=======
+device_wait_ms: 20
+spin_rate: 10
+>>>>>>> c8a64fa8db (camera_accelerate run successful)
 output_type: RGB
 
 compress_conf {

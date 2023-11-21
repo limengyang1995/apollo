@@ -158,14 +158,15 @@ class UsbCam {
   bool is_capturing_;
   uint64_t image_seq_;
 
-  AVFrame* avframe_camera_;
-  AVFrame* avframe_rgb_;
-  AVCodec* avcodec_;
-  AVDictionary* avoptions_;
-  AVCodecContext* avcodec_context_;
-  int avframe_camera_size_;
-  int avframe_rgb_size_;
-  struct SwsContext* video_sws_;
+    
+
+    std::shared_ptr<Config> config_;
+    int pixel_format_;
+    int fd_;
+    buffer* buffers_;
+    unsigned int n_buffers_;
+    bool is_capturing_;
+    uint64_t image_seq_;
 
   float frame_warning_interval_ = 0.0;
   float device_wait_sec_ = 0.0;
