@@ -67,6 +67,7 @@ bool CameraComponent::Init() {
 
   device_wait_ = camera_config_->device_wait_ms();
   spin_rate_ = static_cast<uint32_t>((1.0 / camera_config_->spin_rate()) * 1e6);
+  AERROR << "spin_rate_:" << spin_rate_;
 
   if (camera_config_->output_type() == YUYV) {
     raw_image_->image_size = raw_image_->width * raw_image_->height * 2;

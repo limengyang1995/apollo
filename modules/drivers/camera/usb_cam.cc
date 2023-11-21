@@ -729,13 +729,15 @@ bool UsbCam::uninit_device(void) {
 
     case IO_METHOD_MMAP:
         for (i = 0; i < n_buffers_; ++i) {
+           
             if (-1 == munmap(buffers_[i].start, buffers_[i].length)) {
                 AERROR << "munmap";
                 return false;
             }
+            free(buffers_[i].start);
         }
-
-        break;
+     
+        break; 
 
     case IO_METHOD_USERPTR:
         for (i = 0; i < n_buffers_; ++i) {
@@ -837,6 +839,7 @@ bool UsbCam::read_frame(CameraImagePtr raw_image, CameraImagePtr sensor_raw_imag
         buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buf.memory = V4L2_MEMORY_MMAP;
 
+
         if (-1 == xioctl(fd_, VIDIOC_DQBUF, &buf)) {
             switch (errno) {
             case EAGAIN:
@@ -855,6 +858,7 @@ bool UsbCam::read_frame(CameraImagePtr raw_image, CameraImagePtr sensor_raw_imag
             }
         }
         assert(buf.index < n_buffers_);
+   
         len = buf.bytesused;
         if (!config_->hardware_trigger()) {
             sample_ts_monotonic.tv_sec = static_cast<int>(buf.timestamp.tv_sec);
@@ -908,22 +912,27 @@ bool UsbCam::read_frame(CameraImagePtr raw_image, CameraImagePtr sensor_raw_imag
             AERROR << "Wrong Buffer Len: " << len << ", dev: " << config_->camera_dev();
         } else {
             if (config_->arm_gpu_acceleration()) {
-                process_image_cuda(reinterpret_cast<void*>(buf.m.userptr), len, raw_image);
-                AERROR << "cuda process image";
+                process_image_cuda(buffers_[buf.index].start, len, raw_image);
+                AERROR << "cuda process image: buf size: " << buffers_[buf.index].length;
+                
             } 
             else {
-                process_image(reinterpret_cast<void*>(buf.m.userptr), len, raw_image);
+                // process_image(buffers_[buf.index].start, len, raw_image);
                 AERROR << "process image cpu";
+                if(sensor_raw_image->image != nullptr) {
+                    memcpy(sensor_raw_image->image, buffers_[buf.index].start, len);
+                }
             }
-            if (sensor_raw_image->image != nullptr) {
-                memcpy(sensor_raw_image->image, buffers_[buf.index].start, len);
-            }
+            // if (sensor_raw_image->image != nullptr) {
+            //     memcpy(sensor_raw_image->image, buffers_[buf.index].start, len);
+            // }
         }
 
         if (-1 == xioctl(fd_, VIDIOC_QBUF, &buf)) {
             AERROR << "VIDIOC_QBUF";
             return false;
         }
+        
 
         break;
 
@@ -987,9 +996,34 @@ bool UsbCam::process_image_cuda(void* src, int len, CameraImagePtr dest) {
         return false;
     }
     int yuv_size = len * sizeof(char);
-    cudaError_t ret = cudaMemcpy(image_yuyv_cuda_, src, yuv_size, cudaMemcpyHostToDevice);
+    int rgb_image_size = dest->width * dest->height * 3;
+    int yuyv_image_size = dest->width * dest->height * 2;
+    
+    cudaError_t ret= cudaMalloc((void**)&image_yuyv_cuda_, yuyv_image_size*sizeof(char));
     if (ret != cudaSuccess) {
-        AERROR << "cudaMemcpy error";
+        AERROR << "faild to allocate cuda memory: "<< cudaGetErrorString(ret);
+        return false;
+    }
+    ret = cudaMemset((void*)image_yuyv_cuda_, 0, yuyv_image_size*sizeof(char));
+    if (ret != cudaSuccess) {
+        AERROR <<"faild to memset cuda memory: "<< cudaGetErrorString(ret);
+        return false;
+    }
+
+    ret = cudaMalloc((void**)&image_rgb_cuda_, rgb_image_size*sizeof(char));
+    if (ret != cudaSuccess) {
+        AERROR << "faild to allocate cuda memory: "<< cudaGetErrorString(ret);
+        return false;
+    }
+    ret = cudaMemset((void*)image_rgb_cuda_, 0, rgb_image_size*sizeof(char));
+    if (ret != cudaSuccess) {
+        AERROR << "faild to memset cuda memory: "<< cudaGetErrorString(ret);
+        return false;
+    }
+
+    ret = cudaMemcpy(image_yuyv_cuda_, src, yuv_size, cudaMemcpyHostToDevice);
+    if (ret != cudaSuccess) {
+        AERROR << "222cudaMemcpy error: " << cudaGetErrorString(ret);
         return false;
     }
     const int block_size = 256;
@@ -1002,6 +1036,12 @@ bool UsbCam::process_image_cuda(void* src, int len, CameraImagePtr dest) {
         AERROR << "cudaMemcpy error";
         return false;
     }
+    cudaFree(image_yuyv_cuda_);
+    cudaFree(image_rgb_cuda_);
+ 
+
+
+    
     return true;
 }
 bool UsbCam::process_image(void* src, int len, CameraImagePtr dest) {
