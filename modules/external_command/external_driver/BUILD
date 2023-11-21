@@ -42,6 +42,9 @@ apollo_component(
         "//modules/external_command/external_driver/proto:external_driver_config_cc_proto",
         "//modules/common_msgs/sensor_msgs:sensor_image_cc_proto",
         "@opencv//:imgproc",
+        "@opencv//:core",
+        "@opencv//:calib3d",
+        "@opencv//:imgcodecs",
         "@com_github_nlohmann_json//:json",
         ":baidu_rtc_sdk"
 

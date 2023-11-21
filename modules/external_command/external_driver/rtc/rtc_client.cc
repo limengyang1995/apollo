@@ -12,7 +12,7 @@ void RtcClient::SetListener(baidurtc::BaiduRtcRoomClient* client, MyListener& li
 
 bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
     void* handle = dlopen(
-            "/apollo_workspace/modules/external_command/external_driver/rtc/lib/libbaidurtc.so",
+            "/apollo/modules/external_command/external_driver/rtc/lib/libbaidurtc.so",
             RTLD_LAZY | RTLD_DEEPBIND);
     if (handle == nullptr) {
         AERROR << "dlopen libbaidurtc.so failed";

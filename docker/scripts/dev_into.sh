@@ -58,7 +58,7 @@ docker exec \
     -u "${DOCKER_USER}" \
     -e HISTFILE=/apollo/.dev_bash_hist \
     -it "${DEV_CONTAINER}" \
-    bash -c "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/apollo/modules/remote_drive/lib; exec bash"
+    bash -c "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/apollo/modules/external_command/external_driver/rtc/lib; exec bash"
     
 
 xhost -local:root 1>/dev/null 2>&1

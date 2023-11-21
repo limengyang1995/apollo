@@ -78,5 +78,17 @@
         <dag_conf>/apollo/modules/canbus/dag/canbus.dag</dag_conf>
         <process_name>canbus</process_name>
     </module>
+
+    <module>
+        <name>old_routing_adapter</name>
+        <dag_conf>/apollo/modules/external_command/old_routing_adapter/dag/old_routing_adapter.dag</dag_conf>
+        <process_name>old_routing_adapter</process_name>
+    </module>
+    
+    <module>
+        <name>external_command_process</name>
+        <dag_conf>/apollo/modules/external_command/process_component/dag/external_command_process.dag</dag_conf>
+        <process_name>external_command_process</process_name>
+    </module>
 </cyber>
 
