@@ -12,6 +12,6 @@ can_card_parameter {
   interface: NATIVE
 }
 
-enable_debug_mode: false
+enable_debug_mode: true
 enable_receiver_log: true
 enable_sender_log: true
