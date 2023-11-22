@@ -86,7 +86,7 @@ class Ins570dParser : public Parser {
   Ins570dParser();
   explicit Ins570dParser(const config::Config& config);
 
-  virtual void GetMessage();
+  virtual void GetMessages(MessageInfoVec *messages);
 
   // 从字节流中截取片段（代表某个物理量的值）
   template<class T>
@@ -137,7 +137,7 @@ class Ins570dParser : public Parser {
   void getWHEELSPEEDSTATUS(Ins570d::INS_STATUS& tmp_);
 
 
-  void PrepareMessage();
+  void PrepareMessage(MessageInfoVec* messages);
 
   // The handle_xxx functions return whether a message is ready.
   bool HandleBestPos();
@@ -225,14 +225,17 @@ Ins570dParser::Ins570dParser(const config::Config& config) {
   ins_.mutable_position_covariance()->Resize(9, FLOAT_NAN);
   ins_.mutable_euler_angles_covariance()->Resize(9, FLOAT_NAN);
   ins_.mutable_linear_velocity_covariance()->Resize(9, FLOAT_NAN);
+  AERROR<<"enter parser";
 
   if (config.has_imu_type()) {
     imu_type_ = config.imu_type();
+    AERROR<<"has imu type:"<< imu_type_;
   }
 }
 
-void Ins570dParser::GetMessage() {
+void Ins570dParser::GetMessages(MessageInfoVec* messages) {
   if (data_ == nullptr) {
+    AERROR<<"no messages";
     return;
   }
 
@@ -256,7 +259,7 @@ void Ins570dParser::GetMessage() {
         buffer_.push_back(*data_++);
         continue;
       }
-      PrepareMessage();
+      PrepareMessage(messages);
       buffer_.clear();
     }
   }
@@ -270,7 +273,7 @@ bool Ins570dParser::check_sum() {
   return (checksum_ == buffer_.back());
 }
 
-void Ins570dParser::PrepareMessage() {
+void Ins570dParser::PrepareMessage(MessageInfoVec* messages) {
   if (!check_sum()) {
     AERROR << "CRC check failed.";
     return ;
@@ -294,18 +297,29 @@ void Ins570dParser::PrepareMessage() {
   ins570d_data_=*tmp_;
   // debug
   ins570d_data_.debugString();
-
+  AERROR<<"ENTER HANDLE:";
   HandleGnssBestpos();
   HandleBestPos();
   HandleCorrImuData();
   HandleRawImu();
   HandleInsPvax();
   HandleHeading();
+  messages->push_back(MessageInfo{MessageType::BEST_GNSS_POS,
+                                  reinterpret_cast<MessagePtr>(&bestpos_)});
+  messages->push_back(
+      MessageInfo{MessageType::IMU, reinterpret_cast<MessagePtr>(&imu_)});
+  messages->push_back(MessageInfo{MessageType::HEADING,
+                                  reinterpret_cast<MessagePtr>(&heading_)});
+  messages->push_back(
+      MessageInfo{MessageType::INS, reinterpret_cast<MessagePtr>(&ins_)});
+  messages->push_back(MessageInfo{MessageType::INS_STAT,
+                                  reinterpret_cast<MessagePtr>(&ins_stat_)});
 }
 
 void Ins570dParser::getRPY(Ins570d::INS_STATUS& tmp_)
 {
     // roll
+    AERROR<< "enter ger RPY";
     tmp_.roll=deg2rad(hex2Value<uint16_t>(dummy_array_.at(3),ANGLE_RESOLUTION));
     tmp_.pitch=deg2rad(hex2Value<uint16_t>(dummy_array_.at(4),ANGLE_RESOLUTION));
     tmp_.yaw=deg2rad(-hex2Value<uint16_t>(dummy_array_.at(5),ANGLE_RESOLUTION));
@@ -650,6 +664,7 @@ bool Ins570dParser::HandleInsPva(const Ins570d::InsPva* pva) {
   //   return false;
   // }
 
+
   ins_.mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
   return true;
 }
@@ -659,6 +674,8 @@ bool Ins570dParser::HandleInsPvax() {
   // double unix_sec = apollo::drivers::util::gps2unix(seconds);
   // ins_stat_.mutable_header()->set_timestamp_sec(unix_sec);
   ins_stat_.set_ins_status(2);
+
+  AERROR<<"HANDLE INSPVA RETURN TRUE";
   ins_stat_.set_pos_type(2);
   return true;
 }

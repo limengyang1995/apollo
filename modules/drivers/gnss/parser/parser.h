@@ -135,7 +135,6 @@ class Parser {
   }
 
   virtual void GetMessages(MessageInfoVec *messages) {}
-
   virtual bool GetInsStat(MessagePtr *message_ptr) { return false; }
 
  protected:

@@ -112,6 +112,10 @@ void DataParser::ParseRawData(const std::string &msg) {
   }
 
   data_parser_->Update(msg);
+  //ins570d special
+  //data_parser_->GetMessagea();
+  //DispatchMessage();
+  //common apollo 9.0 driver
   MessageInfoVec messages;
   data_parser_->GetMessages(&messages);
   for (auto &message : messages) {
