@@ -51,6 +51,7 @@ class DataParser {
 
  private:
   void DispatchMessage(const MessageInfo &message_info);
+  void DispatchMessage();
   void PublishInsStat(const MessagePtr message);
   void PublishOdometry(const MessagePtr message);
   void PublishCorrimu(const MessagePtr message);
