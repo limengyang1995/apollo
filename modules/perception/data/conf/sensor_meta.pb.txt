@@ -10,6 +10,12 @@ sensor_meta {
     is_main_sensor: true
 }
 sensor_meta {
+    name: "hesai64"
+    type: VELODYNE_64
+    orientation: PANORAMIC
+    is_main_sensor: true
+}
+sensor_meta {
     name: "velodyne16"
     type: VELODYNE_16
     orientation: FRONT
