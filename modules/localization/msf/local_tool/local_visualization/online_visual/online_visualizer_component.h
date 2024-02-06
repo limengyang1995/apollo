@@ -30,10 +30,11 @@
 
 #include "cyber/cyber.h"
 
-#include "modules/drivers/proto/pointcloud.pb.h"
-#include "modules/localization/proto/localization.pb.h"
+#include "modules/common_msgs/sensor_msgs/pointcloud.pb.h"
+#include "modules/common_msgs/localization_msgs/localization.pb.h"
 
 #include "modules/common/status/status.h"
+#include "modules/common/util/eigen_defs.h"
 #include "modules/localization/msf/local_tool/local_visualization/engine/visualization_manager.h"
 
 /**
@@ -69,7 +70,7 @@ class OnlineVisualizerComponent final
 
   void ParsePointCloudMessage(
       const std::shared_ptr<drivers::PointCloud> &message,
-      std::vector<Eigen::Vector3d> *pt3ds,
+      ::apollo::common::EigenVector3dVec *pt3ds,
       std::vector<unsigned char> *intensities);
 
  private:

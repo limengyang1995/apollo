@@ -24,6 +24,9 @@
 #include <string>
 #include <vector>
 
+#include "modules/bridge/proto/udp_bridge_remote_info.pb.h"
+#include "modules/common_msgs/chassis_msgs/chassis.pb.h"
+
 #include "cyber/class_loader/class_loader.h"
 #include "cyber/component/component.h"
 #include "cyber/cyber.h"
@@ -33,8 +36,6 @@
 #include "modules/bridge/common/bridge_header.h"
 #include "modules/bridge/common/bridge_proto_diserialized_buf.h"
 #include "modules/bridge/common/udp_listener.h"
-#include "modules/bridge/proto/udp_bridge_remote_info.pb.h"
-#include "modules/canbus/proto/chassis.pb.h"
 #include "modules/common/monitor_log/monitor_log_buffer.h"
 
 namespace apollo {
@@ -42,7 +43,7 @@ namespace bridge {
 class UDPBridgeMultiReceiverComponent final : public cyber::Component<> {
  public:
   UDPBridgeMultiReceiverComponent();
-  ~UDPBridgeMultiReceiverComponent();
+  ~UDPBridgeMultiReceiverComponent() = default;
 
   bool Init() override;
   std::string Name() const { return FLAGS_bridge_module_name; }
@@ -66,6 +67,8 @@ class UDPBridgeMultiReceiverComponent final : public cyber::Component<> {
   std::mutex mutex_;
   std::vector<std::shared_ptr<ProtoDiserializedBufBase>> proto_list_;
 };
+
+CYBER_REGISTER_COMPONENT(UDPBridgeMultiReceiverComponent)
 
 }  // namespace bridge
 }  // namespace apollo

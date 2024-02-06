@@ -14,7 +14,7 @@
  * limitations under the License.
  *****************************************************************************/
 
-#include "modules/dreamview/backend/map/map_service.h"
+#include "modules/dreamview/backend/common/map_service/map_service.h"
 
 #include <algorithm>
 #include <fstream>
@@ -154,6 +154,15 @@ const hdmap::HDMap *MapService::SimMap() const {
 }
 
 bool MapService::MapReady() const { return HDMap() && SimMap(); }
+
+bool MapService::PointIsValid(const double x, const double y) const {
+  MapElementIds ids;
+  PointENU point;
+  point.set_x(x);
+  point.set_y(y);
+  CollectMapElementIds(point, 20, &ids);
+  return (ids.ByteSizeLong() != 0);
+}
 
 void MapService::CollectMapElementIds(const PointENU &point, double radius,
                                       MapElementIds *ids) const {
@@ -325,8 +334,31 @@ Map MapService::RetrieveMapElements(const MapElementIds &ids) const {
       *result.add_pnc_junction() = element->pnc_junction();
     }
   }
+  apollo::hdmap::Header map_header;
+  if (SimMap()->GetMapHeader(&map_header)) {
+    result.mutable_header()->CopyFrom(map_header);
+  }
 
   return result;
+}
+
+bool MapService::GetNearestLaneWithDistance(
+    const double x, const double y,
+    apollo::hdmap::LaneInfoConstPtr *nearest_lane, double *nearest_s,
+    double *nearest_l) const {
+  boost::shared_lock<boost::shared_mutex> reader_lock(mutex_);
+
+  PointENU point;
+  point.set_x(x);
+  point.set_y(y);
+  static constexpr double kSearchRadius = 3.0;
+  if (!MapReady() ||
+      HDMap()->GetNearestLaneWithDistance(point, kSearchRadius, nearest_lane,
+                                          nearest_s, nearest_l) < 0) {
+    AERROR << "Failed to get nearest lane!";
+    return false;
+  }
+  return true;
 }
 
 bool MapService::GetNearestLane(const double x, const double y,
@@ -354,7 +386,7 @@ bool MapService::GetNearestLaneWithHeading(const double x, const double y,
   PointENU point;
   point.set_x(x);
   point.set_y(y);
-  static constexpr double kSearchRadius = 1.0;
+  static constexpr double kSearchRadius = 3.0;
   static constexpr double kMaxHeadingDiff = 1.0;
   if (!MapReady() || HDMap()->GetNearestLaneWithHeading(
                          point, kSearchRadius, heading, kMaxHeadingDiff,
@@ -429,10 +461,65 @@ bool MapService::ConstructLaneWayPointWithHeading(
   return true;
 }
 
+bool MapService::ConstructLaneWayPointWithLaneId(
+    const double x, const double y, const std::string id,
+    routing::LaneWaypoint *laneWayPoint) const {
+  LaneInfoConstPtr lane = HDMap()->GetLaneById(hdmap::MakeMapId(id));
+  if (!lane) {
+    return false;
+  }
+
+  if (!CheckRoutingPointLaneType(lane)) {
+    return false;
+  }
+
+  double s, l;
+  PointENU point;
+  point.set_x(x);
+  point.set_y(y);
+
+  if (!lane->GetProjection({point.x(), point.y()}, &s, &l)) {
+    return false;
+  }
+
+  // Limit s with max value of the length of the lane, or not the laneWayPoint
+  // may be invalid.
+  if (s > lane->lane().length()) {
+    s = lane->lane().length();
+  }
+
+  laneWayPoint->set_id(id);
+  laneWayPoint->set_s(s);
+  auto *pose = laneWayPoint->mutable_pose();
+  pose->set_x(x);
+  pose->set_y(y);
+
+  return true;
+}
+
 bool MapService::CheckRoutingPoint(const double x, const double y) const {
   double s, l;
   LaneInfoConstPtr lane;
-  if (!GetNearestLane(x, y, &lane, &s, &l)) {
+  if (!GetNearestLaneWithDistance(x, y, &lane, &s, &l)) {
+    if (GetParkingSpaceId(x, y) != "-1") {
+      return true;
+    }
+    return false;
+  }
+  if (!CheckRoutingPointLaneType(lane)) {
+    return false;
+  }
+  return true;
+}
+
+bool MapService::CheckRoutingPointWithHeading(const double x, const double y,
+                                              const double heading) const {
+  double s, l;
+  LaneInfoConstPtr lane;
+  if (!GetNearestLaneWithHeading(x, y, &lane, &s, &l, heading)) {
+    if (GetParkingSpaceId(x, y) != "-1") {
+      return true;
+    }
     return false;
   }
   if (!CheckRoutingPointLaneType(lane)) {
@@ -514,6 +601,48 @@ bool MapService::AddPathFromPassageRegion(
 size_t MapService::CalculateMapHash(const MapElementIds &ids) const {
   static std::hash<std::string> hash_function;
   return hash_function(ids.DebugString());
+}
+
+double MapService::GetLaneHeading(const std::string &id_str, double s) {
+  auto *hdmap = HDMap();
+  CHECK(hdmap) << "Failed to get hdmap";
+
+  Id id;
+  id.set_id(id_str);
+  LaneInfoConstPtr lane_ptr = hdmap->GetLaneById(id);
+  if (lane_ptr != nullptr) {
+    return lane_ptr->Heading(s);
+  }
+  return 0.0;
+}
+
+std::string MapService::GetParkingSpaceId(const double x,
+                                          const double y) const {
+  PointENU point;
+  point.set_x(x);
+  point.set_y(y);
+  static constexpr double kSearchRadius = 3.0;
+  std::vector<ParkingSpaceInfoConstPtr> parking_spaces;
+
+  // Find parking spaces nearby
+  if (HDMap()->GetParkingSpaces(point, kSearchRadius, &parking_spaces) != 0) {
+    AERROR << "Fail to get parking space from sim_map.";
+    return "-1";
+  }
+
+  // Determine whether the point is in a neighboring parking space
+  for (const auto &parking_sapce : parking_spaces) {
+    if (!parking_sapce->polygon().is_convex()) {
+      AERROR << "The parking space information is incorrect and is not a "
+                "convex hull.";
+      return "-1";
+    }
+    apollo::common::math::Vec2d checked_point(x, y);
+    if (parking_sapce->polygon().IsPointIn(checked_point)) {
+      return parking_sapce->id().id();
+    }
+  }
+  return "-1";
 }
 
 }  // namespace dreamview

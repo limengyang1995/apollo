@@ -18,6 +18,14 @@ limitations under the License.
 
 #include "cyber/common/log.h"
 #include "modules/map/hdmap/adapter/proto_organizer.h"
+#include "modules/map/hdmap/adapter/xml_parser/common_define.h"
+#include "modules/map/hdmap/adapter/xml_parser/coordinate_convert_tool.h"
+#include "modules/map/hdmap/adapter/xml_parser/header_xml_parser.h"
+#include "modules/map/hdmap/adapter/xml_parser/junctions_xml_parser.h"
+#include "modules/map/hdmap/adapter/xml_parser/lanes_xml_parser.h"
+#include "modules/map/hdmap/adapter/xml_parser/objects_xml_parser.h"
+#include "modules/map/hdmap/adapter/xml_parser/roads_xml_parser.h"
+#include "modules/map/hdmap/adapter/xml_parser/signals_xml_parser.h"
 #include "modules/map/hdmap/adapter/xml_parser/status.h"
 
 namespace apollo {
@@ -45,7 +53,7 @@ bool OpendriveAdapter::LoadData(const std::string& filename,
     return false;
   }
 
-  // roads
+  // road
   std::vector<RoadInternal> roads;
   status = RoadsXmlParser::Parse(*root_node, &roads);
   if (!status.ok()) {
@@ -61,9 +69,18 @@ bool OpendriveAdapter::LoadData(const std::string& filename,
     return false;
   }
 
+  // objects
+  ObjectInternal objects;
+  status = ObjectsXmlParser::ParseObjects(*root_node, &objects);
+  if (!status.ok()) {
+    AERROR << "fail to parse opendrive objects, " << status.error_message();
+    return false;
+  }
+
   ProtoOrganizer proto_organizer;
   proto_organizer.GetRoadElements(&roads);
   proto_organizer.GetJunctionElements(junctions);
+  proto_organizer.GetObjectElements(objects);
   proto_organizer.GetOverlapElements(roads, junctions);
   proto_organizer.OutputData(pb_map);
 

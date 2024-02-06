@@ -23,13 +23,13 @@
 #include <memory>
 #include <string>
 
-#include "absl/time/time.h"
+#include "cyber/time/time.h"
 
 #include "cyber/component/component.h"
 #include "modules/prediction/common/message_process.h"
 #include "modules/prediction/container/adc_trajectory/adc_trajectory_container.h"
 #include "modules/prediction/submodules/submodule_output.h"
-#include "modules/storytelling/proto/story.pb.h"
+#include "modules/common_msgs/storytelling_msgs/story.pb.h"
 
 /**
  * @namespace apollo::prediction
@@ -96,6 +96,14 @@ class PredictionComponent
 
   std::shared_ptr<cyber::Writer<perception::PerceptionObstacles>>
       perception_obstacles_writer_;
+
+  std::shared_ptr<ContainerManager> container_manager_;
+
+  std::unique_ptr<EvaluatorManager> evaluator_manager_;
+
+  std::unique_ptr<PredictorManager> predictor_manager_;
+
+  std::unique_ptr<ScenarioManager> scenario_manager_;
 };
 
 CYBER_REGISTER_COMPONENT(PredictionComponent)

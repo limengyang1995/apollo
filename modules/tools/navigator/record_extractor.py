@@ -18,8 +18,8 @@
 
 import sys
 from datetime import datetime
-from cyber_py3.record import RecordReader
-from modules.localization.proto import localization_pb2
+from cyber.python.cyber_py3.record import RecordReader
+from modules.common_msgs.localization_msgs import localization_pb2
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:

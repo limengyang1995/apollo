@@ -16,10 +16,8 @@
 # limitations under the License.
 ###############################################################################
 
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-cd "${DIR}/.."
+TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+source "${TOP_DIR}/scripts/apollo_base.sh"
 
 function setup() {
   bash scripts/canbus.sh start
@@ -29,16 +27,32 @@ function setup() {
 }
 
 function start() {
-  NUM_PROCESSES="$(pgrep -c -f "record_play/rtk_player.py")"
+  local file=$@
+  local rtk_player_binary
+  NUM_PROCESSES="$(pgrep -f "record_play/rtk_player" | grep -cv '^1$')"
   if [ "${NUM_PROCESSES}" -ne 0 ]; then
-    pkill -SIGKILL -f rtk_player.py
+    pkill -SIGKILL -f rtk_player
   fi
 
-  python modules/tools/record_play/rtk_player.py
+  if [[ ! -z "$(which rtk_player)" ]]; then
+    rtk_player_binary="rtk_player" 
+  elif [[ -f ${TOP_DIR}/bazel-bin/modules/tools/record_play/rtk_player ]]; then
+    rtk_player_binary="${TOP_DIR}/bazel-bin/modules/tools/record_play/rtk_player"
+  else
+    rtk_player_binary=
+  fi
+
+  if [[ -z ${rtk_player_binary} ]]; then
+    echo "can't fine rtk_player"
+    exit -1
+  fi
+
+  local cmdStr=$rtk_player_binary" -f "$file
+  ${cmdStr}
 }
 
 function stop() {
-  pkill -SIGKILL -f rtk_player.py
+  pkill -SIGKILL -f rtk_player
 }
 
 case $1 in
@@ -46,12 +60,16 @@ case $1 in
     setup
     ;;
   start)
-    start
+    start "$2"
     ;;
   stop)
     stop
     ;;
-  *)
+  restart)
+    stop
     start
+    ;;
+  *)
+    start "$1"
     ;;
 esac

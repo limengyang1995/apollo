@@ -18,8 +18,9 @@
 
 #include <QtGui/QImage>
 #include <QtGui/QOpenGLBuffer>
+#include <memory>
 
-#include "modules/drivers/proto/sensor_image.pb.h"
+#include "modules/common_msgs/sensor_msgs/sensor_image.pb.h"
 
 class Texture {
  public:

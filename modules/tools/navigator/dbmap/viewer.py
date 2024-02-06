@@ -22,8 +22,8 @@ import sys
 from yattag import Doc
 import pyproj
 
-from modules.map.relative_map.proto import navigation_pb2
-import common.proto_utils as proto_utils
+from modules.common_msgs.planning_msgs import navigation_pb2
+import modules.tool.common.proto_utils as proto_utils
 
 
 class DBMapViewer:

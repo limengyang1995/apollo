@@ -20,7 +20,10 @@
 #include <iomanip>
 #include <limits>
 
+#include "modules/common/util/util.h"
 #include "modules/prediction/common/junction_analyzer.h"
+#include "modules/prediction/common/prediction_constants.h"
+#include "modules/prediction/common/prediction_system_gflags.h"
 #include "modules/prediction/container/obstacles/obstacle_clusters.h"
 #include "modules/prediction/network/rnn_model/rnn_model.h"
 
@@ -107,7 +110,8 @@ bool Obstacle::IsOnLane() const {
     return false;
   }
   for (const auto& curr_lane : latest_feature().lane().current_lane_feature()) {
-    if (curr_lane.lane_type() != hdmap::Lane::CITY_DRIVING) {
+    if (curr_lane.lane_type() != hdmap::Lane::CITY_DRIVING &&
+        curr_lane.lane_type() != hdmap::Lane::BIKING) {
       return false;
     }
   }
@@ -164,6 +168,11 @@ bool Obstacle::Insert(const PerceptionObstacle& perception_obstacle,
   if (type_ != PerceptionObstacle::PEDESTRIAN) {
     SetCurrentLanes(&feature);
     SetNearbyLanes(&feature);
+  }
+
+  if (FLAGS_prediction_offline_mode ==
+      PredictionConstants::kDumpDataForLearning) {
+    SetSurroundingLaneIds(&feature, FLAGS_surrounding_lane_search_radius);
   }
 
   if (FLAGS_adjust_vehicle_heading_by_lane &&
@@ -237,7 +246,7 @@ void Obstacle::BuildJunctionFeature() {
     return;
   }
   // If obstacle is not in the given junction, then exit.
-  const std::string& junction_id = JunctionAnalyzer::GetJunctionId();
+  const std::string& junction_id = junction_analyzer_->GetJunctionId();
   if (!IsInJunction(junction_id)) {
     ADEBUG << "Obstacle [" << id_ << "] is not in junction [" << junction_id
            << "]";
@@ -267,7 +276,7 @@ bool Obstacle::IsCloseToJunctionExit() const {
     AERROR << "No junction feature found";
     return false;
   }
-  CHECK_GT(history_size(), 0);
+  CHECK_GT(history_size(), 0U);
   const Feature& latest_feature = feature_history_.front();
   double position_x = latest_feature.position().x();
   double position_y = latest_feature.position().y();
@@ -289,7 +298,7 @@ bool Obstacle::IsCloseToJunctionExit() const {
 void Obstacle::SetJunctionFeatureWithEnterLane(const std::string& enter_lane_id,
                                                Feature* const feature_ptr) {
   feature_ptr->mutable_junction_feature()->CopyFrom(
-      JunctionAnalyzer::GetJunctionFeature(enter_lane_id));
+      junction_analyzer_->GetJunctionFeature(enter_lane_id));
 }
 
 void Obstacle::SetJunctionFeatureWithoutEnterLane(Feature* const feature_ptr) {
@@ -319,7 +328,7 @@ void Obstacle::SetJunctionFeatureWithoutEnterLane(Feature* const feature_ptr) {
   }
   // TODO(kechxu) Maybe output all exits if no start lane found
   feature_ptr->mutable_junction_feature()->CopyFrom(
-      JunctionAnalyzer::GetJunctionFeature(start_lane_ids));
+      junction_analyzer_->GetJunctionFeature(start_lane_ids));
 }
 
 void Obstacle::SetStatus(const PerceptionObstacle& perception_obstacle,
@@ -642,6 +651,7 @@ void Obstacle::SetCurrentLanes(Feature* feature) {
     lane = feature->lane();
   }
   double min_heading_diff = std::numeric_limits<double>::infinity();
+  clusters_ptr_->ClearObstacle();
   for (std::shared_ptr<const LaneInfo> current_lane : current_lanes) {
     if (current_lane == nullptr) {
       continue;
@@ -680,7 +690,7 @@ void Obstacle::SetCurrentLanes(Feature* feature) {
       lane.mutable_lane_feature()->CopyFrom(*lane_feature);
       min_heading_diff = std::fabs(angle_diff);
     }
-    ObstacleClusters::AddObstacle(id_, lane_id, s, l);
+    clusters_ptr_->AddObstacle(id_, lane_id, s, l);
     ADEBUG << "Obstacle [" << id_ << "] has current lanes ["
            << lane_feature->ShortDebugString() << "].";
   }
@@ -759,6 +769,21 @@ void Obstacle::SetNearbyLanes(Feature* feature) {
   }
 }
 
+void Obstacle::SetSurroundingLaneIds(Feature* feature, const double radius) {
+  Eigen::Vector2d point(feature->position().x(), feature->position().y());
+  std::vector<std::string> lane_ids =
+      PredictionMap::NearbyLaneIds(point, radius);
+  for (const auto& lane_id : lane_ids) {
+    feature->add_surrounding_lane_id(lane_id);
+    std::shared_ptr<const LaneInfo> lane_info =
+        PredictionMap::LaneById(lane_id);
+    if (lane_info->IsOnLane(
+            {feature->position().x(), feature->position().y()})) {
+      feature->add_within_lane_id(lane_id);
+    }
+  }
+}
+
 bool Obstacle::HasJunctionExitLane(
     const LaneSequence& lane_sequence,
     const std::unordered_set<std::string>& exit_lane_id_set) {
@@ -816,7 +841,7 @@ void Obstacle::BuildLaneGraph() {
   for (auto& lane : feature->lane().current_lane_feature()) {
     std::shared_ptr<const LaneInfo> lane_info =
         PredictionMap::LaneById(lane.lane_id());
-    LaneGraph lane_graph = ObstacleClusters::GetLaneGraph(
+    LaneGraph lane_graph = clusters_ptr_->GetLaneGraph(
         lane.lane_s(), road_graph_search_distance, true, lane_info);
     if (lane_graph.lane_sequence_size() > 0) {
       ++curr_lane_count;
@@ -847,7 +872,7 @@ void Obstacle::BuildLaneGraph() {
   for (auto& lane : feature->lane().nearby_lane_feature()) {
     std::shared_ptr<const LaneInfo> lane_info =
         PredictionMap::LaneById(lane.lane_id());
-    LaneGraph lane_graph = ObstacleClusters::GetLaneGraph(
+    LaneGraph lane_graph = clusters_ptr_->GetLaneGraph(
         lane.lane_s(), road_graph_search_distance, false, lane_info);
     if (lane_graph.lane_sequence_size() > 0) {
       ++nearby_lane_count;
@@ -888,7 +913,7 @@ void Obstacle::SetLaneSequenceStopSign(LaneSequence* lane_sequence_ptr) {
   double accumulate_s = 0.0;
   for (const LaneSegment& lane_segment : lane_sequence_ptr->lane_segment()) {
     const StopSign& stop_sign =
-        ObstacleClusters::QueryStopSignByLaneId(lane_segment.lane_id());
+        clusters_ptr_->QueryStopSignByLaneId(lane_segment.lane_id());
     if (stop_sign.has_stop_sign_id() &&
         stop_sign.lane_s() + accumulate_s > lane_sequence_ptr->lane_s()) {
       lane_sequence_ptr->mutable_stop_sign()->CopyFrom(stop_sign);
@@ -1014,10 +1039,9 @@ void Obstacle::BuildLaneGraphFromLeftToRight() {
     bool vehicle_is_on_lane = (lane_id == center_lane_info->lane().id().id());
     std::shared_ptr<const LaneInfo> curr_lane_info =
         PredictionMap::LaneById(lane_id);
-    LaneGraph local_lane_graph =
-        ObstacleClusters::GetLaneGraphWithoutMemorizing(
-            feature->lane().lane_feature().lane_s(), road_graph_search_distance,
-            true, curr_lane_info);
+    LaneGraph local_lane_graph = clusters_ptr_->GetLaneGraphWithoutMemorizing(
+        feature->lane().lane_feature().lane_s(), road_graph_search_distance,
+        true, curr_lane_info);
     // Update it into the Feature proto
     for (const auto& lane_seq : local_lane_graph.lane_sequence()) {
       if (is_in_junction && !HasJunctionExitLane(lane_seq, exit_lane_id_set)) {
@@ -1266,13 +1290,13 @@ void Obstacle::SetNearbyObstacles() {
     double obstacle_s = lane_sequence->lane_s();
     double obstacle_l = lane_sequence->lane_l();
     NearbyObstacle forward_obstacle;
-    if (ObstacleClusters::ForwardNearbyObstacle(
-            *lane_sequence, id_, obstacle_s, obstacle_l, &forward_obstacle)) {
+    if (clusters_ptr_->ForwardNearbyObstacle(*lane_sequence, id_, obstacle_s,
+                                             obstacle_l, &forward_obstacle)) {
       lane_sequence->add_nearby_obstacle()->CopyFrom(forward_obstacle);
     }
     NearbyObstacle backward_obstacle;
-    if (ObstacleClusters::BackwardNearbyObstacle(
-            *lane_sequence, id_, obstacle_s, obstacle_l, &backward_obstacle)) {
+    if (clusters_ptr_->BackwardNearbyObstacle(*lane_sequence, id_, obstacle_s,
+                                              obstacle_l, &backward_obstacle)) {
       lane_sequence->add_nearby_obstacle()->CopyFrom(backward_obstacle);
     }
   }
@@ -1381,16 +1405,19 @@ void Obstacle::InsertFeatureToHistory(const Feature& feature) {
 
 std::unique_ptr<Obstacle> Obstacle::Create(
     const PerceptionObstacle& perception_obstacle, const double timestamp,
-    const int prediction_id) {
+    const int prediction_id, ObstacleClusters* clusters_ptr) {
   std::unique_ptr<Obstacle> ptr_obstacle(new Obstacle());
+  ptr_obstacle->SetClusters(clusters_ptr);
   if (!ptr_obstacle->Insert(perception_obstacle, timestamp, prediction_id)) {
     return nullptr;
   }
   return ptr_obstacle;
 }
 
-std::unique_ptr<Obstacle> Obstacle::Create(const Feature& feature) {
+std::unique_ptr<Obstacle> Obstacle::Create(const Feature& feature,
+                                           ObstacleClusters* clusters_ptr) {
   std::unique_ptr<Obstacle> ptr_obstacle(new Obstacle());
+  ptr_obstacle->SetClusters(clusters_ptr);
   ptr_obstacle->InsertFeatureToHistory(feature);
   return ptr_obstacle;
 }
@@ -1418,7 +1445,7 @@ void Obstacle::DiscardOutdatedHistory() {
 }
 
 void Obstacle::SetCaution() {
-  CHECK_GT(feature_history_.size(), 0);
+  CHECK_GT(feature_history_.size(), 0U);
   Feature* feature = mutable_latest_feature();
   feature->mutable_priority()->set_priority(ObstaclePriority::CAUTION);
 }
@@ -1429,6 +1456,29 @@ bool Obstacle::IsCaution() const {
   }
   const Feature& feature = latest_feature();
   return feature.priority().priority() == ObstaclePriority::CAUTION;
+}
+
+void Obstacle::SetInteractiveTag() {
+  CHECK_GT(feature_history_.size(), 0U);
+  Feature* feature = mutable_latest_feature();
+  feature->mutable_interactive_tag()
+      ->set_interactive_tag(ObstacleInteractiveTag::INTERACTION);
+}
+
+void Obstacle::SetNonInteractiveTag() {
+  CHECK_GT(feature_history_.size(), 0U);
+  Feature* feature = mutable_latest_feature();
+  feature->mutable_interactive_tag()
+      ->set_interactive_tag(ObstacleInteractiveTag::NONINTERACTION);
+}
+
+bool Obstacle::IsInteractiveObstacle() const {
+  if (feature_history_.empty()) {
+    return false;
+  }
+  const Feature& feature = latest_feature();
+  return feature.interactive_tag().interactive_tag() ==
+                 ObstacleInteractiveTag::INTERACTION;
 }
 
 void Obstacle::SetEvaluatorType(
@@ -1445,6 +1495,10 @@ PredictionObstacle Obstacle::GeneratePredictionObstacle() {
   PredictionObstacle prediction_obstacle;
   // TODO(kechxu) implement
   return prediction_obstacle;
+}
+
+void Obstacle::SetClusters(ObstacleClusters* clusters_ptr) {
+  clusters_ptr_ = clusters_ptr;
 }
 
 }  // namespace prediction

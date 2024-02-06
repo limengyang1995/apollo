@@ -16,8 +16,8 @@
 
 #include "modules/localization/msf/msf_localization_component.h"
 
+#include "cyber/time/clock.h"
 #include "modules/common/math/quaternion.h"
-#include "modules/common/time/time.h"
 
 #include "modules/common/adapters/adapter_gflags.h"
 #include "modules/localization/common/localization_gflags.h"
@@ -25,7 +25,7 @@
 namespace apollo {
 namespace localization {
 
-using apollo::common::time::Clock;
+using apollo::cyber::Clock;
 
 MSFLocalizationComponent::MSFLocalizationComponent() {}
 
@@ -102,13 +102,15 @@ bool MSFLocalizationComponent::InitIO() {
 
 bool MSFLocalizationComponent::Proc(
     const std::shared_ptr<drivers::gnss::Imu>& imu_msg) {
-  localization_.OnRawImu(imu_msg);
+  localization_.OnRawImuCache(imu_msg);
   return true;
 }
 
 LocalizationMsgPublisher::LocalizationMsgPublisher(
     const std::shared_ptr<cyber::Node>& node)
-    : node_(node), tf2_broadcaster_(node) {}
+    : node_(node), localization_gnss_compensator_(
+      LocalizationGnssCompensator::Instance()),
+      tf2_broadcaster_(node) {}
 
 bool LocalizationMsgPublisher::InitConfig() {
   localization_topic_ = FLAGS_localization_topic;
@@ -140,9 +142,20 @@ void LocalizationMsgPublisher::PublishPoseBroadcastTF(
     const LocalizationEstimate& localization) {
   // broadcast tf message
   apollo::transform::TransformStamped tf2_msg;
+  // uint64_t compensated_delta;
+  uint64_t current_send_tf_time = apollo::cyber::Clock::Now().ToNanosecond();
+  uint64_t measurement_time =
+      apollo::cyber::Time(localization.measurement_time()).ToNanosecond();
 
   auto mutable_head = tf2_msg.mutable_header();
-  mutable_head->set_timestamp_sec(localization.measurement_time());
+
+  localization_gnss_compensator_ = LocalizationGnssCompensator::Instance();
+
+  localization_gnss_compensator_->ProcessCompensation(
+      current_send_tf_time, &measurement_time);
+
+  mutable_head->set_timestamp_sec(
+    apollo::cyber::Time(measurement_time).ToSecond());
   mutable_head->set_frame_id(broadcast_tf_frame_id_);
   tf2_msg.set_child_frame_id(broadcast_tf_child_frame_id_);
 
@@ -162,6 +175,23 @@ void LocalizationMsgPublisher::PublishPoseBroadcastTF(
 
 void LocalizationMsgPublisher::PublishPoseBroadcastTopic(
     const LocalizationEstimate& localization) {
+  double cur_system_time = localization.header().timestamp_sec();
+  if (pre_system_time_ > 0.0 && cur_system_time - pre_system_time_ > 0.02) {
+    AERROR << std::setprecision(16)
+           << "the localization processing time enlonged more than 2 times "
+              "according to system time, "
+           << "the pre system time and current system time: "
+           << pre_system_time_ << " " << cur_system_time;
+  } else if (pre_system_time_ > 0.0 &&
+             cur_system_time - pre_system_time_ < 0.0) {
+    AERROR << std::setprecision(16)
+           << "published localization message's time is eary than last imu "
+              "message "
+              "according to system time, "
+           << "the pre system time and current system time: "
+           << pre_system_time_ << " " << cur_system_time;
+  }
+  pre_system_time_ = cur_system_time;
   localization_talker_->Write(localization);
 }
 

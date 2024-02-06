@@ -24,8 +24,8 @@ usage:
 
 import argparse
 
-from cyber_py3.record import RecordReader
-from modules.transform.proto import transform_pb2
+from cyber.python.cyber_py3.record import RecordReader
+from modules.common_msgs.transform_msgs import transform_pb2
 
 
 g_args = None

@@ -20,22 +20,28 @@
 
 #pragma once
 
-#include <boost/thread/locks.hpp>
-#include <boost/thread/shared_mutex.hpp>
 #include <memory>
 #include <string>
+#include <vector>
+
+#include <boost/thread/locks.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 #include "absl/strings/str_cat.h"
+
+#include "modules/common_msgs/task_manager_msgs/task_manager.pb.h"
+#include "modules/common_msgs/external_command_msgs/lane_follow_command.pb.h"
+#include "modules/common_msgs/external_command_msgs/valet_parking_command.pb.h"
+#include "modules/common_msgs/external_command_msgs/action_command.pb.h"
+
 #include "cyber/common/log.h"
 #include "cyber/cyber.h"
-
-#include "modules/dreamview/backend/data_collection_monitor/data_collection_monitor.h"
-#include "modules/dreamview/backend/handlers/websocket_handler.h"
-#include "modules/dreamview/backend/map/map_service.h"
+#include "modules/dreamview/backend/common/handlers/websocket_handler.h"
+#include "modules/dreamview/backend/common/map_service/map_service.h"
 #include "modules/dreamview/backend/perception_camera_updater/perception_camera_updater.h"
-#include "modules/dreamview/backend/sim_control/sim_control.h"
+#include "modules/dreamview/backend/common/plugins/plugin_manager.h"
+#include "modules/common_msgs/localization_msgs/localization.pb.h"
 #include "modules/dreamview/backend/simulation_world/simulation_world_service.h"
-#include "modules/routing/proto/poi.pb.h"
 
 /**
  * @namespace apollo::dreamview
@@ -62,10 +68,11 @@ class SimulationWorldUpdater {
    * @param routing_from_file whether to read initial routing from file.
    */
   SimulationWorldUpdater(WebSocketHandler *websocket, WebSocketHandler *map_ws,
-                         WebSocketHandler *camera_ws, SimControl *sim_control,
+                         WebSocketHandler *camera_ws,
+                         WebSocketHandler *plugin_ws,
                          const MapService *map_service,
-                         DataCollectionMonitor *data_collection_monitor,
                          PerceptionCameraUpdater *perception_camera_updater,
+                         PluginManager *plugin_manager,
                          bool routing_from_file = false);
 
   /**
@@ -77,9 +84,7 @@ class SimulationWorldUpdater {
   // frontend.
   static constexpr double kSimWorldTimeIntervalMs = 100;
 
-  double LastAdcTimestampSec() {
-    return last_pushed_adc_timestamp_sec_;
-  }
+  double LastAdcTimestampSec() { return last_pushed_adc_timestamp_sec_; }
 
  private:
   /**
@@ -89,14 +94,48 @@ class SimulationWorldUpdater {
   void OnTimer();
 
   /**
-   * @brief The function to construct a routing request from the given json,
+   * @brief The function to construct a LaneFollowCommand from the given json,
    * @param json that contains start, end, and waypoints
-   * @param routing_request
-   * @return True if routing request is constructed successfully
+   * @param lane_follow_command
+   * @return True if LaneFollowCommand is constructed successfully
    */
-  bool ConstructRoutingRequest(
+  bool ConstructLaneFollowCommand(
       const nlohmann::json &json,
-      apollo::routing::RoutingRequest *routing_request);
+      apollo::external_command::LaneFollowCommand *lane_follow_command);
+
+  /**
+   * @brief The function to construct a ValetParkingCommand from the given json,
+   * @param json that contains parking info
+   * @param valet_parking_command
+   * @return True if ValetParkingCommand is constructed successfully
+   */
+  bool ConstructValetParkingCommand(
+      const nlohmann::json &json,
+      apollo::external_command::ValetParkingCommand *valet_parking_command);
+
+  /**
+   * @brief get json which construct routing request needs
+   * @param json that contains start point,json that contains end point
+   * @return json that contains start point,end point without waypoint
+   */
+  nlohmann::json GetConstructRoutingRequestJson(const nlohmann::json &start,
+                                                const nlohmann::json &end);
+
+  /**
+   * @brief The function to construct a lane waypoint from the given json,
+   * @param json that contains x, y, heading
+   * @param lanewaypoint, description
+   * @return True if lane waypoint is constructed successfully
+   */
+  bool ConstructLaneWayPoint(const nlohmann::json &point,
+                             apollo::routing::LaneWaypoint *laneWayPoint,
+                             std::string description);
+  /**
+   * @brief Check if a process exists
+   * @param process_name The name of the process to check
+   * @return True if the process exists
+   */
+  bool isProcessRunning(const std::string &process_name);
 
   bool ValidateCoordinate(const nlohmann::json &json);
 
@@ -114,6 +153,29 @@ class SimulationWorldUpdater {
    * true otherwise or if it's already loaded.
    */
   bool LoadPOI();
+  /**
+   * @brief get point from lanewaypoint in poi or default routings
+   * @param lanewaypoint
+   * @return json that contains point's coordinate x and y
+   */
+  nlohmann::json GetPointJsonFromLaneWaypoint(
+      const apollo::routing::LaneWaypoint &waypoint);
+
+  /**
+   * @brief Tries to load the user-defined default routings from the txt file
+   * @return False if failed to load from file,file doesn't exist
+   * true otherwise or if it's already loaded.
+   */
+  bool LoadUserDefinedRoutings(const std::string &file_name,
+                               google::protobuf::Message *message);
+
+  /**
+   * @brief Tries to save the points to a fixed location file
+   * @param json that contains routing name and point's coordinate x and y
+   * @return False if failed to save,
+   * true otherwise or if it's already saved.
+   */
+  bool AddDefaultRouting(const nlohmann::json &json);
 
   void RegisterMessageHandlers();
 
@@ -122,12 +184,18 @@ class SimulationWorldUpdater {
   WebSocketHandler *websocket_ = nullptr;
   WebSocketHandler *map_ws_ = nullptr;
   WebSocketHandler *camera_ws_ = nullptr;
-  SimControl *sim_control_ = nullptr;
-  DataCollectionMonitor *data_collection_monitor_ = nullptr;
+  WebSocketHandler *plugin_ws_ = nullptr;
   PerceptionCameraUpdater *perception_camera_updater_ = nullptr;
 
   // End point for requesting default route
   apollo::routing::POI poi_;
+
+  // default routings
+  apollo::routing::POI default_routings_;
+  apollo::routing::Landmark *default_routing_;
+
+  // park and go
+  apollo::routing::POI park_go_routings_;
 
   // The simulation_world in wire format to be pushed to frontend, which is
   // updated by timer.
@@ -144,6 +212,10 @@ class SimulationWorldUpdater {
   std::unique_ptr<cyber::Timer> timer_;
 
   volatile double last_pushed_adc_timestamp_sec_ = 0.0f;
+
+  std::unique_ptr<PluginManager> plugin_manager_;
+
+  uint64_t command_id_;
 };
 
 }  // namespace dreamview

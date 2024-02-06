@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "modules/drivers/proto/pointcloud.pb.h"
+#include <memory>
+
+#include "modules/common_msgs/sensor_msgs/pointcloud.pb.h"
 #include "modules/tools/visualizer/renderable_object.h"
 
 class QOpenGLShaderProgram;

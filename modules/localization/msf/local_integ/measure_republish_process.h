@@ -27,14 +27,13 @@
 
 #include "Eigen/Core"
 #include "Eigen/Geometry"
-
-#include "include/sins_struct.h"
+#include "localization_msf/sins_struct.h"
 #include "modules/common/status/status.h"
-#include "modules/drivers/gnss/proto/gnss_best_pose.pb.h"
-#include "modules/drivers/gnss/proto/heading.pb.h"
+#include "modules/common_msgs/sensor_msgs/gnss_best_pose.pb.h"
+#include "modules/common_msgs/sensor_msgs/heading.pb.h"
 #include "modules/localization/msf/common/util/frame_transform.h"
 #include "modules/localization/msf/local_integ/localization_params.h"
-#include "modules/localization/proto/localization.pb.h"
+#include "modules/common_msgs/localization_msgs/localization.pb.h"
 
 /**
  * @namespace apollo::localization::msf
@@ -50,6 +49,9 @@ struct VehicleGnssAntExtrinsic {
   int ant_num;
   TransformD transform_1;
   TransformD transform_2;
+
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 /**
@@ -81,6 +83,8 @@ class MeasureRepublishProcess {
 
   bool GnssHeadingProcess(const drivers::gnss::Heading& heading_msg,
                           MeasureData* measure, int* status);
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
  protected:
   bool IsSinsAlign();

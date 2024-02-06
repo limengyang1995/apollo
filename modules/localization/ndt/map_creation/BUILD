@@ -1,28 +1,19 @@
 load("//tools:cpplint.bzl", "cpplint")
+load("//tools:apollo_package.bzl", "apollo_package", "apollo_cc_library", "apollo_component", "apollo_cc_binary")
 
 package(default_visibility = ["//visibility:public"])
 
-cc_binary(
+apollo_cc_binary(
     name = "ndt_map_creator",
     srcs = ["ndt_map_creator.cc"],
-    linkopts = [
-        "-lopencv_core",
-        "-lopencv_highgui",
-        "-lopencv_imgproc",
-    ],
-    linkstatic = 0,
     deps = [
         "//cyber",
-        "//modules/localization/msf/common/io:localization_msf_common_io",
-        "//modules/localization/msf/common/util:localization_msf_common_util",
-        "//modules/localization/msf/common/util:localization_msf_common_util_system_utility",
-        "//modules/localization/msf/local_pyramid_map/base_map:localization_pyramid_map_base_map",
-        "//modules/localization/msf/local_pyramid_map/ndt_map:localization_pyramid_map_ndt_map",
-        "//modules/localization/msf/local_pyramid_map/ndt_map:localization_pyramid_map_ndt_map_pool",
-        "//third_party:boost",
+        "//modules/localization/msf:apollo_localization_msf",
+        "@boost",
+        "@com_google_absl//:absl",
         "@eigen",
-        "@pcl",
     ],
 )
 
+apollo_package()
 cpplint()

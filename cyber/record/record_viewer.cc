@@ -17,6 +17,7 @@
 #include "cyber/record/record_viewer.h"
 
 #include <algorithm>
+#include <limits>
 #include <utility>
 
 #include "cyber/common/log.h"
@@ -77,6 +78,10 @@ RecordViewer::Iterator RecordViewer::begin() { return Iterator(this); }
 
 RecordViewer::Iterator RecordViewer::end() { return Iterator(this, true); }
 
+RecordViewer::Iterator RecordViewer::curr_itr() { return itr_; }
+
+void RecordViewer::set_curr_itr(const Iterator& curr_itr) { itr_ = curr_itr; }
+
 void RecordViewer::Init() {
   // Init the channel list
   for (auto& reader : readers_) {
@@ -109,7 +114,7 @@ void RecordViewer::Reset() {
 }
 
 void RecordViewer::UpdateTime() {
-  uint64_t min_begin_time = UINT64_MAX;
+  uint64_t min_begin_time = std::numeric_limits<uint64_t>::max();
   uint64_t max_end_time = 0;
 
   for (auto& reader : readers_) {

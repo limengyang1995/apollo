@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+
 #include "cyber/cyber.h"
 #include "modules/bridge/common/bridge_header.h"
 #include "modules/bridge/common/macro.h"
@@ -96,16 +97,18 @@ bool BridgeProtoDiserializedBuf<T>::Diserialized(std::shared_ptr<T> proto) {
 template <typename T>
 void BridgeProtoDiserializedBuf<T>::UpdateStatus(uint32_t frame_index) {
   size_t status_size = status_list_.size();
-  if (status_size == 0) {
+  uint32_t status_index = frame_index / INT_BITS;
+  if (status_size == 0 ||
+    static_cast<std::size_t>(status_index) >= status_size) {
     is_ready_diser = false;
     return;
   }
 
-  uint32_t status_index = frame_index / INT_BITS;
   status_list_[status_index] |= (1 << (frame_index % INT_BITS));
   for (size_t i = 0; i < status_size; i++) {
     if (i == status_size - 1) {
-      if (status_list_[i] == ((1 << total_frames_ % INT_BITS) - 1)) {
+      if (static_cast<int>(status_list_[i]) ==
+          (1 << total_frames_ % INT_BITS) - 1) {
         AINFO << "diserialized is ready";
         is_ready_diser = true;
       } else {
@@ -135,6 +138,8 @@ template <typename T>
 bool BridgeProtoDiserializedBuf<T>::Initialize(const BridgeHeader &header) {
   total_size_ = header.GetMsgSize();
   total_frames_ = header.GetTotalFrames();
+  proto_name_ = header.GetMsgName();
+  sequence_num_ = header.GetMsgID();
   if (total_frames_ == 0) {
     return false;
   }
@@ -147,7 +152,12 @@ bool BridgeProtoDiserializedBuf<T>::Initialize(const BridgeHeader &header) {
   }
 
   if (!proto_buf_) {
-    proto_buf_ = new char[total_size_];
+    try {
+      proto_buf_ = new char[total_size_];
+    } catch (const std::bad_alloc& e) {
+      AERROR << "Memory allocation failed: " << e.what();
+      return false;
+    }
   }
   return true;
 }

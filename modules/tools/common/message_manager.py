@@ -16,20 +16,21 @@
 # limitations under the License.
 ###############################################################################
 
-from modules.localization.proto import localization_pb2
-from modules.perception.proto import perception_obstacle_pb2
-from modules.perception.proto import traffic_light_detection_pb2
-from modules.planning.proto import planning_internal_pb2
-from modules.planning.proto import planning_pb2
-from modules.prediction.proto import prediction_obstacle_pb2
-from modules.routing.proto import routing_pb2
-from modules.control.proto import control_cmd_pb2
-from modules.canbus.proto import chassis_pb2
-from modules.common.proto import drive_event_pb2
-from modules.map.relative_map.proto import navigation_pb2
-from modules.guardian.proto import guardian_pb2
+from modules.common_msgs.audio_msgs import audio_event_pb2
+from modules.common_msgs.localization_msgs import localization_pb2
+from modules.common_msgs.perception_msgs import perception_obstacle_pb2
+from modules.common_msgs.perception_msgs import traffic_light_detection_pb2
+from modules.common_msgs.planning_msgs import planning_internal_pb2
+from modules.common_msgs.planning_msgs import planning_pb2
+from modules.common_msgs.prediction_msgs import prediction_obstacle_pb2
+from modules.common_msgs.routing_msgs import routing_pb2
+from modules.common_msgs.control_msgs import control_cmd_pb2
+from modules.common_msgs.chassis_msgs import chassis_pb2
+from modules.common_msgs.basic_msgs import drive_event_pb2
+from modules.common_msgs.planning_msgs import navigation_pb2
+from modules.common_msgs.guardian_msgs import guardian_pb2
+from modules.tools.common import proto_utils
 
-from . import proto_utils
 
 
 class MessageType:
@@ -51,6 +52,8 @@ class MessageType:
 
 
 topic_pb_list = [
+    MessageType("audio_event", "/apollo/audio_event",
+                    audio_event_pb2.AudioEvent),
     MessageType("planning", "/apollo/planning", planning_pb2.ADCTrajectory),
     MessageType("control", "/apollo/control", control_cmd_pb2.ControlCommand),
     MessageType("chassis", "/apollo/canbus/chassis", chassis_pb2.Chassis),
@@ -58,10 +61,6 @@ topic_pb_list = [
                 prediction_obstacle_pb2.PredictionObstacles),
     MessageType("perception", "/apollo/perception/obstacles",
                 perception_obstacle_pb2.PerceptionObstacles),
-    MessageType("routing_response", "/apollo/routing_response",
-                routing_pb2.RoutingResponse),
-    MessageType("routing_request", "/apollo/routing_request",
-                routing_pb2.RoutingRequest),
     MessageType("localization", "/apollo/localization/pose",
                 localization_pb2.LocalizationEstimate),
     MessageType("traffic_light", "/apollo/perception/traffic_light",

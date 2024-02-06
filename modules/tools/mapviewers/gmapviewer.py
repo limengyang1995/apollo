@@ -20,8 +20,8 @@ import json
 import pyproj
 import argparse
 from yattag import Doc
-import common.proto_utils as proto_utils
-from modules.map.proto import map_pb2
+import modules.tools.common.proto_utils as proto_utils
+from modules.common_msgs.map_msgs import map_pb2
 
 
 def generate(api_key, left_boundaries, right_boundaries, center_lat,

@@ -20,10 +20,11 @@
 #include <utility>
 #include <vector>
 
+#include "modules/prediction/common/semantic_map.h"
+#include "modules/prediction/evaluator/evaluator.h"
+#include "modules/prediction/evaluator/model_manager/model_manager.h"
 #include "torch/extension.h"
 #include "torch/script.h"
-
-#include "modules/prediction/evaluator/evaluator.h"
 
 namespace apollo {
 namespace prediction {
@@ -33,7 +34,8 @@ class SemanticLSTMEvaluator : public Evaluator {
   /**
    * @brief Constructor
    */
-  SemanticLSTMEvaluator();
+  SemanticLSTMEvaluator() = delete;
+  explicit SemanticLSTMEvaluator(SemanticMap* semantic_map);
 
   /**
    * @brief Destructor
@@ -74,10 +76,10 @@ class SemanticLSTMEvaluator : public Evaluator {
   void LoadModel();
 
  private:
-  torch::jit::script::Module torch_vehicle_model_;
-  torch::jit::script::Module torch_pedestrian_model_;
+  ModelManager model_manager_;
   at::Tensor torch_default_output_tensor_;
-  torch::Device device_;
+  Model::Backend device_;
+  SemanticMap* semantic_map_;
 };
 
 }  // namespace prediction

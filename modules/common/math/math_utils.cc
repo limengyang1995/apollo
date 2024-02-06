@@ -19,8 +19,6 @@
 #include <cmath>
 #include <utility>
 
-#include "glog/logging.h"
-
 namespace apollo {
 namespace common {
 namespace math {
@@ -96,6 +94,13 @@ std::pair<double, double> Cartesian2Polar(double x, double y) {
   double r = std::sqrt(x * x + y * y);
   double theta = std::atan2(y, x);
   return std::make_pair(r, theta);
+}
+
+double check_negative(double input_data) {
+  if (std::signbit(input_data)) {
+    input_data = -input_data;
+  }
+  return input_data;
 }
 
 }  // namespace math

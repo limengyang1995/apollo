@@ -19,19 +19,14 @@
 #include <cmath>
 
 #include "Eigen/Core"
-
-#include "cyber/common/log.h"
-
 #include "absl/strings/str_cat.h"
+#include "cyber/common/log.h"
 #include "modules/common/configs/config_gflags.h"
 #include "modules/common/math/euler_angles_zxy.h"
 #include "modules/common/math/quaternion.h"
-#include "modules/localization/common/localization_gflags.h"
 
 namespace apollo {
 namespace common {
-
-VehicleStateProvider::VehicleStateProvider() {}
 
 Status VehicleStateProvider::Update(
     const localization::LocalizationEstimate &localization,
@@ -71,7 +66,7 @@ Status VehicleStateProvider::Update(
     vehicle_state_.set_steering_percentage(chassis.steering_percentage());
   }
 
-  static constexpr double kEpsilon = 1e-6;
+  static constexpr double kEpsilon = 0.1;
   if (std::abs(vehicle_state_.linear_velocity()) < kEpsilon) {
     vehicle_state_.set_kappa(0.0);
   } else {
@@ -147,8 +142,8 @@ bool VehicleStateProvider::ConstructExceptLinearVelocity(
   }
 
   if (localization.pose().has_euler_angles()) {
-    vehicle_state_.set_roll(localization.pose().euler_angles().x());
-    vehicle_state_.set_pitch(localization.pose().euler_angles().y());
+    vehicle_state_.set_roll(localization.pose().euler_angles().y());
+    vehicle_state_.set_pitch(localization.pose().euler_angles().x());
     vehicle_state_.set_yaw(localization.pose().euler_angles().z());
   } else {
     math::EulerAnglesZXYd euler_angle(orientation.qw(), orientation.qx(),

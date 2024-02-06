@@ -24,7 +24,7 @@
 DEFINE_string(summary_monitor_name, "SummaryMonitor",
               "Name of the summary monitor.");
 
-DEFINE_double(system_status_publish_interval, 10,
+DEFINE_double(system_status_publish_interval, 1,
               "SystemStatus publish interval.");
 
 namespace apollo {
@@ -56,6 +56,8 @@ void SummaryMonitor::RunOnce(const double current_time) {
     auto* summary = component.second.mutable_summary();
     const auto& process_status = component.second.process_status();
     EscalateStatus(process_status.status(), process_status.message(), summary);
+    const auto& module_status = component.second.module_status();
+    EscalateStatus(module_status.status(), module_status.message(), summary);
     const auto& channel_status = component.second.channel_status();
     EscalateStatus(channel_status.status(), channel_status.message(), summary);
     const auto& resource_status = component.second.resource_status();
@@ -63,6 +65,16 @@ void SummaryMonitor::RunOnce(const double current_time) {
                    summary);
     const auto& other_status = component.second.other_status();
     EscalateStatus(other_status.status(), other_status.message(), summary);
+  }
+
+  // For global components
+  for (auto& component : *status->mutable_global_components()) {
+    auto* summary = component.second.mutable_summary();
+    const auto& process_status = component.second.process_status();
+    EscalateStatus(process_status.status(), process_status.message(), summary);
+    const auto& resource_status = component.second.resource_status();
+    EscalateStatus(resource_status.status(), resource_status.message(),
+                   summary);
   }
 
   // Get fingerprint of current status.

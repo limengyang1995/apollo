@@ -32,17 +32,16 @@ PY_CALLBACK_TYPE = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p)
 PY_CALLBACK_TYPE_T = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p)
 
 # init vars
-CYBER_PATH = os.environ.get('CYBER_PATH', '/apollo/cyber')
-CYBER_DIR = os.path.split(CYBER_PATH)[0]
-sys.path.append(CYBER_PATH + "/third_party/")
-sys.path.append(CYBER_PATH + "/lib/")
+APOLLO_DISTRIBUTION_HOME = os.environ.get(
+    'APOLLO_DISTRIBUTION_HOME', '/opt/apollo/neo')
 
-sys.path.append(CYBER_PATH + "/lib/python/")
+if APOLLO_DISTRIBUTION_HOME.startswith('/opt/apollo/neo'):
+    wrapper_lib_path = os.path.join(
+        APOLLO_DISTRIBUTION_HOME, "lib", "cyber/python/internal")
 
-sys.path.append(CYBER_DIR + "/python/")
-sys.path.append(CYBER_DIR + "/cyber/")
+    sys.path.append(wrapper_lib_path)
 
-_CYBER = importlib.import_module('_cyber_py3')
+_CYBER = importlib.import_module('_cyber_wrapper')
 
 
 ##
@@ -296,7 +295,9 @@ class Node(object):
         return Client(c, response_data_type)
 
     def service_callback(self, name):
-        v = self.services[name]
+        # Temporary workaround for cyber_py3 examples: service & client
+        v = self.services[name.decode("utf-8")]
+
         msg_str = _CYBER.PyService_read(v[0])
         if (len(msg_str) > 0):
             proto = v[3]()

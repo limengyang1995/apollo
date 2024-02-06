@@ -26,9 +26,9 @@ parsed data is saved to *.jpeg file, for each capture
 import os
 import sys
 
-from cyber_py3 import cyber
-from cyber_py3 import record
-from modules.drivers.proto.sensor_image_pb2 import CompressedImage
+from cyber.python.cyber_py3 import cyber
+from cyber.python.cyber_py3 import record
+from modules.common_msgs.sensor_msgs.sensor_image_pb2 import CompressedImage
 
 
 def parse_data(channelname, msg, out_folder):
@@ -36,7 +36,7 @@ def parse_data(channelname, msg, out_folder):
     parser images from Apollo record file
     """
     msg_camera = CompressedImage()
-    msg_camera.ParseFromString(str(msg))
+    msg_camera.ParseFromString(msg)
 
     tstamp = msg_camera.measurement_time
 

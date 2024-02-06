@@ -25,9 +25,9 @@ import os
 import sys
 import time
 
-from cyber_py3 import cyber
-from cyber_py3 import cyber_time
-from modules.routing.proto import routing_pb2
+from cyber.python.cyber_py3 import cyber
+from cyber.python.cyber_py3 import cyber_time
+from modules.common_msgs.routing_msgs import routing_pb2
 
 
 def main():
@@ -57,7 +57,7 @@ def main():
     waypoint.id = '1-1'
     waypoint.s = 80
 
-    writer = node.create_writer('/apollo/routing_request',
+    writer = node.create_writer('/apollo/raw_routing_request',
                                 routing_pb2.RoutingRequest)
     time.sleep(2.0)
     print("routing_request", routing_request)

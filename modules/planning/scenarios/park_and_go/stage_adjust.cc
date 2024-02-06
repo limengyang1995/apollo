@@ -17,39 +17,33 @@
 #include "modules/planning/scenarios/park_and_go/stage_adjust.h"
 
 #include "cyber/common/log.h"
-
-#include "modules/common/vehicle_state/vehicle_state_provider.h"
-#include "modules/planning/common/frame.h"
-#include "modules/planning/common/planning_context.h"
-#include "modules/planning/common/util/common.h"
-#include "modules/planning/scenarios/util/util.h"
-#include "modules/planning/tasks/deciders/path_bounds_decider/path_bounds_decider.h"
+#include "modules/planning/planning_base/common/frame.h"
+#include "modules/planning/planning_base/common/util/common.h"
+#include "modules/planning/scenarios/park_and_go/context.h"
+#include "modules/planning/scenarios/park_and_go/util.h"
 
 namespace apollo {
 namespace planning {
-namespace scenario {
-namespace park_and_go {
 
 using apollo::common::TrajectoryPoint;
 
-Stage::StageStatus ParkAndGoStageAdjust::Process(
+StageResult ParkAndGoStageAdjust::Process(
     const TrajectoryPoint& planning_init_point, Frame* frame) {
   ADEBUG << "stage: Adjust";
   CHECK_NOTNULL(frame);
 
-  scenario_config_.CopyFrom(GetContext()->scenario_config);
-
   frame->mutable_open_space_info()->set_is_on_open_space_trajectory(true);
-  bool plan_ok = ExecuteTaskOnOpenSpace(frame);
-  if (!plan_ok) {
+  StageResult result = ExecuteTaskOnOpenSpace(frame);
+  if (result.HasError()) {
     AERROR << "ParkAndGoStageAdjust planning error";
-    return StageStatus::ERROR;
+    return result.SetStageStatus(StageStatusType::ERROR);
   }
   const bool is_ready_to_cruise =
-      scenario::util::CheckADCReadyToCruise(frame, scenario_config_);
+      CheckADCReadyToCruise(injector_->vehicle_state(), frame,
+                            GetContextAs<ParkAndGoContext>()->scenario_config);
 
   bool is_end_of_trajectory = false;
-  const auto& history_frame = FrameHistory::Instance()->Latest();
+  const auto& history_frame = injector_->frame_history()->Latest();
   if (history_frame) {
     const auto& trajectory_points =
         history_frame->current_frame_planned_trajectory().trajectory_point();
@@ -60,38 +54,37 @@ Stage::StageStatus ParkAndGoStageAdjust::Process(
   }
 
   if (!is_ready_to_cruise && !is_end_of_trajectory) {
-    return StageStatus::RUNNING;
+    return result.SetStageStatus(StageStatusType::RUNNING);
   }
   return FinishStage();
 }
 
-Stage::StageStatus ParkAndGoStageAdjust::FinishStage() {
-  const auto vehicle_status = common::VehicleStateProvider::Instance();
+StageResult ParkAndGoStageAdjust::FinishStage() {
+  const auto vehicle_status = injector_->vehicle_state();
   ADEBUG << vehicle_status->steering_percentage();
   if (std::fabs(vehicle_status->steering_percentage()) <
-      scenario_config_.max_steering_percentage_when_cruise()) {
-    next_stage_ = ScenarioConfig::PARK_AND_GO_CRUISE;
+      GetContextAs<ParkAndGoContext>()
+          ->scenario_config.max_steering_percentage_when_cruise()) {
+    next_stage_ = "PARK_AND_GO_CRUISE";
   } else {
     ResetInitPostion();
-    next_stage_ = ScenarioConfig::PARK_AND_GO_PRE_CRUISE;
+    next_stage_ = "PARK_AND_GO_PRE_CRUISE";
   }
-  return Stage::FINISHED;
+  return StageResult(StageStatusType::FINISHED);
 }
 
 void ParkAndGoStageAdjust::ResetInitPostion() {
-  auto* park_and_go_status = PlanningContext::Instance()
+  auto* park_and_go_status = injector_->planning_context()
                                  ->mutable_planning_status()
                                  ->mutable_park_and_go();
   park_and_go_status->mutable_adc_init_position()->set_x(
-      common::VehicleStateProvider::Instance()->x());
+      injector_->vehicle_state()->x());
   park_and_go_status->mutable_adc_init_position()->set_y(
-      common::VehicleStateProvider::Instance()->y());
+      injector_->vehicle_state()->y());
   park_and_go_status->mutable_adc_init_position()->set_z(0.0);
   park_and_go_status->set_adc_init_heading(
-      common::VehicleStateProvider::Instance()->heading());
+      injector_->vehicle_state()->heading());
 }
 
-}  // namespace park_and_go
-}  // namespace scenario
 }  // namespace planning
 }  // namespace apollo

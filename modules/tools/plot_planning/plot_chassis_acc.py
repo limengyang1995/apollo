@@ -23,9 +23,9 @@ import gflags
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 
-from cyber_py3 import cyber
-from modules.canbus.proto import chassis_pb2
-from modules.control.proto import control_cmd_pb2
+from cyber.python.cyber_py3 import cyber
+from modules.common_msgs.chassis_msgs import chassis_pb2
+from modules.common_msgs.control_msgs import control_cmd_pb2
 
 
 INIT_ACC_DATA = []

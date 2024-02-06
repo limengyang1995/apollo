@@ -22,20 +22,28 @@ DEFINE_bool(enable_adapter_dump, false,
 DEFINE_string(gps_topic, "/apollo/sensor/gnss/odometry", "GPS topic name");
 DEFINE_string(imu_topic, "/apollo/sensor/gnss/corrected_imu", "IMU topic name");
 DEFINE_string(raw_imu_topic, "/apollo/sensor/gnss/imu", "Raw IMU topic name");
+DEFINE_string(audio_detection_topic, "/apollo/audio_detection",
+              "audio detection topic name");
 DEFINE_string(chassis_topic, "/apollo/canbus/chassis", "chassis topic name");
 DEFINE_string(chassis_detail_topic, "/apollo/canbus/chassis_detail",
               "chassis detail topic name");
 DEFINE_string(localization_topic, "/apollo/localization/pose",
               "localization topic name");
+DEFINE_string(planning_learning_data_topic, "/apollo/planning/learning_data",
+              "planning learning data");
 DEFINE_string(planning_trajectory_topic, "/apollo/planning",
               "planning trajectory topic name");
-DEFINE_string(planning_pad_topic, "/apollo/planning/pad",
-              "planning pad topic name");
+DEFINE_string(planning_command, "/apollo/planning/command",
+              "Topic name of input command to planning module.");
+DEFINE_string(planning_command_status, "/apollo/planning/command_status",
+              "Topic name of planning command status.");
 DEFINE_string(monitor_topic, "/apollo/monitor", "Monitor");
 DEFINE_string(pad_topic, "/apollo/control/pad",
               "control pad message topic name");
 DEFINE_string(control_command_topic, "/apollo/control",
               "control command topic name");
+DEFINE_string(chassis_command_topic, "/apollo/chassis_control",
+              "chassis command topic name");
 DEFINE_string(control_preprocessor_topic, "/apollo/control/preprocessor",
               "control preprocessor topic name");
 DEFINE_string(control_local_view_topic, "/apollo/control/localview",
@@ -45,6 +53,17 @@ DEFINE_string(control_core_command_topic, "/apollo/control/controlcore",
 DEFINE_string(pointcloud_topic,
               "/apollo/sensor/lidar128/compensator/PointCloud2",
               "pointcloud topic name");
+DEFINE_string(pointcloud_16_topic,
+              "/apollo/sensor/lidar16/compensator/PointCloud2",
+              "16 beam Lidar pointcloud topic name");
+DEFINE_string(pointcloud_16_raw_topic, "/apollo/sensor/lidar16/PointCloud2",
+              "16 beam Lidar raw pointcloud topic name");
+DEFINE_string(pointcloud_16_front_left_raw_topic,
+              "/apollo/sensor/lidar16/left/PointCloud2",
+              "16 left beam Lidar raw pointcloud topic name");
+DEFINE_string(pointcloud_16_front_right_raw_topic,
+              "/apollo/sensor/lidar16/right/PointCloud2",
+              "16 left beam Lidar raw pointcloud topic name");
 DEFINE_string(pointcloud_16_front_up_topic,
               "/apollo/sensor/lidar16/front/up/compensator/PointCloud2",
               "Front up 16 beam Lidar pointcloud topic name");
@@ -54,6 +73,9 @@ DEFINE_string(pointcloud_64_topic,
 DEFINE_string(pointcloud_128_topic,
               "/apollo/sensor/lidar128/compensator/PointCloud2",
               "pointcloud topic name for 128 beam lidar");
+DEFINE_string(pointcloud_hesai_40p_topic,
+              "/apollo/sensor/hesai40/compensator/PointCloud2",
+              "pointcloud topic name for hesai40p lidar");
 DEFINE_string(pointcloud_raw_topic, "/apollo/sensor/velodyne64/PointCloud2",
               "pointcloud raw topic name");
 DEFINE_string(velodyne_raw_topic,
@@ -97,8 +119,6 @@ DEFINE_string(traffic_light_detection_topic, "/apollo/perception/traffic_light",
 DEFINE_string(perception_lane_mask_segmentation_topic,
               "/apollo/perception/lane_mask",
               "lane mask segmentation topic name");
-DEFINE_string(routing_request_topic, "/apollo/routing_request",
-              "routing request topic name");
 DEFINE_string(routing_response_topic, "/apollo/routing_response",
               "routing response topic name");
 DEFINE_string(routing_response_history_topic,
@@ -151,6 +171,13 @@ DEFINE_string(camera_image_long_topic, "/apollo/sensor/camera/image_long",
               "long camera image topic name");
 DEFINE_string(camera_image_short_topic, "/apollo/sensor/camera/image_short",
               "short camera image topic name");
+DEFINE_string(camera_front_6mm_topic, "/apollo/sensor/camera/front_6mm/image",
+              "front 6mm camera topic name");
+DEFINE_string(camera_front_6mm_2_topic,
+              "/apollo/sensor/camera/front_6mm_2/image",
+              "front 6mm camera topic name 2");
+DEFINE_string(camera_front_12mm_topic, "/apollo/sensor/camera/front_12mm/image",
+              "front 12mm camera topic name");
 DEFINE_string(camera_front_6mm_compressed_topic,
               "/apollo/sensor/camera/front_6mm/image/compressed",
               "front 6mm camera compressed topic name");
@@ -202,32 +229,24 @@ DEFINE_string(navigation_topic, "/apollo/navigation", "navigation");
 DEFINE_string(hmi_status_topic, "/apollo/hmi/status", "HMI status topic name.");
 DEFINE_string(audio_capture_topic, "/apollo/hmi/audio_capture",
               "HMI audio capture topic name.");
+DEFINE_string(v2x_obu_traffic_light_topic,
+              "/apollo/v2x/obu/internal/traffic_light",
+              "v2x obu traffic_light topic name");
+DEFINE_string(v2x_internal_obstacle_topic, "/apollo/v2x/obu/internal/obstacles",
+              "v2x internal obstacles topic name");
 DEFINE_string(v2x_obstacle_topic, "/apollo/v2x/obstacles",
               "v2x obstacles topic name");
-DEFINE_string(v2x_trafficlight_topic, "/apollo/v2x/traffic_light",
-              "v2x trafficlight topic name");
+DEFINE_string(v2x_traffic_light_topic, "/apollo/v2x/traffic_light",
+              "v2x traffic light topic name");
+DEFINE_string(v2x_traffic_light_for_hmi_topic,
+              "/apollo/v2x/traffic_light/for_hmi",
+              "v2x traffic light topic name for hmi");
+DEFINE_string(v2x_rsi_topic, "/apollo/v2x/rsi", "v2x rsi topic name");
+
 DEFINE_string(storytelling_topic, "/apollo/storytelling",
               "Storytelling topic.");
+DEFINE_string(audio_event_topic, "/apollo/audio_event", "Audio event topic.");
 
-// For pandora.
-DEFINE_string(pandora_pointcloud_topic,
-              "/apollo/sensor/pandora/hesai40/PointCloud2",
-              "pandora pointcloud topic name");
-DEFINE_string(pandora_camera_front_color_topic,
-              "/apollo/sensor/pandora/camera/front_color",
-              "pandora front color camera topic name");
-DEFINE_string(pandora_camera_right_gray_topic,
-              "/apollo/sensor/pandora/camera/right_gray",
-              "pandora right gray camera topic name");
-DEFINE_string(pandora_camera_left_gray_topic,
-              "/apollo/sensor/pandora/camera/left_gray",
-              "pandora left gray camera topic name");
-DEFINE_string(pandora_camera_front_gray_topic,
-              "/apollo/sensor/pandora/camera/front_gray",
-              "pandora front gray camera topic name");
-DEFINE_string(pandora_camera_back_gray_topic,
-              "/apollo/sensor/pandora/camera/back_gray",
-              "pandora back gray camera topic name");
 DEFINE_string(guardian_topic, "/apollo/guardian", "Guardian topic.");
 DEFINE_string(gnss_raw_data_topic, "/apollo/sensor/gnss/raw_data",
               "gnss raw data topic name");
@@ -245,3 +264,10 @@ DEFINE_string(latency_recording_topic, "/apollo/common/latency_records",
               "Latency recording topic.");
 DEFINE_string(latency_reporting_topic, "/apollo/common/latency_reports",
               "Latency reporting topic.");
+DEFINE_string(task_topic, "/apollo/task_manager", "task manager topic name");
+// value: velodyne128, velodyne64, velodyne16
+DEFINE_string(lidar_model_version, "",
+              "It determins which lidar model(16 ,64 or 128) to load, "
+              "if not to set, the model will be loaded by the sensor name.");
+DEFINE_string(record_info_topic, "/apollo/cyber/record_info",
+              "record info topic");

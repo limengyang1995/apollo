@@ -20,9 +20,9 @@
 print received perception message
 """
 import argparse
-from cyber_py3 import cyber
+from cyber.python.cyber_py3 import cyber
 
-from modules.perception.proto.perception_obstacle_pb2 import PerceptionObstacles
+from modules.common_msgs.perception_msgs.perception_obstacle_pb2 import PerceptionObstacles
 
 
 def receiver(data):

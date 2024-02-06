@@ -16,32 +16,43 @@
 # limitations under the License.
 ###############################################################################
 
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-cd "${DIR}/.."
+TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+source "${TOP_DIR}/scripts/apollo_base.sh"
 
 function setup() {
-  bash scripts/canbus.sh start
-  bash scripts/gps.sh start
-  bash scripts/localization.sh start
-  bash scripts/control.sh start
+  bash ${TOP_DIR}/scripts/canbus.sh start
+  bash ${TOP_DIR}/scripts/gps.sh start
+  bash ${TOP_DIR}/scripts/localization.sh start
+  bash ${TOP_DIR}/scripts/control.sh start
 }
 
 function start() {
-  TIME=`date +%F_%H_%M`
-  if [ -e data/log/garage.csv ]; then
-    cp data/log/garage.csv data/log/garage-${TIME}.csv
+  local rtk_recorder_binary
+  TIME="$(date +%F_%H_%M)"
+  if [ -f ${TOP_DIR}/data/log/garage.csv ] && [ "$1" != "rename" ] && [ "$1" != "delete" ]; then
+    cp ${TOP_DIR}/data/log/garage.csv ${TOP_DIR}/data/log/garage-${TIME}.csv
   fi
 
-  NUM_PROCESSES="$(pgrep -c -f "record_play/rtk_recorder.py")"
+  NUM_PROCESSES="$(pgrep -f "record_play/rtk_recorder" | grep -cv '^1$')"
+  if [[ ! -z "$(which rtk_recorder)" ]]; then
+    rtk_recorder_binary="rtk_recorder" 
+  elif [[ -f ${TOP_DIR}/bazel-bin/modules/tools/record_play/rtk_recorder ]]; then
+    rtk_recorder_binary="${TOP_DIR}/bazel-bin/modules/tools/record_play/rtk_recorder"
+  else
+    rtk_recorder_binary=
+  fi
+
+  if [[ -z $rtk_recorder_binary ]]; then
+    echo "can't fine rtk_recorder"
+    exit -1
+  fi
   if [ "${NUM_PROCESSES}" -eq 0 ]; then
-    python modules/tools/record_play/rtk_recorder.py
+    ${rtk_recorder_binary} $1 $2
   fi
 }
 
 function stop() {
-  pkill -SIGKILL -f rtk_recorder.py
+  pkill -SIGKILL -f rtk_recorder
 }
 
 case $1 in
@@ -49,12 +60,16 @@ case $1 in
     setup
     ;;
   start)
-    start
+    start $2 $3
     ;;
   stop)
     stop
     ;;
+  restart)
+    stop
+    start $2 $3
+    ;;
   *)
-    start
+    start $2 $3
     ;;
 esac

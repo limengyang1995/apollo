@@ -27,18 +27,27 @@ namespace apollo {
 namespace routing {
 
 bool RoutingComponent::Init() {
+  RoutingConfig routing_conf;
+  ACHECK(cyber::ComponentBase::GetProtoConfig(&routing_conf))
+      << "Unable to load routing conf file: "
+      << cyber::ComponentBase::ConfigFilePath();
+
+  AINFO << "Config file: " << cyber::ComponentBase::ConfigFilePath()
+        << " is loaded.";
+
   apollo::cyber::proto::RoleAttributes attr;
-  attr.set_channel_name(FLAGS_routing_response_topic);
+  attr.set_channel_name(routing_conf.topic_config().routing_response_topic());
   auto qos = attr.mutable_qos_profile();
   qos->set_history(apollo::cyber::proto::QosHistoryPolicy::HISTORY_KEEP_LAST);
   qos->set_reliability(
       apollo::cyber::proto::QosReliabilityPolicy::RELIABILITY_RELIABLE);
   qos->set_durability(
       apollo::cyber::proto::QosDurabilityPolicy::DURABILITY_TRANSIENT_LOCAL);
-  response_writer_ = node_->CreateWriter<RoutingResponse>(attr);
+  response_writer_ = node_->CreateWriter<routing::RoutingResponse>(attr);
 
   apollo::cyber::proto::RoleAttributes attr_history;
-  attr_history.set_channel_name(FLAGS_routing_response_history_topic);
+  attr_history.set_channel_name(
+      routing_conf.topic_config().routing_response_history_topic());
   auto qos_history = attr_history.mutable_qos_profile();
   qos_history->set_history(
       apollo::cyber::proto::QosHistoryPolicy::HISTORY_KEEP_LAST);
@@ -47,7 +56,8 @@ bool RoutingComponent::Init() {
   qos_history->set_durability(
       apollo::cyber::proto::QosDurabilityPolicy::DURABILITY_TRANSIENT_LOCAL);
 
-  response_history_writer_ = node_->CreateWriter<RoutingResponse>(attr_history);
+  response_history_writer_ =
+      node_->CreateWriter<routing::RoutingResponse>(attr_history);
   std::weak_ptr<RoutingComponent> self =
       std::dynamic_pointer_cast<RoutingComponent>(shared_from_this());
   timer_.reset(new ::apollo::cyber::Timer(
@@ -56,11 +66,10 @@ bool RoutingComponent::Init() {
         auto ptr = self.lock();
         if (ptr) {
           std::lock_guard<std::mutex> guard(this->mutex_);
-          if (this->response_.get() != nullptr) {
-            auto response = *response_;
-            auto timestamp = apollo::common::time::Clock::NowInSeconds();
-            response.mutable_header()->set_timestamp_sec(timestamp);
-            this->response_history_writer_->Write(response);
+          if (this->response_ != nullptr) {
+            auto timestamp = apollo::cyber::Clock::NowInSeconds();
+            response_->mutable_header()->set_timestamp_sec(timestamp);
+            this->response_history_writer_->Write(*response_);
           }
         }
       },
@@ -70,8 +79,9 @@ bool RoutingComponent::Init() {
   return routing_.Init().ok() && routing_.Start().ok();
 }
 
-bool RoutingComponent::Proc(const std::shared_ptr<RoutingRequest>& request) {
-  auto response = std::make_shared<RoutingResponse>();
+bool RoutingComponent::Proc(
+    const std::shared_ptr<routing::RoutingRequest>& request) {
+  auto response = std::make_shared<routing::RoutingResponse>();
   if (!routing_.Process(request, response.get())) {
     return false;
   }

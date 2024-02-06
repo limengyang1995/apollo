@@ -42,10 +42,11 @@ bool TimerComponent::Initialize(const TimerComponentConfig& config) {
   if (!Init()) {
     return false;
   }
+  interval_ = config.interval();
 
   std::shared_ptr<TimerComponent> self =
       std::dynamic_pointer_cast<TimerComponent>(shared_from_this());
-  auto func = [self]() { self->Proc(); };
+  auto func = [self]() { self->Process(); };
   timer_.reset(new Timer(config.interval(), func, false));
   timer_->Start();
   return true;
@@ -53,7 +54,7 @@ bool TimerComponent::Initialize(const TimerComponentConfig& config) {
 
 void TimerComponent::Clear() { timer_.reset(); }
 
-uint64_t TimerComponent::GetInterval() const { return interval_; }
+uint32_t TimerComponent::GetInterval() const { return interval_; }
 
 }  // namespace cyber
 }  // namespace apollo

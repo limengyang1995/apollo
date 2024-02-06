@@ -19,25 +19,28 @@
 #include <unordered_set>
 
 #include "absl/strings/str_split.h"
-#include "cyber/common/file.h"
 #include "google/protobuf/util/json_util.h"
-#include "modules/canbus/proto/chassis.pb.h"
+
+#include "modules/common_msgs/basic_msgs/geometry.pb.h"
+#include "modules/common_msgs/basic_msgs/vehicle_signal.pb.h"
+#include "modules/common_msgs/chassis_msgs/chassis.pb.h"
+#include "modules/common_msgs/dreamview_msgs/simulation_world.pb.h"
+
+#include "cyber/common/file.h"
+#include "cyber/time/clock.h"
 #include "modules/common/adapters/adapter_gflags.h"
 #include "modules/common/configs/vehicle_config_helper.h"
 #include "modules/common/math/quaternion.h"
-#include "modules/common/proto/geometry.pb.h"
-#include "modules/common/proto/vehicle_signal.pb.h"
-#include "modules/common/time/time.h"
 #include "modules/common/util/map_util.h"
 #include "modules/common/util/points_downsampler.h"
 #include "modules/common/util/util.h"
-
 #include "modules/dreamview/backend/common/dreamview_gflags.h"
-#include "modules/dreamview/proto/simulation_world.pb.h"
 
 namespace apollo {
 namespace dreamview {
 
+using apollo::audio::AudioDetection;
+using apollo::audio::AudioEvent;
 using apollo::canbus::Chassis;
 using apollo::common::DriveEvent;
 using apollo::common::PathPoint;
@@ -47,11 +50,16 @@ using apollo::common::TrajectoryPoint;
 using apollo::common::VehicleConfigHelper;
 using apollo::common::monitor::MonitorMessage;
 using apollo::common::monitor::MonitorMessageItem;
-using apollo::common::time::Clock;
 using apollo::common::util::DownsampleByAngle;
 using apollo::common::util::FillHeader;
 using apollo::control::ControlCommand;
+using apollo::cyber::Clock;
 using apollo::cyber::common::GetProtoFromFile;
+using apollo::external_command::CommandStatus;
+using apollo::external_command::LaneFollowCommand;
+using apollo::external_command::ValetParkingCommand;
+using apollo::external_command::ActionCommandType;
+using apollo::external_command::ActionCommand;
 using apollo::hdmap::Curve;
 using apollo::hdmap::Map;
 using apollo::hdmap::Path;
@@ -59,20 +67,24 @@ using apollo::localization::Gps;
 using apollo::localization::LocalizationEstimate;
 using apollo::perception::PerceptionObstacle;
 using apollo::perception::PerceptionObstacles;
+using apollo::perception::SensorMeasurement;
 using apollo::perception::TrafficLight;
 using apollo::perception::TrafficLightDetection;
+using apollo::perception::V2XInformation;
 using apollo::planning::ADCTrajectory;
 using apollo::planning::DecisionResult;
 using apollo::planning::StopReasonCode;
+using apollo::planning::PlanningCommand;
 using apollo::planning_internal::PlanningData;
+using apollo::prediction::ObstacleInteractiveTag;
 using apollo::prediction::ObstaclePriority;
 using apollo::prediction::PredictionObstacle;
 using apollo::prediction::PredictionObstacles;
 using apollo::relative_map::MapMsg;
 using apollo::relative_map::NavigationInfo;
-using apollo::routing::RoutingRequest;
 using apollo::routing::RoutingResponse;
 using apollo::storytelling::Stories;
+using apollo::task_manager::Task;
 
 using Json = nlohmann::json;
 using ::google::protobuf::util::MessageToJsonString;
@@ -81,6 +93,61 @@ using ::google::protobuf::util::MessageToJsonString;
 static constexpr double kAngleThreshold = 0.1;
 
 namespace {
+// Adapt to 1.0 records
+std::map<int, std::string> ScenarioType = {
+    {0, "LANE_FOLLOW"},  // Default scenario
+    {2, "BARE_INTERSECTION_UNPROTECTED"},
+    {3, "STOP_SIGN_PROTECTED"},
+    {4, "TRAFFIC_LIGHT_PROTECTED"},
+    {5, "TRAFFIC_LIGHT_PROTECTED"},
+    {6, "TRAFFIC_LIGHT_UNPROTECTED_LEFT_TURN"},
+    {7, "TRAFFIC_LIGHT_UNPROTECTED_RIGHT_TURN"},
+    {8, "YIELD_SIGN"},
+    {9, "PULL_OVER"},
+    {10, "VALET_PARKING"},
+    {11, "EMERGENCY_PULL_OVER"},
+    {12, "EMERGENCY_STOP"},
+    {13, "NARROW_STREET_U_TURN"},
+    {14, "PARK_AND_GO"},
+    {15, "LEARNING_MODEL_SAMPLE"},
+    {16, "DEADEND_TURNAROUND"}};
+
+std::map<int, std::string> StageType = {
+    {0, "NO_STAGE"},
+    {1, "LANE_FOLLOW_DEFAULT_STAGE"},
+    {200, "BARE_INTERSECTION_UNPROTECTED_APPROACH"},
+    {201, "BARE_INTERSECTION_UNPROTECTED_INTERSECTION_CRUISE"},
+    {300, "STOP_SIGN_UNPROTECTED_PRE_STOP"},
+    {301, "STOP_SIGN_UNPROTECTED_STOP"},
+    {302, "STOP_SIGN_UNPROTECTED_CREEP"},
+    {303, "STOP_SIGN_UNPROTECTED_INTERSECTION_CRUISE"},
+    {400, "TRAFFIC_LIGHT_PROTECTED_APPROACH"},
+    {401, "TRAFFIC_LIGHT_PROTECTED_INTERSECTION_CRUISE"},
+    {410, "TRAFFIC_LIGHT_UNPROTECTED_LEFT_TURN_APPROACH"},
+    {411, "TRAFFIC_LIGHT_UNPROTECTED_LEFT_TURN_CREEP"},
+    {412, "TRAFFIC_LIGHT_UNPROTECTED_LEFT_TURN_INTERSECTION_CRUISE"},
+    {420, "TRAFFIC_LIGHT_UNPROTECTED_RIGHT_TURN_STOP"},
+    {421, "TRAFFIC_LIGHT_UNPROTECTED_RIGHT_TURN_CREEP"},
+    {422, "TRAFFIC_LIGHT_UNPROTECTED_RIGHT_TURN_INTERSECTION_CRUISE"},
+    {500, "PULL_OVER_APPROACH"},
+    {501, "PULL_OVER_RETRY_APPROACH_PARKING"},
+    {502, "PULL_OVER_RETRY_PARKING"},
+    {600, "EMERGENCY_PULL_OVER_SLOW_DOWN"},
+    {601, "EMERGENCY_PULL_OVER_APPROACH"},
+    {602, "EMERGENCY_PULL_OVER_STANDBY"},
+    {610, "EMERGENCY_STOP_APPROACH"},
+    {611, "EMERGENCY_STOP_STANDBY"},
+    {700, "VALET_PARKING_APPROACHING_PARKING_SPOT"},
+    {701, "VALET_PARKING_PARKING"},
+    {1100, "DEADEND_TURNAROUND_APPROACHING_TURNING_POINT"},
+    {1101, "DEADEND_TURNAROUND_TURNING"},
+    {800, "PARK_AND_GO_CHECK"},
+    {801, "PARK_AND_GO_CRUISE"},
+    {802, "PARK_AND_GO_ADJUST"},
+    {803, "PARK_AND_GO_PRE_CRUISE"},
+    {900, "YIELD_SIGN_APPROACH"},
+    {901, "YIELD_SIGN_CREEP"},
+    {1000, "LEARNING_MODEL_RUN"}};
 
 double CalculateAcceleration(
     const Point3D &acceleration, const Point3D &velocity,
@@ -127,12 +194,14 @@ Object::DisengageType DeduceDisengageType(const Chassis &chassis) {
   }
 }
 
-void SetObstacleType(const PerceptionObstacle &obstacle, Object *world_object) {
+void SetObstacleType(const PerceptionObstacle::Type obstacle_type,
+                     const PerceptionObstacle::SubType obstacle_subtype,
+                     Object *world_object) {
   if (world_object == nullptr) {
     return;
   }
 
-  switch (obstacle.type()) {
+  switch (obstacle_type) {
     case PerceptionObstacle::UNKNOWN:
       world_object->set_type(Object_Type_UNKNOWN);
       break;
@@ -155,7 +224,7 @@ void SetObstacleType(const PerceptionObstacle &obstacle, Object *world_object) {
       world_object->set_type(Object_Type_VIRTUAL);
   }
 
-  world_object->set_sub_type(obstacle.sub_type());
+  world_object->set_sub_type(obstacle_subtype);
 }
 
 void SetStopReason(const StopReasonCode &reason_code, Decision *decision) {
@@ -255,10 +324,8 @@ SimulationWorldService::SimulationWorldService(const MapService *map_service,
 }
 
 void SimulationWorldService::InitReaders() {
-  routing_request_reader_ =
-      node_->CreateReader<RoutingRequest>(FLAGS_routing_request_topic);
-  routing_response_reader_ =
-      node_->CreateReader<RoutingResponse>(FLAGS_routing_response_topic);
+  planning_command_reader_ =
+      node_->CreateReader<PlanningCommand>(FLAGS_planning_command);
   chassis_reader_ = node_->CreateReader<Chassis>(FLAGS_chassis_topic);
   gps_reader_ = node_->CreateReader<Gps>(FLAGS_gps_topic);
   localization_reader_ =
@@ -277,7 +344,16 @@ void SimulationWorldService::InitReaders() {
       node_->CreateReader<NavigationInfo>(FLAGS_navigation_topic);
   relative_map_reader_ = node_->CreateReader<MapMsg>(FLAGS_relative_map_topic);
   storytelling_reader_ = node_->CreateReader<Stories>(FLAGS_storytelling_topic);
+  audio_detection_reader_ =
+      node_->CreateReader<AudioDetection>(FLAGS_audio_detection_topic);
 
+  audio_event_reader_ = node_->CreateReader<AudioEvent>(
+      FLAGS_audio_event_topic,
+      [this](const std::shared_ptr<AudioEvent> &audio_event) {
+        this->PublishMonitorMessage(
+            MonitorMessageItem::WARN,
+            apollo::audio::AudioType_Name(audio_event->audio_type()));
+      });
   drive_event_reader_ = node_->CreateReader<DriveEvent>(
       FLAGS_drive_event_topic,
       [this](const std::shared_ptr<DriveEvent> &drive_event) {
@@ -294,30 +370,24 @@ void SimulationWorldService::InitReaders() {
         std::unique_lock<std::mutex> lock(monitor_msgs_mutex_);
         monitor_msgs_.push_back(monitor_message);
       });
+  task_reader_ = node_->CreateReader<Task>(FLAGS_task_topic);
 }
 
 void SimulationWorldService::InitWriters() {
   navigation_writer_ =
       node_->CreateWriter<NavigationInfo>(FLAGS_navigation_topic);
-
-  {  // configure QoS for routing request writer
-    apollo::cyber::proto::RoleAttributes routing_request_attr;
-    routing_request_attr.set_channel_name(FLAGS_routing_request_topic);
-    auto qos = routing_request_attr.mutable_qos_profile();
-    // only keeps the last message in history
-    qos->set_history(apollo::cyber::proto::QosHistoryPolicy::HISTORY_KEEP_LAST);
-    // reliable transfer
-    qos->set_reliability(
-        apollo::cyber::proto::QosReliabilityPolicy::RELIABILITY_RELIABLE);
-    // when writer find new readers, send all its history messsage
-    qos->set_durability(
-        apollo::cyber::proto::QosDurabilityPolicy::DURABILITY_TRANSIENT_LOCAL);
-    routing_request_writer_ =
-        node_->CreateWriter<RoutingRequest>(routing_request_attr);
-  }
-
+  lane_follow_command_client_ =
+      node_->CreateClient<LaneFollowCommand, CommandStatus>(
+          FLAGS_lane_follow_command_topic);
+  valet_parking_command_client_ =
+      node_->CreateClient<ValetParkingCommand, CommandStatus>(
+          FLAGS_valet_parking_command_topic);
+  action_command_client_ =
+      node_->CreateClient<ActionCommand, CommandStatus>(
+          FLAGS_action_command_topic);
   routing_response_writer_ =
-      node_->CreateWriter<RoutingResponse>(FLAGS_routing_response_topic);
+      node_->CreateWriter<RoutingResponse>("/apollo/routing_response");
+  task_writer_ = node_->CreateWriter<Task>(FLAGS_task_topic);
 }
 
 void SimulationWorldService::Update() {
@@ -342,7 +412,7 @@ void SimulationWorldService::Update() {
 
   UpdateMonitorMessages();
 
-  UpdateWithLatestObserved(routing_response_reader_.get(), false);
+  UpdateWithLatestObserved(planning_command_reader_.get(), false);
   UpdateWithLatestObserved(chassis_reader_.get());
   UpdateWithLatestObserved(gps_reader_.get());
   UpdateWithLatestObserved(localization_reader_.get());
@@ -353,6 +423,8 @@ void SimulationWorldService::Update() {
   // may not always be perfectly aligned and belong to the same frame.
   obj_map_.clear();
   world_.clear_object();
+  world_.clear_sensor_measurements();
+  UpdateWithLatestObserved(audio_detection_reader_.get());
   UpdateWithLatestObserved(storytelling_reader_.get());
   UpdateWithLatestObserved(perception_obstacle_reader_.get());
   UpdateWithLatestObserved(perception_traffic_light_reader_.get(), false);
@@ -371,7 +443,7 @@ void SimulationWorldService::Update() {
   UpdateLatencies();
 
   world_.set_sequence_num(world_.sequence_num() + 1);
-  world_.set_timestamp(static_cast<double>(absl::ToUnixMillis(Clock::Now())));
+  world_.set_timestamp(Clock::Now().ToSecond() * 1000);
 }
 
 void SimulationWorldService::UpdateDelays() {
@@ -413,7 +485,7 @@ Json SimulationWorldService::GetUpdateAsJson(double radius) const {
 
   Json update;
   update["type"] = "SimWorldUpdate";
-  update["timestamp"] = absl::ToUnixMillis(Clock::Now());
+  update["timestamp"] = Clock::Now().ToSecond() * 1000;
   update["world"] = sim_world_json_string;
 
   return update;
@@ -523,6 +595,9 @@ void SimulationWorldService::UpdateSimulationWorld(const Chassis &chassis) {
   UpdateTurnSignal(chassis.signal(), auto_driving_car);
 
   auto_driving_car->set_disengage_type(DeduceDisengageType(chassis));
+
+  auto_driving_car->set_battery_percentage(chassis.battery_soc_percentage());
+  auto_driving_car->set_gear_location(chassis.gear_location());
 }
 
 template <>
@@ -541,6 +616,12 @@ void SimulationWorldService::UpdateSimulationWorld(const Stories &stories) {
   }
 }
 
+template <>
+void SimulationWorldService::UpdateSimulationWorld(
+    const AudioDetection &audio_detection) {
+  world_.set_is_siren_on(audio_detection.is_siren());
+}
+
 Object &SimulationWorldService::CreateWorldObjectIfAbsent(
     const PerceptionObstacle &obstacle) {
   const std::string id = std::to_string(obstacle.id());
@@ -550,9 +631,23 @@ Object &SimulationWorldService::CreateWorldObjectIfAbsent(
     Object &world_obj = obj_map_[id];
     SetObstacleInfo(obstacle, &world_obj);
     SetObstaclePolygon(obstacle, &world_obj);
-    SetObstacleType(obstacle, &world_obj);
+    SetObstacleType(obstacle.type(), obstacle.sub_type(), &world_obj);
+    SetObstacleSensorMeasurements(obstacle, &world_obj);
+    SetObstacleSource(obstacle, &world_obj);
   }
   return obj_map_[id];
+}
+
+void SimulationWorldService::CreateWorldObjectFromSensorMeasurement(
+    const SensorMeasurement &sensor, Object *world_object) {
+  world_object->set_id(std::to_string(sensor.id()));
+  world_object->set_position_x(sensor.position().x());
+  world_object->set_position_y(sensor.position().y());
+  world_object->set_heading(sensor.theta());
+  world_object->set_length(sensor.length());
+  world_object->set_width(sensor.width());
+  world_object->set_height(sensor.height());
+  SetObstacleType(sensor.type(), sensor.sub_type(), world_object);
 }
 
 void SimulationWorldService::SetObstacleInfo(const PerceptionObstacle &obstacle,
@@ -598,6 +693,33 @@ void SimulationWorldService::SetObstaclePolygon(
       seen_points.insert(xy_pair);
     }
   }
+}
+
+void SimulationWorldService::SetObstacleSensorMeasurements(
+    const PerceptionObstacle &obstacle, Object *world_object) {
+  if (world_object == nullptr) {
+    return;
+  }
+  for (const auto &sensor : obstacle.measurements()) {
+    Object *obj = (*(world_.mutable_sensor_measurements()))[sensor.sensor_id()]
+                      .add_sensor_measurement();
+    CreateWorldObjectFromSensorMeasurement(sensor, obj);
+  }
+}
+
+void SimulationWorldService::SetObstacleSource(
+    const apollo::perception::PerceptionObstacle &obstacle,
+    Object *world_object) {
+  if (world_object == nullptr || !obstacle.has_source()) {
+    return;
+  }
+  const PerceptionObstacle::Source obstacle_source = obstacle.source();
+  world_object->set_source(obstacle_source);
+  world_object->clear_v2x_info();
+  if (obstacle_source == PerceptionObstacle::V2X && obstacle.has_v2x_info()) {
+    world_object->mutable_v2x_info()->CopyFrom(obstacle.v2x_info());
+  }
+  return;
 }
 
 template <>
@@ -882,6 +1004,14 @@ void SimulationWorldService::UpdatePlanningData(const PlanningData &data) {
   // Update scenario
   if (data.has_scenario()) {
     planning_data->mutable_scenario()->CopyFrom(data.scenario());
+
+    // Adapt to 1.0 records
+    if (!data.scenario().has_scenario_plugin_type()) {
+      planning_data->mutable_scenario()->set_scenario_plugin_type(
+          ScenarioType[planning_data->scenario().scenario_type()]);
+      planning_data->mutable_scenario()->set_stage_plugin_type(
+          StageType[planning_data->scenario().stage_type()]);
+    }
   }
 
   // Update init point
@@ -1072,6 +1202,11 @@ void SimulationWorldService::UpdateSimulationWorld(
       world_obj.mutable_obstacle_priority()->CopyFrom(obstacle.priority());
     }
 
+    // Add prediction interactive tag
+    if (obstacle.has_interactive_tag()) {
+      world_obj.mutable_interactive_tag()->CopyFrom(obstacle.interactive_tag());
+    }
+
     world_obj.set_timestamp_sec(
         std::max(obstacle.timestamp(), world_obj.timestamp_sec()));
   }
@@ -1079,11 +1214,12 @@ void SimulationWorldService::UpdateSimulationWorld(
 
 template <>
 void SimulationWorldService::UpdateSimulationWorld(
-    const RoutingResponse &routing_response) {
+    const PlanningCommand &planning_command) {
+  auto routing_response = planning_command.lane_follow_command();
   {
     boost::shared_lock<boost::shared_mutex> reader_lock(route_paths_mutex_);
     if (world_.has_routing_time() &&
-        world_.routing_time() == routing_response.header().timestamp_sec()) {
+        world_.routing_time() == planning_command.header().timestamp_sec()) {
       // This routing response has been processed.
       return;
     }
@@ -1120,7 +1256,7 @@ void SimulationWorldService::UpdateSimulationWorld(
   {
     boost::unique_lock<boost::shared_mutex> writer_lock(route_paths_mutex_);
     std::swap(route_paths, route_paths_);
-    world_.set_routing_time(routing_response.header().timestamp_sec());
+    world_.set_routing_time(planning_command.header().timestamp_sec());
   }
 }
 
@@ -1273,8 +1409,7 @@ void SimulationWorldService::UpdateMonitorMessages() {
 void SimulationWorldService::DumpMessages() {
   DumpMessageFromReader(chassis_reader_.get());
   DumpMessageFromReader(prediction_obstacle_reader_.get());
-  DumpMessageFromReader(routing_request_reader_.get());
-  DumpMessageFromReader(routing_response_reader_.get());
+  DumpMessageFromReader(planning_command_reader_.get());
   DumpMessageFromReader(localization_reader_.get());
   DumpMessageFromReader(planning_reader_.get());
   DumpMessageFromReader(control_command_reader_.get());
@@ -1282,6 +1417,7 @@ void SimulationWorldService::DumpMessages() {
   DumpMessageFromReader(perception_traffic_light_reader_.get());
   DumpMessageFromReader(relative_map_reader_.get());
   DumpMessageFromReader(navigation_reader_.get());
+  DumpMessageFromReader(task_reader_.get());
 }
 
 void SimulationWorldService::PublishNavigationInfo(
@@ -1290,10 +1426,27 @@ void SimulationWorldService::PublishNavigationInfo(
   navigation_writer_->Write(navigation_info);
 }
 
-void SimulationWorldService::PublishRoutingRequest(
-    const std::shared_ptr<RoutingRequest> &routing_request) {
-  FillHeader(FLAGS_dreamview_module_name, routing_request.get());
-  routing_request_writer_->Write(routing_request);
+void SimulationWorldService::PublishLaneFollowCommand(
+    const std::shared_ptr<LaneFollowCommand> &lane_follow_command) {
+  FillHeader(FLAGS_dreamview_module_name, lane_follow_command.get());
+  lane_follow_command_client_->SendRequest(lane_follow_command);
+}
+
+void SimulationWorldService::PublishValetParkingCommand(
+    const std::shared_ptr<ValetParkingCommand> &valet_parking_command) {
+  FillHeader(FLAGS_dreamview_module_name, valet_parking_command.get());
+  valet_parking_command_client_->SendRequest(valet_parking_command);
+}
+
+void SimulationWorldService::PublishActionCommand(
+    const std::shared_ptr<ActionCommand> &action_command) {
+  FillHeader(FLAGS_dreamview_module_name, action_command.get());
+  action_command_client_->SendRequest(action_command);
+}
+
+void SimulationWorldService::PublishTask(const std::shared_ptr<Task> &task) {
+  FillHeader(FLAGS_dreamview_module_name, task.get());
+  task_writer_->Write(task);
 }
 
 void SimulationWorldService::PublishMonitorMessage(

@@ -26,13 +26,16 @@ import os
 import sys
 import time
 
-from cyber_py3 import cyber
+from cyber.python.cyber_py3 import cyber
 from gflags import FLAGS
 
-from common.logger import Logger
-from modules.canbus.proto import chassis_pb2
-from modules.localization.proto import localization_pb2
+from modules.tools.common.logger import Logger
+import modules.tools.common.proto_utils as proto_utils
+from modules.common_msgs.chassis_msgs import chassis_pb2
+from modules.common_msgs.config_msgs import vehicle_config_pb2
+from modules.common_msgs.localization_msgs import localization_pb2
 
+APOLLO_ROOT = "/apollo"
 
 class RtkRecord(object):
     """
@@ -71,6 +74,11 @@ class RtkRecord(object):
         self.carcurvature = 0.0
 
         self.prev_carspeed = 0.0
+
+        vehicle_config = vehicle_config_pb2.VehicleConfig()
+        proto_utils.get_pb_from_text_file(
+            "/apollo/modules/common/data/vehicle_param.pb.txt", vehicle_config)
+        self.vehicle_param = vehicle_config.vehicle_param
 
     def chassis_callback(self, data):
         """
@@ -124,7 +132,11 @@ class RtkRecord(object):
             caracceleration = 0.0
 
         carsteer = self.chassis.steering_percentage
-        curvature = math.tan(math.radians(carsteer / 100 * 470) / 16) / 2.85
+        carmax_steer_angle = self.vehicle_param.max_steer_angle
+        carsteer_ratio = self.vehicle_param.steer_ratio
+        carwheel_base = self.vehicle_param.wheel_base
+        curvature = math.tan(math.radians(carsteer / 100
+                                          * math.degrees(carmax_steer_angle)) / carsteer_ratio) / carwheel_base
         if abs(carspeed) >= speed_epsilon:
             carcurvature_change_rate = (curvature - self.carcurvature) / (
                 carspeed * 0.01)
@@ -172,15 +184,20 @@ def main(argv):
     """
     node = cyber.Node("rtk_recorder")
     argv = FLAGS(argv)
-    log_dir = os.path.dirname(os.path.abspath(
-        __file__)) + "/../../../data/log/"
+
+    log_dir = "/apollo/data/log"
+    if len(argv) > 1:
+        log_dir = argv[1]
+
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
+
     Logger.config(
-        log_file=log_dir + "rtk_recorder.log",
+        log_file=os.path.join(APOLLO_ROOT, 'data/log/rtk_recorder.log'),
         use_stdout=True,
         log_level=logging.DEBUG)
     print("runtime log is in %s%s" % (log_dir, "rtk_recorder.log"))
+
     record_file = log_dir + "/garage.csv"
     recorder = RtkRecord(record_file)
     atexit.register(recorder.shutdown)
@@ -195,8 +212,29 @@ def main(argv):
     while not cyber.is_shutdown():
         time.sleep(0.002)
 
+def rename(new_record_name):
+    record_path = '/apollo/data/log/'
+    new_record_file = record_path + new_record_name + ".csv"
+    if os.path.exists(new_record_file):
+        print(f"The directory '{new_record_file}' already exist.")
+        exit(-1)
+    os.rename(record_path + "garage.csv", new_record_file)
+
+def delete():
+    record_file = '/apollo/data/log/garage.csv'
+    if not os.path.exists(record_file):
+        print(f"The directory '{record_file}' not exist.")
+        exit(-1)
+    os.remove(record_file)
 
 if __name__ == '__main__':
-    cyber.init()
-    main(sys.argv)
-    cyber.shutdown()
+    operation = ['rename', 'delete']
+    if len(sys.argv) > 1 and sys.argv[1] in operation:
+        if sys.argv[1] == operation[0]:
+            rename(sys.argv[2])
+        elif sys.argv[1] == operation[1]:
+            delete()
+    else:
+        cyber.init()
+        main(sys.argv)
+        cyber.shutdown()

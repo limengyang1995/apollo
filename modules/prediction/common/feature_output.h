@@ -16,12 +16,13 @@
 
 #pragma once
 
+#include <mutex>
 #include <string>
 #include <vector>
 
 #include "modules/prediction/container/obstacles/obstacle.h"
 #include "modules/prediction/proto/offline_features.pb.h"
-#include "modules/prediction/proto/prediction_obstacle.pb.h"
+#include "modules/common_msgs/prediction_msgs/prediction_obstacle.pb.h"
 
 namespace apollo {
 namespace prediction {
@@ -165,6 +166,7 @@ class FeatureOutput {
   static std::size_t idx_frame_env_;
   static ListDataForTuning list_data_for_tuning_;
   static std::size_t idx_tuning_;
+  static std::mutex mutex_feature_;
 };
 
 }  // namespace prediction

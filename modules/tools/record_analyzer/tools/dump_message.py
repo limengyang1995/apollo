@@ -19,12 +19,12 @@
 import argparse
 import sys
 
-from cyber_py3.record import RecordReader
-from modules.canbus.proto import chassis_pb2
-from modules.control.proto import control_cmd_pb2
-from modules.drivers.proto import pointcloud_pb2
-from modules.perception.proto import perception_obstacle_pb2
-from modules.planning.proto import planning_pb2
+from cyber.python.cyber_py3.record import RecordReader
+from modules.common_msgs.chassis_msgs import chassis_pb2
+from modules.common_msgs.control_msgs import control_cmd_pb2
+from modules.common_msgs.sensor_msgs import pointcloud_pb2
+from modules.common_msgs.perception_msgs import perception_obstacle_pb2
+from modules.common_msgs.planning_msgs import planning_pb2
 
 
 if __name__ == "__main__":

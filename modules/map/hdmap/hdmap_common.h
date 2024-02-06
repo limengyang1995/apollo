@@ -25,19 +25,20 @@ limitations under the License.
 #include "modules/common/math/math_utils.h"
 #include "modules/common/math/polygon2d.h"
 #include "modules/common/math/vec2d.h"
-#include "modules/map/proto/map_clear_area.pb.h"
-#include "modules/map/proto/map_crosswalk.pb.h"
-#include "modules/map/proto/map_id.pb.h"
-#include "modules/map/proto/map_junction.pb.h"
-#include "modules/map/proto/map_lane.pb.h"
-#include "modules/map/proto/map_overlap.pb.h"
-#include "modules/map/proto/map_parking_space.pb.h"
-#include "modules/map/proto/map_pnc_junction.pb.h"
-#include "modules/map/proto/map_road.pb.h"
-#include "modules/map/proto/map_signal.pb.h"
-#include "modules/map/proto/map_speed_bump.pb.h"
-#include "modules/map/proto/map_stop_sign.pb.h"
-#include "modules/map/proto/map_yield_sign.pb.h"
+#include "modules/common_msgs/map_msgs/map_clear_area.pb.h"
+#include "modules/common_msgs/map_msgs/map_crosswalk.pb.h"
+#include "modules/common_msgs/map_msgs/map_id.pb.h"
+#include "modules/common_msgs/map_msgs/map_junction.pb.h"
+#include "modules/common_msgs/map_msgs/map_lane.pb.h"
+#include "modules/common_msgs/map_msgs/map_overlap.pb.h"
+#include "modules/common_msgs/map_msgs/map_parking_space.pb.h"
+#include "modules/common_msgs/map_msgs/map_pnc_junction.pb.h"
+#include "modules/common_msgs/map_msgs/map_road.pb.h"
+#include "modules/common_msgs/map_msgs/map_signal.pb.h"
+#include "modules/common_msgs/map_msgs/map_speed_bump.pb.h"
+#include "modules/common_msgs/map_msgs/map_stop_sign.pb.h"
+#include "modules/common_msgs/map_msgs/map_yield_sign.pb.h"
+#include "modules/common_msgs/map_msgs/map_rsu.pb.h"
 
 /**
  * @namespace apollo::hdmap
@@ -84,6 +85,7 @@ class SpeedBumpInfo;
 class RoadInfo;
 class ParkingSpaceInfo;
 class PNCJunctionInfo;
+class RSUInfo;
 class HDMapImpl;
 
 struct LineBoundary {
@@ -134,6 +136,7 @@ using RoadROIBoundaryPtr = std::shared_ptr<RoadROIBoundary>;
 using PolygonRoiPtr = std::shared_ptr<PolygonRoi>;
 using RoadRoiPtr = std::shared_ptr<RoadRoi>;
 using PNCJunctionInfoConstPtr = std::shared_ptr<const PNCJunctionInfo>;
+using RSUInfoConstPtr = std::shared_ptr<const RSUInfo>;
 
 class LaneInfo {
  public:
@@ -219,6 +222,9 @@ class LaneInfo {
       const apollo::common::math::Vec2d &point, double *distance) const;
   bool GetProjection(const apollo::common::math::Vec2d &point,
                      double *accumulate_s, double *lateral) const;
+  bool GetProjection(const apollo::common::math::Vec2d &point,
+                     const double heading, double *accumulate_s,
+                     double *lateral) const;
 
  private:
   friend class HDMapImpl;
@@ -512,6 +518,21 @@ struct JunctionBoundary {
 };
 
 using JunctionBoundaryPtr = std::shared_ptr<JunctionBoundary>;
+
+class RSUInfo {
+ public:
+  explicit RSUInfo(const RSU& rsu);
+
+  const Id& id() const {
+    return _rsu.id();
+  }
+  const RSU& rsu() const {
+    return _rsu;
+  }
+
+ private:
+  RSU _rsu;
+};
 
 }  // namespace hdmap
 }  // namespace apollo

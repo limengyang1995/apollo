@@ -16,9 +16,11 @@
 
 #include "modules/data/tools/smart_recorder/realtime_record_processor.h"
 
+#include <csignal>
+
 #include <algorithm>
 #include <chrono>
-#include <csignal>
+#include <limits>
 #include <set>
 #include <sstream>
 #include <thread>
@@ -34,6 +36,8 @@
 
 #include "modules/data/tools/smart_recorder/channel_pool.h"
 #include "modules/data/tools/smart_recorder/interval_pool.h"
+
+using Time = ::apollo::cyber::Time;
 
 namespace apollo {
 namespace data {
@@ -124,18 +128,21 @@ bool RealtimeRecordProcessor::Init(const SmartRecordTrigger& trigger_conf) {
   max_backward_time_ = trigger_conf.max_backward_time();
   min_restore_chunk_ = trigger_conf.min_restore_chunk();
   std::vector<std::string> all_channels;
+  std::vector<std::string> black_channels;
   const std::set<std::string>& all_channels_set =
       ChannelPool::Instance()->GetAllChannels();
   std::copy(all_channels_set.begin(), all_channels_set.end(),
             std::back_inserter(all_channels));
   recorder_ = std::make_shared<Recorder>(
       absl::StrCat(source_record_dir_, "/", default_output_filename_), false,
-      all_channels, HeaderBuilder::GetHeader());
+      all_channels, black_channels, HeaderBuilder::GetHeader());
   // Init base
   if (!RecordProcessor::Init(trigger_conf)) {
     AERROR << "base init failed";
     return false;
   }
+  reused_record_num_ = trigger_conf.reused_record_num();
+  record_files_.clear();
   return true;
 }
 
@@ -154,7 +161,7 @@ bool RealtimeRecordProcessor::Process() {
       break;
     }
     auto reader = std::make_shared<RecordReader>(record_path);
-    RecordViewer viewer(reader, 0, UINT64_MAX,
+    RecordViewer viewer(reader, 0, std::numeric_limits<uint64_t>::max(),
                         ChannelPool::Instance()->GetAllChannels());
     AINFO << "checking " << record_path << ": " << viewer.begin_time() << " - "
           << viewer.end_time();
@@ -171,7 +178,7 @@ bool RealtimeRecordProcessor::Process() {
     }
   } while (!is_terminating_);
   // Try restore the rest of messages one last time
-  RestoreMessage(UINT64_MAX);
+  RestoreMessage(std::numeric_limits<uint64_t>::max());
   if (monitor_thread && monitor_thread->joinable()) {
     monitor_thread->join();
     monitor_thread = nullptr;
@@ -179,6 +186,36 @@ bool RealtimeRecordProcessor::Process() {
   PublishStatus(RecordingState::STOPPED, "smart recorder stopped");
   MonitorManager::Instance()->LogBuffer().INFO("SmartRecorder is stopped");
   return true;
+}
+
+void RealtimeRecordProcessor::ProcessRestoreRecord(
+    const std::string& record_path) {
+  // Get all the record files
+  std::string record_source_path = "";
+  record_source_path = record_path + "/";
+  std::vector<std::string> files =
+      cyber::common::ListSubPaths(record_source_path, DT_REG);
+  std::smatch result;
+  std::regex record_file_name_regex("[1-9][0-9]{13}\\.record\\.[0-9]{5}");
+  for (const auto& file : files) {
+    if (std::regex_match(file, result, record_file_name_regex)) {
+      if (std::find(record_files_.begin(), record_files_.end(), file) ==
+          record_files_.end()) {
+        record_files_.emplace_back(file);
+      }
+    }
+  }
+  // Sort the files in name order.
+  std::sort(record_files_.begin(), record_files_.end(),
+            [](const std::string& a, const std::string& b) { return a < b; });
+  // Delete the overdue files by num.
+  if (record_files_.size() > reused_record_num_) {
+    if (0 !=
+        std::remove((record_source_path + (*record_files_.begin())).c_str())) {
+      AWARN << "Failed to delete file: " << *record_files_.begin();
+    }
+    record_files_.erase(record_files_.begin());
+  }
 }
 
 void RealtimeRecordProcessor::MonitorStatus() {
@@ -190,6 +227,8 @@ void RealtimeRecordProcessor::MonitorStatus() {
     if (++status_counter % kPublishStatusFrequency == 0) {
       status_counter = 0;
       PublishStatus(RecordingState::RECORDING, "smart recorder recording");
+      // AINFO << "smart recorder recording status check every 3000ms a time.";
+      ProcessRestoreRecord(source_record_dir_);
     }
   }
   recorder_->Stop();
@@ -208,7 +247,7 @@ void RealtimeRecordProcessor::PublishStatus(const RecordingState state,
                                             const std::string& message) const {
   SmartRecorderStatus status;
   Header* status_headerpb = status.mutable_header();
-  status_headerpb->set_timestamp_sec(cyber::Time::Now().ToSecond());
+  status_headerpb->set_timestamp_sec(Time::Now().ToSecond());
   status.set_recording_state(state);
   status.set_state_message(message);
   AINFO << "send message with state " << state << ", " << message;

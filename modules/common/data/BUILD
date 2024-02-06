@@ -1,3 +1,5 @@
+load("//tools:apollo_package.bzl", "apollo_package")
+
 package(default_visibility = ["//visibility:public"])
 
 filegroup(
@@ -9,3 +11,5 @@ filegroup(
     name = "global_flagfile",
     srcs = ["global_flagfile.txt"],
 )
+
+apollo_package()

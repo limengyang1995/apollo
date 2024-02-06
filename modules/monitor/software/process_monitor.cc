@@ -16,9 +16,10 @@
 
 #include "modules/monitor/software/process_monitor.h"
 
+#include "gflags/gflags.h"
+
 #include "cyber/common/file.h"
 #include "cyber/common/log.h"
-#include "gflags/gflags.h"
 #include "modules/common/util/map_util.h"
 #include "modules/monitor/common/monitor_manager.h"
 #include "modules/monitor/software/summary_monitor.h"
@@ -70,6 +71,26 @@ void ProcessMonitor::RunOnce(const double current_time) {
         apollo::common::util::ContainsKey(*components, name)) {
       const auto& config = iter.second.process();
       auto* status = components->at(name).mutable_process_status();
+      UpdateStatus(running_processes, config, status);
+    }
+  }
+
+  // Check other components.
+  auto* other_components = manager->GetStatus()->mutable_other_components();
+  for (const auto& iter : mode.other_components()) {
+    const std::string& name = iter.first;
+    const auto& config = iter.second;
+    UpdateStatus(running_processes, config, &other_components->at(name));
+  }
+
+  // Check global components.
+  auto* global_components = manager->GetStatus()->mutable_global_components();
+  for (const auto& iter : mode.global_components()) {
+    const std::string& name = iter.first;
+    if (iter.second.has_process() &&
+        apollo::common::util::ContainsKey(*global_components, name)) {
+      const auto& config = iter.second.process();
+      auto* status = global_components->at(name).mutable_process_status();
       UpdateStatus(running_processes, config, status);
     }
   }

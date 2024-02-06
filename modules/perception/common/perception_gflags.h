@@ -23,7 +23,7 @@ namespace perception {
 
 // sensor_manager
 DECLARE_string(obs_sensor_intrinsic_path);
-DECLARE_string(obs_sensor_meta_path);
+DECLARE_string(obs_sensor_meta_file);
 
 DECLARE_bool(enable_base_object_pool);
 
@@ -31,10 +31,36 @@ DECLARE_bool(enable_base_object_pool);
 DECLARE_string(config_manager_path);
 DECLARE_string(work_root);
 
-// lidar_point_pillars
-DECLARE_int32(gpu_id);
-DECLARE_string(pfe_onnx_file);
-DECLARE_string(rpn_onnx_file);
+// emergency detection onnx
+DECLARE_string(onnx_obstacle_detector_model);
+DECLARE_string(onnx_test_input_path);
+DECLARE_string(onnx_test_input_name_file);
+DECLARE_string(onnx_prediction_image_path);
+DECLARE_int32(num_classes);
+
+// emergency detection libtorch
+DECLARE_string(torch_detector_model);
+
+// lidar sensor name
+DECLARE_string(lidar_sensor_name);
+
+// lidar_center_point
+DECLARE_bool(use_trt);
+DECLARE_int32(trt_precision);
+DECLARE_int32(trt_use_static);
+DECLARE_bool(use_calibration);
+DECLARE_bool(use_dynamicshape);
+DECLARE_bool(collect_shape_info);
+DECLARE_string(dynamic_shape_file);
+
+DECLARE_string(object_template_file);
+
+DECLARE_int32(hdmap_sample_step);
+
+// scene manager
+DECLARE_string(scene_manager_file);
+DECLARE_string(roi_service_file);
+DECLARE_string(ground_service_file);
 
 }  // namespace perception
 }  // namespace apollo

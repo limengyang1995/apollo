@@ -15,124 +15,78 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+source ${TOP_DIR}/scripts/apollo.bashrc
 
-APOLLO_ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+ARCH="$(uname -m)"
 
-BOLD='\033[1m'
-RED='\033[0;31m'
-GREEN='\033[32m'
-WHITE='\033[34m'
-YELLOW='\033[33m'
-NO_COLOR='\033[0m'
+# components="$(echo -e "${@// /\\n}" | sort -u)"
+# if [ ${PIPESTATUS[0]} -ne 0 ]; then ... ; fi
 
-function info() {
-  (>&2 echo -e "[${WHITE}${BOLD}INFO${NO_COLOR}] $*")
-}
+APOLLO_OUTSIDE_DOCKER=0
+CMDLINE_OPTIONS=
+SHORTHAND_TARGETS=
+DISABLED_TARGETS=
 
-function error() {
-  (>&2 echo -e "[${RED}ERROR${NO_COLOR}] $*")
-}
+: ${CROSSTOOL_VERBOSE:=0}
+: ${NVCC_VERBOSE:=0}
+: ${HIPCC_VERBOSE:=0}
 
-function warning() {
-  (>&2 echo -e "${YELLOW}[WARNING] $*${NO_COLOR}")
-}
+: ${USE_ESD_CAN:=false}
+USE_GPU=-1
 
-function ok() {
-  (>&2 echo -e "[${GREEN}${BOLD} OK ${NO_COLOR}] $*")
-}
-
-function print_delim() {
-  echo '============================'
-}
-
-function get_now() {
-  echo $(date +%s)
-}
-
-function print_time() {
-  END_TIME=$(get_now)
-  ELAPSED_TIME=$(echo "$END_TIME - $START_TIME" | bc -l)
-  MESSAGE="Took ${ELAPSED_TIME} seconds"
-  info "${MESSAGE}"
-}
-
-function success() {
-  print_delim
-  ok "$1"
-  print_time
-  print_delim
-}
-
-function fail() {
-  print_delim
-  error "$1"
-  print_time
-  print_delim
-  exit -1
-}
-
-function check_in_docker() {
-  if [ -f /.dockerenv ]; then
-    APOLLO_IN_DOCKER=true
-  else
-    APOLLO_IN_DOCKER=false
-  fi
-  export APOLLO_IN_DOCKER
-}
+use_cpu=-1
+use_gpu=-1
+use_nvidia=-1
+use_amd=-1
 
 function set_lib_path() {
-  export LD_LIBRARY_PATH=/usr/lib:/usr/lib/x86_64-linux-gnu
+  local CYBER_SETUP="${APOLLO_ROOT_DIR}/cyber/setup.bash"
+  [ -e "${CYBER_SETUP}" ] && . "${CYBER_SETUP}"
+  pathprepend ${APOLLO_ROOT_DIR}/modules/tools PYTHONPATH
+  pathprepend ${APOLLO_ROOT_DIR}/modules/teleop/common PYTHONPATH
+  pathprepend /apollo/modules/teleop/common/scripts
+}
 
-  if [ "$RELEASE_DOCKER" == 1 ]; then
-    local CYBER_SETUP="/apollo/cyber/setup.bash"
-    if [ -e "${CYBER_SETUP}" ]; then
-      source "${CYBER_SETUP}"
-    fi
-    PY_LIB_PATH=/apollo/lib
-    PY_TOOLS_PATH=/apollo/modules/tools
-  else
-    local CYBER_SETUP="/apollo/cyber/setup.bash"
-    if [ -e "${CYBER_SETUP}" ]; then
-      source "${CYBER_SETUP}"
-    fi
-    PY_LIB_PATH=${APOLLO_ROOT_DIR}/py_proto
-    PY_TOOLS_PATH=${APOLLO_ROOT_DIR}/modules/tools
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/apollo/lib:/apollo/bazel-genfiles/external/caffe/lib
+function site_restore() {
+  [[ -e "${TOP_DIR}/WORKSPACE.source" ]] && rm -f "${TOP_DIR}/WORKSPACE" && cp "${TOP_DIR}/WORKSPACE.source" "${TOP_DIR}/WORKSPACE"
+  echo "" > "${TOP_DIR}/tools/package/rules_cc.patch"
+  [[ -e "${TOP_DIR}/tools/proto/proto.bzl.tpl" ]] && rm -f "${TOP_DIR}/tools/proto/proto.bzl" && cp "${TOP_DIR}/tools/proto/proto.bzl.tpl" "${TOP_DIR}/tools/proto/proto.bzl"
+  if which buildtool > /dev/null 2>&1; then
+    sudo apt remove -y apollo-neo-buildtool
   fi
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/apollo/lib:/usr/local/apollo/local_integ/lib
-  export LD_LIBRARY_PATH=/usr/local/adolc/lib64:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=/usr/local/Qt5.12.2/5.12.2/gcc_64/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=/usr/local/fast-rtps/lib:$LD_LIBRARY_PATH
-  if [ "$USE_GPU" != "1" ];then
-    export LD_LIBRARY_PATH=/usr/local/apollo/libtorch/lib:$LD_LIBRARY_PATH
-  else
-    export LD_LIBRARY_PATH=/usr/local/apollo/libtorch_gpu/lib:$LD_LIBRARY_PATH
-  fi
-  export LD_LIBRARY_PATH=/usr/local/apollo/boost/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=/usr/local/apollo/paddlepaddle_dep/mkldnn/lib/:$LD_LIBRARY_PATH
-  export PYTHONPATH=${PY_LIB_PATH}:${PY_TOOLS_PATH}:${PYTHONPATH}
+  # switch back to standalone mode to increase building speed
+  sed -i 's/build --spawn_strategy=sandboxed/build --spawn_strategy=standalone/' "${TOP_DIR}/tools/bazel.rc"
+  # recover ld cache
+  sudo bash -c "echo '/opt/apollo/sysroot/lib' > /etc/ld.so.conf.d/apollo.conf"
+  sudo bash -c "echo '/usr/local/fast-rtps/lib' >> /etc/ld.so.conf.d/apollo.conf"
+  sudo bash -c "echo '/opt/apollo/absl/lib' >> /etc/ld.so.conf.d/apollo.conf"
+  sudo bash -c "echo '/opt/apollo/pkgs/adv_plat/lib' >> /etc/ld.so.conf.d/apollo.conf"
+  return 0
+}
 
-  # Set teleop paths
-  export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-  export PYTHONPATH=/apollo/modules/teleop/common:${PYTHONPATH}
-  export PATH=/apollo/modules/teleop/common/scripts:${PATH}
-
-  if [ -e /usr/local/cuda/ ];then
-    export PATH=/usr/local/cuda/bin:$PATH
-    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-    export C_INCLUDE_PATH=/usr/local/cuda/include:$C_INCLUDE_PATH
-    export CPLUS_INCLUDE_PATH=/usr/local/cuda/include:$CPLUS_INCLUDE_PATH
+function env_prepare() {
+  set +e
+  mkdir -p /opt/apollo/neo/src
+  dpkg -l apollo-neo-buildtool > /dev/null 2>&1
+  [[ $? -ne 0 ]] && set -e && sudo apt-get install -y ca-certificates curl gnupg && sudo install -m 0755 -d /etc/apt/keyrings &&
+    curl -fsSL https://apollo-pkg-beta.cdn.bcebos.com/neo/beta/key/deb.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/apolloauto.gpg &&
+    sudo chmod a+r /etc/apt/keyrings/apolloauto.gpg && echo \
+    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/apolloauto.gpg] https://apollo-pkg-beta.cdn.bcebos.com/apollo/core" \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") "main" | sudo tee /etc/apt/sources.list.d/apolloauto.list &&
+    sudo apt-get update && sudo apt-get install -y apollo-neo-buildtool apollo-neo-env-manager-dev &&
+    sudo touch /.installed && sudo sed -i 's/#include "flann\/general\.h"/#include <\/usr\/include\/flann\/general\.h>/g' /usr/include/flann/util/params.h
+  source /opt/apollo/neo/setup.sh
+  # currently, only sandboxed available in package managerment env
+  if cat "${TOP_DIR}/tools/bazel.rc" | grep standalone; then
+    sed -i 's/build --spawn_strategy=standalone/build --spawn_strategy=sandboxed/' "${TOP_DIR}/tools/bazel.rc"
+    rm -rf "${TOP_DIR}/.cache"
   fi
+  return 0
 }
 
 function create_data_dir() {
-  local DATA_DIR=""
-  if [ "$RELEASE_DOCKER" != "1" ];then
-    DATA_DIR="${APOLLO_ROOT_DIR}/data"
-  else
-    DATA_DIR="${HOME}/data"
-  fi
-
+  local DATA_DIR="${APOLLO_ROOT_DIR}/data"
   mkdir -p "${DATA_DIR}/log"
   mkdir -p "${DATA_DIR}/bag"
   mkdir -p "${DATA_DIR}/core"
@@ -146,79 +100,86 @@ function determine_bin_prefix() {
   export APOLLO_BIN_PREFIX
 }
 
-function find_device() {
-  # ${1} = device pattern
-  local device_list=$(find /dev -name "${1}")
-  if [ -z "${device_list}" ]; then
-    warning "Failed to find device with pattern \"${1}\" ..."
+function setup_device_for_aarch64() {
+  local can_dev="/dev/can0"
+  local socket_can_dev="can0"
+  if [ ! -e "${can_dev}" ]; then
+    warning "No CAN device named ${can_dev}. "
+  fi
+
+  if [[ -x "$(command -v ip)" ]]; then
+    if ! ip link show type can | grep "${socket_can_dev}" &> /dev/null; then
+      warning "No SocketCAN device named ${socket_can_dev}."
+    else
+      sudo modprobe can
+      sudo modprobe can_raw
+      sudo modprobe mttcan
+      sudo ip link set "${socket_can_dev}" type can bitrate 500000 sjw 4 berr-reporting on loopback off
+      sudo ip link set up "${socket_can_dev}"
+    fi
   else
-    local devices=""
-    for device in $(find /dev -name "${1}"); do
-      ok "Found device: ${device}."
-      devices="${devices} --device ${device}:${device}"
-    done
-    echo "${devices}"
+    warning "ip command not found."
+  fi
+}
+
+function setup_device_for_amd64() {
+  # setup CAN device
+  local NUM_PORTS=8
+  for i in $(seq 0 $((${NUM_PORTS} - 1))); do
+    if [[ -e /dev/can${i} ]]; then
+      continue
+    elif [[ -e /dev/zynq_can${i} ]]; then
+      # soft link if sensorbox exist
+      sudo ln -s /dev/zynq_can${i} /dev/can${i}
+    else
+      break
+      # sudo mknod --mode=a+rw /dev/can${i} c 52 ${i}
+    fi
+  done
+
+  # Check Nvidia device
+  if [[ ! -e /dev/nvidia0 ]]; then
+    warning "No device named /dev/nvidia0"
+  fi
+  if [[ ! -e /dev/nvidiactl ]]; then
+    warning "No device named /dev/nvidiactl"
+  fi
+  if [[ ! -e /dev/nvidia-uvm ]]; then
+    warning "No device named /dev/nvidia-uvm"
+  fi
+  if [[ ! -e /dev/nvidia-uvm-tools ]]; then
+    warning "No device named /dev/nvidia-uvm-tools"
+  fi
+  if [[ ! -e /dev/nvidia-modeset ]]; then
+    warning "No device named /dev/nvidia-modeset"
   fi
 }
 
 function setup_device() {
-  if [ $(uname -s) != "Linux" ]; then
-    echo "Not on Linux, skip mapping devices."
+  if [ "$(uname -s)" != "Linux" ]; then
+    info "Not on Linux, skip mapping devices."
     return
   fi
-
-  # setup CAN device
-  for INDEX in `seq 0 3`
-  do
-    # soft link if sensorbox exist
-    if [ -e /dev/zynq_can${INDEX} ] &&  [ ! -e /dev/can${INDEX} ]; then
-      sudo ln -s /dev/zynq_can${INDEX} /dev/can${INDEX}
-    fi
-    if [ ! -e /dev/can${INDEX} ]; then
-      sudo mknod --mode=a+rw /dev/can${INDEX} c 52 $INDEX
-    fi
-  done
-
-  MACHINE_ARCH=$(uname -m)
-  if [ "$MACHINE_ARCH" == 'aarch64' ]; then
-    sudo ip link set can0 type can bitrate 500000
-    sudo ip link set can0 up
-  fi
-
-  # setup nvidia device
-  sudo /sbin/modprobe nvidia
-  sudo /sbin/modprobe nvidia-uvm
-  if [ ! -e /dev/nvidia0 ];then
-    sudo mknod -m 666 /dev/nvidia0 c 195 0
-  fi
-  if [ ! -e /dev/nvidiactl ];then
-    sudo mknod -m 666 /dev/nvidiactl c 195 255
-  fi
-  if [ ! -e /dev/nvidia-uvm ];then
-    sudo mknod -m 666 /dev/nvidia-uvm c 243 0
-  fi
-  if [ ! -e /dev/nvidia-uvm-tools ];then
-    sudo mknod -m 666 /dev/nvidia-uvm-tools c 243 1
-  fi
-
-  if [ ! -e /dev/nvidia-uvm-tools ];then
-    sudo mknod -m 666 /dev/nvidia-uvm-tools c 243 1
+  if [[ "${ARCH}" == "x86_64" ]]; then
+    setup_device_for_amd64
+  else
+    setup_device_for_aarch64
   fi
 }
 
 function decide_task_dir() {
   # Try to find largest NVMe drive.
-  DISK="$(df | grep "^/dev/nvme" | sort -nr -k 4 | \
-      awk '{print substr($0, index($0, $6))}')"
+  DISK="$(df | grep "^/dev/nvme" | sort -nr -k 4 |
+    awk '{print substr($0, index($0, $6))}')"
 
   # Try to find largest external drive.
   if [ -z "${DISK}" ]; then
-    DISK="$(df | grep "/media/${DOCKER_USER}" | sort -nr -k 4 | \
-        awk '{print substr($0, index($0, $6))}')"
+    DISK="$(df | grep "/media/${DOCKER_USER}" | sort -nr -k 4 |
+      awk '{print substr($0, index($0, $6))}')"
   fi
 
   if [ -z "${DISK}" ]; then
-    echo "Cannot find portable disk. Fallback to apollo data dir."
+    info "Cannot find portable disk. Fallback to apollo data dir."
     DISK="/apollo"
   fi
 
@@ -228,7 +189,7 @@ function decide_task_dir() {
   TASK_DIR="${BAG_PATH}/${TASK_ID}"
   mkdir -p "${TASK_DIR}"
 
-  echo "Record bag to ${TASK_DIR}..."
+  info "Record bag to ${TASK_DIR}..."
   export TASK_ID="${TASK_ID}"
   export TASK_DIR="${TASK_DIR}"
 }
@@ -236,7 +197,7 @@ function decide_task_dir() {
 function is_stopped_customized_path() {
   MODULE_PATH=$1
   MODULE=$2
-  NUM_PROCESSES="$(pgrep -c -f "modules/${MODULE_PATH}/launch/${MODULE}.launch")"
+  NUM_PROCESSES="$(pgrep -f "modules/${MODULE_PATH}/launch/${MODULE}.launch" | grep -cv '^1$')"
   if [ "${NUM_PROCESSES}" -eq 0 ]; then
     return 1
   else
@@ -251,18 +212,19 @@ function start_customized_path() {
 
   is_stopped_customized_path "${MODULE_PATH}" "${MODULE}"
   if [ $? -eq 1 ]; then
-    eval "nohup cyber_launch start /apollo/modules/${MODULE_PATH}/launch/${MODULE}.launch &"
+    # todo(zero): Better to move nohup.out to data/log/nohup.out
+    eval "nohup cyber_launch start ${APOLLO_ROOT_DIR}/modules/${MODULE_PATH}/launch/${MODULE}.launch &"
     sleep 0.5
     is_stopped_customized_path "${MODULE_PATH}" "${MODULE}"
     if [ $? -eq 0 ]; then
-      echo "Launched module ${MODULE}."
+      ok "Launched module ${MODULE}."
       return 0
     else
-      echo "Could not launch module ${MODULE}. Is it already built?"
+      error "Could not launch module ${MODULE}. Is it already built?"
       return 1
     fi
   else
-    echo "Module ${MODULE} is already running - skipping."
+    info "Module ${MODULE} is already running - skipping."
     return 2
   fi
 }
@@ -279,7 +241,7 @@ function start_prof_customized_path() {
   MODULE=$2
   shift 2
 
-  echo "Make sure you have built with 'bash apollo.sh build_prof'"
+  info "Make sure you have built with 'bash apollo.sh build_prof'"
   LOG="${APOLLO_ROOT_DIR}/data/log/${MODULE}.out"
   is_stopped_customized_path "${MODULE_PATH}" "${MODULE}"
   if [ $? -eq 1 ]; then
@@ -292,15 +254,15 @@ function start_prof_customized_path() {
     sleep 0.5
     is_stopped_customized_path "${MODULE_PATH}" "${MODULE}"
     if [ $? -eq 0 ]; then
-      echo -e "Launched module ${MODULE} in prof mode. \nExport profile by command:"
-      echo -e "${YELLOW}google-pprof --pdf $BINARY $PROF_FILE > ${MODULE}_prof.pdf${NO_COLOR}"
+      ok "Launched module ${MODULE} in prof mode."
+      echo -e " Export profile by command:\n\t${YELLOW}google-pprof --pdf $BINARY $PROF_FILE > ${MODULE}_prof.pdf${NO_COLOR}"
       return 0
     else
-      echo "Could not launch module ${MODULE}. Is it already built?"
+      error "Could not launch module ${MODULE}. Is it already built?"
       return 1
     fi
   else
-    echo "Module ${MODULE} is already running - skipping."
+    info "Module ${MODULE} is already running - skipping."
     return 2
   fi
 }
@@ -319,9 +281,9 @@ function start_fe_customized_path() {
 
   is_stopped_customized_path "${MODULE_PATH}" "${MODULE}"
   if [ $? -eq 1 ]; then
-    eval "cyber_launch start /apollo/modules/${MODULE_PATH}/launch/${MODULE}.launch"
+    eval "cyber_launch start ${APOLLO_ROOT_DIR}/modules/${MODULE_PATH}/launch/${MODULE}.launch"
   else
-    echo "Module ${MODULE} is already running - skipping."
+    info "Module ${MODULE} is already running - skipping."
     return 2
   fi
 }
@@ -356,15 +318,15 @@ function stop_customized_path() {
 
   is_stopped_customized_path "${MODULE_PATH}" "${MODULE}"
   if [ $? -eq 1 ]; then
-    echo "${MODULE} process is not running!"
+    info "${MODULE} process is not running!"
     return
   fi
 
-  cyber_launch stop "/apollo/modules/${MODULE_PATH}/launch/${MODULE}.launch"
+  cyber_launch stop "${APOLLO_ROOT_DIR}/modules/${MODULE_PATH}/launch/${MODULE}.launch"
   if [ $? -eq 0 ]; then
-    echo "Successfully stopped module ${MODULE}."
+    ok "Successfully stopped module ${MODULE}."
   else
-    echo "Module ${MODULE} is not running - skipping."
+    info "Module ${MODULE} is not running - skipping."
   fi
 }
 
@@ -376,7 +338,7 @@ function stop() {
 # Note: This 'help' function here will overwrite the bash builtin command 'help'.
 # TODO: add a command to query known modules.
 function help() {
-cat <<EOF
+  cat << EOF
 Invoke ". scripts/apollo_base.sh" within docker to add the following commands to the environment:
 Usage: COMMAND [<module_name>]
 
@@ -415,7 +377,7 @@ function run_customized_path() {
       ;;
     *)
       start_customized_path $module_path $module $cmd "$@"
-    ;;
+      ;;
   esac
 }
 
@@ -425,17 +387,17 @@ function record_bag_env_log() {
     TASK_ID=$(date +%Y-%m-%d-%H-%M)
   fi
 
-  git status >/dev/null 2>&1
+  git status > /dev/null 2>&1
   if [ $? -ne 0 ]; then
-    echo "Not in Git repo, maybe because you are in release container."
-    echo "Skip log environment."
+    warning "Not in Git repo, maybe because you are in release container."
+    info "Skip log environment."
     return
   fi
 
   commit=$(git log -1)
   echo -e "Date:$(date)\n" >> Bag_Env_$TASK_ID.log
-  git branch | awk '/\*/ { print "current branch: " $2; }'  >> Bag_Env_$TASK_ID.log
-  echo -e "\nNewest commit:\n$commit"  >> Bag_Env_$TASK_ID.log
+  git branch | awk '/\*/ { print "current branch: " $2; }' >> Bag_Env_$TASK_ID.log
+  echo -e "\nNewest commit:\n$commit" >> Bag_Env_$TASK_ID.log
   echo -e "\ngit diff:" >> Bag_Env_$TASK_ID.log
   git diff >> Bag_Env_$TASK_ID.log
   echo -e "\n\n\n\n" >> Bag_Env_$TASK_ID.log
@@ -444,19 +406,132 @@ function record_bag_env_log() {
 }
 
 # run command_name module_name
-function run() {
+function run_module() {
   local module=$1
   shift
   run_customized_path $module $module "$@"
 }
 
-check_in_docker
-unset OMP_NUM_THREADS
-if [ $APOLLO_IN_DOCKER = "true" ]; then
-  CYBER_SETUP="/apollo/cyber/setup.bash"
-  if [ -e "${CYBER_SETUP}" ]; then
-    source "${CYBER_SETUP}"
+function _chk_n_set_gpu_arg() {
+  local arg="$1"
+  if [ "${arg}" = "cpu" ]; then
+    use_cpu=1
+  elif [ "${arg}" = "gpu" ]; then
+    use_gpu=1
+  elif [ "${arg}" = "nvidia" ]; then
+    use_nvidia=1
+  elif [ "${arg}" = "amd" ]; then
+    use_amd=1
+  else
+    return 0
   fi
+
+  if (($use_cpu == 1)) && (($use_gpu == 1)); then
+    error "${RED}Mixed use of '--config=cpu' and '--config=gpu' may" \
+      "lead to unexpected behavior. Exiting...${NO_COLOR}"
+    exit 1
+  fi
+  if (($use_cpu == 1)) && (($use_nvidia == 1)); then
+    error "${RED}Mixed use of '--config=cpu' and '--config=nvidia' may" \
+      "lead to unexpected behavior. Exiting...${NO_COLOR}"
+    exit 1
+  fi
+  if (($use_cpu == 1)) && (($use_amd == 1)); then
+    error "${RED}Mixed use of '--config=cpu' and '--config=amd' may" \
+      "lead to unexpected behavior. Exiting...${NO_COLOR}"
+    exit 1
+  fi
+  if (($use_nvidia == 1)) && (($use_amd == 1)); then
+    error "${RED}Mixed use of '--config=amd' and '--config=nvidia':" \
+      "please specify only one GPU target. Exiting...${NO_COLOR}"
+    exit 1
+  fi
+  if (($use_nvidia == 1)) && (($use_amd == -1)) && [ "$GPU_PLATFORM" == "AMD" ]; then
+    error "${RED}Cross-compilation for NVIDIA GPU target is not supported on AMD GPU device':" \
+      "please specify AMD or skip its specification to compile for AMD GPU target." \
+      "To compile for NVIDIA GPU target NVIDIA GPU device should be installed. Exiting...${NO_COLOR}"
+    exit 1
+  fi
+  if (($use_amd == 1)) && (($use_nvidia == -1)) && [ "$GPU_PLATFORM" == "NVIDIA" ]; then
+    error "${RED}Cross-compilation for AMD GPU target is not supported on NVIDIA GPU device':" \
+      "please specify NVIDIA or skip its specification to compile for NVIDIA GPU target." \
+      "To compile for AMD GPU target AMD GPU device should be installed. Exiting...${NO_COLOR}"
+    exit 1
+  fi
+
+  return 0
+}
+
+function parse_cmdline_arguments() {
+  local known_options=""
+  local bazel_option=""
+  local remained_args=""
+  local bazel=0
+
+  for ((pos = 1; pos <= $#; pos++)); do #do echo "$#" "$i" "${!i}"; done
+    local opt="${!pos}"
+    local optarg
+    local known_bazel_opt=0
+    if ((${bazel} == 1)); then
+      ((++bazel))
+    fi
+    case "${opt}" in
+      --bazel)
+        ((++pos))
+        bazel_option="${!pos}"
+        bazel=1
+        ((--pos))
+        ;;
+      --config=*)
+        optarg="${opt#*=}"
+        known_options="${known_options} ${opt}"
+        _chk_n_set_gpu_arg "${optarg}"
+        known_bazel_opt=1
+        ;;
+      --config)
+        ((++pos))
+        optarg="${!pos}"
+        known_options="${known_options} ${opt} ${optarg}"
+        _chk_n_set_gpu_arg "${optarg}"
+        known_bazel_opt=1
+        ;;
+      -o)
+        ((++pos))
+        optarg="${!pos}"
+        known_options="${known_options} ${opt}"
+        APOLLO_OUTSIDE_DOCKER=1
+        ;;
+      -c)
+        ((++pos))
+        optarg="${!pos}"
+        known_options="${known_options} ${opt} ${optarg}"
+        ;;
+      *)
+        if ((${bazel} == 0)); then
+          remained_args="${remained_args} ${opt}"
+        elif ((${bazel} == 2)); then
+          if ((${known_bazel_opt} == 0)); then
+            known_options="${known_options} ${bazel_option}"
+          fi
+          bazel=0
+        fi
+        ;;
+    esac
+  done
+  if ((${bazel} == 1)); then
+    warning "Bazel option is not specified. Skipping..."
+  fi
+  # Strip leading whitespaces
+  known_options="$(echo "${known_options}" | sed -e 's/^[[:space:]]*//')"
+  remained_args="$(echo "${remained_args}" | sed -e 's/^[[:space:]]*//')"
+
+  CMDLINE_OPTIONS="${known_options}"
+  SHORTHAND_TARGETS="${remained_args}"
+}
+
+unset OMP_NUM_THREADS
+
+if [ $APOLLO_IN_DOCKER = "true" ]; then
   create_data_dir
   set_lib_path $1
   if [ -z $APOLLO_BASE_SOURCED ]; then
@@ -464,3 +539,203 @@ if [ $APOLLO_IN_DOCKER = "true" ]; then
     export APOLLO_BASE_SOURCED=1
   fi
 fi
+
+function _determine_drivers_disabled() {
+  if ! ${USE_ESD_CAN}; then
+    warning "ESD CAN library supplied by ESD Electronics doesn't exist."
+    warning "If you need ESD CAN, please refer to third_party/can_card_library/esd_can/README.md"
+    # DISABLED_TARGETS="${DISABLED_TARGETS} except //modules/drivers/canbus/can_client/esd/..."
+    DISABLED_TARGETS="${DISABLED_TARGETS}"
+  fi
+}
+
+function _determine_perception_disabled() {
+  if [ "${USE_GPU}" -eq 0 ]; then
+    DISABLED_TARGETS="${DISABLED_TARGETS} except //modules/perception/..."
+  elif [ "$GPU_PLATFORM" == "AMD" ]; then
+    DISABLED_TARGETS="${DISABLED_TARGETS} except //modules/perception/common/inference/tensorrt/..."
+  elif [ "$GPU_PLATFORM" == "NVIDIA" ]; then
+    DISABLED_TARGETS="${DISABLED_TARGETS} except //modules/perception/common/inference/migraphx/..."
+  fi
+}
+
+function _determine_localization_disabled() {
+  if [ "${ARCH}" != "x86_64" ]; then
+    # Skip msf for non-x86_64 platforms
+    DISABLED_TARGETS="${disabled} except //modules/localization/msf/..."
+  fi
+}
+
+function _determine_planning_disabled() {
+  if [ "${USE_GPU}" -eq 0 ]; then
+    DISABLED_TARGETS="${DISABLED_TARGETS} \
+        except //modules/planning/planning_base:planning_block"
+  fi
+}
+
+function determine_disabled_targets() {
+  if [[ "$#" -eq 0 ]]; then
+    _determine_drivers_disabled
+    _determine_localization_disabled
+    _determine_perception_disabled
+    _determine_planning_disabled
+    echo "${DISABLED_TARGETS}"
+    return
+  fi
+
+  for component in $@; do
+    case "${component}" in
+      drivers*)
+        _determine_drivers_disabled
+        ;;
+      localization*)
+        _determine_localization_disabled
+        ;;
+      perception*)
+        _determine_perception_disabled
+        ;;
+      planning*)
+        _determine_planning_disabled
+        ;;
+    esac
+  done
+
+  echo "${DISABLED_TARGETS}"
+}
+
+function determine_targets() {
+  local targets_all
+  if [[ "$#" -eq 0 ]]; then
+    targets_all="//modules/... union //cyber/..."
+    echo "${targets_all}"
+    return
+  fi
+
+  for component in $@; do
+    local targets
+    if [ "${component}" = "cyber" ]; then
+      if [[ "${HOST_OS}" == "Linux" ]]; then
+        targets="//cyber/... union //modules/tools/visualizer/..."
+      else
+        targets="//cyber/..."
+      fi
+    elif [[ -d "${APOLLO_ROOT_DIR}/modules/${component}" ]]; then
+      targets="//modules/${component}/..."
+    else
+      error "Directory <APOLLO_ROOT_DIR>/modules/${component} not found. Exiting ..."
+      exit 1
+    fi
+    if [ -z "${targets_all}" ]; then
+      targets_all="${targets}"
+    else
+      targets_all="${targets_all} union ${targets}"
+    fi
+  done
+  echo "${targets_all}"
+}
+
+function format_bazel_targets() {
+  local targets="$(echo $@ | xargs)"
+  targets="${targets// union / }"   # replace all matches of "A union B" to "A B"
+  targets="${targets// except / -}" # replaces all matches of "A except B" to "A-B"
+  echo "${targets}"
+}
+
+function determine_cpu_or_gpu() {
+  USE_GPU="${USE_GPU_TARGET}"
+  if [ "${USE_GPU_TARGET}" -eq 0 ]; then
+    if [ "${use_gpu}" -eq 1 ]; then
+      error "Can't compile for GPU: no GPU found. Exiting ..."
+      exit 1
+    elif [ "${use_cpu}" -lt 0 ]; then
+      CMDLINE_OPTIONS="--config=cpu ${CMDLINE_OPTIONS}"
+    fi
+    USE_GPU="0"
+  else
+    if [ "${use_cpu}" -eq 1 ]; then
+      USE_GPU="0"
+    else
+      USE_GPU="1"
+      if [ "${use_gpu}" -lt 0 ]; then
+        CMDLINE_OPTIONS="--config=gpu ${CMDLINE_OPTIONS}"
+      fi
+      if [ "${use_amd}" -lt 0 ] && [ "$GPU_PLATFORM" == "AMD" ]; then
+        CMDLINE_OPTIONS="${CMDLINE_OPTIONS} --config=amd"
+      elif [ "${use_nvidia}" -lt 0 ] && [ "$GPU_PLATFORM" == "NVIDIA" ]; then
+        CMDLINE_OPTIONS="${CMDLINE_OPTIONS} --config=nvidia"
+      fi
+    fi
+  fi
+
+  if [ "${USE_GPU}" -eq 1 ]; then
+    ok "Running ${GREEN}${GPU_PLATFORM} GPU${NO_COLOR} $1 on ${GREEN}${ARCH}${NO_COLOR} platform."
+  else
+    ok "Running ${GREEN}CPU${NO_COLOR} $1 on ${GREEN}${ARCH}${NO_COLOR} platform."
+  fi
+}
+
+function run_bazel() {
+  if [ "${APOLLO_OUTSIDE_DOCKER}" -eq 1 ]; then
+    warning "Assembling outside the docker can cause errors,"
+    warning "  we recommend using a ready-made container."
+    warning "Make sure that all dependencies are installed,"
+    warning "  if errors, try running <apollo_path>/docker/build/installers/install.sh"
+  elif ! "${APOLLO_IN_DOCKER}"; then
+    error "The build operation must be run from within docker container"
+    error "Use -o flag to force build"
+    exit 1
+  fi
+
+  determine_cpu_or_gpu "${1,,}"
+
+  if ${USE_ESD_CAN}; then
+    CMDLINE_OPTIONS="${CMDLINE_OPTIONS} --define USE_ESD_CAN=${USE_ESD_CAN}"
+  fi
+
+  CMDLINE_OPTIONS="$(echo ${CMDLINE_OPTIONS} | xargs)"
+
+  local build_targets="$(determine_targets ${SHORTHAND_TARGETS})"
+
+  local disabled_targets="$(determine_disabled_targets ${SHORTHAND_TARGETS})"
+  disabled_targets="$(echo ${disabled_targets} | xargs)"
+
+  # Note(storypku): Workaround for in case "/usr/bin/bazel: Argument list too long"
+  # bazel build ${CMDLINE_OPTIONS} ${job_args} $(bazel query ${build_targets})
+  local formatted_targets="$(format_bazel_targets ${build_targets} ${disabled_targets})"
+
+  local sp="    "
+  local spaces="    "
+  local count=$(nproc)
+  if [ "$1" == "Coverage" ]; then
+    count="$(($(nproc) / 2))"
+    spaces="       "
+  elif [ "$1" == "Test" ]; then
+    sp="     "
+  fi
+
+  info "${BLUE}$1 Overview:${NO_COLOR}"
+  info "${TAB}USE_GPU:       ${spaces}${GREEN}${USE_GPU}${NO_COLOR}  [ 0 for CPU, 1 for GPU ]"
+  if [ "${USE_GPU}" -eq 1 ]; then
+    info "${TAB}GPU arch:      ${spaces}${GREEN}${GPU_PLATFORM}${NO_COLOR}"
+    info "${TAB}CROSSTOOL_VERBOSE: ${GREEN}${CROSSTOOL_VERBOSE}${NO_COLOR}  [ 0 for no verbose, 1 for verbose]"
+    if [ "$GPU_PLATFORM" == "AMD" ]; then
+      info "${TAB}HIPCC_VERBOSE: ${spaces}${GREEN}${HIPCC_VERBOSE}${NO_COLOR}  [ 0 for no verbose, 1 for cmd, 2 for env, 4 for args, 3,5,6,7 for combinations of 1,2,4]"
+    elif [ "$GPU_PLATFORM" == "NVIDIA" ]; then
+      info "${TAB}NVCC_VERBOSE:  ${spaces}${GREEN}${NVCC_VERBOSE}${NO_COLOR}  [ 0 for no verbose, 1 for verbose]"
+    fi
+  else
+    info "${TAB}CPU arch:      ${spaces}${GREEN}${ARCH}${NO_COLOR}"
+  fi
+  info "${TAB}Bazel Options: ${spaces}${GREEN}${CMDLINE_OPTIONS}${NO_COLOR}"
+  info "${TAB}$1 Targets: ${sp}${GREEN}${build_targets}${NO_COLOR}"
+  info "${TAB}Disabled:      ${spaces}${YELLOW}${disabled_targets}${NO_COLOR}"
+
+  if [[ "$(uname -m)" == "x86_64" ]]; then
+    job_args="--copt=-mavx2 --host_copt=-mavx2 --jobs=${count} --local_ram_resources=HOST_RAM*0.7"
+  else
+    job_args="--copt=-march=native --host_copt=-march=native --jobs=${count} --local_ram_resources=HOST_RAM*0.7 --copt=-fPIC --host_copt=-fPIC"
+  fi
+  set -x
+  bazel ${1,,} ${CMDLINE_OPTIONS} ${job_args} -- ${formatted_targets}
+  set +x
+}

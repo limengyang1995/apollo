@@ -25,23 +25,26 @@ import sys
 
 import yaml
 
-from gen_proto_file import gen_proto_file
-from gen_protocols import gen_protocols
-from gen_vehicle_controller_and_manager import gen_vehicle_controller_and_manager
-from extract_dbc_meta import extract_dbc_meta
+from modules.tools.gen_vehicle_protocol.gen_proto_file import gen_proto_file
+from modules.tools.gen_vehicle_protocol.gen_protocols import gen_protocols
+from modules.tools.gen_vehicle_protocol.gen_vehicle_controller_and_manager import gen_vehicle_controller_and_manager
+from modules.tools.gen_vehicle_protocol.extract_dbc_meta import extract_dbc_meta
 
 
 def gen(conf):
     """
         doc string:
     """
-    dbc_file = conf["dbc_file"]
-    protocol_conf_file = conf["protocol_conf"]
+    current_dir = sys.path[0]
+    # print("current dir is", current_dir)
+    dbc_file = sys.path[0] + '/' + conf["dbc_file"]
+    protocol_conf_file = sys.path[0] + '/' + conf["protocol_conf"]
     car_type = conf["car_type"]
     black_list = conf["black_list"]
     sender_list = conf["sender_list"]
     sender = conf["sender"]
-    output_dir = conf["output_dir"]
+    output_dir = sys.path[0] + '/' + conf["output_dir"]
+    template_dir = current_dir + "/template/"
 
     # extract dbc file meta to an internal config file
     if not extract_dbc_meta(dbc_file, protocol_conf_file, car_type, black_list,
@@ -49,16 +52,16 @@ def gen(conf):
         return
 
     # gen proto
-    proto_dir = output_dir + "proto/"
-    gen_proto_file(protocol_conf_file, proto_dir)
+    proto_dir = output_dir + "vehicle/" + car_type.lower() + "/" + "proto/"
+    gen_proto_file(protocol_conf_file, proto_dir, template_dir)
 
     # gen protocol
     protocol_dir = output_dir + "vehicle/" + car_type.lower() + "/protocol/"
-    gen_protocols(protocol_conf_file, protocol_dir)
+    gen_protocols(protocol_conf_file, protocol_dir, template_dir)
 
     # gen vehicle controller and protocol_manager
     vehicle_dir = output_dir + "vehicle/" + car_type.lower() + "/"
-    gen_vehicle_controller_and_manager(protocol_conf_file, vehicle_dir)
+    gen_vehicle_controller_and_manager(protocol_conf_file, vehicle_dir, template_dir)
 
 
 if __name__ == "__main__":
@@ -66,5 +69,5 @@ if __name__ == "__main__":
         print("usage:\npython %s some_config.yml" % sys.argv[0])
         sys.exit(0)
     with open(sys.argv[1], 'r') as fp:
-        conf = yaml.load(fp)
+        conf = yaml.safe_load(fp)
     gen(conf)

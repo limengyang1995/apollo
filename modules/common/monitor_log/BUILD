@@ -1,8 +1,7 @@
 load("//tools:cpplint.bzl", "cpplint")
+load("//tools:apollo_package.bzl", "apollo_cc_library", "apollo_cc_test", "apollo_package")
 
-package(default_visibility = ["//visibility:public"])
-
-cc_library(
+apollo_cc_library(
     name = "monitor_log",
     srcs = [
         "monitor_log_buffer.cc",
@@ -14,16 +13,14 @@ cc_library(
     ],
     deps = [
         "//cyber",
-        "//cyber/proto:component_conf_cc_proto",
-        "//modules/common/monitor_log/proto:monitor_log_proto",
-        "//modules/common/proto:geometry_proto",
-        "//modules/common/time",
-        "//modules/common/util:message_util",
+        "//modules/common/util:util_tool",
+        "//modules/common_msgs/monitor_msgs:monitor_log_cc_proto",
+        "@com_google_absl//:absl",
         "@com_google_googletest//:gtest",
     ],
 )
 
-cc_test(
+apollo_cc_test(
     name = "monitor_log_buffer_test",
     size = "small",
     srcs = ["monitor_log_buffer_test.cc"],
@@ -33,7 +30,7 @@ cc_test(
     ],
 )
 
-# cc_test(
+# apollo_cc_test(
 #     name = "monitor_logger_test",
 #     size = "small",
 #     srcs = ["monitor_logger_test.cc"],
@@ -42,5 +39,7 @@ cc_test(
 #         "@com_google_googletest//:gtest_main",
 #     ],
 # )
+
+apollo_package()
 
 cpplint()

@@ -18,6 +18,7 @@
 #define CYBER_RECORD_RECORD_VIEWER_H_
 
 #include <cstddef>
+#include <limits>
 #include <map>
 #include <memory>
 #include <set>
@@ -47,8 +48,8 @@ class RecordViewer {
    * @param channels
    */
   RecordViewer(const RecordReaderPtr& reader, uint64_t begin_time = 0,
-               uint64_t end_time = UINT64_MAX,
-               const std::set<std::string>& channels = std::set<std::string>());
+               uint64_t end_time = std::numeric_limits<uint64_t>::max(),
+               const std::set<std::string>& channels = {});
 
   /**
    * @brief The constructor with multiple readers.
@@ -59,7 +60,8 @@ class RecordViewer {
    * @param channels
    */
   RecordViewer(const std::vector<RecordReaderPtr>& readers,
-               uint64_t begin_time = 0, uint64_t end_time = UINT64_MAX,
+               uint64_t begin_time = 0,
+               uint64_t end_time = std::numeric_limits<uint64_t>::max(),
                const std::set<std::string>& channels = std::set<std::string>());
 
   /**
@@ -174,6 +176,15 @@ class RecordViewer {
    */
   Iterator end();
 
+  /**
+   * @brief Get current iterator.
+   *
+   * @return The current iterator.
+   */
+  Iterator curr_itr();
+
+  void set_curr_itr(const Iterator& curr_itr);
+
  private:
   friend class Iterator;
 
@@ -184,7 +195,7 @@ class RecordViewer {
   bool Update(RecordMessage* message);
 
   uint64_t begin_time_ = 0;
-  uint64_t end_time_ = UINT64_MAX;
+  uint64_t end_time_ = std::numeric_limits<uint64_t>::max();
   // User defined channels
   std::set<std::string> channels_;
   // All channel in user defined readers
@@ -197,6 +208,8 @@ class RecordViewer {
 
   const uint64_t kStepTimeNanoSec = 1000000000UL;  // 1 second
   const std::size_t kBufferMinSize = 128;
+
+  Iterator itr_;
 };
 
 }  // namespace record

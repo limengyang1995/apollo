@@ -16,9 +16,9 @@
 # limitations under the License.
 ###############################################################################
 
-from modules.common.proto import error_code_pb2
-from .statistical_analyzer import PrintColors
-from .distribution_analyzer import DistributionAnalyzer
+from modules.common_msgs.basic_msgs import error_code_pb2
+from modules.tools.record_analyzer.common.statistical_analyzer import PrintColors
+from modules.tools.record_analyzer.common.distribution_analyzer import DistributionAnalyzer
 
 
 class ErrorMsgAnalyzer:

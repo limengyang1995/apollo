@@ -20,9 +20,7 @@
 #include <utility>
 #include <vector>
 
-#include "modules/map/proto/map_lane.pb.h"
-
-#include "cyber/common/log.h"
+#include "modules/common_msgs/map_msgs/map_lane.pb.h"
 #include "modules/common/math/box2d.h"
 #include "modules/common/math/line_segment2d.h"
 #include "modules/common/math/vec2d.h"
@@ -258,8 +256,23 @@ class Path {
                                         double* min_distance) const;
   bool GetProjection(const common::math::Vec2d& point, double* accumulate_s,
                      double* lateral) const;
+
+  bool GetProjection(const double heading,
+                      const common::math::Vec2d& point,
+                      double* accumulate_s,
+                      double* lateral) const;
+
+  bool GetProjectionWithWarmStartS(const common::math::Vec2d& point,
+                                   double* accumulate_s, double* lateral) const;
+
   bool GetProjection(const common::math::Vec2d& point, double* accumulate_s,
                      double* lateral, double* distance) const;
+
+  bool GetProjection(const common::math::Vec2d& point,
+                     const double heading,
+                     double* accumulate_s,
+                     double* lateral,
+                     double* distance) const;
 
   bool GetHeadingAlongPath(const common::math::Vec2d& point,
                            double* heading) const;
@@ -314,6 +327,9 @@ class Path {
   }
   const std::vector<PathOverlap>& parking_space_overlaps() const {
     return parking_space_overlaps_;
+  }
+  const std::vector<PathOverlap>& dead_end_overlaps() const {
+    return dead_end_overlaps_;
   }
 
   double GetLaneLeftWidth(const double s) const;
@@ -374,10 +390,22 @@ class Path {
   std::vector<PathOverlap> stop_sign_overlaps_;
   std::vector<PathOverlap> crosswalk_overlaps_;
   std::vector<PathOverlap> parking_space_overlaps_;
+  std::vector<PathOverlap> dead_end_overlaps_;
   std::vector<PathOverlap> junction_overlaps_;
   std::vector<PathOverlap> pnc_junction_overlaps_;
   std::vector<PathOverlap> clear_area_overlaps_;
   std::vector<PathOverlap> speed_bump_overlaps_;
+
+ private:
+  /**
+   * @brief Find the segment index nearest to target_s.
+   * @param left_index The start index to search.
+   * @param right_index The end index to search.
+   * @param target_s The target s.
+   * @param mid_index Output result.
+   */
+  void FindIndex(int left_index, int right_index, double target_s,
+                 int* mid_index) const;
 };
 
 }  // namespace hdmap

@@ -23,10 +23,10 @@
 #include "Eigen/Geometry"
 #include "cyber/cyber.h"
 
-#include "include/sins.h"
+#include "localization_msf/sins.h"
 #include "modules/common/status/status.h"
 #include "modules/localization/msf/local_integ/localization_params.h"
-#include "modules/localization/proto/localization.pb.h"
+#include "modules/common_msgs/localization_msgs/localization.pb.h"
 
 /**
  * @namespace apollo::localization::msf
@@ -100,6 +100,9 @@ class LocalizationIntegProcess {
   std::mutex measure_data_queue_mutex_;
 
   int delay_output_counter_ = 0;
+
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 }  // namespace msf

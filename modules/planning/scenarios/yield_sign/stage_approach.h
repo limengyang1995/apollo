@@ -20,36 +20,31 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 
-#include "modules/planning/scenarios/stage.h"
+#include "cyber/plugin_manager/plugin_manager.h"
+#include "modules/planning/planning_interface_base/scenario_base/stage.h"
 #include "modules/planning/scenarios/yield_sign/yield_sign_scenario.h"
 
 namespace apollo {
 namespace planning {
-namespace scenario {
-namespace yield_sign {
 
 struct YieldSignContext;
 
 class YieldSignStageApproach : public Stage {
  public:
-  explicit YieldSignStageApproach(const ScenarioConfig::StageConfig& config)
-      : Stage(config) {}
+  StageResult Process(const common::TrajectoryPoint& planning_init_point,
+                      Frame* frame) override;
 
  private:
-  Stage::StageStatus Process(const common::TrajectoryPoint& planning_init_point,
-                             Frame* frame) override;
-  YieldSignContext* GetContext() { return GetContextAs<YieldSignContext>(); }
+  StageResult FinishStage();
 
- private:
-  Stage::StageStatus FinishStage();
-
- private:
   ScenarioYieldSignConfig scenario_config_;
 };
 
-}  // namespace yield_sign
-}  // namespace scenario
+CYBER_PLUGIN_MANAGER_REGISTER_PLUGIN(apollo::planning::YieldSignStageApproach,
+                                     Stage)
+
 }  // namespace planning
 }  // namespace apollo

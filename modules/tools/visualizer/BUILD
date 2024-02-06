@@ -1,28 +1,17 @@
-load("//tools:cpplint.bzl", "cpplint")
-load("//tools:qt.bzl", "qt_cc_library")
+load("//tools:apollo_package.bzl", "apollo_package", "apollo_cc_binary", "apollo_qt_library")
 
 package(default_visibility = ["//visibility:public"])
 
-cc_binary(
+apollo_cc_binary(
     name = "cyber_visualizer",
     copts = [
         "-Iexternal/qt",
     ],
-    includes = [
-        ".",
-    ],
     linkopts = [
-        "-lconsole_bridge",
-        "-lGL",
-        "-lQt5Core",
-        "-lQt5Widgets",
-        "-lQt5Gui",
-        "-lQt5OpenGL",
+        "-pthread",
     ],
     deps = [
         ":visualizer_lib",
-        "//third_party:pthread",
-        "@fastrtps",
         "@qt//:qt_core",
         "@qt//:qt_gui",
         "@qt//:qt_opengl",
@@ -30,23 +19,24 @@ cc_binary(
     ],
 )
 
-# name, src, hdr, uis = [], res = [], normal_hdrs = [], deps = None
-qt_cc_library(
+filegroup(
+    name = "resources",
+    srcs = glob(["images/*", "shaders/*"]),
+)
+
+# TODO(all): Extract the large library to thin pieces.
+apollo_qt_library(
     name = "visualizer_lib",
-    src = glob(
-        ["*.cc"],
-    ),
+    srcs = glob(["*.cc"]),
+    hdrs = glob(["*.h"]),
+    data = [":resources"],
     copts = [
-        "-Imodules/drivers/proto",
         "-Iexternal/qt",
     ],
-    hdr = glob([
-        "*.h",
-    ]),
     includes = [
         ".",
     ],
-    linkstatic = 1,
+    linkstatic = False,
     res = glob([
         "*.qrc",
     ]),
@@ -55,7 +45,10 @@ qt_cc_library(
     ]),
     deps = [
         "//cyber",
-        "//modules/drivers/proto:sensor_proto",
+        "//modules/common_msgs/sensor_msgs:pointcloud_cc_proto",
+        "//modules/common_msgs/sensor_msgs:radar_cc_proto",
+        "//modules/common_msgs/sensor_msgs:sensor_image_cc_proto",
+        "@fastrtps",
         "@qt//:qt_core",
         "@qt//:qt_gui",
         "@qt//:qt_opengl",
@@ -63,4 +56,9 @@ qt_cc_library(
     ],
 )
 
-cpplint()
+# TODO(all): Disable linter temporarily as the generated ui files should be
+# excluded from check. But we should also check the .h and .cc files, if they
+# are extracted to their own cc_libraries. See the TODO above.
+# cpplint()
+
+apollo_package()

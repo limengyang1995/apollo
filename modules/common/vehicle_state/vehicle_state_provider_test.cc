@@ -22,9 +22,9 @@
 #include "gtest/gtest.h"
 
 #include "cyber/common/file.h"
-#include "modules/canbus/proto/chassis.pb.h"
-#include "modules/localization/common/localization_gflags.h"
-#include "modules/localization/proto/localization.pb.h"
+#include "modules/common_msgs/chassis_msgs/chassis.pb.h"
+#include "modules/common_msgs/localization_msgs/localization.pb.h"
+#include "modules/common/configs/config_gflags.h"
 
 namespace apollo {
 namespace common {
@@ -37,7 +37,7 @@ class VehicleStateProviderTest : public ::testing::Test {
  public:
   virtual void SetUp() {
     std::string localization_file =
-        "modules/localization/testdata/3_localization_result_1.pb.txt";
+        "modules/common/vehicle_state/testdata/3_localization_result_1.pb.txt";
     ACHECK(cyber::common::GetProtoFromFile(localization_file, &localization_));
     chassis_.set_speed_mps(3.0);
     chassis_.set_gear_location(canbus::Chassis::GEAR_DRIVE);
@@ -50,7 +50,7 @@ class VehicleStateProviderTest : public ::testing::Test {
 };
 
 TEST_F(VehicleStateProviderTest, Accessors) {
-  auto vehicle_state_provider = VehicleStateProvider::Instance();
+  auto vehicle_state_provider = std::make_shared<VehicleStateProvider>();
   vehicle_state_provider->Update(localization_, chassis_);
   EXPECT_DOUBLE_EQ(vehicle_state_provider->x(), 357.51331791372041);
   EXPECT_DOUBLE_EQ(vehicle_state_provider->y(), 96.165912376788725);
@@ -67,7 +67,7 @@ TEST_F(VehicleStateProviderTest, Accessors) {
 }
 
 TEST_F(VehicleStateProviderTest, EstimateFuturePosition) {
-  auto vehicle_state_provider = VehicleStateProvider::Instance();
+  auto vehicle_state_provider = std::make_shared<VehicleStateProvider>();
   vehicle_state_provider->Update(localization_, chassis_);
   common::math::Vec2d future_position =
       vehicle_state_provider->EstimateFuturePosition(1.0);

@@ -16,20 +16,19 @@
 
 #include "modules/monitor/hardware/resource_monitor.h"
 
-#include <boost/filesystem.hpp>
-
 #include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include "cyber/common/file.h"
-#include "cyber/common/log.h"
-#include "gflags/gflags.h"
+#include <boost/filesystem.hpp>
 
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_split.h"
+#include "cyber/common/file.h"
+#include "cyber/common/log.h"
+#include "gflags/gflags.h"
 #include "modules/common/util/map_util.h"
 #include "modules/monitor/common/monitor_manager.h"
 #include "modules/monitor/software/summary_monitor.h"
@@ -244,6 +243,15 @@ void ResourceMonitor::RunOnce(const double current_time) {
     if (config.has_resource()) {
       UpdateStatus(config.resource(),
                    components->at(name).mutable_resource_status());
+    }
+  }
+  auto* global_components = manager->GetStatus()->mutable_global_components();
+  for (const auto& iter : mode.global_components()) {
+    const std::string& name = iter.first;
+    const auto& config = iter.second;
+    if (config.has_resource()) {
+      UpdateStatus(config.resource(),
+                   global_components->at(name).mutable_resource_status());
     }
   }
 }

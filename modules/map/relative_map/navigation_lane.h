@@ -28,10 +28,11 @@
 #include <utility>
 
 #include "modules/common/vehicle_state/proto/vehicle_state.pb.h"
-#include "modules/localization/proto/localization.pb.h"
-#include "modules/map/relative_map/proto/navigation.pb.h"
+#include "modules/common/vehicle_state/vehicle_state_provider.h"
+#include "modules/common_msgs/localization_msgs/localization.pb.h"
+#include "modules/common_msgs/planning_msgs/navigation.pb.h"
 #include "modules/map/relative_map/proto/relative_map_config.pb.h"
-#include "modules/perception/proto/perception_obstacle.pb.h"
+#include "modules/common_msgs/perception_msgs/perception_obstacle.pb.h"
 
 /**
  * @namespace apollo::relative_map
@@ -105,6 +106,9 @@ class NavigationLane {
    * @return None.
    */
   void SetConfig(const NavigationLaneConfig& config);
+
+  void SetVehicleStateProvider(
+      common::VehicleStateProvider* vehicle_state_provider);
 
   /**
    * @brief Update navigation line information.
@@ -298,6 +302,7 @@ class NavigationLane {
 
   // in world coordination: ENU
   localization::Pose original_pose_;
+  common::VehicleStateProvider* vehicle_state_provider_ = nullptr;
 };
 
 }  // namespace relative_map

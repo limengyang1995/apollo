@@ -38,6 +38,11 @@ namespace prediction {
 class PredictorManager {
  public:
   /**
+   * @brief Constructor
+   */
+  PredictorManager();
+
+  /**
    * @brief Destructor
    */
   virtual ~PredictorManager() = default;
@@ -173,9 +178,10 @@ class PredictorManager {
   ObstacleConf::PredictorType vehicle_default_caution_predictor_ =
       ObstacleConf::EXTRAPOLATION_PREDICTOR;
 
-  PredictionObstacles prediction_obstacles_;
+  ObstacleConf::PredictorType vehicle_interactive_predictor_ =
+      ObstacleConf::EMPTY_PREDICTOR;
 
-  DECLARE_SINGLETON(PredictorManager)
+  PredictionObstacles prediction_obstacles_;
 };
 
 }  // namespace prediction

@@ -25,10 +25,10 @@ Usage:
 import os
 import sys
 
-from cyber_py3 import cyber
-from cyber_py3.record import RecordReader
-from modules.canbus.proto import chassis_pb2
-from modules.dreamview.proto import hmi_status_pb2
+from cyber.python.cyber_py3 import cyber
+from cyber.python.cyber_py3.record import RecordReader
+from modules.common_msgs.chassis_msgs import chassis_pb2
+from modules.common_msgs.dreamview_msgs import hmi_status_pb2
 
 
 kChassisInfoTopic = '/apollo/canbus/chassis'

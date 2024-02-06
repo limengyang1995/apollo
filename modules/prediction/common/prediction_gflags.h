@@ -26,6 +26,7 @@ DECLARE_double(prediction_trajectory_time_resolution);
 DECLARE_double(min_prediction_trajectory_spatial_length);
 DECLARE_bool(enable_trajectory_validation_check);
 DECLARE_bool(enable_tracking_adaptation);
+DECLARE_bool(free_move_predict_with_accelerate);
 
 DECLARE_double(vehicle_max_linear_acc);
 DECLARE_double(vehicle_min_linear_acc);
@@ -41,9 +42,11 @@ DECLARE_double(lane_search_radius_in_junction);
 DECLARE_double(junction_search_radius);
 DECLARE_double(pedestrian_nearby_lane_search_radius);
 DECLARE_int32(road_graph_max_search_horizon);
+DECLARE_double(surrounding_lane_search_radius);
 
 // Semantic Map
 DECLARE_double(base_image_half_range);
+DECLARE_bool(enable_draw_adc_trajectory);
 DECLARE_bool(img_show_semantic_map);
 
 // Scenario
@@ -51,6 +54,7 @@ DECLARE_double(junction_distance_threshold);
 DECLARE_bool(enable_all_junction);
 DECLARE_bool(enable_all_pedestrian_caution_in_front);
 DECLARE_bool(enable_rank_caution_obstacles);
+DECLARE_bool(enable_rank_interactive_obstacles);
 DECLARE_int32(caution_obs_max_nums);
 DECLARE_double(caution_distance_threshold);
 DECLARE_double(caution_search_distance_ahead);
@@ -58,6 +62,12 @@ DECLARE_double(caution_search_distance_backward);
 DECLARE_double(caution_search_distance_backward_for_merge);
 DECLARE_double(caution_search_distance_backward_for_overlap);
 DECLARE_double(caution_pedestrian_approach_time);
+DECLARE_int32(interactive_obs_max_nums);
+DECLARE_double(interaction_distance_threshold);
+DECLARE_double(interaction_search_distance_ahead);
+DECLARE_double(interaction_search_distance_backward);
+DECLARE_double(interaction_search_distance_backward_for_merge);
+DECLARE_double(interaction_search_distance_backward_for_overlap);
 
 // Obstacle features
 DECLARE_int32(ego_vehicle_id);
@@ -96,6 +106,8 @@ DECLARE_double(pedestrian_max_speed);
 DECLARE_double(pedestrian_max_acc);
 DECLARE_double(still_speed);
 DECLARE_string(evaluator_vehicle_mlp_file);
+DECLARE_string(torch_vehicle_jointly_model_file);
+DECLARE_string(torch_vehicle_jointly_model_cpu_file);
 DECLARE_string(torch_vehicle_junction_mlp_file);
 DECLARE_string(torch_vehicle_junction_map_file);
 DECLARE_string(torch_vehicle_semantic_lstm_file);
@@ -103,6 +115,8 @@ DECLARE_string(torch_vehicle_semantic_lstm_cpu_file);
 DECLARE_string(torch_vehicle_cruise_go_file);
 DECLARE_string(torch_vehicle_cruise_cutin_file);
 DECLARE_string(torch_vehicle_lane_scanning_file);
+DECLARE_string(torch_vehicle_vectornet_file);
+DECLARE_string(torch_vehicle_vectornet_cpu_file);
 DECLARE_string(torch_pedestrian_interaction_position_embedding_file);
 DECLARE_string(torch_pedestrian_interaction_social_embedding_file);
 DECLARE_string(torch_pedestrian_interaction_single_lstm_file);
@@ -140,6 +154,8 @@ DECLARE_double(distance_to_slow_down_at_stop_sign);
 
 // Evaluator
 DECLARE_double(time_to_center_if_not_reach);
+DECLARE_uint32(warm_up_times);
+DECLARE_uint32(affine_pool_size);
 DECLARE_double(default_s_if_no_obstacle_in_lane_sequence);
 DECLARE_double(default_l_if_no_obstacle_in_lane_sequence);
 DECLARE_bool(enable_semantic_map);
@@ -171,6 +187,7 @@ DECLARE_double(cost_function_sigma);
 DECLARE_bool(use_bell_curve_for_cost_function);
 
 // interaction predictor
+DECLARE_bool(enable_interactive_tag);
 DECLARE_double(collision_cost_time_resolution);
 DECLARE_double(longitudinal_acceleration_cost_weight);
 DECLARE_double(centripedal_acceleration_cost_weight);

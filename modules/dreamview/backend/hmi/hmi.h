@@ -17,12 +17,12 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 #include "modules/common/monitor_log/monitor_log_buffer.h"
-#include "modules/dreamview/backend/data_collection_monitor/data_collection_monitor.h"
-#include "modules/dreamview/backend/handlers/websocket_handler.h"
+#include "modules/dreamview/backend/common/handlers/websocket_handler.h"
 #include "modules/dreamview/backend/hmi/hmi_worker.h"
-#include "modules/dreamview/backend/map/map_service.h"
+#include "modules/dreamview/backend/common/map_service/map_service.h"
 
 /**
  * @namespace apollo::dreamview
@@ -33,10 +33,18 @@ namespace dreamview {
 
 class HMI {
  public:
-  HMI(WebSocketHandler *websocket, MapService *map_service,
-      DataCollectionMonitor *data_collection_monitor_);
-  void Start();
+  using DvCallback = std::function<nlohmann::json(
+      const std::string &function_name, const nlohmann::json &param_json)>;
+  HMI(WebSocketHandler *websocket, MapService *map_service);
+  void Start(DvCallback callback_api);
   void Stop();
+  bool UpdateScenarioSetToStatus(const std::string &scenario_set_id,
+                                 const std::string &scenario_set_name);
+  bool UpdateDynamicModelToStatus(const std::string &dynamic_model_name);
+  bool UpdateRecordToStatus();
+  bool UpdateVehicleToStatus();
+  bool UpdateCameraChannelToStatus(const std::string& channel_name);
+  bool UpdatePointChannelToStatus(const std::string& channel_name);
 
  private:
   // Send VehicleParam to the given conn, or broadcast if conn is null.
@@ -51,7 +59,6 @@ class HMI {
   // No ownership.
   WebSocketHandler *websocket_;
   MapService *map_service_;
-  DataCollectionMonitor *data_collection_monitor_;
 };
 
 }  // namespace dreamview

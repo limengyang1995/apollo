@@ -19,9 +19,9 @@
 import time
 import argparse
 import google.protobuf.text_format as text_format
-from cyber_py3 import cyber
-from cyber_py3 import cyber_time
-from modules.perception.proto import perception_obstacle_pb2
+from cyber.python.cyber_py3 import cyber
+from cyber.python.cyber_py3 import cyber_time
+from modules.common_msgs.perception_msgs import perception_obstacle_pb2
 
 
 def update(perception_obstacles):

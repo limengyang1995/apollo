@@ -22,7 +22,7 @@ limitations under the License.
 #include "modules/common/util/util.h"
 
 #include "modules/map/hdmap/adapter/xml_parser/common_define.h"
-#include "modules/map/proto/map.pb.h"
+#include "modules/common_msgs/map_msgs/map.pb.h"
 
 namespace apollo {
 namespace hdmap {
@@ -44,6 +44,7 @@ struct ProtoData {
   std::unordered_map<std::string, StopLineInternal> pb_stop_lines;
   std::unordered_map<std::string, PbParkingSpace> pb_parking_spaces;
   std::unordered_map<std::string, PbPNCJunction> pb_pnc_junctions;
+  std::unordered_map<std::string, PbRSU> pb_rsus;
 };
 
 class ProtoOrganizer {
@@ -52,6 +53,7 @@ class ProtoOrganizer {
   void GetJunctionElements(const std::vector<JunctionInternal>& junctions);
   void GetOverlapElements(const std::vector<RoadInternal>& roads,
                           const std::vector<JunctionInternal>& junctions);
+  void GetObjectElements(const ObjectInternal& objects);
   void OutputData(apollo::hdmap::Map* pb_map);
 
  private:

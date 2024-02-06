@@ -24,9 +24,9 @@ Usage:
 import sys
 import time
 
-from cyber_py3 import cyber
-from cyber_py3.record import RecordReader
-from modules.common.proto import drive_event_pb2
+from cyber.python.cyber_py3 import cyber
+from cyber.python.cyber_py3.record import RecordReader
+from modules.common_msgs.basic_msgs import drive_event_pb2
 
 
 kEventTopic = '/apollo/drive_event'

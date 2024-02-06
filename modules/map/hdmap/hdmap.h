@@ -22,18 +22,18 @@
 
 #include "cyber/common/macros.h"
 
-#include "modules/common/proto/geometry.pb.h"
-#include "modules/map/proto/map_clear_area.pb.h"
-#include "modules/map/proto/map_crosswalk.pb.h"
-#include "modules/map/proto/map_junction.pb.h"
-#include "modules/map/proto/map_lane.pb.h"
-#include "modules/map/proto/map_overlap.pb.h"
-#include "modules/map/proto/map_parking_space.pb.h"
-#include "modules/map/proto/map_road.pb.h"
-#include "modules/map/proto/map_signal.pb.h"
-#include "modules/map/proto/map_speed_bump.pb.h"
-#include "modules/map/proto/map_stop_sign.pb.h"
-#include "modules/map/proto/map_yield_sign.pb.h"
+#include "modules/common_msgs/basic_msgs/geometry.pb.h"
+#include "modules/common_msgs/map_msgs/map_clear_area.pb.h"
+#include "modules/common_msgs/map_msgs/map_crosswalk.pb.h"
+#include "modules/common_msgs/map_msgs/map_junction.pb.h"
+#include "modules/common_msgs/map_msgs/map_lane.pb.h"
+#include "modules/common_msgs/map_msgs/map_overlap.pb.h"
+#include "modules/common_msgs/map_msgs/map_parking_space.pb.h"
+#include "modules/common_msgs/map_msgs/map_road.pb.h"
+#include "modules/common_msgs/map_msgs/map_signal.pb.h"
+#include "modules/common_msgs/map_msgs/map_speed_bump.pb.h"
+#include "modules/common_msgs/map_msgs/map_stop_sign.pb.h"
+#include "modules/common_msgs/map_msgs/map_yield_sign.pb.h"
 
 #include "modules/map/hdmap/hdmap_common.h"
 #include "modules/map/hdmap/hdmap_impl.h"
@@ -78,6 +78,7 @@ class HDMap {
   RoadInfoConstPtr GetRoadById(const Id& id) const;
   ParkingSpaceInfoConstPtr GetParkingSpaceById(const Id& id) const;
   PNCJunctionInfoConstPtr GetPNCJunctionById(const Id& id) const;
+  RSUInfoConstPtr GetRSUById(const Id& id) const;
 
   /**
    * @brief get all lanes in certain range
@@ -180,6 +181,21 @@ class HDMap {
   int GetPNCJunctions(
       const apollo::common::PointENU& point, double distance,
       std::vector<PNCJunctionInfoConstPtr>* pnc_junctions) const;
+
+  /**
+   * @brief get nearest lane from target point with search radius,
+   * @param point the target point
+   * @param distance the search radius
+   * @param nearest_lane the nearest lane that match search conditions
+   * @param nearest_s the offset from lane start point along lane center line
+   * @param nearest_l the lateral offset from lane center line
+   * @return 0:success, otherwise, failed.
+   */
+  int GetNearestLaneWithDistance(const apollo::common::PointENU& point,
+                                 const double distance,
+                                 LaneInfoConstPtr* nearest_lane,
+                                 double* nearest_s, double* nearest_l) const;
+
   /**
    * @brief get nearest lane from target point,
    * @param point the target point
@@ -296,6 +312,22 @@ class HDMap {
    */
   int GetLocalMap(const apollo::common::PointENU& point,
                   const std::pair<double, double>& range, Map* local_map) const;
+
+  /**
+   * @brief get forward nearest rsus within certain range
+   * @param point the target position
+   * @param distance the forward search distance
+   * @param central_heading the base heading
+   * @param max_heading_difference the heading range
+   * @param rsus all rsus that match search conditions
+   * @return 0:success, otherwise failed
+   */
+  int GetForwardNearestRSUs(const apollo::common::PointENU& point,
+                    double distance, double central_heading,
+                    double max_heading_difference,
+                    std::vector<RSUInfoConstPtr>* rsus) const;
+
+  bool GetMapHeader(Header* map_header) const;
 
  private:
   HDMapImpl impl_;

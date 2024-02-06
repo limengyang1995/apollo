@@ -19,7 +19,7 @@
 #include <thread>
 #include <vector>
 
-#include "third_party/json/json.hpp"
+#include "nlohmann/json.hpp"
 
 #include "cyber/common/file.h"
 #include "cyber/common/log.h"
@@ -28,7 +28,7 @@
 #include "modules/common/adapters/adapter_gflags.h"
 #include "modules/common/util/message_util.h"
 #include "modules/map/relative_map/common/relative_map_gflags.h"
-#include "modules/map/relative_map/proto/navigation.pb.h"
+#include "modules/common_msgs/planning_msgs/navigation.pb.h"
 #include "modules/map/relative_map/proto/navigator_config.pb.h"
 
 using apollo::cyber::Rate;

@@ -21,7 +21,7 @@
 DEFINE_double(double_precision, 1e-6, "precision of double");
 
 // prediction trajectory and dynamic model
-DEFINE_double(prediction_trajectory_time_length, 8.0,
+DEFINE_double(prediction_trajectory_time_length, 6.0,
               "Time length of predicted trajectory (in seconds)");
 DEFINE_double(prediction_trajectory_time_resolution, 0.1,
               "Time resolution of predicted trajectory (in seconds");
@@ -31,6 +31,8 @@ DEFINE_bool(enable_trajectory_validation_check, false,
             "If check the validity of prediction trajectory.");
 DEFINE_bool(enable_tracking_adaptation, false,
             "If enable prediction tracking adaptation");
+DEFINE_bool(free_move_predict_with_accelerate, false,
+              "If freemove predict with accelerate");
 
 DEFINE_double(vehicle_max_linear_acc, 4.0,
               "Upper bound of vehicle linear acceleration");
@@ -53,9 +55,13 @@ DEFINE_double(pedestrian_nearby_lane_search_radius, 5.0,
               "Radius to determine if pedestrian-like obstacle is near lane.");
 DEFINE_int32(road_graph_max_search_horizon, 20,
              "Maximal search depth for building road graph");
+DEFINE_double(surrounding_lane_search_radius, 3.0,
+              "Search radius for surrounding lanes.");
 
 // Semantic Map
 DEFINE_double(base_image_half_range, 100.0, "The half range of base image.");
+DEFINE_bool(enable_draw_adc_trajectory, true,
+            "If draw adc trajectory in semantic map");
 DEFINE_bool(img_show_semantic_map, false, "If show the image of semantic map.");
 
 // Scenario
@@ -68,6 +74,8 @@ DEFINE_bool(enable_all_pedestrian_caution_in_front, false,
             "If true, then all pedestrian in front of ADC are marked caution.");
 DEFINE_bool(enable_rank_caution_obstacles, true,
             "Rank the caution-level obstacles.");
+DEFINE_bool(enable_rank_interactive_obstacles, true,
+            "Rank the interactive obstacles.");
 DEFINE_int32(caution_obs_max_nums, 6,
              "The max number of caution-level obstacles");
 DEFINE_double(caution_distance_threshold, 60.0,
@@ -84,6 +92,20 @@ DEFINE_double(caution_search_distance_backward_for_overlap, 30.0,
               "in the case of overlap");
 DEFINE_double(caution_pedestrian_approach_time, 3.0,
               "The time for a pedestrian to approach adc trajectory");
+DEFINE_int32(interactive_obs_max_nums, 6,
+             "The max number of interactive obstacles");
+DEFINE_double(interaction_distance_threshold, 60.0,
+              "Distance threshold for interactive obstacles");
+DEFINE_double(interaction_search_distance_ahead, 50.0,
+              "The distance ahead to search interactive obstacles");
+DEFINE_double(interaction_search_distance_backward, 50.0,
+              "The distance backward to search interactive obstacles");
+DEFINE_double(interaction_search_distance_backward_for_merge, 60.0,
+              "The distance backward to search interactive obstacles "
+              "in the case of merging");
+DEFINE_double(interaction_search_distance_backward_for_overlap, 30.0,
+              "The distance backward to search interactive obstacles "
+              "in the case of overlap");
 
 // Obstacle features
 DEFINE_int32(ego_vehicle_id, -1, "The obstacle ID of the ego vehicle.");
@@ -149,6 +171,16 @@ DEFINE_string(evaluator_vehicle_mlp_file,
 DEFINE_string(evaluator_vehicle_rnn_file,
               "/apollo/modules/prediction/data/rnn_vehicle_model.bin",
               "rnn model file for vehicle evaluator");
+DEFINE_string(
+    torch_vehicle_jointly_model_file,
+    "/apollo/modules/prediction/data/"
+    "jointly_prediction_planning_vehicle_model.pt",
+    "Vehicle jointly prediction and planning model file");
+DEFINE_string(
+    torch_vehicle_jointly_model_cpu_file,
+    "/apollo/modules/prediction/data/"
+    "jointly_prediction_planning_vehicle_cpu_model.pt",
+    "Vehicle jointly prediction and planning cpu model file");
 DEFINE_string(torch_vehicle_junction_mlp_file,
               "/apollo/modules/prediction/data/junction_mlp_vehicle_model.pt",
               "Vehicle junction MLP model file");
@@ -171,6 +203,12 @@ DEFINE_string(torch_vehicle_cruise_cutin_file,
 DEFINE_string(torch_vehicle_lane_scanning_file,
               "/apollo/modules/prediction/data/lane_scanning_vehicle_model.pt",
               "Vehicle lane scanning model file");
+DEFINE_string(torch_vehicle_vectornet_file,
+              "/apollo/modules/prediction/data/vectornet_vehicle_model.pt",
+              "Vehicle vectornet model file");
+DEFINE_string(torch_vehicle_vectornet_cpu_file,
+              "/apollo/modules/prediction/data/vectornet_vehicle_cpu_model.pt",
+              "Vehicle vectornet cpu model file");
 DEFINE_string(torch_pedestrian_interaction_position_embedding_file,
               "/apollo/modules/prediction/data/"
               "pedestrian_interaction_position_embedding.pt",
@@ -216,7 +254,7 @@ DEFINE_double(valid_position_diff_rate_threshold, 0.075,
 DEFINE_double(split_rate, 0.5, "obstacle split rate for adjusting velocity");
 DEFINE_double(rnn_min_lane_relatice_s, 5.0,
               "Minimal relative s for RNN model.");
-DEFINE_bool(adjust_velocity_by_obstacle_heading, false,
+DEFINE_bool(adjust_velocity_by_obstacle_heading, true,
             "Use obstacle heading for velocity.");
 DEFINE_bool(adjust_velocity_by_position_shift, false,
             "adjust velocity heading to lane heading");
@@ -254,6 +292,10 @@ DEFINE_double(distance_to_slow_down_at_stop_sign, 80.0,
 // Evaluator
 DEFINE_double(time_to_center_if_not_reach, 10.0,
               "Default value of time to lane center of not reach.");
+DEFINE_uint32(affine_pool_size, 80,
+              "The number of cv mat pool size.");
+DEFINE_uint32(warm_up_times, 10,
+              "The number of torch model warm up times.");
 DEFINE_double(default_s_if_no_obstacle_in_lane_sequence, 1000.0,
               "The default s value if no obstacle in the lane sequence.");
 DEFINE_double(default_l_if_no_obstacle_in_lane_sequence, 10.0,
@@ -315,6 +357,8 @@ DEFINE_bool(use_bell_curve_for_cost_function, false,
             "Whether to use bell curve for the cost function or not.");
 
 // interaction predictor
+DEFINE_bool(enable_interactive_tag, true,
+            "Whether to set interactive tag for obstacles.");
 DEFINE_double(collision_cost_time_resolution, 1.0,
               "The time resolution used to compute the collision cost");
 DEFINE_double(longitudinal_acceleration_cost_weight, 0.2,

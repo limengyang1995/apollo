@@ -22,8 +22,8 @@ from matplotlib import cm as cmx
 from matplotlib import colors as mcolors
 import matplotlib.pyplot as plt
 
-from modules.map.proto import map_pb2
-import common.proto_utils as proto_utils
+from modules.common_msgs.map_msgs import map_pb2
+import modules.tools.common.proto_utils as proto_utils
 
 
 class Map:

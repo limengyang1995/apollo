@@ -16,8 +16,12 @@
 # limitations under the License.
 ###############################################################################
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
-python $DIR/result2pb.py $DIR/../../control/conf/control_conf.pb.txt $1
+TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd  -P)"
+if [[ -f "/opt/apollo/neo/packages/tools-dev/latest/vehicle_calibration/result2pb" ]]; then
+    /opt/apollo/neo/packages/tools-dev/latest/vehicle_calibration/result2pb /opt/apollo/neo/packages/control-dev/latest/conf/control_conf.pb.txt $1
+else
+    ${TOP_DIR}/bazel-bin/modules/tools/vehicle_calibration/result2pb ${TOP_DIR}/modules/control/conf/control_conf.pb.txt $1
+fi
 
 echo "Created control conf file: control_conf_pb.txt"
-echo "with updated calibration table"
+

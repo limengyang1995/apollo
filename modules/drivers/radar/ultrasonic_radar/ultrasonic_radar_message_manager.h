@@ -27,7 +27,7 @@
 #include "modules/drivers/canbus/can_client/can_client_factory.h"
 #include "modules/drivers/canbus/can_comm/can_sender.h"
 #include "modules/drivers/canbus/can_comm/message_manager.h"
-#include "modules/drivers/proto/ultrasonic_radar.pb.h"
+#include "modules/common_msgs/sensor_msgs/ultrasonic_radar.pb.h"
 
 #include "modules/drivers/canbus/sensor_gflags.h"
 
@@ -37,7 +37,7 @@ namespace ultrasonic_radar {
 
 using ::apollo::drivers::canbus::MessageManager;
 using ::apollo::drivers::canbus::ProtocolData;
-using Clock = ::apollo::common::time::Clock;
+using Time = ::apollo::cyber::Time;
 using micros = std::chrono::microseconds;
 using ::apollo::common::ErrorCode;
 using apollo::drivers::canbus::CanClient;

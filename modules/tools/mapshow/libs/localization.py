@@ -19,8 +19,8 @@
 import math
 import threading
 
-import common.proto_utils as proto_utils
-from modules.localization.proto.localization_pb2 import LocalizationEstimate
+import modules.tools.common.proto_utils as proto_utils
+from modules.common_msgs.localization_msgs.localization_pb2 import LocalizationEstimate
 
 
 class Localization:
