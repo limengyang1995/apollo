@@ -1,0 +1,71 @@
+
+module_config {
+    module_library : "modules/drivers/lidar/hesai/libhesai_driver_component.so"
+    #front_left_40p
+    components {
+        class_name : "HesaiComponent"
+        config {
+          name : "front_left_hesai40p_driver"
+          config_file_path : "/apollo/modules/drivers/lidar/hesai/conf/hesai40p_front_left.pb.txt"
+        }
+    }
+    #front_right_40p
+    components {
+        class_name : "HesaiComponent"
+        config {
+          name : "front_right_hesai40p_driver"
+          config_file_path : "/apollo/modules/drivers/lidar/hesai/conf/hesai40p_front_right.pb.txt"
+        }
+    }
+    #rear_left_40p
+    components {
+        class_name : "HesaiComponent"
+        config {
+          name : "rear_left_hesai40p_driver"
+          config_file_path : "/apollo/modules/drivers/lidar/hesai/conf/hesai40p_rear_left.pb.txt"
+        }
+    }
+    #rear_right_40p
+    components {
+        class_name : "HesaiComponent"
+        config {
+          name : "rear_right_hesai40p_driver"
+          config_file_path : "/apollo/modules/drivers/lidar/hesai/conf/hesai40p_rear_right.pb.txt"
+        }
+    }
+}
+
+
+##################################################
+#                    fusion                      #
+##################################################
+
+module_config {
+    module_library : "modules/drivers/lidar/velodyne/fusion/libvelodyne_fusion_component.so"
+
+    components {
+      class_name : "PriSecFusionComponent"
+      config {
+        name : "hesai40p_fusion"
+        config_file_path : "/apollo/modules/drivers/lidar/hesai/conf/hesai40p_fusion_conf.pb.txt"
+        readers {channel: "/apollo/sensor/hesai40/front_left/PointCloud2"}
+      }
+    }
+}
+
+##################################################
+#                compensation                    #
+##################################################
+
+module_config {
+    module_library : "modules/drivers/lidar/velodyne/compensator/libvelodyne_compensator_component.so"
+
+    components {
+      class_name : "CompensatorComponent"
+      config {
+        name : "hesai40p_fusion_compensator"
+        config_file_path : "/apollo/modules/drivers/lidar/hesai/conf/hesai40p_fusion_compensator.pb.txt"
+        readers {channel: "/apollo/sensor/hesai40/fusion/PointCloud2"}
+      }
+    }
+}

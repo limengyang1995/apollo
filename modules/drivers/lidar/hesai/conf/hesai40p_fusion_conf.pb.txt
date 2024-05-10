@@ -1,0 +1,12 @@
+max_interval_ms: 50
+drop_expired_data : true
+fusion_channel: "/apollo/sensor/hesai40/fusion/PointCloud2"
+input_channel: [
+    "/apollo/sensor/hesai40/front_left/PointCloud2",
+    "/apollo/sensor/hesai40/front_right/PointCloud2",
+    "/apollo/sensor/hesai40/rear_right/PointCloud2",
+    "/apollo/sensor/hesai40/rear_left/PointCloud2"
+]
+
+# wait time after main channel receive msg, unit second
+wait_time_s: 0.02

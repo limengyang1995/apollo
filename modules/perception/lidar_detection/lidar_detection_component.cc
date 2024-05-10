@@ -71,6 +71,7 @@ bool LidarDetectionComponent::Proc(
   PERF_FUNCTION()
   // internal proc
   bool status = InternalProc(message);
+  AERROR << "lidar dectetion ----";
   if (status) {
     writer_->Write(message);
     AINFO << "Send Lidar detection output message.";

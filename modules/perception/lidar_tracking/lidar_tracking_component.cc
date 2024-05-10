@@ -31,7 +31,7 @@ bool LidarTrackingComponent::Init() {
     AERROR << "Get LidarTrackingComponentConfig file failed";
     return false;
   }
-  AINFO << "Lidar Tracking Component Configs: " << comp_config.DebugString();
+  AERROR << "Lidar Tracking Component Configs: " << comp_config.DebugString();
 
   // writer
   std::string output_channel_name = comp_config.output_channel_name();
@@ -68,7 +68,7 @@ bool LidarTrackingComponent::Init() {
 bool LidarTrackingComponent::Proc(
     const std::shared_ptr<LidarFrameMessage>& message) {
   PERF_FUNCTION()
-  AINFO << std::setprecision(16)
+  AERROR << std::setprecision(16)
         << "Enter LidarTracking component, message timestamp: "
         << message->timestamp_
         << " current timestamp: " << Clock::NowInSeconds();
@@ -76,6 +76,7 @@ bool LidarTrackingComponent::Proc(
   auto out_message = std::make_shared<SensorFrameMessage>();
 
   if (InternalProc(message, out_message)) {
+    AERROR << "lidar tracking output-----";
     writer_->Write(out_message);
     return true;
   }

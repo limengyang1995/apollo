@@ -1,0 +1,11 @@
+ip: "192.168.20.14"
+lidar_recv_port: 2369
+gps_recv_port: 10111
+start_angle: 0
+pointcloud_channel: "/apollo/sensor/hesai40/front_right/PointCloud2"
+scan_channel: "/apollo/sensor/hesai40/front_right/Scan"
+time_zone: 8
+frame_id: "hesai40p_front_right"
+model: HESAI40P
+#is_online_calibration: false
+#calibration_file: "/apollo/hesai_calibration"
