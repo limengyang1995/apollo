@@ -146,3 +146,6 @@ DEFINE_double(throttle_smoothing_factor, 0.05, "speed smooth factor");
 
 DEFINE_bool(use_calibration_dimension_equal_check, false,
             "use calibration dimension equal check");
+DEFINE_bool(enable_cloud_drive, true,
+            "True to open cloud drive switch");
+            

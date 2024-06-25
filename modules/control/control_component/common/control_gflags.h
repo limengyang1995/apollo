@@ -111,3 +111,4 @@ DECLARE_double(speed_smoothing_factor);
 DECLARE_double(throttle_smoothing_factor);
 
 DECLARE_bool(use_calibration_dimension_equal_check);
+DECLARE_bool(enable_cloud_drive);
