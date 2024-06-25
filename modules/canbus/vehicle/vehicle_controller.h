@@ -267,6 +267,13 @@ ErrorCode VehicleController<SensorType>::SetDrivingMode(
       }
       break;
     }
+    case Chassis::REMOTE_CLOUD_DRIVE: {
+      if (EnableCloudMode() != ErrorCode::OK) {
+        AERROR << "Failed to enable cloud remote mode";
+        return ErrorCode::CANBUS_ERROR;
+      }
+      break;
+    }
     default:
       break;
   }
@@ -307,6 +314,11 @@ ErrorCode VehicleController<SensorType>::Update(
           break;
         }
       }
+      if (control_command.has_cloud_takeover_request() && control_command.cloud_takeover_request() == true){
+        AINFO << "control has received cloud control request:";
+        mode = Chassis::REMOTE_CLOUD_DRIVE;
+      } 
+
       auto error_code = SetDrivingMode(mode);
       if (error_code != ErrorCode::OK) {
         AERROR << "Failed to set driving mode.";
@@ -317,7 +329,8 @@ ErrorCode VehicleController<SensorType>::Update(
   }
 
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
-      driving_mode() == Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() == Chassis::AUTO_SPEED_ONLY || 
+      driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
     Gear(control_command.gear_location());
     Throttle(control_command.throttle());
     Acceleration(control_command.acceleration());
@@ -327,7 +340,8 @@ ErrorCode VehicleController<SensorType>::Update(
   }
 
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
-      driving_mode() == Chassis::AUTO_STEER_ONLY) {
+      driving_mode() == Chassis::AUTO_STEER_ONLY || 
+      driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
     const double steering_rate_threshold = 1.0;
     if (control_command.steering_rate() > steering_rate_threshold) {
       Steer(control_command.steering_target(), control_command.steering_rate());
@@ -338,7 +352,8 @@ ErrorCode VehicleController<SensorType>::Update(
 
   if ((driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
        driving_mode() == Chassis::AUTO_SPEED_ONLY ||
-       driving_mode() == Chassis::AUTO_STEER_ONLY) &&
+       driving_mode() == Chassis::AUTO_STEER_ONLY || 
+       driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) &&
       control_command.has_signal()) {
     HandleVehicleSignal(
         ProcessCommandChange(control_command.signal(), &last_control_command_));
@@ -357,7 +372,8 @@ ErrorCode VehicleController<SensorType>::Update(
 
   if ((driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
        driving_mode() == Chassis::AUTO_SPEED_ONLY ||
-       driving_mode() == Chassis::AUTO_STEER_ONLY) &&
+       driving_mode() == Chassis::AUTO_STEER_ONLY  || 
+       driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) &&
       chassis_command.has_basic_signal()) {
     HandleVehicleSignal(ProcessCommandChange(chassis_command.basic_signal(),
                                              &last_chassis_command_));

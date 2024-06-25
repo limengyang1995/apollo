@@ -59,6 +59,8 @@ class ControlComponent final : public apollo::cyber::TimerComponent {
   bool Proc() override;
 
  private:
+  void OnCloudControlCommand(const apollo::control::ControlCommand &cloud_control_command);
+
   // Upon receiving pad message
   void OnPad(const std::shared_ptr<PadMessage> &pad);
 
@@ -92,6 +94,7 @@ class ControlComponent final : public apollo::cyber::TimerComponent {
   localization::LocalizationEstimate latest_localization_;
   canbus::Chassis latest_chassis_;
   planning::ADCTrajectory latest_trajectory_;
+  control::ControlCommand latest_cloud_command_;
   external_command::CommandStatus planning_command_status_;
   PadMessage pad_msg_;
   common::Header latest_replan_trajectory_header_;
@@ -99,6 +102,8 @@ class ControlComponent final : public apollo::cyber::TimerComponent {
   ControlTaskAgent control_task_agent_;
 
   bool estop_ = false;
+  bool cloud_takeover_ = false;
+  bool receive_cloud_cmd_ = false;
   std::string estop_reason_;
   bool pad_received_ = false;
 
@@ -110,7 +115,7 @@ class ControlComponent final : public apollo::cyber::TimerComponent {
   ControlPipeline control_pipeline_;
 
   std::mutex mutex_;
-
+  std::shared_ptr<cyber::Reader<apollo::control::ControlCommand>> cloud_control_command_reader_;
   std::shared_ptr<cyber::Reader<apollo::canbus::Chassis>> chassis_reader_;
   std::shared_ptr<cyber::Reader<PadMessage>> pad_msg_reader_;
   std::shared_ptr<cyber::Reader<apollo::localization::LocalizationEstimate>>
@@ -123,6 +128,7 @@ class ControlComponent final : public apollo::cyber::TimerComponent {
   std::shared_ptr<cyber::Writer<ControlCommand>> control_cmd_writer_;
   // when using control submodules
   std::shared_ptr<cyber::Writer<LocalView>> local_view_writer_;
+
 
   common::monitor::MonitorLogBuffer monitor_logger_buffer_;
 

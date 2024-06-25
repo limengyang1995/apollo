@@ -414,6 +414,29 @@ ErrorCode LincolnController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+ErrorCode LincolnController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+  brake_60_->set_enable();
+  throttle_62_->set_enable();
+  steering_64_->set_enable();
+
+  can_sender_->Update();
+  const int32_t flag =
+      CHECK_RESPONSE_STEER_UNIT_FLAG | CHECK_RESPONSE_SPEED_UNIT_FLAG;
+  if (!CheckResponse(flag, true)) {
+    AERROR << "Failed to switch to REMOTE_CLOUD_DRIVE mode.";
+    CheckChassisError();
+    Emergency();
+    return ErrorCode::CANBUS_ERROR;
+  }
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
 ErrorCode LincolnController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();
@@ -472,7 +495,8 @@ ErrorCode LincolnController::EnableSpeedOnlyMode() {
 // NEUTRAL, REVERSE, DRIVE
 void LincolnController::Gear(Chassis::GearPosition ref_gear_position) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "This drive mode no need to set gear.";
     return;
   }
@@ -539,7 +563,8 @@ void LincolnController::Gear(Chassis::GearPosition ref_gear_position) {
 // -> pedal
 void LincolnController::Brake(double pedal) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "The current drive mode does not need to set acceleration.";
     return;
   }
@@ -550,7 +575,8 @@ void LincolnController::Brake(double pedal) {
 // gas:0.00~99.99 unit:%
 void LincolnController::Throttle(double pedal) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "The current drive mode does not need to set acceleration.";
     return;
   }
@@ -561,7 +587,8 @@ void LincolnController::Throttle(double pedal) {
 // acc:-7.0 ~ 5.0, unit:m/s^2
 void LincolnController::Acceleration(double acc) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "The current drive mode does not need to set acceleration.";
     return;
   }
@@ -574,7 +601,8 @@ void LincolnController::Acceleration(double acc) {
 // angle:-99.99~0.00~99.99, unit:%, left:-, right:+
 void LincolnController::Steer(double angle) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_STEER_ONLY) {
+      driving_mode() != Chassis::AUTO_STEER_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "The current driving mode does not need to set steer.";
     return;
   }
@@ -589,7 +617,8 @@ void LincolnController::Steer(double angle) {
 // angle_spd:0.00~99.99, unit:deg/s
 void LincolnController::Steer(double angle, double angle_spd) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_STEER_ONLY) {
+      driving_mode() != Chassis::AUTO_STEER_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE ) {
     AINFO << "The current driving mode does not need to set steer.";
     return;
   }
@@ -794,7 +823,8 @@ void LincolnController::SecurityDogThreadFunc() {
 
     // 1. Steer control check
     if ((mode == Chassis::COMPLETE_AUTO_DRIVE ||
-         mode == Chassis::AUTO_STEER_ONLY) &&
+         mode == Chassis::AUTO_STEER_ONLY || 
+         mode == Chassis::REMOTE_CLOUD_DRIVE) &&
         !CheckResponse(CHECK_RESPONSE_STEER_UNIT_FLAG, false)) {
       ++steer_ctrl_fail;
       if (steer_ctrl_fail >= kMaxFailAttempt) {
@@ -807,7 +837,8 @@ void LincolnController::SecurityDogThreadFunc() {
 
     // 2. Speed control check
     if ((mode == Chassis::COMPLETE_AUTO_DRIVE ||
-         mode == Chassis::AUTO_SPEED_ONLY) &&
+         mode == Chassis::AUTO_SPEED_ONLY || 
+         mode == Chassis::REMOTE_CLOUD_DRIVE) &&
         !CheckResponse(CHECK_RESPONSE_SPEED_UNIT_FLAG, false)) {
       ++speed_ctrl_fail;
       if (speed_ctrl_fail >= kMaxFailAttempt) {

@@ -20,6 +20,7 @@ message Chassis {
 
     // security mode when manual intervention happens, only response status
     EMERGENCY_MODE = 4;
+    REMOTE_CLOUD_DRIVE = 5; //remote cloud driving
   }
 
   enum ErrorCode {

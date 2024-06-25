@@ -132,3 +132,7 @@ DEFINE_bool(is_control_ut_test_mode, false,
 
 DEFINE_bool(publish_control_debug_info, false,
             "True to run control in ut test mode");
+
+DEFINE_bool(enable_cloud_drive, true,
+            "True to open cloud drive switch");
+            

@@ -91,6 +91,7 @@ class LincolnController final
   // main logical function for operation the car enter or exit the auto driving
   void Emergency() override;
   common::ErrorCode EnableAutoMode() override;
+  common::ErrorCode EnableCloudMode override;
   common::ErrorCode DisableAutoMode() override;
   common::ErrorCode EnableSteeringOnlyMode() override;
   common::ErrorCode EnableSpeedOnlyMode() override;

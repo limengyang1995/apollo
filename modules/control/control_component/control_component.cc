@@ -155,6 +155,13 @@ void ControlComponent::OnPlanning(
   latest_trajectory_.CopyFrom(*trajectory);
 }
 
+void ControlComponent::OnCloudControlCommand(
+    const ControlCommand &cloud_control_command) {
+  ADEBUG << "Received cloud command data: run cloud control callback.";
+  std::lock_guard<std::mutex> lock(mutex_);
+  latest_cloud_command_.CopyFrom(*cloud_control_command);
+}
+
 void ControlComponent::OnPlanningCommandStatus(
     const std::shared_ptr<external_command::CommandStatus>
         &planning_command_status) {
@@ -304,6 +311,19 @@ Status ControlComponent::ProduceControlCommand(
         injector_->previous_control_command_mutable()->steering_target();
     control_command->set_steering_target(previous_steering_command_);
   }
+
+  //cloud_takeover_ = local_view_.cloud_control_cmd().cloud_takeover_request() ;
+  if (FLAGS_enable_cloud_drive && receive_cloud_cmd_ && cloud_takeover_){
+    control_command->set_speed(local_view_.cloud_control_cmd().speed());
+    control_command->set_throttle(local_view_.cloud_control_cmd().throttle());
+    control_command->set_brake(local_view_.cloud_control_cmd().brake());
+    control_command->set_gear_location(Chassis::GEAR_DRIVE);
+    control_command->set_steering_target(local_view_.cloud_control_cmd().steering_target());
+    control_command->set_cloud_takeover_request(true);
+  }else{
+    control_command->set_cloud_takeover_request(false);
+  }
+
   // check signal
   if (local_view_.trajectory().decision().has_vehicle_signal()) {
     control_command->mutable_signal()->CopyFrom(
@@ -355,6 +375,12 @@ bool ControlComponent::Proc() {
   }
   OnLocalization(localization_msg);
 
+  cloud_control_command_reader_->Observe();
+  const auto &cloud_control_command_msg = cloud_control_command_reader_->GetLatestObserved();
+  if (cloud_control_command_msg != nullptr) {
+    OnCloudControlCommand(cloud_control_command_msg);
+  }
+  
   pad_msg_reader_->Observe();
   const auto &pad_msg = pad_msg_reader_->GetLatestObserved();
   if (pad_msg != nullptr) {
@@ -367,6 +393,9 @@ bool ControlComponent::Proc() {
     local_view_.mutable_chassis()->CopyFrom(latest_chassis_);
     local_view_.mutable_trajectory()->CopyFrom(latest_trajectory_);
     local_view_.mutable_localization()->CopyFrom(latest_localization_);
+    if (cloud_control_command_msg != nullptr){
+      local_view_.mutable_cloud_control_cmd()->CopyFrom(latest_cloud_command_);
+    }
     if (pad_msg != nullptr) {
       local_view_.mutable_pad_msg()->CopyFrom(pad_msg_);
     }
@@ -403,6 +432,20 @@ bool ControlComponent::Proc() {
       estop_reason_.clear();
     }
     pad_received_ = true;
+  }
+
+  if (cloud_control_command_msg != nullptr){
+    AINFO << "cloud control command message: " << latest_cloud_command_.ShortDebugString();
+    if (latest_cloud_command_.cloud_takeover_request() == true){
+      AINFO << "Cloud reuest takeover";
+      cloud_takeover_ = true;
+    }else{
+      cloud_takeover_ = false;
+    }
+    receive_cloud_cmd_ = true;
+  }else{
+    receive_cloud_cmd_ = false;
+    cloud_takeover_ = false;
   }
 
   if (FLAGS_is_control_test_mode && FLAGS_control_test_duration > 0 &&
