@@ -341,6 +341,31 @@ ErrorCode LexusController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+ErrorCode LexusController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+
+  
+  accel_cmd_100_->set_enable(true);
+  accel_cmd_100_->set_clear_override(true);
+  brake_cmd_104_->set_enable(true);
+  brake_cmd_104_->set_clear_override(true);
+  steering_cmd_12c_->set_enable(true);
+  steering_cmd_12c_->set_clear_override(true);
+  shift_cmd_128_->set_enable(true);
+  shift_cmd_128_->set_clear_override(true);
+
+  can_sender_->Update();
+
+  
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
+
 ErrorCode LexusController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();

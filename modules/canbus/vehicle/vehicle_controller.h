@@ -107,6 +107,7 @@ class VehicleController {
 
   virtual common::ErrorCode EnableAutoMode() = 0;
   virtual common::ErrorCode DisableAutoMode() = 0;
+  virtual common::ErrorCode EnableCloudMode() = 0;
   virtual common::ErrorCode EnableSteeringOnlyMode() = 0;
   virtual common::ErrorCode EnableSpeedOnlyMode() = 0;
 

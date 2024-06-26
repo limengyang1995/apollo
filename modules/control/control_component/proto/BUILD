@@ -24,6 +24,7 @@ proto_library(
         "//modules/common_msgs/control_msgs:control_pad_msg_proto",
         "//modules/common_msgs/localization_msgs:localization_proto",
         "//modules/common_msgs/planning_msgs:planning_proto",
+        "//modules/common_msgs/control_msgs:control_cmd_proto",
     ],
 )
 

@@ -329,6 +329,24 @@ ErrorCode Neolix_eduController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+ErrorCode Neolix_eduController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+  ads_brake_command_46_->set_drive_enable(true);
+  ads_drive_command_50_->set_drive_enable(true);
+  ads_eps_command_56_->set_drive_enable(true);
+
+
+  can_sender_->Update();
+  
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
+
 ErrorCode Neolix_eduController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();

@@ -68,6 +68,7 @@ class WeyController final : public VehicleController<::apollo::canbus::Wey> {
   void Emergency() override;
   ::apollo::common::ErrorCode EnableAutoMode() override;
   ::apollo::common::ErrorCode DisableAutoMode() override;
+  ::apollo::common::ErrorCode EnableCloudMode() override;
   ::apollo::common::ErrorCode EnableSteeringOnlyMode() override;
   ::apollo::common::ErrorCode EnableSpeedOnlyMode() override;
 

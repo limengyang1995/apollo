@@ -282,6 +282,29 @@ ErrorCode TransitController::EnableAutoMode() {
   }
   return ErrorCode::OK;
 }
+ErrorCode TransitController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+  SetLimits();
+
+  adc_motioncontrol1_10_->set_adc_cmd_autonomyrequest(
+      Adc_motioncontrol1_10::ADC_CMD_AUTONOMYREQUEST_AUTONOMY_REQUESTED);
+  adc_motioncontrol1_10_->set_adc_cmd_steeringcontrolmode(
+      Adc_motioncontrol1_10::ADC_CMD_STEERINGCONTROLMODE_ANGLE);
+  adc_motioncontrol1_10_->set_adc_cmd_longitudinalcontrolmode(
+      Adc_motioncontrol1_10::
+          ADC_CMD_LONGITUDINALCONTROLMODE_DIRECT_THROTTLE_BRAKE);
+
+  can_sender_->Update();
+
+  
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
 
 ErrorCode TransitController::DisableAutoMode() {
   ResetProtocol();

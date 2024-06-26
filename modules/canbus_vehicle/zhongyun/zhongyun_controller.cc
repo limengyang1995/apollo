@@ -312,6 +312,31 @@ ErrorCode ZhongyunController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+
+ErrorCode ZhongyunController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+  steering_control_a2_->set_steering_enable_control(
+      Steering_control_a2::STEERING_ENABLE_CONTROL_STEERING_AUTOCONTROL);
+  gear_control_a1_->set_gear_enable_control(
+      Gear_control_a1::GEAR_ENABLE_CONTROL_GEAR_AUTOCONTROL);
+  torque_control_a3_->set_driven_enable_control(
+      Torque_control_a3::DRIVEN_ENABLE_CONTROL_DRIVE_AUTO);
+  brake_control_a4_->set_brake_enable_control(
+      Brake_control_a4::BRAKE_ENABLE_CONTROL_BRAKE_AUTO);
+  parking_control_a5_->set_parking_enable_control(
+      Parking_control_a5::PARKING_ENABLE_CONTROL_PARKING_AUTOCONTROL);
+
+  can_sender_->Update();
+  
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
+
 ErrorCode ZhongyunController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();
