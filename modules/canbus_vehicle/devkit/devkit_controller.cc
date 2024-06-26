@@ -512,6 +512,35 @@ ErrorCode DevkitController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+ErrorCode DevkitController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+
+  brake_command_101_->set_brake_en_ctrl(
+      Brake_command_101::BRAKE_EN_CTRL_ENABLE);
+  throttle_command_100_->set_throttle_en_ctrl(
+      Throttle_command_100::THROTTLE_EN_CTRL_ENABLE);
+  steering_command_102_->set_steer_en_ctrl(
+      Steering_command_102::STEER_EN_CTRL_ENABLE);
+  gear_command_103_->set_gear_en_ctrl(Gear_command_103::GEAR_EN_CTRL_ENABLE);
+  park_command_104_->set_park_en_ctrl(Park_command_104::PARK_EN_CTRL_ENABLE);
+  // set AEB enable
+  if (FLAGS_enable_aeb) {
+    brake_command_101_->set_aeb_en_ctrl(
+        Brake_command_101::AEB_EN_CTRL_ENABLE_AEB);
+    AINFO << "Set AEB enable";
+  }
+
+  can_sender_->Update();
+
+  
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
 ErrorCode DevkitController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();

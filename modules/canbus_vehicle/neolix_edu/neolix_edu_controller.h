@@ -78,6 +78,7 @@ class Neolix_eduController final
   ::apollo::common::ErrorCode EnableAutoMode() override;
   ::apollo::common::ErrorCode DisableAutoMode() override;
   ::apollo::common::ErrorCode EnableSteeringOnlyMode() override;
+  ::apollo::common::ErrorCode EnableCloudMode() override;
   ::apollo::common::ErrorCode EnableSpeedOnlyMode() override;
 
   // NEUTRAL, REVERSE, DRIVE

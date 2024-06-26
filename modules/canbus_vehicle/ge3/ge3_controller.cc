@@ -451,6 +451,26 @@ ErrorCode Ge3Controller::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+
+ErrorCode Ge3Controller::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+
+  pc_bcs_202_->set_pc_brkpedenable(Pc_bcs_202::PC_BRKPEDENABLE_ENABLE);
+  pc_vcu_205_->set_pc_accpedenable(Pc_vcu_205::PC_ACCPEDENABLE_ENABLE);
+  pc_vcu_205_->set_pc_gearenable(Pc_vcu_205::PC_GEARENABLE_ENABLE);
+  pc_epb_203_->set_pc_epbenable(Pc_epb_203::PC_EPBENABLE_ENABLE);
+  pc_eps_204_->set_pc_steerenable(Pc_eps_204::PC_STEERENABLE_ENABLE);
+
+  can_sender_->Update();
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
+
 ErrorCode Ge3Controller::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();

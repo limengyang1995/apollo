@@ -384,6 +384,28 @@ ErrorCode ChController::EnableAutoMode() {
   }
 }
 
+
+ErrorCode ChController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+  brake_command_111_->set_brake_pedal_en_ctrl(
+      Brake_command_111::BRAKE_PEDAL_EN_CTRL_ENABLE);
+  throttle_command_110_->set_throttle_pedal_en_ctrl(
+      Throttle_command_110::THROTTLE_PEDAL_EN_CTRL_ENABLE);
+  steer_command_112_->set_steer_angle_en_ctrl(
+      Steer_command_112::STEER_ANGLE_EN_CTRL_ENABLE);
+
+  can_sender_->Update();
+
+  
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
+
 ErrorCode ChController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();

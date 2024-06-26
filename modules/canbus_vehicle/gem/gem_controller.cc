@@ -324,6 +324,28 @@ ErrorCode GemController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+
+ErrorCode GemController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+
+  global_cmd_69_->set_pacmod_enable(
+      Global_cmd_69::PACMOD_ENABLE_CONTROL_ENABLED);
+  global_cmd_69_->set_clear_override(
+      Global_cmd_69::CLEAR_OVERRIDE_CLEAR_ACTIVE_OVERRIDES);
+
+  can_sender_->Update();
+
+  
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
+
+
 ErrorCode GemController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();

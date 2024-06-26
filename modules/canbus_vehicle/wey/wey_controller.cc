@@ -468,6 +468,34 @@ ErrorCode WeyController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+
+ErrorCode WeyController::EnableCloudMode() {
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    return ErrorCode::OK;
+  }
+  ads1_111_->set_ads_mode(Ads1_111::ADS_MODE_ACTIVE_MODE);
+  ads_eps_113_->set_ads_epsmode(Ads_eps_113::ADS_EPSMODE_ACTIVE);
+  // unlock the limited steering angle for first cmd within [-10,10] deg
+  ads_eps_113_->set_ads_reqepstargetangle(angle_init);
+  ads_shifter_115_->set_ads_shiftmode(Ads_shifter_115::ADS_SHIFTMODE_VALID);
+  ads_req_vin_390_->set_req_vin_signal(Ads_req_vin_390::REQ_VIN_SIGNAL_REQUEST);
+  // BCM enable control for horn/ beam/ turnlight
+  // notice : if BCM enable, the beam manual control is invalid. If you use the
+  // car at night, please watch out or disable this function before auto_drive
+  ads3_38e_->set_ads_bcmworkstsvalid(Ads3_38e::ADS_BCMWORKSTSVALID_VALID);
+  ads3_38e_->set_ads_bcm_worksts(Ads3_38e::ADS_BCM_WORKSTS_ACTIVE);
+  ads3_38e_->set_ads_reqcontrolbcm(Ads3_38e::ADS_REQCONTROLBCM_REQUEST);
+  ads3_38e_->set_dippedbeamon(Ads3_38e::DIPPEDBEAMON_TURN_ON);
+
+  can_sender_->Update();
+
+  
+  set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  return ErrorCode::OK;
+}
+
 ErrorCode WeyController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();

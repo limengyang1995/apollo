@@ -162,7 +162,7 @@ void ControlComponent::OnCloudControlCommand(
     const ControlCommand &cloud_control_command) {
   ADEBUG << "Received cloud command data: run cloud control callback.";
   std::lock_guard<std::mutex> lock(mutex_);
-  latest_cloud_command_.CopyFrom(*cloud_control_command);
+  latest_cloud_command_.CopyFrom(cloud_control_command);
 }
 
 void ControlComponent::OnPlanningCommandStatus(
@@ -382,7 +382,7 @@ bool ControlComponent::Proc() {
   cloud_control_command_reader_->Observe();
   const auto &cloud_control_command_msg = cloud_control_command_reader_->GetLatestObserved();
   if (cloud_control_command_msg != nullptr) {
-    OnCloudControlCommand(cloud_control_command_msg);
+    OnCloudControlCommand(*cloud_control_command_msg);
   }
   
   pad_msg_reader_->Observe();
