@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package apollo.remote;
+
+// message type of channel, just a placeholder for demo,
+// you should use `--channel_message_type` option to specify the real message type
+message RemoteDriveMsg {
+
+}
+
+message RemoteDriveConfig {
+  optional string name = 1;
+};

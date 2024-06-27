@@ -1,0 +1,228 @@
+/******************************************************************************
+ * Copyright 2023 The Apollo Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *****************************************************************************/
+
+/******************************************************************************
+ * @file remote_drive_component.cc
+ *****************************************************************************/
+
+#include "modules/remote_drive/remote_drive_component.h"
+#include <dlfcn.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <thread>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <cstring>
+#include <inttypes.h>
+#include <unistd.h>
+#include "opencv2/opencv.hpp"
+
+namespace apollo {
+namespace remote {
+
+bool RemoteDrive::Init() {
+    if (!GetProtoConfig(&config_)) {
+        AERROR << "Failed to load remote_drive config file " << ComponentBase::ConfigFilePath();
+    }
+    ACHECK(ComponentBase::GetProtoConfig(&config_))
+            << "failed to load remote_drive config file " << ComponentBase::ConfigFilePath();
+
+    AINFO << "Init RemoteDrive succedded.";
+    InitMainVideoroom();
+    InitSetListener(g_BrtcClient, g_mylistener);
+    cloud_control_cmd_writer_ = node_->CreateWriter<ControlCommand>(cloud_topic);
+    return true;
+}
+
+// RTC_MESSAGE_ROOM_EVENT_LOGIN_OK                    = 100,
+// RTC_MESSAGE_ROOM_EVENT_LOGIN_TIMEOUT               = 101,
+// RTC_MESSAGE_ROOM_EVENT_LOGIN_ERROR                 = 102,
+// RTC_MESSAGE_ROOM_EVENT_CONNECTION_LOST             = 103,
+// RTC_MESSAGE_ROOM_EVENT_REMOTE_COMING               = 104,
+// RTC_MESSAGE_ROOM_EVENT_REMOTE_LEAVING              = 105,
+// RTC_MESSAGE_ROOM_EVENT_REMOTE_RENDERING            = 106,
+// RTC_MESSAGE_ROOM_EVENT_REMOTE_GONE                 = 107,
+// RTC_MESSAGE_ROOM_EVENT_SERVER_ERROR                = 108,
+
+// RTC_ROOM_EVENT_AVAILABLE_SEND_BITRATE      		   = 200,
+// RTC_ROOM_EVENT_FORCE_KEY_FRAME          		   = 201,
+
+// RTC_ROOM_EVENT_ON_USER_JOINED_ROOM                 = 300,
+// RTC_ROOM_EVENT_ON_USER_LEAVING_ROOM                = 301,
+// RTC_ROOM_EVENT_ON_USER_MESSAGE             		   = 302,
+// RTC_ROOM_EVENT_ON_USER_ATTRIBUTE                   = 303,
+
+// RTC_MESSAGE_STATE_STREAM_UP                        = 2000,
+// RTC_MESSAGE_STATE_SENDING_MEDIA_OK                 = 2001,
+// RTC_MESSAGE_STATE_SENDING_MEDIA_FAILED             = 2002,
+// RTC_MESSAGE_STATE_STREAM_DOWN                      = 2003,
+// RTC_STATE_STREAM_SLOW_LINK_NACKS                   = 2100,
+bool RemoteDrive::Proc(
+        const std::shared_ptr<apollo::drivers::Image>& fr_msg,
+        const std::shared_ptr<apollo::drivers::Image>& rr_msg,
+        const std::shared_ptr<apollo::drivers::Image>& lf_msg,
+        const std::shared_ptr<apollo::drivers::Image>& rh_msg) {
+    if (g_mylistener.message_type == RtcMessageType::RTC_MESSAGE_STATE_SENDING_MEDIA_OK
+        || g_mylistener.message_type == RtcMessageType::RTC_ROOM_EVENT_ON_USER_JOINED_ROOM
+        || g_mylistener.message_type == RtcMessageType::RTC_MESSAGE_STATE_STREAM_UP
+        || g_mylistener.message_type == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE)
+    //     std::thread([this, &fr_msg, &rr_msg, &lf_msg, &rh_msg]() {
+    //     SendMsg(fr_msg,rr_msg,lf_msg,rh_msg);
+    // }).detach();
+
+    {
+        SendMsg(fr_msg, rr_msg, lf_msg, rh_msg);
+        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    else {
+        AINFO << "message recieved." << g_mylistener.message_type;
+    }
+
+    ControlCommand control_command;
+    CloudControlCommand(&control_command);
+    // control_command->set_speed(0);
+    // control_command->set_gear_location(Chassis::GEAR_DRIVE);
+    cloud_control_cmd_writer_->Write(control_command);
+
+    return true;
+}
+bool RemoteDrive::SendMsg(
+        const std::shared_ptr<apollo::drivers::Image>& fr_msg,
+        const std::shared_ptr<apollo::drivers::Image>& rr_msg,
+        const std::shared_ptr<apollo::drivers::Image>& lf_msg,
+        const std::shared_ptr<apollo::drivers::Image>& rh_msg) {
+    cv::Mat img_front(fr_msg->height(), fr_msg->width(), CV_8UC3, const_cast<char*>(fr_msg->data().data()));
+    cv::Mat img_rear(rr_msg->height(), rr_msg->width(), CV_8UC3, const_cast<char*>(rr_msg->data().data()));
+    cv::Mat img_left(lf_msg->height(), lf_msg->width(), CV_8UC3, const_cast<char*>(lf_msg->data().data()));
+    cv::Mat img_right(rh_msg->height(), rh_msg->width(), CV_8UC3, const_cast<char*>(rh_msg->data().data()));
+
+    // cv::resize(img_rear,img_rear,cv::Size(),0.25,0.25);
+    cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
+    cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
+
+    std::string rear_image_text = "Rear Image";
+    std::string left_image_text = "Left Image";
+    std::string right_image_text = "Right Image";
+    cv::Scalar color(0, 0, 255);
+
+    cv::putText(img_rear,rear_image_text,cv::Point(10, 20),cv::FONT_HERSHEY_SIMPLEX,0.5,color,1,cv::LINE_AA);
+    cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
+    cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
+
+    cv::Rect roi_left(0, 0, img_left.cols, img_left.rows);
+    cv::Rect roi_right(img_front.cols - img_right.cols, 0, img_right.cols, img_right.rows);
+
+    cv::Mat roi_left_rect = img_front(roi_left);
+    cv::Mat roi_right_rect = img_front(roi_right);
+
+    img_left.copyTo(roi_left_rect);
+    img_right.copyTo(roi_right_rect);
+
+    std::vector<unsigned char> buf;
+    cv::imencode(".jpg", img_front, buf);
+    // cv::imwrite("/apollo_workspace/data/test.jpg", img_front);
+    // AERROR << "buf size: " << buf.size()*sizeof(char);
+
+    g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+
+    // g_BrtcClient->subscribeStreaming("999999",nullptr,nullptr,nullptr) ;
+    // AERROR << "message sent.";
+    // cv::imshow("RemoteDrive", img_front);
+    // cv::waitKey(1);
+    return true;
+}
+
+void RemoteDrive::InitSetListener(baidurtc::BaiduRtcRoomClient* c, MyListener& l) {
+    c->registerRtcMessageListener(&l);
+};
+
+void MyListener::OnRtcMessage(RtcMessage& msg) {
+    message_type = msg.msgType;
+    AERROR << "message type: " << message_type;
+    switch (msg.msgType) {
+    case RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE: {
+        recieve_msg = msg.extra_info;
+        // AERROR << "recieved message: -----" << msg.extra_info;
+        // g_BrtcClient->sendMessageToUser("remote drive demo!!!!!!!!", "0");
+    } break;
+    default:
+        break;
+    }
+}
+
+bool RemoteDrive::InitMainVideoroom() {
+    void* handle = dlopen("modules/remote_drive/lib/libbaidurtc.so", RTLD_LAZY | RTLD_DEEPBIND);
+    if (handle == NULL) {
+        fprintf(stderr, "Could not open sdk: %s\n", dlerror());
+        return false;
+    }
+
+    f_createBaiduRtcRoomClient* createClient
+            = (f_createBaiduRtcRoomClient*)dlsym(handle, "_ZN8baidurtc24createBaiduRtcRoomClientEv");
+    f_enableLog* enableLog = (f_enableLog*)dlsym(handle, "enableBaiduRtcLog");
+    if (enableLog) {
+        enableLog(0);
+    }
+    g_BrtcClient = createClient();
+
+    s.HasData = true;
+    s.HasVideo = true;
+    s.HasAudio = true;
+    s.AudioINChannel = 1;
+    s.AudioINFrequency = 16000;
+    s.ImageINType = RTC_IMAGE_TYPE_JPEG;
+
+    s.AsPublisher = true;
+    s.AsListener = false;
+    s.AutoPublish = true;
+    s.VideoFps = 15;
+    s.VideoMaxkbps = 20000;
+    s.VideoWidth = 1600;
+    s.VideoHeight = 900;
+    // s.AutoSubscribe = true;
+
+    // g_BrtcClient->setFeedId("999999");
+    g_BrtcClient->setParamSettings(&s, s.RTC_PARAM_SETTINGS_ALL);
+    g_BrtcClient->setAppID("appqemmzy5zk1im");
+    g_BrtcClient->setMediaServerURL("wss://rtc.exp.bcelive.com/janus");
+    g_BrtcClient->setCER("/apollo_workspace/modules/remote_drive/lib/a.cer");
+
+    std::string uid;
+    std::ostringstream os;
+    os << 1234500000 + rand() / 100000;
+    uid = os.str();
+
+    g_BrtcClient->loginRoom("2131", uid.c_str(), "XMT018", "token");
+    return true;
+}
+bool RemoteDrive::CloudControlCommand(ControlCommand* control_command) {
+    if (g_mylistener.recieve_msg.empty()) {
+        control_command->set_throttle(0);
+        control_command->set_brake(0);
+    } else {
+        control_command->set_speed(0);
+        control_command->set_throttle(1);
+        control_command->set_brake(1);
+        control_command->set_cloud_takeover_request(true);
+    }
+    return true;
+}
+
+}  // namespace remote
+}  // namespace apollo

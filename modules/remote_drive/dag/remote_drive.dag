@@ -1,0 +1,24 @@
+module_config {
+  module_library : "modules/remote_drive/libremote_drive_component.so"
+  components {
+    class_name : "RemoteDrive"
+    config {
+      name : "remote_drive"
+      config_file_path: "modules/remote_drive/conf/remote_drive.pb.txt"
+      flag_file_path: "modules/remote_drive/conf/remote_drive.conf"
+      readers {
+        channel: "/apollo/sensor/camera/CAM_FRONT/image"
+      }
+      readers {
+        channel: "/apollo/sensor/camera/CAM_BACK/image"
+      }
+      readers {
+        channel: "/apollo/sensor/camera/CAM_FRONT_LEFT/image"
+      }
+      readers {
+        channel: "/apollo/sensor/camera/CAM_FRONT_RIGHT/image"
+      }
+      
+    }
+  }
+}
