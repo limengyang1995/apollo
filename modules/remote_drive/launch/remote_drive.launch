@@ -1,0 +1,7 @@
+<cyber>
+  <module>
+    <name>remote_drive</name>
+    <dag_conf>modules/remote_drive/dag/remote_drive.dag</dag_conf>
+    <process_name>remote_drive</process_name>
+  </module>
+</cyber>
