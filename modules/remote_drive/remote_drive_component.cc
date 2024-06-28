@@ -77,29 +77,20 @@ bool RemoteDrive::Proc(
         const std::shared_ptr<apollo::drivers::Image>& rr_msg,
         const std::shared_ptr<apollo::drivers::Image>& lf_msg,
         const std::shared_ptr<apollo::drivers::Image>& rh_msg) {
-    if (g_mylistener.message_type == RtcMessageType::RTC_MESSAGE_STATE_SENDING_MEDIA_OK
-        || g_mylistener.message_type == RtcMessageType::RTC_ROOM_EVENT_ON_USER_JOINED_ROOM
+    if (g_mylistener.message_type == RtcMessageType::RTC_ROOM_EVENT_ON_USER_JOINED_ROOM
         || g_mylistener.message_type == RtcMessageType::RTC_MESSAGE_STATE_STREAM_UP
-        || g_mylistener.message_type == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE)
-    //     std::thread([this, &fr_msg, &rr_msg, &lf_msg, &rh_msg]() {
-    //     SendMsg(fr_msg,rr_msg,lf_msg,rh_msg);
-    // }).detach();
-
+        || g_mylistener.message_type == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE
+        || g_mylistener.message_type == RtcMessageType::RTC_MESSAGE_ROOM_EVENT_REMOTE_COMING
+        )
     {
         SendMsg(fr_msg, rr_msg, lf_msg, rh_msg);
-        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
-    else {
-        AINFO << "message recieved." << g_mylistener.message_type;
+        AINFO << "message sent successfully.";
     }
 
     ControlCommand control_command;
-    CloudControlCommand(&control_command);
-    // control_command->set_speed(0);
-    // control_command->set_gear_location(Chassis::GEAR_DRIVE);
-    cloud_control_cmd_writer_->Write(control_command);
 
+    CloudControlCommand(&control_command);
+    cloud_control_cmd_writer_->Write(control_command);
     return true;
 }
 bool RemoteDrive::SendMsg(
@@ -121,7 +112,7 @@ bool RemoteDrive::SendMsg(
     std::string right_image_text = "Right Image";
     cv::Scalar color(0, 0, 255);
 
-    cv::putText(img_rear,rear_image_text,cv::Point(10, 20),cv::FONT_HERSHEY_SIMPLEX,0.5,color,1,cv::LINE_AA);
+    cv::putText(img_rear, rear_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
     cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
     cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
 
@@ -140,9 +131,6 @@ bool RemoteDrive::SendMsg(
     // AERROR << "buf size: " << buf.size()*sizeof(char);
 
     g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
-
-    // g_BrtcClient->subscribeStreaming("999999",nullptr,nullptr,nullptr) ;
-    // AERROR << "message sent.";
     // cv::imshow("RemoteDrive", img_front);
     // cv::waitKey(1);
     return true;
@@ -154,13 +142,17 @@ void RemoteDrive::InitSetListener(baidurtc::BaiduRtcRoomClient* c, MyListener& l
 
 void MyListener::OnRtcMessage(RtcMessage& msg) {
     message_type = msg.msgType;
-    AERROR << "message type: " << message_type;
+    AINFO << "message type: " << message_type;
     switch (msg.msgType) {
-    case RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE: {
+    case RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE:
         recieve_msg = msg.extra_info;
-        // AERROR << "recieved message: -----" << msg.extra_info;
+        AINFO << "recieved cloud message: -----" << msg.extra_info;
         // g_BrtcClient->sendMessageToUser("remote drive demo!!!!!!!!", "0");
-    } break;
+        break;
+    case RtcMessageType::RTC_ROOM_EVENT_ON_USER_LEAVING_ROOM:
+        recieve_msg = "";
+        AINFO << "user leaving room";
+        break;
     default:
         break;
     }
@@ -212,17 +204,42 @@ bool RemoteDrive::InitMainVideoroom() {
     return true;
 }
 bool RemoteDrive::CloudControlCommand(ControlCommand* control_command) {
-    if (g_mylistener.recieve_msg.empty()) {
-        control_command->set_throttle(0);
-        control_command->set_brake(0);
+    auto header_time = cyber::Time::Now().ToSecond();
+    control_command->mutable_header()->set_timestamp_sec(header_time);
+    control_command->mutable_header()->set_module_name("remote_drive");
+    seq_num = seq_num + 1;
+    control_command->mutable_header()->set_sequence_num(seq_num);
+    if (!g_mylistener.recieve_msg.empty()) {
+        std::istringstream iss(g_mylistener.recieve_msg);
+        std::string pair, key, value;
+
+        while (std::getline(iss, pair, ',')) {
+            std::size_t pos = pair.find(':');
+            if (pos != std::string::npos) {
+                key = pair.substr(0, pos);
+                value = pair.substr(pos + 1);
+
+                if (key == "throttle") {
+                    control_command->set_throttle(std::stod(value));
+                } else if (key == "brake") {
+                    control_command->set_brake(std::stod(value));
+                } else if (key == "cloud_takeover_request") {
+                    bool status = false;
+                    if (value == "true") {
+                        status = true;
+                    }
+                    control_command->set_cloud_takeover_request(status);
+                } else {
+                    AERROR << "no cloud control message----";
+                }
+            }
+        }
     } else {
-        control_command->set_speed(0);
-        control_command->set_throttle(1);
-        control_command->set_brake(1);
-        control_command->set_cloud_takeover_request(true);
+        control_command->set_throttle(0);
+        control_command->set_brake(0.5);
+        control_command->set_cloud_takeover_request(false);
     }
     return true;
 }
-
 }  // namespace remote
 }  // namespace apollo
