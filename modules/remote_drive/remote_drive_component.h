@@ -66,6 +66,7 @@ private:
     IDataFrameObserver* iDfo[2];
     std::shared_ptr<cyber::Writer<ControlCommand>> cloud_control_cmd_writer_;
     std::string cloud_topic = "/apollo/cloud_control";
+    int seq_num = 0;
     
     // std::shared_ptr<ControlCommand> control_command;
 
