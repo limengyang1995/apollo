@@ -86,6 +86,11 @@ message Chassis {
   // Clockwise: negative
   // CountClockwise: positive
   optional float steering_percentage = 11 [default = nan];
+  // Real rear steering location in [%], ranging from -100 to 100.
+  // steering_angle / max_steering_angle
+  // Clockwise: positive
+  // CountClockwise:  negative
+  optional float rear_steering_percentage = 42 [default = nan];
 
   // Applied steering torque in [Nm].
   optional float steering_torque_nm = 12 [default = nan];
@@ -147,6 +152,8 @@ message Chassis {
   // Clockwise: negative
   // CountClockwise: positive
   optional float steering_percentage_cmd = 37 [default = nan];
+  optional float rear_steering_percentage_cmd = 43 [default = nan];
+
 
   optional BumperEvent front_bumper_event = 38;
 
