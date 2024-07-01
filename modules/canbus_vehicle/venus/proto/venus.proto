@@ -1,0 +1,675 @@
+syntax = "proto2";
+
+package apollo.canbus;
+
+message Vector__independent_sig_msg_0 {
+// Report Message
+  enum Vcu4_vehiclemodeindicationType {
+    VCU4_VEHICLEMODEINDICATION_NORMAL = 0;
+    VCU4_VEHICLEMODEINDICATION_ECO = 1;
+    VCU4_VEHICLEMODEINDICATION_SPORT = 2;
+    VCU4_VEHICLEMODEINDICATION_RESERVED = 3;
+  }
+  enum Vcu4_interlocksystemfaultType {
+    VCU4_INTERLOCKSYSTEMFAULT_NOFAULT = 0;
+    VCU4_INTERLOCKSYSTEMFAULT_FAULT = 1;
+  }
+  enum Vcu4_insulationmonitorwarningType {
+    VCU4_INSULATIONMONITORWARNING_NORMAL = 0;
+    VCU4_INSULATIONMONITORWARNING_SECONDWARNING = 1;
+    VCU4_INSULATIONMONITORWARNING_FIRSTWARNING = 2;
+    VCU4_INSULATIONMONITORWARNING_RESERVED = 3;
+  }
+  enum Vcu4_dcdcstatusType {
+    VCU4_DCDCSTATUS_NOTWORKING = 0;
+    VCU4_DCDCSTATUS_WORKING = 1;
+    VCU4_DCDCSTATUS_NORMALERROR = 2;
+    VCU4_DCDCSTATUS_CRITICALERROR = 3;
+  }
+  enum Vcu4_chargerstatusType {
+    VCU4_CHARGERSTATUS_NOTCHARGE = 0;
+    VCU4_CHARGERSTATUS_CHARGING = 1;
+    VCU4_CHARGERSTATUS_CHARGEFINISH = 2;
+    VCU4_CHARGERSTATUS_CHARGEFAULT = 3;
+  }
+  enum Acu3_wiperType {
+    ACU3_WIPER_NOREQUEST = 0;
+    ACU3_WIPER_SPEED1 = 1;
+    ACU3_WIPER_SPEED2 = 2;
+    ACU3_WIPER_SPEED3 = 3;
+    ACU3_WIPER_SPEED4 = 4;
+    ACU3_WIPER_AUTO = 5;
+    ACU3_WIPER_WASH = 6;
+    ACU3_WIPER_OFF = 7;
+  }
+  enum Acu3_widthlightType {
+    ACU3_WIDTHLIGHT_NOREQUEST = 0;
+    ACU3_WIDTHLIGHT_ON = 1;
+    ACU3_WIDTHLIGHT_OFF = 2;
+    ACU3_WIDTHLIGHT_RESERVED = 3;
+  }
+  enum Acu3_ignitionType {
+    ACU3_IGNITION_NOREQUEST = 0;
+    ACU3_IGNITION_ON = 1;
+    ACU3_IGNITION_START = 2;
+    ACU3_IGNITION_OFF = 3;
+    ACU3_IGNITION_IG1 = 4;
+    ACU3_IGNITION_IG2 = 5;
+    ACU3_IGNITION_RESERVED1 = 6;
+    ACU3_IGNITION_RESERVED2 = 7;
+  }
+  enum Acu3_hornlightType {
+    ACU3_HORNLIGHT_NOREQUEST = 0;
+    ACU3_HORNLIGHT_ON = 1;
+    ACU3_HORNLIGHT_OFF = 2;
+    ACU3_HORNLIGHT_RESERVED = 3;
+  }
+  enum Acu3_hornType {
+    ACU3_HORN_NOREQUEST = 0;
+    ACU3_HORN_ON = 1;
+    ACU3_HORN_OFF = 2;
+    ACU3_HORN_RESERVED = 3;
+  }
+  enum Acu3_doorlockType {
+    ACU3_DOORLOCK_NOREQUEST = 0;
+    ACU3_DOORLOCK_LOCK = 1;
+    ACU3_DOORLOCK_UNLOCK = 2;
+    ACU3_DOORLOCK_RESERVED = 3;
+  }
+  enum Acu3_artisticlightType {
+    ACU3_ARTISTICLIGHT_NOREQUEST = 0;
+    ACU3_ARTISTICLIGHT_EFFECT1 = 1;
+    ACU3_ARTISTICLIGHT_EFFECT2 = 2;
+    ACU3_ARTISTICLIGHT_EFFECT3 = 3;
+    ACU3_ARTISTICLIGHT_EFFECT4 = 4;
+    ACU3_ARTISTICLIGHT_EFFECT5 = 5;
+    ACU3_ARTISTICLIGHT_EFFECT6 = 6;
+    ACU3_ARTISTICLIGHT_EFFECT7 = 7;
+    ACU3_ARTISTICLIGHT_EFFECT8 = 8;
+    ACU3_ARTISTICLIGHT_EFFECT9 = 9;
+    ACU3_ARTISTICLIGHT_EFFECT10 = 10;
+    ACU3_ARTISTICLIGHT_EFFECT11 = 11;
+    ACU3_ARTISTICLIGHT_EFFECT12 = 12;
+    ACU3_ARTISTICLIGHT_EFFECT13 = 13;
+    ACU3_ARTISTICLIGHT_EFFECT14 = 14;
+    ACU3_ARTISTICLIGHT_OFF = 15;
+  }
+  enum Acu1_standstillstType {
+    ACU1_STANDSTILLST_INACTIVE = 0;
+    ACU1_STANDSTILLST_ACTIVE = 1;
+  }
+  // [¡æ] [15|30]
+  optional int32 acu4_conditionertemp = 1;
+  // [deg/s] [-100|100]
+  optional double vcu2_yawrate = 2;
+  // [m/s2] [-20|20]
+  optional double vcu2_longitudinalaccel = 3;
+  // [count] [0|15]
+  optional int32 vcu2_livecounter = 4;
+  // [m/s2] [-20|20]
+  optional double vcu2_lateraaccel = 5;
+  // [check] [0|255]
+  optional int32 vcu2_checksum = 6;
+  // [] [0|3]
+  optional Vcu4_vehiclemodeindicationType vcu4_vehiclemodeindication = 7;
+  // [%] [-50|100]
+  optional int32 vcu4_outputpowerpercent = 8;
+  // [count] [0|15]
+  optional int32 vcu4_livecounter = 9;
+  // [] [0|1]
+  optional Vcu4_interlocksystemfaultType vcu4_interlocksystemfault = 10;
+  // [] [0|3]
+  optional Vcu4_insulationmonitorwarningType vcu4_insulationmonitorwarning = 11;
+  // [] [0|3]
+  optional Vcu4_dcdcstatusType vcu4_dcdcstatus = 12;
+  // [check] [0|255]
+  optional int32 vcu4_checksum = 13;
+  // [] [0|3]
+  optional Vcu4_chargerstatusType vcu4_chargerstatus = 14;
+  // [V] [0|500]
+  optional int32 vcu4_batterypackvoltage = 15;
+  // [¡ãC] [-40|210]
+  optional int32 vcu4_batterypacktemperature = 16;
+  // [%] [0|100]
+  optional int32 vcu4_batterypacksoc = 17;
+  // [A] [-500|500]
+  optional int32 vcu4_batterypackcurrent = 18;
+  // [] [0|0]
+  optional int32 byd_gearcmd = 19;
+  // [] [0|0]
+  optional bool gear_p = 20;
+  // [] [0|0]
+  optional int32 gear_info = 21;
+  // [km/h] [0|180]
+  optional double acu5_wheelspeedrr = 22;
+  // [km/h] [0|180]
+  optional double acu5_wheelspeedrl = 23;
+  // [km/h] [0|180]
+  optional double acu5_wheelspeedfr = 24;
+  // [km/h] [0|180]
+  optional double acu5_wheelspeedfl = 25;
+  // [] [0|0]
+  optional int32 signal2 = 26;
+  // [] [0|0]
+  optional int32 pulse1 = 27;
+  // [] [0|15]
+  optional int32 acu3_action6 = 28;
+  // [] [0|15]
+  optional int32 acu3_action5 = 29;
+  // [] [0|3]
+  optional int32 acu3_action4 = 30;
+  // [] [0|3]
+  optional int32 acu3_action3 = 31;
+  // [] [0|3]
+  optional int32 acu3_action2 = 32;
+  // [] [0|3]
+  optional int32 acu3_action1 = 33;
+  // [] [0|7]
+  optional Acu3_wiperType acu3_wiper = 34;
+  // [] [0|3]
+  optional Acu3_widthlightType acu3_widthlight = 35;
+  // [count] [0|15]
+  optional int32 acu3_livecounter = 36;
+  // [] [0|7]
+  optional Acu3_ignitionType acu3_ignition = 37;
+  // [] [0|3]
+  optional Acu3_hornlightType acu3_hornlight = 38;
+  // [] [0|3]
+  optional Acu3_hornType acu3_horn = 39;
+  // [] [0|3]
+  optional Acu3_doorlockType acu3_doorlock = 40;
+  // [] [0|15]
+  optional Acu3_artisticlightType acu3_artisticlight = 41;
+  // [] [0|1]
+  optional Acu1_standstillstType acu1_standstillst = 42;
+  // [] [0|0]
+  optional int32 eps1_moder = 43;
+  // [] [0|0]
+  optional int32 eps1_mode = 44;
+  // [] [0|0]
+  optional bool eps1_autocontrolr = 45;
+  // [] [0|0]
+  optional bool eps1_autocontrolf = 46;
+  // [] [0|0]
+  optional int32 eps1_errorr = 47;
+  // [] [0|0]
+  optional int32 eps1_errorf = 48;
+  // [] [0|500]
+  optional double eps1_currentspeedr = 49;
+  // [] [0|500]
+  optional double eps1_currentspeedf = 50;
+  // [] [-600|600]
+  optional double eps1_currentangler = 51;
+  // [] [-600|600]
+  optional double eps1_currentanglef = 52;
+  // [] [0|0]
+  optional bool bcm_engstartst = 53;
+  // [] [0|0]
+  optional int32 bcm_lampst = 54;
+  // [] [0|0]
+  optional int32 bcm_fuelremain = 55;
+  // [] [0|0]
+  optional bool bcm_diflock = 56;
+  // [] [0|0]
+  optional int32 bcm_enginestartrequest = 57;
+  // [] [0|100]
+  optional int32 vcu3_esppresure = 58;
+  // [] [0|100]
+  optional int32 vcu3_espposition = 59;
+}
+
+message Acu1_529 {
+// Report Message
+  enum Acu1_gearautocontrolType {
+    ACU1_GEARAUTOCONTROL_RESERVED1 = 0;
+    ACU1_GEARAUTOCONTROL_REQUEST = 1;
+    ACU1_GEARAUTOCONTROL_NOREQUEST = 2;
+    ACU1_GEARAUTOCONTROL_RESERVED2 = 3;
+  }
+  enum Acu1_targetsteeringangle_rType {
+    ACU1_TARGETSTEERINGANGLE_R_NOREQUEST = 2047;
+  }
+  enum Acu1_targetsteeringangle_fType {
+    ACU1_TARGETSTEERINGANGLE_F_NOREQUEST = 2047;
+  }
+  enum Acu1_targetgearType {
+    ACU1_TARGETGEAR_NOREQUEST = 0;
+    ACU1_TARGETGEAR_P = 1;
+    ACU1_TARGETGEAR_R = 2;
+    ACU1_TARGETGEAR_N = 3;
+    ACU1_TARGETGEAR_D = 4;
+    ACU1_TARGETGEAR_RESERVED1 = 5;
+    ACU1_TARGETGEAR_RESERVED2 = 6;
+    ACU1_TARGETGEAR_RESERVED3 = 7;
+  }
+  enum Acu1_targetepbType {
+    ACU1_TARGETEPB_NOREQUEST = 0;
+    ACU1_TARGETEPB_RELEASE = 1;
+    ACU1_TARGETEPB_LOCK = 2;
+    ACU1_TARGETEPB_RESERVE = 3;
+  }
+  enum Acu1_steeringautocontrolType {
+    ACU1_STEERINGAUTOCONTROL_NOREQUET = 0;
+    ACU1_STEERINGAUTOCONTROL_REQUEST = 1;
+    ACU1_STEERINGAUTOCONTROL_RESERVE1 = 2;
+    ACU1_STEERINGAUTOCONTROL_RESERVE2 = 3;
+  }
+  // [] [0|0]
+  optional Acu1_gearautocontrolType acu1_gearautocontrol = 1;
+  // [deg/s] [0|500]
+  optional int32 acu1_targetsteeringspeed = 2;
+  // [deg] [-600|600]
+  optional Acu1_targetsteeringangle_rType acu1_targetsteeringangle_r = 3;
+  // [deg] [-600|600]
+  optional Acu1_targetsteeringangle_fType acu1_targetsteeringangle_f = 4;
+  // [] [0|7]
+  optional Acu1_targetgearType acu1_targetgear = 5;
+  // [] [0|3]
+  optional Acu1_targetepbType acu1_targetepb = 6;
+  // [count] [0|15]
+  optional int32 acu1_livecounter = 7;
+  // [check] [0|255]
+  optional int32 acu1_checksum = 8;
+  // [] [0|3]
+  optional Acu1_steeringautocontrolType acu1_steeringautocontrol = 9;
+}
+
+message Acu2_532 {
+// Report Message
+  enum Acu2_axialautocontrolType {
+    ACU2_AXIALAUTOCONTROL_NOREQUET = 0;
+    ACU2_AXIALAUTOCONTROL_REQUEST = 1;
+    ACU2_AXIALAUTOCONTROL_RESERVE1 = 2;
+    ACU2_AXIALAUTOCONTROL_RESERVE2 = 3;
+  }
+  enum Acu2_brakingcontrolmodeType {
+    ACU2_BRAKINGCONTROLMODE_POSITION = 0;
+    ACU2_BRAKINGCONTROLMODE_DECELACC = 1;
+    ACU2_BRAKINGCONTROLMODE_DECELAEB = 2;
+    ACU2_BRAKINGCONTROLMODE_ESP = 3;
+  }
+  enum Acu2_acceleratorcontrolmodeType {
+    ACU2_ACCELERATORCONTROLMODE_POSITION = 0;
+    ACU2_ACCELERATORCONTROLMODE_ACCEL = 1;
+    ACU2_ACCELERATORCONTROLMODE_TORQUE = 2;
+    ACU2_ACCELERATORCONTROLMODE_VEHICLESPEED = 3;
+  }
+  // [] [0|3]
+  optional Acu2_axialautocontrolType acu2_axialautocontrol = 1;
+  // [km/h] [0|100]
+  optional double acu2_targetvehiclespeed = 2;
+  // [Nm] [0|100]
+  optional double acu2_targettorque = 3;
+  // [%] [0|100]
+  optional int32 acu2_targetbrakingposition = 4;
+  // [%] [0|100]
+  optional int32 acu2_targetacceleratorposition = 5;
+  // [] [0|3]
+  optional Acu2_brakingcontrolmodeType acu2_brakingcontrolmode = 6;
+  // [] [0|3]
+  optional Acu2_acceleratorcontrolmodeType acu2_acceleratorcontrolmode = 7;
+  // [m/s2] [-20|20]
+  optional double acu2_targetaxialacceldecel = 8;
+  // [count] [0|15]
+  optional int32 acu2_livecounter = 9;
+  // [check] [0|255]
+  optional int32 acu2_checksum = 10;
+}
+
+message Acu3_534 {
+// Report Message
+  enum Acu3_steeringlightType {
+    ACU3_STEERINGLIGHT_NOREQUEST = 0;
+    ACU3_STEERINGLIGHT_LEFT = 1;
+    ACU3_STEERINGLIGHT_RIGHT = 2;
+    ACU3_STEERINGLIGHT_OFF = 3;
+  }
+  enum Acu3_hazardlightType {
+    ACU3_HAZARDLIGHT_NOREQUEST = 0;
+    ACU3_HAZARDLIGHT_ON = 1;
+    ACU3_HAZARDLIGHT_OFF = 2;
+    ACU3_HAZARDLIGHT_RESERVED = 3;
+  }
+  enum Acu3_brakeswitchType {
+    ACU3_BRAKESWITCH_NOREQUEST = 0;
+    ACU3_BRAKESWITCH_ON = 1;
+    ACU3_BRAKESWITCH_OFF = 2;
+    ACU3_BRAKESWITCH_RESERVED = 3;
+  }
+  enum Acu3_beamlightType {
+    ACU3_BEAMLIGHT_NOREQUEST = 0;
+    ACU3_BEAMLIGHT_LOW = 1;
+    ACU3_BEAMLIGHT_HIGH = 2;
+    ACU3_BEAMLIGHT_OFF = 3;
+  }
+  enum Acu3_backuplightType {
+    ACU3_BACKUPLIGHT_NOREQUEST = 0;
+    ACU3_BACKUPLIGHT_ON = 1;
+    ACU3_BACKUPLIGHT_OFF = 2;
+    ACU3_BACKUPLIGHT_RESERVED = 3;
+  }
+  // [] [0|3]
+  optional Acu3_steeringlightType acu3_steeringlight = 1;
+  // [] [0|3]
+  optional Acu3_hazardlightType acu3_hazardlight = 2;
+  // [check] [0|255]
+  optional int32 acu3_checksum = 3;
+  // [] [0|3]
+  optional Acu3_brakeswitchType acu3_brakeswitch = 4;
+  // [] [0|3]
+  optional Acu3_beamlightType acu3_beamlight = 5;
+  // [] [0|3]
+  optional Acu3_backuplightType acu3_backuplight = 6;
+}
+
+message Vcu7_569 {
+// Report Message
+  enum Vcu7_mcubrakestateType {
+    VCU7_MCUBRAKESTATE_OFF = 0;
+    VCU7_MCUBRAKESTATE_ON = 1;
+  }
+  enum Vcu7_mcuspeedmodeType {
+    VCU7_MCUSPEEDMODE_LOW = 0;
+    VCU7_MCUSPEEDMODE_HIGH = 1;
+  }
+  enum Vcu7_mcurelaystateType {
+    VCU7_MCURELAYSTATE_OFF = 0;
+    VCU7_MCURELAYSTATE_ON = 1;
+  }
+  enum Vcu7_mculowpowerType {
+    VCU7_MCULOWPOWER_INACTIVE = 0;
+    VCU7_MCULOWPOWER_ACTIVE = 1;
+  }
+  // [] [0|1]
+  optional Vcu7_mcubrakestateType vcu7_mcubrakestate = 1;
+  // [V] [0|500]
+  optional double vcu7_batteryvoltage = 2;
+  // [A] [-100|100]
+  optional double vcu7_batterycurrent = 3;
+  // [rpm] [0|65535]
+  optional int32 vcu7_motorspeed = 4;
+  // [] [0|1]
+  optional Vcu7_mcuspeedmodeType vcu7_mcuspeedmode = 5;
+  // [] [0|1]
+  optional Vcu7_mcurelaystateType vcu7_mcurelaystate = 6;
+  // [] [0|1]
+  optional Vcu7_mculowpowerType vcu7_mculowpower = 7;
+  // [] [0|255]
+  optional int32 vcu7_mcuerrorcode = 8;
+  // [count] [0|15]
+  optional int32 vcu7_livecounter = 9;
+  // [check] [0|255]
+  optional int32 vcu7_checksum = 10;
+}
+
+message Vcu5_56a {
+// Report Message
+  enum Vcu5_gearautocontrolstType {
+    VCU5_GEARAUTOCONTROLST_INACTIVE = 0;
+    VCU5_GEARAUTOCONTROLST_ACTIVE = 1;
+    VCU5_GEARAUTOCONTROLST_RESERVED1 = 2;
+    VCU5_GEARAUTOCONTROLST_RESERVED2 = 3;
+  }
+  enum Vcu5_rearsteeringtorquesignType {
+    VCU5_REARSTEERINGTORQUESIGN_LEFT = 0;
+    VCU5_REARSTEERINGTORQUESIGN_RIGHT = 1;
+  }
+  enum Vcu5_rearsteeringactiveType {
+    VCU5_REARSTEERINGACTIVE_NOACTIVE = 0;
+    VCU5_REARSTEERINGACTIVE_ACTIVE = 1;
+  }
+  enum Vcu5_frontsteeringtorquesignType {
+    VCU5_FRONTSTEERINGTORQUESIGN_LEFT = 0;
+    VCU5_FRONTSTEERINGTORQUESIGN_RIGHT = 1;
+  }
+  enum Vcu5_frontsteeringactiveType {
+    VCU5_FRONTSTEERINGACTIVE_NOACTIVE = 0;
+    VCU5_FRONTSTEERINGACTIVE_ACTIVE = 1;
+  }
+  enum Vcu5_rearsteeringtakeoverstType {
+    VCU5_REARSTEERINGTAKEOVERST_INACTIVE = 0;
+    VCU5_REARSTEERINGTAKEOVERST_ACTIVE = 1;
+  }
+  enum Vcu5_rearsteeringfailurestType {
+    VCU5_REARSTEERINGFAILUREST_NOTFAIL = 0;
+    VCU5_REARSTEERINGFAILUREST_EPSFAIL = 1;
+    VCU5_REARSTEERINGFAILUREST_SASFAIL = 2;
+    VCU5_REARSTEERINGFAILUREST_STEERTEMPFAIL = 3;
+    VCU5_REARSTEERINGFAILUREST_RESERVED1 = 4;
+    VCU5_REARSTEERINGFAILUREST_RESERVED2 = 5;
+    VCU5_REARSTEERINGFAILUREST_RESERVED3 = 6;
+    VCU5_REARSTEERINGFAILUREST_RESERVED4 = 7;
+  }
+  enum Vcu5_rearsteeringautocontrolstType {
+    VCU5_REARSTEERINGAUTOCONTROLST_INACTIVE = 0;
+    VCU5_REARSTEERINGAUTOCONTROLST_ACTIVE = 1;
+    VCU5_REARSTEERINGAUTOCONTROLST_RESERVED1 = 2;
+    VCU5_REARSTEERINGAUTOCONTROLST_RESERVED2 = 3;
+  }
+  enum Vcu5_frontsteeringtakeoverstType {
+    VCU5_FRONTSTEERINGTAKEOVERST_INACTIVE = 0;
+    VCU5_FRONTSTEERINGTAKEOVERST_ACTIVE = 1;
+  }
+  enum Vcu5_frontsteeringfailurestType {
+    VCU5_FRONTSTEERINGFAILUREST_NOTFAIL = 0;
+    VCU5_FRONTSTEERINGFAILUREST_EPSFAIL = 1;
+    VCU5_FRONTSTEERINGFAILUREST_SASFAIL = 2;
+    VCU5_FRONTSTEERINGFAILUREST_STEERTEMPFAIL = 3;
+    VCU5_FRONTSTEERINGFAILUREST_RESERVED1 = 4;
+    VCU5_FRONTSTEERINGFAILUREST_RESERVED2 = 5;
+    VCU5_FRONTSTEERINGFAILUREST_RESERVED3 = 6;
+    VCU5_FRONTSTEERINGFAILUREST_RESERVED4 = 7;
+  }
+  enum Vcu5_frontsteeringautocontrolstType {
+    VCU5_FRONTSTEERINGAUTOCONTROLST_INACTIVE = 0;
+    VCU5_FRONTSTEERINGAUTOCONTROLST_ACTIVE = 1;
+    VCU5_FRONTSTEERINGAUTOCONTROLST_RESERVED1 = 2;
+    VCU5_FRONTSTEERINGAUTOCONTROLST_RESERVED2 = 3;
+  }
+  enum Vcu5_drivingtakeoverstType {
+    VCU5_DRIVINGTAKEOVERST_INACTIVE = 0;
+    VCU5_DRIVINGTAKEOVERST_ACTIVE = 1;
+  }
+  enum Vcu5_drivingfailurestType {
+    VCU5_DRIVINGFAILUREST_NOTFAIL = 0;
+    VCU5_DRIVINGFAILUREST_HCUFAIL = 1;
+    VCU5_DRIVINGFAILUREST_SPEEDSENSORFAIL = 2;
+    VCU5_DRIVINGFAILUREST_YRSFAIL = 3;
+    VCU5_DRIVINGFAILUREST_RESERVED1 = 4;
+    VCU5_DRIVINGFAILUREST_RESERVED2 = 5;
+    VCU5_DRIVINGFAILUREST_RESERVED3 = 6;
+    VCU5_DRIVINGFAILUREST_RESERVED4 = 7;
+  }
+  enum Vcu5_drivingautocontrolstType {
+    VCU5_DRIVINGAUTOCONTROLST_INACTIVE = 0;
+    VCU5_DRIVINGAUTOCONTROLST_ACTIVE = 1;
+    VCU5_DRIVINGAUTOCONTROLST_RESERVED1 = 2;
+    VCU5_DRIVINGAUTOCONTROLST_RESERVED2 = 3;
+  }
+  enum Vcu5_brakingtakeoverstType {
+    VCU5_BRAKINGTAKEOVERST_INACTIVE = 0;
+    VCU5_BRAKINGTAKEOVERST_ACTIVE = 1;
+  }
+  enum Vcu5_brakingfailurestType {
+    VCU5_BRAKINGFAILUREST_NOTFAIL = 0;
+    VCU5_BRAKINGFAILUREST_ESPFAIL = 1;
+    VCU5_BRAKINGFAILUREST_SPEEDSENSORFAIL = 2;
+    VCU5_BRAKINGFAILUREST_YRSFAIL = 3;
+    VCU5_BRAKINGFAILUREST_HCUFAIL = 4;
+    VCU5_BRAKINGFAILUREST_ESPANDHCUFAIL = 5;
+    VCU5_BRAKINGFAILUREST_RESERVED1 = 6;
+    VCU5_BRAKINGFAILUREST_RESERVED2 = 7;
+  }
+  enum Vcu5_brakingautocontrolstType {
+    VCU5_BRAKINGAUTOCONTROLST_INACTIVE = 0;
+    VCU5_BRAKINGAUTOCONTROLST_ACTIVE = 1;
+    VCU5_BRAKINGAUTOCONTROLST_RESERVED1 = 2;
+    VCU5_BRAKINGAUTOCONTROLST_RESERVED2 = 3;
+  }
+  // [] [0|0]
+  optional Vcu5_gearautocontrolstType vcu5_gearautocontrolst = 1;
+  // [] [0|1]
+  optional Vcu5_rearsteeringtorquesignType vcu5_rearsteeringtorquesign = 2;
+  // [Nm] [0|10]
+  optional double vcu5_rearsteeringtorque = 3;
+  // [] [0|1]
+  optional Vcu5_rearsteeringactiveType vcu5_rearsteeringactive = 4;
+  // [] [0|1]
+  optional Vcu5_frontsteeringtorquesignType vcu5_frontsteeringtorquesign = 5;
+  // [Nm] [0|10]
+  optional double vcu5_frontsteeringtorque = 6;
+  // [] [0|1]
+  optional Vcu5_frontsteeringactiveType vcu5_frontsteeringactive = 7;
+  // [] [0|1]
+  optional Vcu5_rearsteeringtakeoverstType vcu5_rearsteeringtakeoverst = 8;
+  // [] [0|7]
+  optional Vcu5_rearsteeringfailurestType vcu5_rearsteeringfailurest = 9;
+  // [] [0|3]
+  optional Vcu5_rearsteeringautocontrolstType vcu5_rearsteeringautocontrolst = 10;
+  // [count] [0|15]
+  optional int32 vcu5_livecounter = 11;
+  // [] [0|1]
+  optional Vcu5_frontsteeringtakeoverstType vcu5_frontsteeringtakeoverst = 12;
+  // [] [0|7]
+  optional Vcu5_frontsteeringfailurestType vcu5_frontsteeringfailurest = 13;
+  // [] [0|3]
+  optional Vcu5_frontsteeringautocontrolstType vcu5_frontsteeringautocontrolst = 14;
+  // [] [0|1]
+  optional Vcu5_drivingtakeoverstType vcu5_drivingtakeoverst = 15;
+  // [] [0|7]
+  optional Vcu5_drivingfailurestType vcu5_drivingfailurest = 16;
+  // [] [0|3]
+  optional Vcu5_drivingautocontrolstType vcu5_drivingautocontrolst = 17;
+  // [check] [0|255]
+  optional int32 vcu5_checksum = 18;
+  // [] [0|1]
+  optional Vcu5_brakingtakeoverstType vcu5_brakingtakeoverst = 19;
+  // [] [0|7]
+  optional Vcu5_brakingfailurestType vcu5_brakingfailurest = 20;
+  // [] [0|3]
+  optional Vcu5_brakingautocontrolstType vcu5_brakingautocontrolst = 21;
+}
+
+message Vcu6_56c {
+// Report Message
+  enum Vcu6_remotesteeringmodeType {
+    VCU6_REMOTESTEERINGMODE_FRONT = 0;
+    VCU6_REMOTESTEERINGMODE_REAR = 1;
+    VCU6_REMOTESTEERINGMODE_OPPOSITE = 2;
+    VCU6_REMOTESTEERINGMODE_SAME = 3;
+  }
+  enum Vcu6_remoteconnectType {
+    VCU6_REMOTECONNECT_NO_CONNECT = 0;
+    VCU6_REMOTECONNECT_CONNECT = 1;
+  }
+  enum Vcu6_controlmodeType {
+    VCU6_CONTROLMODE_STOP = 0;
+    VCU6_CONTROLMODE_REMOTE = 1;
+    VCU6_CONTROLMODE_IPC = 2;
+    VCU6_CONTROLMODE_TOGETHER = 3;
+    VCU6_CONTROLMODE_RESERVED = 4;
+    VCU6_CONTROLMODE_RESERVED = 5;
+    VCU6_CONTROLMODE_RESERVED = 6;
+    VCU6_CONTROLMODE_RESERVED = 7;
+  }
+  // [times] [0|4095]
+  optional int32 vcu6_remainingtimes = 1;
+  // [V] [0|5]
+  optional double vcu6_accelpedalvoltage = 2;
+  // [%] [0|100]
+  optional double vcu6_throttleposition = 3;
+  // [%] [0|100]
+  optional double vcu6_brakeposition = 4;
+  // [] [0|3]
+  optional Vcu6_remotesteeringmodeType vcu6_remotesteeringmode = 5;
+  // [] [0|1]
+  optional Vcu6_remoteconnectType vcu6_remoteconnect = 6;
+  // [] [0|7]
+  optional Vcu6_controlmodeType vcu6_controlmode = 7;
+  // [count] [0|15]
+  optional int32 vcu6_livecounter = 8;
+  // [check] [0|255]
+  optional int32 vcu6_checksum = 9;
+  // [%] [0|100]
+  optional double vcu6_batterysoc = 10;
+}
+
+message Vcu3_2_56d {
+// Report Message
+  // [km/h] [0|180]
+  optional double vcu3_wheelspeedrr = 1;
+  // [km/h] [0|180]
+  optional double vcu3_wheelspeedrl = 2;
+  // [km/h] [0|180]
+  optional double vcu3_wheelspeedfr = 3;
+  // [km/h] [0|180]
+  optional double vcu3_wheelspeedfl = 4;
+}
+
+message Vcu1_56f {
+// Report Message
+  enum Vcu1_jerkstType {
+    VCU1_JERKST_NOPRESS = 0;
+    VCU1_JERKST_PRESS = 1;
+  }
+  enum Vcu1_button2Type {
+    VCU1_BUTTON2_NOPRESS = 0;
+    VCU1_BUTTON2_PRESS = 1;
+  }
+  enum Vcu1_button1Type {
+    VCU1_BUTTON1_NOPRESS = 0;
+    VCU1_BUTTON1_PRESS = 1;
+  }
+  enum Vcu1_parkingbrakeinfoType {
+    VCU1_PARKINGBRAKEINFO_RELEASED = 0;
+    VCU1_PARKINGBRAKEINFO_LOCKED = 1;
+  }
+  enum Vcu1_gearinfoType {
+    VCU1_GEARINFO_NOCONNECTION = 0;
+    VCU1_GEARINFO_P = 1;
+    VCU1_GEARINFO_R = 2;
+    VCU1_GEARINFO_N = 3;
+    VCU1_GEARINFO_D = 4;
+    VCU1_GEARINFO_RESERVED1 = 5;
+    VCU1_GEARINFO_RESERVED2 = 6;
+    VCU1_GEARINFO_RESERVED3 = 7;
+  }
+  enum Vcu1_brakeinfoType {
+    VCU1_BRAKEINFO_INACTIVE = 0;
+    VCU1_BRAKEINFO_BRAKEACTIVE = 1;
+  }
+  // [] [0|1]
+  optional Vcu1_jerkstType vcu1_jerkst = 1;
+  // [] [0|1]
+  optional Vcu1_button2Type vcu1_button2 = 2;
+  // [] [0|1]
+  optional Vcu1_button1Type vcu1_button1 = 3;
+  // [km/h] [0|327.67]
+  optional double vcu1_vehiclespeed = 4;
+  // [deg] [-600|600]
+  optional double vcu1_steeringangle_r = 5;
+  // [deg] [-600|600]
+  optional double vcu1_steeringangle_f = 6;
+  // [count] [0|15]
+  optional int32 vcu1_livecounter = 7;
+  // [] [0|1]
+  optional Vcu1_parkingbrakeinfoType vcu1_parkingbrakeinfo = 8;
+  // [] [0|7]
+  optional Vcu1_gearinfoType vcu1_gearinfo = 9;
+  // [check] [0|255]
+  optional int32 vcu1_checksum = 10;
+  // [] [0|1]
+  optional Vcu1_brakeinfoType vcu1_brakeinfo = 11;
+}
+
+message Venus {
+  optional Vector__independent_sig_msg_0 vector__independent_sig_msg_0 = 1; // report message
+  optional Acu1_529 acu1_529 = 2; // report message
+  optional Acu2_532 acu2_532 = 3; // report message
+  optional Acu3_534 acu3_534 = 4; // report message
+  optional Vcu7_569 vcu7_569 = 5; // report message
+  optional Vcu5_56a vcu5_56a = 6; // report message
+  optional Vcu6_56c vcu6_56c = 7; // report message
+  optional Vcu3_2_56d vcu3_2_56d = 8; // report message
+  optional Vcu1_56f vcu1_56f = 9; // report message
+}

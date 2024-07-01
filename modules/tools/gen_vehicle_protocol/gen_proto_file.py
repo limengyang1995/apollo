@@ -117,11 +117,11 @@ def gen_proto_file(config_file, work_dir, template_dir):
     print("Generating proto file")
     if not os.path.exists(work_dir):
         os.makedirs(work_dir)
-    with open(config_file, 'r') as fp:
+    with open(config_file, 'r', encoding='utf-8') as fp:
         content = yaml.safe_load(fp)
         protocols = content["protocols"]
         car_type = content["car_type"]
-        with open("%s/%s.proto" % (work_dir, car_type.lower()), 'w') as pb_fp:
+        with open("%s/%s.proto" % (work_dir, car_type.lower()), 'w', encoding='utf-8') as pb_fp:
             pb_fp.write("syntax = \"proto2\";\n\npackage apollo.canbus;\n")
             for pid in protocols:
                 p = protocols[pid]
@@ -171,7 +171,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("usage:\npython %s some_config.yml" % sys.argv[0])
         sys.exit(0)
-    with open(sys.argv[1], 'r') as fp:
+    with open(sys.argv[1], 'r', encoding='utf-8') as fp:
         conf = yaml.safe_load(fp)
     protocol_conf = conf["protocol_conf"]
     car_type = conf["car_type"]

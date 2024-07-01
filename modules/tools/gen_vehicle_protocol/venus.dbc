@@ -1,0 +1,387 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: VCU ACU
+VAL_TABLE_ ACU1_GearAutoControl 3 "Reserved2" 2 "NoRequest" 1 "Request" 0 "Reserved1" ;
+
+
+BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
+ SG_ ACU4_ConditionerTemp : 0|4@1+ (1,15) [15|30] "¡æ" Vector__XXX
+ SG_ VCU2_YawRate : 0|12@1+ (0.05,-100) [-100|100] "deg/s" Vector__XXX
+ SG_ VCU2_LongitudinalAccel : 0|12@1+ (0.01,-20) [-20|20] "m/s2" Vector__XXX
+ SG_ VCU2_LiveCounter : 0|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ VCU2_LateraAccel : 0|12@1+ (0.01,-20) [-20|20] "m/s2" Vector__XXX
+ SG_ VCU2_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ VCU4_VehicleModeIndication : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ VCU4_OutputPowerPercent : 0|8@1+ (1,-50) [-50|100] "%" Vector__XXX
+ SG_ VCU4_LiveCounter : 0|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ VCU4_InterlockSystemFault : 0|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU4_InsulationMonitorWarning : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ VCU4_DCDCStatus : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ VCU4_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ VCU4_ChargerStatus : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ VCU4_BatteryPackVoltage : 0|9@1+ (1,0) [0|500] "V" Vector__XXX
+ SG_ VCU4_BatteryPackTemperature : 0|8@1+ (1,-40) [-40|210] "¡ãC" Vector__XXX
+ SG_ VCU4_BatteryPackSOC : 0|8@1+ (1,0) [0|100] "%" Vector__XXX
+ SG_ VCU4_BatteryPackCurrent : 0|10@1+ (1,-500) [-500|500] "A" Vector__XXX
+ SG_ BYD_GearCMD : 0|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GEAR_P : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Gear_Info : 0|3@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ACU5_WheelSpeedRR : 0|15@1+ (0.01,0) [0|180] "km/h" Vector__XXX
+ SG_ ACU5_WheelSpeedRL : 0|15@1+ (0.01,0) [0|180] "km/h" Vector__XXX
+ SG_ ACU5_WheelSpeedFR : 0|15@1+ (0.01,0) [0|180] "km/h" Vector__XXX
+ SG_ ACU5_WheelSpeedFL : 0|15@1+ (0.01,0) [0|180] "km/h" Vector__XXX
+ SG_ SIGNAL2 : 0|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ pulse1 : 0|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ACU3_Action6 : 0|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ ACU3_Action5 : 0|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ ACU3_Action4 : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_Action3 : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_Action2 : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_Action1 : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_Wiper : 0|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ ACU3_WidthLight : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_LiveCounter : 0|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ ACU3_Ignition : 0|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ ACU3_HornLight : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_Horn : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_DoorLock : 0|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_ArtisticLight : 0|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ ACU1_StandStillSt : 0|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ EPS1_ModeR : 0|3@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ EPS1_Mode : 0|3@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ EPS1_AutoControlR : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ EPS1_AutoControlF : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ EPS1_ErrorR : 0|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ EPS1_ErrorF : 0|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ EPS1_CurrentSpeedR : 0|8@1+ (4,0) [0|500] "" Vector__XXX
+ SG_ EPS1_CurrentSpeedF : 0|8@1+ (4,0) [0|500] "" Vector__XXX
+ SG_ EPS1_CurrentAngleR : 0|14@1+ (0.1,-600) [-600|600] "" Vector__XXX
+ SG_ EPS1_CurrentAngleF : 0|14@1+ (0.1,-600) [-600|600] "" Vector__XXX
+ SG_ BCM_EngStartST : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ BCM_LampST : 0|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ BCM_FuelRemain : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ BCM_DifLock : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ BCM_EngineStartRequest : 0|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ VCU3_ESPPresure : 0|8@1+ (1,0) [0|100] "" Vector__XXX
+ SG_ VCU3_ESPPosition : 0|8@1+ (1,0) [0|100] "" Vector__XXX
+
+BO_ 1389 VCU3_2: 8 VCU
+ SG_ VCU3_WheelSpeedRR : 48|15@1+ (0.01,0) [0|180] "km/h" Vector__XXX
+ SG_ VCU3_WheelSpeedRL : 32|15@1+ (0.01,0) [0|180] "km/h" Vector__XXX
+ SG_ VCU3_WheelSpeedFR : 16|15@1+ (0.01,0) [0|180] "km/h" Vector__XXX
+ SG_ VCU3_WheelSpeedFL : 0|15@1+ (0.01,0) [0|180] "km/h" Vector__XXX
+
+BO_ 1385 VCU7: 8 VCU
+ SG_ VCU7_MCUBrakeState : 59|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU7_BatteryVoltage : 32|13@1+ (0.1,0) [0|500] "V" Vector__XXX
+ SG_ VCU7_BatteryCurrent : 45|11@1+ (0.1,-100) [-100|100] "A" Vector__XXX
+ SG_ VCU7_MotorSpeed : 16|16@1+ (1,0) [0|65535] "rpm" Vector__XXX
+ SG_ VCU7_MCUSpeedMode : 58|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU7_MCURelayState : 57|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU7_MCULowPower : 56|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU7_MCUErrorCode : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ VCU7_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ VCU7_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+
+BO_ 1388 VCU6: 8 VCU
+ SG_ VCU6_RemainingTimes : 48|12@1+ (1,0) [0|4095] "times" Vector__XXX
+ SG_ VCU6_AccelPedalVoltage : 40|8@1+ (0.02,0) [0|5] "V" Vector__XXX
+ SG_ VCU6_ThrottlePosition : 32|8@1+ (0.4,0) [0|100] "%" Vector__XXX
+ SG_ VCU6_BrakePosition : 24|8@1+ (0.4,0) [0|100] "%" Vector__XXX
+ SG_ VCU6_RemoteSteeringMode : 20|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ VCU6_RemoteConnect : 19|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU6_ControlMode : 16|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ VCU6_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ VCU6_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ VCU6_BatterySOC : 8|8@1+ (0.4,0) [0|100] "%" Vector__XXX
+
+BO_ 1332 ACU3: 8 ACU
+ SG_ ACU3_SteeringLight : 8|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_HazardLight : 12|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ ACU3_BrakeSwitch : 32|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_BeamLight : 10|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU3_BackupLight : 18|2@1+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 1321 ACU1: 8 ACU
+ SG_ ACU1_GearAutoControl : 40|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ACU1_TargetSteeringSpeed : 30|9@1+ (1,0) [0|500] "deg/s" Vector__XXX
+ SG_ ACU1_TargetSteeringAngle_R : 19|11@1+ (1,-600) [-600|600] "deg" Vector__XXX
+ SG_ ACU1_TargetSteeringAngle_F : 8|11@1+ (1,-600) [-600|600] "deg" Vector__XXX
+ SG_ ACU1_TargetGear : 44|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ ACU1_TargetEPB : 42|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU1_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ ACU1_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ ACU1_SteeringAutoControl : 56|2@1+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 1330 ACU2: 8 ACU
+ SG_ ACU2_AxialAutoControl : 34|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU2_TargetVehicleSpeed : 50|10@1+ (0.1,0) [0|100] "km/h" Vector__XXX
+ SG_ ACU2_TargetTorque : 40|10@1+ (0.1,0) [0|100] "Nm" Vector__XXX
+ SG_ ACU2_TargetBrakingPosition : 27|7@1+ (1,0) [0|100] "%" Vector__XXX
+ SG_ ACU2_TargetAcceleratorPosition : 20|7@1+ (1,0) [0|100] "%" Vector__XXX
+ SG_ ACU2_BrakingControlMode : 38|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU2_AcceleratorControlMode : 36|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ ACU2_TargetAxialAccelDecel : 8|12@1+ (0.01,-20) [-20|20] "m/s2" Vector__XXX
+ SG_ ACU2_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ ACU2_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+
+BO_ 1391 VCU1: 8 VCU
+ SG_ VCU1_JerkSt : 55|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU1_Button2 : 23|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU1_Button1 : 22|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU1_VehicleSpeed : 40|15@1+ (0.01,0) [0|327.67] "km/h" Vector__XXX
+ SG_ VCU1_SteeringAngle_R : 24|14@1+ (0.1,-600) [-600|600] "deg" Vector__XXX
+ SG_ VCU1_SteeringAngle_F : 8|14@1+ (0.1,-600) [-600|600] "deg" Vector__XXX
+ SG_ VCU1_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ VCU1_ParkingBrakeInfo : 39|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU1_GearInfo : 56|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ VCU1_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ VCU1_BrakeInfo : 38|1@1+ (1,0) [0|1] "" Vector__XXX
+
+BO_ 1386 VCU5: 8 VCU
+ SG_ VCU5_GearAutoControlST : 56|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ VCU5_RearSteeringTorqueSign : 54|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU5_RearSteeringTorque : 44|10@1+ (0.01,0) [0|10] "Nm" Vector__XXX
+ SG_ VCU5_RearSteeringActive : 55|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU5_FrontSteeringTorqueSign : 42|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU5_FrontSteeringTorque : 32|10@1+ (0.01,0) [0|10] "Nm" Vector__XXX
+ SG_ VCU5_FrontSteeringActive : 43|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU5_RearSteeringTakeOverSt : 31|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU5_RearSteeringFailureSt : 28|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ VCU5_RearSteeringAutoControlSt : 14|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ VCU5_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ VCU5_FrontSteeringTakeOverSt : 27|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU5_FrontSteeringFailureSt : 24|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ VCU5_FrontSteeringAutoControlSt : 12|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ VCU5_DrivingTakeOverSt : 19|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU5_DrivingFailureSt : 16|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ VCU5_DrivingAutoControlSt : 8|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ VCU5_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ VCU5_BrakingTakeOverSt : 23|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ VCU5_BrakingFailureSt : 20|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ VCU5_BrakingAutoControlSt : 10|2@1+ (1,0) [0|3] "" Vector__XXX
+
+
+
+CM_ BU_ VCU;
+CM_ BU_ ACU;
+CM_ BO_ 3221225472 "This is a message for not used signals, created by Vector CANdb++ DBC OLE DB Provider.";
+CM_ SG_ 3221225472 ACU4_ConditionerTemp;
+CM_ SG_ 3221225472 VCU2_YawRate;
+CM_ SG_ 3221225472 VCU2_LongitudinalAccel;
+CM_ SG_ 3221225472 VCU2_LateraAccel;
+CM_ SG_ 3221225472 VCU4_VehicleModeIndication;
+CM_ SG_ 3221225472 VCU4_OutputPowerPercent;
+CM_ SG_ 3221225472 VCU4_InterlockSystemFault;
+CM_ SG_ 3221225472 VCU4_InsulationMonitorWarning;
+CM_ SG_ 3221225472 VCU4_DCDCStatus;
+CM_ SG_ 3221225472 VCU4_ChargerStatus;
+CM_ SG_ 3221225472 VCU4_BatteryPackVoltage;
+CM_ SG_ 3221225472 VCU4_BatteryPackTemperature;
+CM_ SG_ 3221225472 VCU4_BatteryPackSOC;
+CM_ SG_ 3221225472 VCU4_BatteryPackCurrent;
+CM_ SG_ 3221225472 ACU5_WheelSpeedRR;
+CM_ SG_ 3221225472 ACU5_WheelSpeedRL;
+CM_ SG_ 3221225472 ACU5_WheelSpeedFR;
+CM_ SG_ 3221225472 ACU5_WheelSpeedFL;
+CM_ SG_ 3221225472 ACU3_Action6;
+CM_ SG_ 3221225472 ACU3_Action5;
+CM_ SG_ 3221225472 ACU3_Action4;
+CM_ SG_ 3221225472 ACU3_Action3;
+CM_ SG_ 3221225472 ACU3_Action2;
+CM_ SG_ 3221225472 ACU3_Action1;
+CM_ SG_ 3221225472 ACU3_Wiper;
+CM_ SG_ 3221225472 ACU3_WidthLight;
+CM_ SG_ 3221225472 ACU3_HornLight;
+CM_ SG_ 3221225472 ACU3_Horn;
+CM_ SG_ 3221225472 ACU3_DoorLock;
+CM_ SG_ 3221225472 ACU3_ArtisticLight;
+CM_ SG_ 3221225472 ACU1_StandStillSt;
+CM_ SG_ 3221225472 BCM_EngStartST;
+CM_ SG_ 3221225472 BCM_LampST;
+CM_ SG_ 3221225472 BCM_FuelRemain;
+CM_ SG_ 3221225472 BCM_DifLock;
+CM_ SG_ 3221225472 BCM_EngineStartRequest;
+CM_ SG_ 3221225472 VCU3_ESPPresure;
+CM_ SG_ 3221225472 VCU3_ESPPosition;
+CM_ SG_ 1389 VCU3_WheelSpeedRR;
+CM_ SG_ 1389 VCU3_WheelSpeedRL;
+CM_ SG_ 1389 VCU3_WheelSpeedFR;
+CM_ SG_ 1389 VCU3_WheelSpeedFL;
+CM_ SG_ 1385 VCU7_MCUBrakeState;
+CM_ SG_ 1385 VCU7_BatteryVoltage;
+CM_ SG_ 1385 VCU7_BatteryCurrent;
+CM_ SG_ 1385 VCU7_MotorSpeed;
+CM_ SG_ 1385 VCU7_MCUSpeedMode;
+CM_ SG_ 1385 VCU7_MCURelayState;
+CM_ SG_ 1385 VCU7_MCULowPower;
+CM_ SG_ 1385 VCU7_MCUErrorCode;
+CM_ SG_ 1388 VCU6_AccelPedalVoltage;
+CM_ SG_ 1388 VCU6_ThrottlePosition;
+CM_ SG_ 1388 VCU6_BrakePosition;
+CM_ SG_ 1388 VCU6_RemoteSteeringMode;
+CM_ SG_ 1388 VCU6_RemoteConnect;
+CM_ SG_ 1388 VCU6_ControlMode;
+CM_ SG_ 1388 VCU6_BatterySOC;
+CM_ SG_ 1332 ACU3_SteeringLight;
+CM_ SG_ 1332 ACU3_HazardLight;
+CM_ SG_ 1332 ACU3_BrakeSwitch;
+CM_ SG_ 1332 ACU3_BeamLight;
+CM_ SG_ 1332 ACU3_BackupLight;
+CM_ SG_ 1321 ACU1_GearAutoControl;
+CM_ SG_ 1321 ACU1_TargetSteeringSpeed;
+CM_ SG_ 1321 ACU1_TargetSteeringAngle_R;
+CM_ SG_ 1321 ACU1_TargetSteeringAngle_F;
+CM_ SG_ 1321 ACU1_TargetGear;
+CM_ SG_ 1321 ACU1_TargetEPB;
+CM_ SG_ 1321 ACU1_SteeringAutoControl;
+CM_ SG_ 1330 ACU2_AxialAutoControl;
+CM_ SG_ 1330 ACU2_TargetVehicleSpeed;
+CM_ SG_ 1330 ACU2_TargetTorque;
+CM_ SG_ 1330 ACU2_TargetBrakingPosition;
+CM_ SG_ 1330 ACU2_TargetAcceleratorPosition;
+CM_ SG_ 1330 ACU2_BrakingControlMode;
+CM_ SG_ 1330 ACU2_AcceleratorControlMode;
+CM_ SG_ 1330 ACU2_TargetAxialAccelDecel;
+CM_ SG_ 1391 VCU1_JerkSt;
+CM_ SG_ 1391 VCU1_Button2;
+CM_ SG_ 1391 VCU1_Button1;
+CM_ SG_ 1391 VCU1_VehicleSpeed;
+CM_ SG_ 1391 VCU1_SteeringAngle_R;
+CM_ SG_ 1391 VCU1_SteeringAngle_F;
+CM_ SG_ 1391 VCU1_ParkingBrakeInfo;
+CM_ SG_ 1391 VCU1_GearInfo;
+CM_ SG_ 1391 VCU1_BrakeInfo;
+CM_ SG_ 1386 VCU5_GearAutoControlST;
+CM_ SG_ 1386 VCU5_RearSteeringTorqueSign;
+CM_ SG_ 1386 VCU5_RearSteeringTorque;
+CM_ SG_ 1386 VCU5_RearSteeringActive;
+CM_ SG_ 1386 VCU5_FrontSteeringTorqueSign;
+CM_ SG_ 1386 VCU5_FrontSteeringTorque;
+CM_ SG_ 1386 VCU5_FrontSteeringActive;
+CM_ SG_ 1386 VCU5_RearSteeringTakeOverSt;
+CM_ SG_ 1386 VCU5_RearSteeringFailureSt;
+CM_ SG_ 1386 VCU5_RearSteeringAutoControlSt;
+CM_ SG_ 1386 VCU5_FrontSteeringTakeOverSt;
+CM_ SG_ 1386 VCU5_FrontSteeringFailureSt;
+CM_ SG_ 1386 VCU5_FrontSteeringAutoControlSt;
+CM_ SG_ 1386 VCU5_DrivingTakeOverSt;
+CM_ SG_ 1386 VCU5_DrivingFailureSt;
+CM_ SG_ 1386 VCU5_DrivingAutoControlSt;
+CM_ SG_ 1386 VCU5_BrakingTakeOverSt;
+CM_ SG_ 1386 VCU5_BrakingFailureSt;
+CM_ SG_ 1386 VCU5_BrakingAutoControlSt;
+BA_DEF_  "Baudrate" INT 0 1000000;
+BA_DEF_  "VersionDay" INT 0 31;
+BA_DEF_  "VersionMonth" INT 0 12;
+BA_DEF_  "VersionYear" INT 0 2099;
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 10000;
+BA_DEF_  "DBName" STRING ;
+BA_DEF_DEF_  "Baudrate" 500000;
+BA_DEF_DEF_  "VersionDay" 1;
+BA_DEF_DEF_  "VersionMonth" 1;
+BA_DEF_DEF_  "VersionYear" 2020;
+BA_DEF_DEF_  "GenMsgCycleTime" 10;
+BA_DEF_DEF_  "DBName" "VENUS";
+BA_ "VersionMonth" 7;
+BA_ "VersionDay" 25;
+BA_ "VersionYear" 2020;
+BA_ "DBName" "VENUS";
+BA_ "GenMsgCycleTime" BO_ 1388 20;
+BA_ "GenMsgCycleTime" BO_ 1332 100;
+BA_ "GenMsgCycleTime" BO_ 1321 20;
+BA_ "GenMsgCycleTime" BO_ 1330 20;
+BA_ "GenMsgCycleTime" BO_ 1391 10;
+BA_ "GenMsgCycleTime" BO_ 1386 20;
+VAL_ 3221225472 VCU4_VehicleModeIndication 3 "Reserved" 2 "Sport" 1 "ECO" 0 "Normal" ;
+VAL_ 3221225472 VCU4_InterlockSystemFault 1 "Fault" 0 "NoFault" ;
+VAL_ 3221225472 VCU4_InsulationMonitorWarning 3 "Reserved" 2 "FirstWarning" 1 "SecondWarning" 0 "Normal" ;
+VAL_ 3221225472 VCU4_DCDCStatus 3 "CriticalError" 2 "NormalError" 1 "Working" 0 "NotWorking" ;
+VAL_ 3221225472 VCU4_ChargerStatus 3 "ChargeFault" 2 "ChargeFinish" 1 "Charging" 0 "NotCharge" ;
+VAL_ 3221225472 ACU3_Wiper 7 "Off" 6 "Wash" 5 "Auto" 4 "Speed4" 3 "Speed3" 2 "Speed2" 1 "Speed1" 0 "NoRequest" ;
+VAL_ 3221225472 ACU3_WidthLight 3 "Reserved" 2 "Off" 1 "On" 0 "NoRequest" ;
+VAL_ 3221225472 ACU3_Ignition 7 "Reserved2" 6 "Reserved1" 5 "IG2" 4 "IG1" 3 "Off" 2 "Start" 1 "On" 0 "NoRequest" ;
+VAL_ 3221225472 ACU3_HornLight 3 "Reserved" 2 "Off" 1 "On" 0 "NoRequest" ;
+VAL_ 3221225472 ACU3_Horn 3 "Reserved" 2 "Off" 1 "On" 0 "NoRequest" ;
+VAL_ 3221225472 ACU3_DoorLock 3 "Reserved" 2 "Unlock" 1 "Lock" 0 "NoRequest" ;
+VAL_ 3221225472 ACU3_ArtisticLight 15 "Off" 14 "Effect14" 13 "Effect13" 12 "Effect12" 11 "Effect11" 10 "Effect10" 9 "Effect9" 8 "Effect8" 7 "Effect7" 6 "Effect6" 5 "Effect5" 4 "Effect4" 3 "Effect3" 2 "Effect2" 1 "Effect1" 0 "NoRequest" ;
+VAL_ 3221225472 ACU1_StandStillSt 1 "Active" 0 "Inactive" ;
+VAL_ 1385 VCU7_MCUBrakeState 1 "On" 0 "Off" ;
+VAL_ 1385 VCU7_MCUSpeedMode 1 "High" 0 "Low" ;
+VAL_ 1385 VCU7_MCURelayState 1 "On" 0 "Off" ;
+VAL_ 1385 VCU7_MCULowPower 1 "Active" 0 "Inactive" ;
+VAL_ 1388 VCU6_RemoteSteeringMode 3 "Same" 2 "Opposite" 1 "Rear" 0 "Front" ;
+VAL_ 1388 VCU6_RemoteConnect 1 "Connect" 0 "No Connect" ;
+VAL_ 1388 VCU6_ControlMode 7 "Reserved" 6 "Reserved" 5 "Reserved" 4 "Reserved" 3 "TOGETHER" 2 "IPC" 1 "REMOTE" 0 "STOP" ;
+VAL_ 1332 ACU3_SteeringLight 3 "Off" 2 "Right" 1 "Left" 0 "NoRequest" ;
+VAL_ 1332 ACU3_HazardLight 3 "Reserved" 2 "Off" 1 "On" 0 "NoRequest" ;
+VAL_ 1332 ACU3_BrakeSwitch 3 "Reserved" 2 "Off" 1 "On" 0 "NoRequest" ;
+VAL_ 1332 ACU3_BeamLight 3 "Off" 2 "High" 1 "Low" 0 "NoRequest" ;
+VAL_ 1332 ACU3_BackupLight 3 "Reserved" 2 "Off" 1 "On" 0 "NoRequest" ;
+VAL_ 1321 ACU1_GearAutoControl 3 "Reserved2" 2 "NoRequest" 1 "Request" 0 "Reserved1" ;
+VAL_ 1321 ACU1_TargetSteeringAngle_R 2047 "NoRequest" ;
+VAL_ 1321 ACU1_TargetSteeringAngle_F 2047 "NoRequest" ;
+VAL_ 1321 ACU1_TargetGear 7 "Reserved3" 6 "Reserved2" 5 "Reserved1" 4 "D" 3 "N" 2 "R" 1 "P" 0 "NoRequest" ;
+VAL_ 1321 ACU1_TargetEPB 3 "Reserve" 2 "Lock" 1 "Release" 0 "NoRequest" ;
+VAL_ 1321 ACU1_SteeringAutoControl 3 "Reserve2" 2 "Reserve1" 1 "Request" 0 "NoRequet" ;
+VAL_ 1330 ACU2_AxialAutoControl 3 "Reserve2" 2 "Reserve1" 1 "Request" 0 "NoRequet" ;
+VAL_ 1330 ACU2_BrakingControlMode 3 "ESP" 2 "DecelAEB" 1 "DecelACC" 0 "Position" ;
+VAL_ 1330 ACU2_AcceleratorControlMode 3 "VehicleSpeed" 2 "Torque" 1 "Accel" 0 "Position" ;
+VAL_ 1391 VCU1_JerkSt 1 "Press" 0 "NoPress" ;
+VAL_ 1391 VCU1_Button2 1 "Press" 0 "NoPress" ;
+VAL_ 1391 VCU1_Button1 1 "Press" 0 "NoPress" ;
+VAL_ 1391 VCU1_ParkingBrakeInfo 1 "Locked" 0 "Released" ;
+VAL_ 1391 VCU1_GearInfo 7 "Reserved3" 6 "Reserved2" 5 "Reserved1" 4 "D" 3 "N" 2 "R" 1 "P" 0 "NoConnection" ;
+VAL_ 1391 VCU1_BrakeInfo 1 "BrakeActive" 0 "Inactive" ;
+VAL_ 1386 VCU5_GearAutoControlST 3 "Reserved2" 2 "Reserved1" 1 "Active" 0 "Inactive" ;
+VAL_ 1386 VCU5_RearSteeringTorqueSign 1 "Right" 0 "Left" ;
+VAL_ 1386 VCU5_RearSteeringActive 1 "Active" 0 "NoActive" ;
+VAL_ 1386 VCU5_FrontSteeringTorqueSign 1 "Right" 0 "Left" ;
+VAL_ 1386 VCU5_FrontSteeringActive 1 "Active" 0 "NoActive" ;
+VAL_ 1386 VCU5_RearSteeringTakeOverSt 1 "Active" 0 "Inactive" ;
+VAL_ 1386 VCU5_RearSteeringFailureSt 7 "Reserved4" 6 "Reserved3" 5 "Reserved2" 4 "Reserved1" 3 "SteerTempFail" 2 "SASFail" 1 "EPSFail" 0 "NotFail" ;
+VAL_ 1386 VCU5_RearSteeringAutoControlSt 3 "Reserved2" 2 "Reserved1" 1 "Active" 0 "Inactive" ;
+VAL_ 1386 VCU5_FrontSteeringTakeOverSt 1 "Active" 0 "Inactive" ;
+VAL_ 1386 VCU5_FrontSteeringFailureSt 7 "Reserved4" 6 "Reserved3" 5 "Reserved2" 4 "Reserved1" 3 "SteerTempFail" 2 "SASFail" 1 "EPSFail" 0 "NotFail" ;
+VAL_ 1386 VCU5_FrontSteeringAutoControlSt 3 "Reserved2" 2 "Reserved1" 1 "Active" 0 "Inactive" ;
+VAL_ 1386 VCU5_DrivingTakeOverSt 1 "Active" 0 "Inactive" ;
+VAL_ 1386 VCU5_DrivingFailureSt 7 "Reserved4" 6 "Reserved3" 5 "Reserved2" 4 "Reserved1" 3 "YRSFail" 2 "SpeedSensorFail" 1 "HCUFail" 0 "NotFail" ;
+VAL_ 1386 VCU5_DrivingAutoControlSt 3 "Reserved2" 2 "Reserved1" 1 "Active" 0 "Inactive" ;
+VAL_ 1386 VCU5_BrakingTakeOverSt 1 "Active" 0 "Inactive" ;
+VAL_ 1386 VCU5_BrakingFailureSt 7 "Reserved2" 6 "Reserved1" 5 "ESPAndHCUFail" 4 "HCUFail" 3 "YRSFail" 2 "SpeedSensorFail" 1 "ESPFail" 0 "NotFail" ;
+VAL_ 1386 VCU5_BrakingAutoControlSt 3 "Reserved2" 2 "Reserved1" 1 "Active" 0 "Inactive" ;
+
