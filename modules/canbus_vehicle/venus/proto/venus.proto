@@ -219,18 +219,12 @@ message Vector__independent_sig_msg_0 {
 }
 
 message Acu1_529 {
-// Report Message
+// Control Message
   enum Acu1_gearautocontrolType {
     ACU1_GEARAUTOCONTROL_RESERVED1 = 0;
     ACU1_GEARAUTOCONTROL_REQUEST = 1;
     ACU1_GEARAUTOCONTROL_NOREQUEST = 2;
     ACU1_GEARAUTOCONTROL_RESERVED2 = 3;
-  }
-  enum Acu1_targetsteeringangle_rType {
-    ACU1_TARGETSTEERINGANGLE_R_NOREQUEST = 2047;
-  }
-  enum Acu1_targetsteeringangle_fType {
-    ACU1_TARGETSTEERINGANGLE_F_NOREQUEST = 2047;
   }
   enum Acu1_targetgearType {
     ACU1_TARGETGEAR_NOREQUEST = 0;
@@ -259,9 +253,9 @@ message Acu1_529 {
   // [deg/s] [0|500]
   optional int32 acu1_targetsteeringspeed = 2;
   // [deg] [-600|600]
-  optional Acu1_targetsteeringangle_rType acu1_targetsteeringangle_r = 3;
+  optional double acu1_targetsteeringangle_r = 3;
   // [deg] [-600|600]
-  optional Acu1_targetsteeringangle_fType acu1_targetsteeringangle_f = 4;
+  optional double acu1_targetsteeringangle_f = 4;
   // [] [0|7]
   optional Acu1_targetgearType acu1_targetgear = 5;
   // [] [0|3]
@@ -275,7 +269,7 @@ message Acu1_529 {
 }
 
 message Acu2_532 {
-// Report Message
+// Control Message
   enum Acu2_axialautocontrolType {
     ACU2_AXIALAUTOCONTROL_NOREQUET = 0;
     ACU2_AXIALAUTOCONTROL_REQUEST = 1;
@@ -317,7 +311,7 @@ message Acu2_532 {
 }
 
 message Acu3_534 {
-// Report Message
+// Control Message
   enum Acu3_steeringlightType {
     ACU3_STEERINGLIGHT_NOREQUEST = 0;
     ACU3_STEERINGLIGHT_LEFT = 1;
@@ -567,10 +561,10 @@ message Vcu6_56c {
     VCU6_CONTROLMODE_REMOTE = 1;
     VCU6_CONTROLMODE_IPC = 2;
     VCU6_CONTROLMODE_TOGETHER = 3;
-    VCU6_CONTROLMODE_RESERVED = 4;
-    VCU6_CONTROLMODE_RESERVED = 5;
-    VCU6_CONTROLMODE_RESERVED = 6;
-    VCU6_CONTROLMODE_RESERVED = 7;
+    VCU6_CONTROLMODE_RESERVED1 = 4;
+    VCU6_CONTROLMODE_RESERVED2 = 5;
+    VCU6_CONTROLMODE_RESERVED3 = 6;
+    VCU6_CONTROLMODE_RESERVED4 = 7;
   }
   // [times] [0|4095]
   optional int32 vcu6_remainingtimes = 1;
@@ -664,9 +658,9 @@ message Vcu1_56f {
 
 message Venus {
   optional Vector__independent_sig_msg_0 vector__independent_sig_msg_0 = 1; // report message
-  optional Acu1_529 acu1_529 = 2; // report message
-  optional Acu2_532 acu2_532 = 3; // report message
-  optional Acu3_534 acu3_534 = 4; // report message
+  optional Acu1_529 acu1_529 = 2; // control message
+  optional Acu2_532 acu2_532 = 3; // control message
+  optional Acu3_534 acu3_534 = 4; // control message
   optional Vcu7_569 vcu7_569 = 5; // report message
   optional Vcu5_56a vcu5_56a = 6; // report message
   optional Vcu6_56c vcu6_56c = 7; // report message

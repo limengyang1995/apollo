@@ -197,7 +197,7 @@ Chassis VenusController::chassis() {
     chassis_.set_speed_mps(0);
   }
   //7 battery soc && chassis throttle percentage and brake percentage
-  if (chassis_detail.has_vcu6_56c(){
+  if (chassis_detail.has_vcu6_56c()){
     if (chassis_detail.vcu6_56c().has_vcu6_batterysoc()) {
       chassis_.set_battery_soc_percentage(
           static_cast<int>(chassis_detail.vcu6_56c().vcu6_batterysoc()));
@@ -288,7 +288,7 @@ Chassis VenusController::chassis() {
 void VenusController::Emergency() {
   set_driving_mode(Chassis::EMERGENCY_MODE);
   ResetProtocol();
-  acu3_534->set_acu3_hazardlight(Acu3_534::ACU3_HAZARDLIGHT_ON);
+  acu3_534_->set_acu3_hazardlight(Acu3_534::ACU3_HAZARDLIGHT_ON);
 }
 
 ErrorCode VenusController::EnableAutoMode() {
@@ -297,8 +297,8 @@ ErrorCode VenusController::EnableAutoMode() {
     return ErrorCode::OK;
   }
   acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_REQUEST);
-  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_REQUEST)
-  acu1_529_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
+  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_REQUEST);
+  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
 
   can_sender_->Update();
   const int32_t flag =
@@ -315,15 +315,15 @@ ErrorCode VenusController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
-ErrorCode Ge3Controller::EnableCloudMode() {
+ErrorCode VenusController::EnableCloudMode() {
   if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
     return ErrorCode::OK;
   }
 
   acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_REQUEST);
-  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_REQUEST)
-  acu1_529_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
+  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_REQUEST);
+  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
 
   can_sender_->Update();
   set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
@@ -348,8 +348,8 @@ ErrorCode VenusController::EnableSteeringOnlyMode() {
     return ErrorCode::OK;
   }
   acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_REQUEST);
-  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_NOREQUEST)
-  acu1_529_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_NOREQUET);
+  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_NOREQUEST);
+  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_NOREQUET);
   can_sender_->Update();
   if (!CheckResponse(CHECK_RESPONSE_STEER_UNIT_FLAG, true)) {
     AERROR << "Failed to switch to AUTO_STEER_ONLY mode.";
@@ -371,8 +371,8 @@ ErrorCode VenusController::EnableSpeedOnlyMode() {
     return ErrorCode::OK;
   }
   acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_NOREQUET);
-  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_REQUEST)
-  acu1_529_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
+  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_REQUEST);
+  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
 
   can_sender_->Update();
   if (!CheckResponse(CHECK_RESPONSE_SPEED_UNIT_FLAG, true)) {
@@ -397,6 +397,8 @@ void VenusController::Gear(Chassis::GearPosition gear_position) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_REQUEST);
+
   Venus chassis_detail;
   message_manager_->GetSensorData(&chassis_detail);
   // Need to request neutral gear first if current gear location is not neutral
@@ -414,42 +416,38 @@ void VenusController::Gear(Chassis::GearPosition gear_position) {
       chassis_detail.vcu5_56a().vcu5_gearautocontrolst() == Vcu5_56a::VCU5_GEARAUTOCONTROLST_ACTIVE){
     switch (gear_position) {
       case Chassis::GEAR_NEUTRAL: {
-        gear_66_->set_gear_neutral();
+        acu1_529_->set_acu1_targetgear(Acu1_529::ACU1_TARGETGEAR_N);
         break;
       }
       case Chassis::GEAR_REVERSE: {
-        gear_66_->set_gear_reverse();
+        acu1_529_->set_acu1_targetgear(Acu1_529::ACU1_TARGETGEAR_R);
         break;
       }
       case Chassis::GEAR_DRIVE: {
-        gear_66_->set_gear_drive();
+        acu1_529_->set_acu1_targetgear(Acu1_529::ACU1_TARGETGEAR_D);
         break;
       }
       case Chassis::GEAR_PARKING: {
-        gear_66_->set_gear_park();
-        break;
-      }
-      case Chassis::GEAR_LOW: {
-        gear_66_->set_gear_low();
+        acu1_529_->set_acu1_targetgear(Acu1_529::ACU1_TARGETGEAR_P);
         break;
       }
       case Chassis::GEAR_NONE: {
-        gear_66_->set_gear_none();
+        acu1_529_->set_acu1_targetgear(Acu1_529::ACU1_TARGETGEAR_NOREQUEST);
         break;
       }
       case Chassis::GEAR_INVALID: {
         AERROR << "Gear command is invalid!";
-        gear_66_->set_gear_none();
+        acu1_529_->set_acu1_targetgear(Acu1_529::ACU1_TARGETGEAR_NOREQUEST);
         break;
       }
       default: {
-        gear_66_->set_gear_none();
+        acu1_529_->set_acu1_targetgear(Acu1_529::ACU1_TARGETGEAR_NOREQUEST);
         break;
       }
     }
-    }else{
-      AERROR << "Gear status is not activated";
-    }
+  }else{
+    AERROR << "Gear status is not activated";
+  }
   
 }
 
@@ -464,9 +462,13 @@ void VenusController::Brake(double pedal) {
     AINFO << "The current drive mode does not need to set brake pedal.";
     return;
   }
+
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
-  
+  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_NOREQUET);
+  acu2_532_->set_acu2_brakingcontrolmode(Acu2_532::ACU2_BRAKINGCONTROLMODE_POSITION);
+  acu2_532_->set_acu2_targetbrakingposition(std::abs(int(pedal)));
+
 }
 
 // drive with pedal
@@ -480,6 +482,9 @@ void VenusController::Throttle(double pedal) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
+  acu2_532_->set_acu2_acceleratorcontrolmode(Acu2_532::ACU2_ACCELERATORCONTROLMODE_POSITION);
+  acu2_532_->set_acu2_targetacceleratorposition(std::abs(int(pedal)));
 }
 
 // confirm the car is driven by acceleration command instead of
@@ -495,6 +500,10 @@ void VenusController::Acceleration(double acc) {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
   */
+  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
+  acu2_532_->set_acu2_acceleratorcontrolmode(Acu2_532::ACU2_ACCELERATORCONTROLMODE_ACCEL);
+  acu2_532_->set_acu2_brakingcontrolmode(Acu2_532::ACU2_BRAKINGCONTROLMODE_DECELACC);
+  acu2_532_->set_acu2_targetaxialacceldecel(acc);
 }
 
 // venus default, +470 ~ -470 or other, left:+, right:-
@@ -510,11 +519,14 @@ void VenusController::Steer(double angle) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_REQUEST);
+  acu1_529_->set_acu1_targetsteeringangle_f(double((-1) * vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0));
+  acu1_529_->set_acu1_targetsteeringspeed(400);
 }
 
 // venus default, steering with new angle speed
-// angle:99.99~0.00~-99.99, unit:deg, left:+, right:-
-// angle_spd:0.00~99.99, unit:deg/s
+// angle:99.99~0.00~-99.99, unit:deg, left:-, right:+
+// angle_spd:0.00~500, unit:deg/s
 void VenusController::Steer(double angle, double angle_spd) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_STEER_ONLY &&
@@ -524,6 +536,9 @@ void VenusController::Steer(double angle, double angle_spd) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_REQUEST);
+  acu1_529_->set_acu1_targetsteeringangle_f(double((-1) * vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0));
+  acu1_529_->set_acu1_targetsteeringspeed(int(vehicle_params_.max_steer_angle_rate() /M_PI * 180 * angle_spd / 100));
 }
 
 void VenusController::SetEpbBreak(const ControlCommand& command) {
@@ -542,12 +557,15 @@ void VenusController::SetBeam(const VehicleSignal& vehicle_signal) {
   if (vehicle_signal.high_beam()) {
     /* ADD YOUR OWN CAR CHASSIS OPERATION
     */
+    acu3_534_->set_acu3_beamlight(Acu3_534::ACU3_BEAMLIGHT_HIGH);
   } else if (vehicle_signal.low_beam()) {
     /* ADD YOUR OWN CAR CHASSIS OPERATION
     */
+    acu3_534_->set_acu3_beamlight(Acu3_534::ACU3_BEAMLIGHT_LOW);
   } else {
     /* ADD YOUR OWN CAR CHASSIS OPERATION
     */
+    acu3_534_->set_acu3_beamlight(Acu3_534::ACU3_BEAMLIGHT_NOREQUEST);
   }
 }
 
@@ -563,16 +581,15 @@ void VenusController::SetHorn(const VehicleSignal& vehicle_signal) {
 
 void VenusController::SetTurningSignal(const VehicleSignal& vehicle_signal) {
   // Set Turn Signal
-  /* ADD YOUR OWN CAR CHASSIS OPERATION
   auto signal = vehicle_signal.turn_signal();
   if (signal == common::VehicleSignal::TURN_LEFT) {
-
+    acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_LEFT);
   } else if (signal == common::VehicleSignal::TURN_RIGHT) {
-
+    acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_RIGHT);
   } else {
-
+    acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_NOREQUEST);
   }
-  */
+ 
 }
 
 ErrorCode VenusController::HandleCustomOperation(
@@ -639,25 +656,25 @@ bool VenusController::CheckChassisError() {
   if (chassis_detail.has_vcu5_56a()){
     if (chassis_detail.vcu5_56a().has_vcu5_drivingfailurest()) {
       if(chassis_detail.vcu5_56a().vcu5_drivingfailurest() != Vcu5_56a::VCU5_DRIVINGFAILUREST_NOTFAIL){ 
-        chassis_.set_error_code(ErrorCode::CHASSIS_ERROR_ON_THROTTLE);
+        chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_THROTTLE);
         return true;
       }else{
-        chassis_.set_error_code(ErrorCode::NO_ERROR);
+        chassis_.set_error_code(Chassis::NO_ERROR);
       }
     }else{
-      chassis_.set_error_code(ErrorCode::CHASSIS_ERROR_ON_THROTTLE);
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_THROTTLE);
       return true;
     }
 
     if (chassis_detail.vcu5_56a().has_vcu5_brakingfailurest()) {
       if(chassis_detail.vcu5_56a().vcu5_brakingfailurest() != Vcu5_56a::VCU5_BRAKINGFAILUREST_NOTFAIL){ 
-        chassis_.set_error_code(ErrorCode::CHASSIS_ERROR_ON_BRAKE);
+        chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_BRAKE);
         return true;
       }else{
-        chassis_.set_error_code(ErrorCode::NO_ERROR);
+        chassis_.set_error_code(Chassis::NO_ERROR);
       }
     }else{
-      chassis_.set_error_code(ErrorCode::CHASSIS_ERROR_ON_BRAKE);
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_BRAKE);
       return true;
     }
 
@@ -665,13 +682,13 @@ bool VenusController::CheckChassisError() {
         chassis_detail.vcu5_56a().has_vcu5_rearsteeringfailurest()) {
       if(chassis_detail.vcu5_56a().vcu5_frontsteeringfailurest() != Vcu5_56a::VCU5_FRONTSTEERINGFAILUREST_NOTFAIL &&
          chassis_detail.vcu5_56a().vcu5_rearsteeringfailurest() != Vcu5_56a::VCU5_REARSTEERINGFAILUREST_NOTFAIL){ 
-        chassis_.set_error_code(ErrorCode::CHASSIS_ERROR_ON_STEER);
+        chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_STEER);
         return true;
       }else{
-        chassis_.set_error_code(ErrorCode::NO_ERROR);
+        chassis_.set_error_code(Chassis::NO_ERROR);
       }
     }else{
-      chassis_.set_error_code(ErrorCode::CHASSIS_ERROR_ON_STEER);
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_STEER);
       return true;
     }
   }
@@ -683,8 +700,7 @@ void VenusController::SecurityDogThreadFunc() {
   int32_t horizontal_ctrl_fail = 0;
 
   if (can_sender_ == nullptr) {
-    AERROR << "Failed to run SecurityDogThreadFunc() because can_sender_ is "
-              "nullptr.";
+    AERROR << "Failed to run SecurityDogThreadFunc() because can_sender_ is nullptr.";
     return;
   }
   while (!can_sender_->IsRunning()) {
@@ -701,7 +717,8 @@ void VenusController::SecurityDogThreadFunc() {
 
     // 1. horizontal control check
     if ((mode == Chassis::COMPLETE_AUTO_DRIVE ||
-         mode == Chassis::AUTO_STEER_ONLY) &&
+         mode == Chassis::AUTO_STEER_ONLY || 
+         mode == Chassis::REMOTE_CLOUD_DRIVE) &&
         !CheckResponse(CHECK_RESPONSE_STEER_UNIT_FLAG, false)) {
       ++horizontal_ctrl_fail;
       if (horizontal_ctrl_fail >= kMaxFailAttempt) {
@@ -715,7 +732,8 @@ void VenusController::SecurityDogThreadFunc() {
 
     // 2. vertical control check
     if ((mode == Chassis::COMPLETE_AUTO_DRIVE ||
-         mode == Chassis::AUTO_SPEED_ONLY) &&
+         mode == Chassis::AUTO_SPEED_ONLY || 
+         mode == Chassis::REMOTE_CLOUD_DRIVE) &&
         !CheckResponse(CHECK_RESPONSE_SPEED_UNIT_FLAG, false)) {
       ++vertical_ctrl_fail;
       if (vertical_ctrl_fail >= kMaxFailAttempt) {
@@ -754,23 +772,29 @@ bool VenusController::CheckResponse(const int32_t flags, bool need_wait) {
   bool is_eps_online = false;
   bool is_vcu_online = false;
   bool is_esp_online = false;
-
+  Venus chassis_detail;
+  
+  
   do {
+    if (message_manager_->GetSensorData(&chassis_detail) != ErrorCode::OK) {
+      AERROR_EVERY(100) << "Get chassis detail failed.";
+      return false;
+    }
     bool check_ok = true;
     if (flags & CHECK_RESPONSE_STEER_UNIT_FLAG) {
-      is_eps_online = chassis_.has_check_response() &&
-                      chassis_.check_response().has_is_eps_online() &&
-                      chassis_.check_response().is_eps_online();
+      is_eps_online = chassis_detail.has_vcu5_56a() &&
+                      chassis_detail.vcu5_56a().has_vcu5_frontsteeringtakeoverst() &&
+                      chassis_detail.vcu5_56a().vcu5_frontsteeringtakeoverst();
       check_ok = check_ok && is_eps_online;
     }
 
     if (flags & CHECK_RESPONSE_SPEED_UNIT_FLAG) {
-      is_vcu_online = chassis_.has_check_response() &&
-                      chassis_.check_response().has_is_vcu_online() &&
-                      chassis_.check_response().is_vcu_online();
-      is_esp_online = chassis_.has_check_response() &&
-                      chassis_.check_response().has_is_esp_online() &&
-                      chassis_.check_response().is_esp_online();
+      is_vcu_online = chassis_detail.has_vcu5_56a() &&
+                      chassis_detail.vcu5_56a().has_vcu5_drivingtakeoverst() &&
+                      chassis_detail.vcu5_56a().vcu5_drivingtakeoverst();
+      is_esp_online = chassis_detail.has_vcu5_56a() &&
+                      chassis_detail.vcu5_56a().has_vcu5_brakingtakeoverst() &&
+                      chassis_detail.vcu5_56a().vcu5_brakingtakeoverst();
       check_ok = check_ok && is_vcu_online && is_esp_online;
     }
     if (check_ok) {

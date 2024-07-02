@@ -21,10 +21,16 @@
 
 #include "modules/canbus/proto/canbus_conf.pb.h"
 #include "modules/canbus/proto/vehicle_parameter.pb.h"
+#include "modules/canbus_vehicle/venus/proto/venus.pb.h"
 #include "modules/common_msgs/basic_msgs/error_code.pb.h"
 #include "modules/common_msgs/chassis_msgs/chassis.pb.h"
 #include "modules/common_msgs/control_msgs/control_cmd.pb.h"
 #include "modules/canbus/vehicle/vehicle_controller.h"
+#include "modules/canbus_vehicle/venus/protocol/acu1_529.h"
+#include "modules/canbus_vehicle/venus/protocol/acu2_532.h"
+#include "modules/canbus_vehicle/venus/protocol/acu3_534.h"
+#include "modules/canbus_vehicle/venus/venus_message_manager.h"
+
 
 
 
@@ -119,6 +125,11 @@ class VenusController final : public VehicleController<::apollo::canbus::Venus> 
 
  private:
   // control protocol
+  Acu1529* acu1_529_ = nullptr;
+  Acu2532* acu2_532_ = nullptr;
+  Acu3534* acu3_534_ = nullptr;
+
+
 
 
   Chassis chassis_;
