@@ -680,7 +680,7 @@ protocols:
   '529':
     id: '529'
     name: acu1_529
-    protocol_type: report
+    protocol_type: control
     sender: ACU
     vars:
     - bit: 40
@@ -804,7 +804,7 @@ protocols:
   '532':
     id: '532'
     name: acu2_532
-    protocol_type: report
+    protocol_type: control
     sender: ACU
     vars:
     - bit: 34
@@ -925,7 +925,7 @@ protocols:
   '534':
     id: '534'
     name: acu3_534
-    protocol_type: report
+    protocol_type: control
     sender: ACU
     vars:
     - bit: 8

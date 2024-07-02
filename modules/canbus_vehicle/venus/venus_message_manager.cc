@@ -16,7 +16,6 @@
 
 #include "modules/canbus_vehicle/venus/venus_message_manager.h"
 
-
 #include "modules/canbus_vehicle/venus/protocol/acu1_529.h"
 #include "modules/canbus_vehicle/venus/protocol/acu2_532.h"
 #include "modules/canbus_vehicle/venus/protocol/acu3_534.h"
@@ -33,12 +32,11 @@ namespace venus {
 
 VenusMessageManager::VenusMessageManager() {
   // Control Messages
-
+  AddSendProtocolData<Acu1529, true>();
+  AddSendProtocolData<Acu2532, true>();
+  AddSendProtocolData<Acu3534, true>();
 
   // Report Messages
-  AddRecvProtocolData<Acu1529, true>();
-  AddRecvProtocolData<Acu2532, true>();
-  AddRecvProtocolData<Acu3534, true>();
   AddRecvProtocolData<Vcu156f, true>();
   AddRecvProtocolData<Vcu3256d, true>();
   AddRecvProtocolData<Vcu556a, true>();
