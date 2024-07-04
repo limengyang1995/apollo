@@ -317,7 +317,7 @@ Status ControlComponent::ProduceControlCommand(
     control_command->set_speed(local_view_.cloud_control_cmd().speed());
     control_command->set_throttle(local_view_.cloud_control_cmd().throttle());
     control_command->set_brake(local_view_.cloud_control_cmd().brake());
-    control_command->set_gear_location(Chassis::GEAR_DRIVE);
+    control_command->set_gear_location(local_view_.cloud_control_cmd().gear_location());
     control_command->set_steering_target(local_view_.cloud_control_cmd().steering_target());
     control_command->set_cloud_takeover_request(true);
   }else{

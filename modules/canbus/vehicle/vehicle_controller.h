@@ -330,11 +330,19 @@ ErrorCode VehicleController<SensorType>::Update(
   }
 
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
-      driving_mode() == Chassis::AUTO_SPEED_ONLY || 
-      driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
+      driving_mode() == Chassis::AUTO_SPEED_ONLY) {
+    Gear(control_command.gear_location());
+    //Throttle(control_command.throttle());
+    Acceleration(control_command.acceleration());
+    //Brake(control_command.brake());
+    SetEpbBreak(control_command);
+    SetLimits();
+  }
+
+  if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
     Gear(control_command.gear_location());
     Throttle(control_command.throttle());
-    Acceleration(control_command.acceleration());
+    //Acceleration(control_command.acceleration());
     Brake(control_command.brake());
     SetEpbBreak(control_command);
     SetLimits();
