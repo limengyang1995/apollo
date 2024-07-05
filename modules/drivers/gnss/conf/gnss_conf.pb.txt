@@ -1,5 +1,5 @@
 data {
-    # format optional: NOVATEL_BINARY, HUACE_TEXT, ASENSING_BINARY, BROADGNSS_TEXT
+    # format optional: NOVATEL_BINARY, HUACE_TEXT, ASENSING_BINARY, INS570D_BINARY, BROADGNSS_TEXT
     format: NOVATEL_BINARY
 
     # protocol optional: serial, tcp, udp, ntrip, can_card_parameter
