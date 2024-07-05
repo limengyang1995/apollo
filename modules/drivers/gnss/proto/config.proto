@@ -19,6 +19,7 @@ message Stream {
 
     ASENSING_TEXT = 14;
     ASENSING_BINARY = 15;
+    INS570D_BINARY = 16;
 
     UBLOX_TEXT = 20;
     UBLOX_BINARY = 21;

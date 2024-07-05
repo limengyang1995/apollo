@@ -18,11 +18,16 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 
 #include "google/protobuf/message.h"
 
 #include "modules/drivers/gnss/proto/config.pb.h"
+#include "modules/drivers/gnss/proto/gnss.pb.h"
+#include "modules/drivers/gnss/proto/gnss_best_pose.pb.h"
+#include "modules/drivers/gnss/proto/gnss_raw_observation.pb.h"
+#include "modules/drivers/gnss/proto/heading.pb.h"
+#include "modules/drivers/gnss/proto/imu.pb.h"
+#include "modules/drivers/gnss/proto/ins.pb.h"
 
 #include "modules/drivers/gnss/util/macros.h"
 
@@ -30,31 +35,15 @@ namespace apollo {
 namespace drivers {
 namespace gnss {
 
-// A general pointer to a protobuf message.
-using MessagePtr = ::google::protobuf::Message *;
-enum class MessageType {
-  NONE,
-  GNSS,
-  GNSS_RANGE,
-  IMU,
-  INS,
-  INS_STAT,
-  WHEEL,
-  EPHEMERIDES,
-  OBSERVATION,
-  GPGGA,
-  BDSEPHEMERIDES,
-  RAWIMU,
-  GPSEPHEMERIDES,
-  GLOEPHEMERIDES,
-  BEST_GNSS_POS,
-  HEADING,
-};
-struct MessageInfo {
-  MessageType type;
-  MessagePtr message_ptr;
-};
-using MessageInfoVec = std::vector<MessageInfo>;
+// Modified by chihow
+Gnss gnss_;
+GnssBestPose bestpos_;
+Imu imu_;
+Ins ins_;
+InsStat ins_stat_;
+GnssEphemeris gnss_ephemeris_;
+EpochObservation gnss_observation_;
+Heading heading_;
 
 // convert gps time (base on Jan 6 1980) to system time (base on Jan 1 1970)
 // notice: Jan 6 1980
@@ -77,36 +66,10 @@ inline T *As(::google::protobuf::Message *message_ptr) {
 // One should use the create_xxx() functions to create a Parser object.
 class Parser {
  public:
-  // Return a pointer to a parser. The caller should take ownership.
-  static Parser *CreateNovatel(const config::Config &config);
-  static Parser *CreateHuaCeText(const config::Config &config);
-  static Parser *CreateAsensing(const config::Config &config);
-  static Parser *CreateBroadGnssText(const config::Config &config);
-  static Parser *CreateEnbroad(const config::Config &config);
+  // A general pointer to a protobuf message.
+  using MessagePtr = ::google::protobuf::Message *;
+  // Return a pointer to a NovAtel parser. The caller should take ownership.
   static Parser *CreateIns570d(const config::Config &config);
-
-
-  static Parser *CreateParser(const config::Config &config) {
-    switch (config.data().format()) {
-      case config::Stream::NOVATEL_BINARY:
-        return Parser::CreateNovatel(config);
-      case config::Stream::HUACE_TEXT:
-        return Parser::CreateHuaCeText(config);
-      case config::Stream::ASENSING_BINARY:
-        return Parser::CreateAsensing(config);
-      case config::Stream::BROADGNSS_TEXT:
-        return Parser::CreateBroadGnssText(config);
-      case config::Stream::ENBROAD_BINARY:
-        return Parser::CreateEnbroad(config);
-      case config::Stream::INS570D_BINARY:
-        return Parser::CreateIns570d(config);
-      default:
-        return nullptr;
-    }
-  }
-
-  // Return a pointer to rtcm v3 parser. The caller should take ownership.
-  static Parser *CreateRtcmV3(bool is_base_station = false);
 
   virtual ~Parser() {}
 
@@ -121,16 +84,29 @@ class Parser {
   void Update(const std::string &data) {
     Update(reinterpret_cast<const uint8_t *>(data.data()), data.size());
   }
+
+  enum class MessageType {
+    NONE,
+    GNSS,
+    GNSS_RANGE,
+    IMU,
+    INS,
+    INS_STAT,
+    WHEEL,
+    EPHEMERIDES,
+    OBSERVATION,
+    BDSEPHEMERIDES,
+    RAWIMU,
+    GPSEPHEMERIDES,
+    GLOEPHEMERIDES,
+    BEST_GNSS_POS,
+    HEADING,
+  };
+
   // Gets a parsed protobuf message. The caller must consume the message before
   // calling another
   // GetMessage() or Update();
-  virtual MessageType GetMessage(MessagePtr *message_ptr) {
-    return MessageType::NONE;
-  }
-
-  virtual void GetMessages(MessageInfoVec *messages) {}
-
-  virtual bool GetInsStat(MessagePtr *message_ptr) { return false; }
+  virtual void GetMessage() = 0;
 
  protected:
   Parser() {}
