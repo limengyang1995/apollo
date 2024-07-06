@@ -7,7 +7,7 @@ module_config {
       config_file_path : "modules/perception/lidar_tracking/conf/lidar_tracking_config.pb.txt"
       flag_file_path: "modules/perception/data/flag/perception_common.flag"
       readers {
-        channel: "/perception/lidar/detection_filter"
+        channel: "/perception/lidar/detection"
       }
     }
   }

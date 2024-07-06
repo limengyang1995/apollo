@@ -57,7 +57,7 @@ public:
             const std::shared_ptr<apollo::drivers::Image>& rh_msg) override;
 
 private:
-    apollo::remote::RemoteDriveConfig config_;
+    // apollo::remote::RemoteDriveConfig config_;
     baidurtc::BaiduRtcRoomClient* g_BrtcClient = nullptr;
     typedef baidurtc::BaiduRtcRoomClient* f_createBaiduRtcRoomClient();
     RtcParameterSettings s;
@@ -72,13 +72,14 @@ private:
 
 private:
     void InitSetListener(baidurtc::BaiduRtcRoomClient* c, MyListener& l);
-    bool InitMainVideoroom();
+    bool InitMainVideoroom(const RemoteDriveMsg& video_param);
     bool SendMsg(
             const std::shared_ptr<apollo::drivers::Image>& fr_msg,
             const std::shared_ptr<apollo::drivers::Image>& rr_msg,
             const std::shared_ptr<apollo::drivers::Image>& lf_msg,
             const std::shared_ptr<apollo::drivers::Image>& rh_msg);
     bool CloudControlCommand(ControlCommand *control_command);
+
 };
 
 

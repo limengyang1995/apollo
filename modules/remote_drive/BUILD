@@ -37,9 +37,9 @@ apollo_component(
         "//modules/common_msgs/control_msgs:control_cmd_cc_proto",
         "@opencv//:imgproc",
         "@opencv//:core",
-        "@opencv//:highgui",
         "@opencv//:calib3d",
         "@opencv//:imgcodecs",
+
     ],
 )
 

@@ -803,7 +803,7 @@ RTNet::RTNet(const std::string &net_file, const std::string &model_file,
   loadWeights(model_file, &weight_map_);
   net_param_.reset(new NetParameter);
   loadNetParams(net_file, net_param_.get());
-  model_root_ = model_root;
+  model_root_ = "/apollo/modules/perception/data";
   BatchStream stream;
 
   calibrator_ =
@@ -911,7 +911,8 @@ bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
 
   // serialize trt engine the first time
   nvinfer1::ICudaEngine *engine = nullptr;
-  auto trt_cache_path = model_root_ + "/TRTengine.cache";
+  auto trt_cache_path = "/apollo/modules/perception/data/TRTengine.cache";
+  AERROR << "trt_cache path : " << trt_cache_path;
   if (!LoadCache(trt_cache_path)) {
     engine = builder_->buildEngineWithConfig(*network_, *builder_config_);
 
