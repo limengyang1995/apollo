@@ -2,7 +2,7 @@ output_channel_name: "/perception/lidar/detection"
 sensor_name: "velodyne64"
 use_object_builder: true
 # centerpoint
-#plugin_param {
+# plugin_param {
 #  name: "CenterPointDetection"
 #  config_path: "perception/lidar_detection/data"
 #  config_file: "center_point_param.pb.txt"
@@ -23,7 +23,8 @@ use_object_builder: true
 # }
 
 # cnnseg
- plugin_param {
+
+plugin_param {
    name: "CNNSegmentation"
    config_path: "perception/lidar_detection/data"
    config_file: "cnnseg64_param.pb.txt"

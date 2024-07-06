@@ -1,1 +1,5 @@
 name: "remote-drive"
+videomaxkbps: 7000
+imagewidth: 1600
+imageheight: 900
+fps: 15

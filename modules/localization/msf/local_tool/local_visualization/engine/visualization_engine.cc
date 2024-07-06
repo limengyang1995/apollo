@@ -128,6 +128,7 @@ bool VisualizationEngine::Init(const std::string &map_folder,
   Preprocess(map_folder, map_visual_folder);
 
   std::string params_file = image_visual_resolution_path_ + "/param.txt";
+  AERROR << "params_file: " << params_file;
   bool success = InitOtherParams(params_file);
   if (!success) {
     AERROR << "Init other params failed.";

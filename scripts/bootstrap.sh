@@ -18,7 +18,7 @@
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DREAMVIEW_URL="http://localhost:8899"
-DREAMVIEW_PLUS_URL="http://localhost:8888"
+DREAMVIEW_PLUS_URL="http://192.168.1.104:8888"
 
 cd "${DIR}/.."
 

@@ -36,14 +36,14 @@ namespace apollo {
 namespace remote {
 
 bool RemoteDrive::Init() {
-    if (!GetProtoConfig(&config_)) {
-        AERROR << "Failed to load remote_drive config file " << ComponentBase::ConfigFilePath();
+    RemoteDriveMsg video_param;
+    if (!GetProtoConfig(&video_param)) {
+        AERROR << "Failed to load remote_drive config file ";
+        return false;
     }
-    ACHECK(ComponentBase::GetProtoConfig(&config_))
-            << "failed to load remote_drive config file " << ComponentBase::ConfigFilePath();
 
     AINFO << "Init RemoteDrive succedded.";
-    InitMainVideoroom();
+    InitMainVideoroom(video_param);
     InitSetListener(g_BrtcClient, g_mylistener);
     cloud_control_cmd_writer_ = node_->CreateWriter<ControlCommand>(cloud_topic);
     return true;
@@ -81,8 +81,7 @@ bool RemoteDrive::Proc(
         || g_mylistener.message_type == RtcMessageType::RTC_MESSAGE_STATE_STREAM_UP
         || g_mylistener.message_type == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE
         || g_mylistener.message_type == RtcMessageType::RTC_MESSAGE_ROOM_EVENT_REMOTE_COMING
-        )
-    {
+        || g_mylistener.message_type == RtcMessageType::RTC_STATE_STREAM_SLOW_LINK_NACKS) {
         SendMsg(fr_msg, rr_msg, lf_msg, rh_msg);
         AINFO << "message sent successfully.";
     }
@@ -124,6 +123,26 @@ bool RemoteDrive::SendMsg(
 
     img_left.copyTo(roi_left_rect);
     img_right.copyTo(roi_right_rect);
+    
+    double fx = 1800.66, fy = 1800.66, cx = 800.0, cy = 453.0, k1 = -0.54, k2 = 0.276, p1 = -0.0015, p2 = 0.0055, k3 = 0.0;
+    cv::Mat camera_matrix = (cv::Mat_<double>(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
+    cv::Mat dist_coeffs = (cv::Mat_<double>(1, 5) << k1, k2, p1, p2, k3);
+    std::vector<cv::Point3f> objectPoints;
+    std::vector<cv::Point2f> imagePoints;
+    imagePoints.resize(1);
+    cv::Mat tvec = (cv::Mat_<double>(3, 1) << 0, 0, 0);
+    objectPoints.push_back(cv::Point3f(-2, 2.4, 6));
+    objectPoints.push_back(cv::Point3f(2, 2.4, 6));
+    objectPoints.push_back(cv::Point3f(2, 2.6, 16));
+    objectPoints.push_back(cv::Point3f(-2, 2.6, 16));
+
+    cv::projectPoints(objectPoints, cv::Mat::zeros(3, 1, CV_64F), tvec, camera_matrix, dist_coeffs, imagePoints);
+    AERROR << "imagePoints_: " << imagePoints[0];
+
+    cv::line(img_front, imagePoints[0], imagePoints[1], cv::Scalar(255, 0, 0), 2);
+    cv::line(img_front, imagePoints[1], imagePoints[2], cv::Scalar(255, 0, 0), 2);
+    cv::line(img_front, imagePoints[2], imagePoints[3], cv::Scalar(255, 0, 0), 2);
+    cv::line(img_front, imagePoints[3], imagePoints[0], cv::Scalar(255, 0, 0), 2);
 
     std::vector<unsigned char> buf;
     cv::imencode(".jpg", img_front, buf);
@@ -158,7 +177,7 @@ void MyListener::OnRtcMessage(RtcMessage& msg) {
     }
 }
 
-bool RemoteDrive::InitMainVideoroom() {
+bool RemoteDrive::InitMainVideoroom(const RemoteDriveMsg& video_param) {
     void* handle = dlopen("modules/remote_drive/lib/libbaidurtc.so", RTLD_LAZY | RTLD_DEEPBIND);
     if (handle == NULL) {
         fprintf(stderr, "Could not open sdk: %s\n", dlerror());
@@ -183,17 +202,17 @@ bool RemoteDrive::InitMainVideoroom() {
     s.AsPublisher = true;
     s.AsListener = false;
     s.AutoPublish = true;
-    s.VideoFps = 15;
-    s.VideoMaxkbps = 20000;
-    s.VideoWidth = 1600;
-    s.VideoHeight = 900;
+    s.VideoFps = video_param.fps();
+    s.VideoMaxkbps = video_param.videomaxkbps();
+    s.VideoWidth = video_param.imagewidth();
+    s.VideoHeight = video_param.imageheight();
     // s.AutoSubscribe = true;
 
     // g_BrtcClient->setFeedId("999999");
     g_BrtcClient->setParamSettings(&s, s.RTC_PARAM_SETTINGS_ALL);
     g_BrtcClient->setAppID("appqemmzy5zk1im");
     g_BrtcClient->setMediaServerURL("wss://rtc.exp.bcelive.com/janus");
-    g_BrtcClient->setCER("/apollo_workspace/modules/remote_drive/lib/a.cer");
+    g_BrtcClient->setCER("/apollo/modules/remote_drive/lib/a.cer");
 
     std::string uid;
     std::ostringstream os;
@@ -203,6 +222,7 @@ bool RemoteDrive::InitMainVideoroom() {
     g_BrtcClient->loginRoom("2131", uid.c_str(), "XMT018", "token");
     return true;
 }
+
 bool RemoteDrive::CloudControlCommand(ControlCommand* control_command) {
     auto header_time = cyber::Time::Now().ToSecond();
     control_command->mutable_header()->set_timestamp_sec(header_time);
