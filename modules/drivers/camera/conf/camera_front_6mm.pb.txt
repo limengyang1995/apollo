@@ -1,5 +1,5 @@
 
-camera_dev: "/dev/camera/front_6mm"
+camera_dev: "/dev/video0"
 frame_id: "camera_front_6mm"
 pixel_format: "yuyv"
 io_method: IO_METHOD_MMAP
@@ -23,8 +23,8 @@ trigger_internal: 0
 trigger_fps: 15
 raw_channel_name: "/apollo/sensor/camera/front_6mm/raw/image"
 channel_name: "/apollo/sensor/camera/front_6mm/image"
-device_wait_ms: 2000
-spin_rate: 200
+device_wait_ms: 100
+spin_rate: 2000
 output_type: RGB
 
 compress_conf {

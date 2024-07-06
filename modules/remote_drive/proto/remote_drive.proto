@@ -5,9 +5,13 @@ package apollo.remote;
 // message type of channel, just a placeholder for demo,
 // you should use `--channel_message_type` option to specify the real message type
 message RemoteDriveMsg {
-
+  optional string name = 1;
+  optional int32 videomaxkbps = 2;
+  optional int32 imagewidth = 3;
+  optional int32 imageheight = 4;
+  optional int32 fps = 5;
 }
 
-message RemoteDriveConfig {
-  optional string name = 1;
-};
+//message RemoteDriveConfig {
+//  optional string name = 1;
+//};
