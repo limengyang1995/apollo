@@ -104,18 +104,18 @@ bool CameraComponent::Init() {
 
     pb_image_buffer_.push_back(pb_image);
 
-    auto raw_image = std::make_shared<Image>();
-    raw_image->mutable_header()->set_frame_id(camera_config_->frame_id());
-    raw_image->set_width(raw_image_for_compress_->width);
-    raw_image->set_height(raw_image_for_compress_->height);
-    raw_image->mutable_data()->reserve(raw_image_for_compress_->image_size);
-    raw_image->set_encoding(camera_config_->pixel_format());
+    // auto raw_image = std::make_shared<Image>();
+    // raw_image->mutable_header()->set_frame_id(camera_config_->frame_id());
+    // raw_image->set_width(raw_image_for_compress_->width);
+    // raw_image->set_height(raw_image_for_compress_->height);
+    // raw_image->mutable_data()->reserve(raw_image_for_compress_->image_size);
+    // raw_image->set_encoding(camera_config_->pixel_format());
 
-    raw_image_buffer_.push_back(raw_image);
+    // raw_image_buffer_.push_back(raw_image);
   }
 
   writer_ = node_->CreateWriter<Image>(camera_config_->channel_name());
-  raw_writer_ = node_->CreateWriter<Image>(camera_config_->raw_channel_name());
+  // raw_writer_ = node_->CreateWriter<Image>(camera_config_->raw_channel_name());
   async_result_ = cyber::Async(&CameraComponent::run, this);
   return true;
 }
@@ -146,13 +146,13 @@ void CameraComponent::run() {
     pb_image->set_data(raw_image_->image, raw_image_->image_size);
     writer_->Write(pb_image);
 
-    auto raw_image_for_compress = raw_image_buffer_.at(index_++);
-    raw_image_for_compress->mutable_header()->set_timestamp_sec(
-        header_time);
-    raw_image_for_compress->set_measurement_time(measurement_time);
-    raw_image_for_compress->set_data(raw_image_for_compress_->image,
-                                      raw_image_for_compress_->image_size);
-    raw_writer_->Write(raw_image_for_compress);
+    // auto raw_image_for_compress = raw_image_buffer_.at(index_++);
+    // raw_image_for_compress->mutable_header()->set_timestamp_sec(
+    //     header_time);
+    // raw_image_for_compress->set_measurement_time(measurement_time);
+    // raw_image_for_compress->set_data(raw_image_for_compress_->image,
+    //                                   raw_image_for_compress_->image_size);
+    // raw_writer_->Write(raw_image_for_compress);
 
     cyber::SleepFor(std::chrono::microseconds(spin_rate_));
   }
