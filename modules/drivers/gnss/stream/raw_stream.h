@@ -23,12 +23,11 @@
 
 #include "cyber/cyber.h"
 
-#include "modules/common_msgs/chassis_msgs/chassis.pb.h"
+// #include "modules/canbus/proto/chassis.pb.h"
 #include "modules/drivers/gnss/proto/config.pb.h"
 #include "modules/drivers/gnss/proto/gnss_status.pb.h"
 
 #include "modules/drivers/gnss/parser/data_parser.h"
-#include "modules/drivers/gnss/parser/rtcm_parser.h"
 #include "modules/drivers/gnss/stream/stream.h"
 
 namespace apollo {
@@ -51,57 +50,37 @@ class RawStream {
 
  private:
   void DataSpin();
-  void RtkSpin();
   bool Connect();
   bool Disconnect();
-  bool Login();
-  bool Logout();
   void StreamStatusCheck();
-  void PublishRtkData(size_t length);
-  void PushGpgga(size_t length);
   void GpsbinSpin();
   void GpsbinCallback(const std::shared_ptr<RawData const>& raw_data);
-  void OnWheelVelocityTimer();
 
-  std::unique_ptr<cyber::Timer> wheel_velocity_timer_ = nullptr;
-  std::shared_ptr<apollo::canbus::Chassis> chassis_ptr_ = nullptr;
-  static constexpr size_t BUFFER_SIZE = 2048;
+
+  static constexpr size_t BUFFER_SIZE = 63;
   uint8_t buffer_[BUFFER_SIZE] = {0};
   uint8_t buffer_rtk_[BUFFER_SIZE] = {0};
 
   std::shared_ptr<Stream> data_stream_;
-  std::shared_ptr<Stream> command_stream_;
-  std::shared_ptr<Stream> in_rtk_stream_;
-  std::shared_ptr<Stream> out_rtk_stream_;
 
   std::shared_ptr<Status> data_stream_status_;
-  std::shared_ptr<Status> command_stream_status_;
-  std::shared_ptr<Status> in_rtk_stream_status_;
-  std::shared_ptr<Status> out_rtk_stream_status_;
 
   bool rtk_software_solution_ = false;
-  bool push_location_ = false;
   bool is_healthy_ = true;
   config::Config config_;
 
   const std::string raw_data_topic_;
-  const std::string rtcm_data_topic_;
 
   StreamStatus stream_status_;
   std::unique_ptr<std::thread> data_thread_ptr_;
-  std::unique_ptr<std::thread> rtk_thread_ptr_;
   std::unique_ptr<DataParser> data_parser_ptr_;
-  std::unique_ptr<RtcmParser> rtcm_parser_ptr_;
   std::unique_ptr<std::thread> gpsbin_thread_ptr_;
   std::unique_ptr<std::ofstream> gpsbin_stream_ = nullptr;
 
   std::shared_ptr<apollo::cyber::Node> node_ = nullptr;
   std::shared_ptr<apollo::cyber::Writer<StreamStatus>> stream_writer_ = nullptr;
   std::shared_ptr<apollo::cyber::Writer<RawData>> raw_writer_ = nullptr;
-  std::shared_ptr<apollo::cyber::Writer<RawData>> rtcm_writer_ = nullptr;
   std::shared_ptr<apollo::cyber::Reader<RawData>> gpsbin_reader_ = nullptr;
-  std::shared_ptr<apollo::cyber::Reader<apollo::canbus::Chassis>>
-      chassis_reader_ = nullptr;
 };
 
 }  // namespace gnss

@@ -1,59 +1,20 @@
-# drivers-gnss
+#   Intro
+This is the Baidu Apollo7.0 gnss driver adapted for using ins570d.
 
-## Introduction
-The GNSS driver is mainly responsible for receiving and processing GNSS signals and passing them to the positioning module to realize high-precision positioning.
+##  About Apollo
+A high performance, flexible architecture which accelerates the development, testing, and deployment of Autonomous Vehicles.[Apollo's Github Repo](https://github.com/ApolloAuto/apollo)
 
-## Directory Structure
-```shell
-modules/drivers/gnss/
-├── BUILD
-├── conf
-├── cyberfile.xml
-├── dag
-├── gnss_component.cc
-├── gnss_component.h
-├── launch
-├── parser              // parser to parse different kinds of gnss data
-├── proto
-├── README.md
-├── stream              // stream handler to process gnss data from different data streams
-├── test
-├── test_data
-└── util                // common function
-```
+##   About ins570d
+A High-precision combined navigation device.    [Documentation Here](http://www.asensing.com/p_box)
 
-## Modules
+#   Usage
+This is the hardware connecting diagram, to use this driver wo also need a RS422-USB line added between RS422 port and testing PC.
+![hw_interface](./img/hw_interface.jpg)
 
-### GnssDriverComponent
+Than run the following commands to clone this repo.
+>   git clone https://github.com/Mud-B/ins570d_apollo_driver.git
 
-apollo::drivers::gnss::GnssDriverComponent
+Next,under this path`/<Apollo_workspace>/modules/driver/gnss`, replace the Apollo origin driver with this driver.
 
-#### Input
-
-|     Name    | Type                             | Description         |
-| ----------- | -------------------------------- | ------------------- |
-| data stream |   binary data from gnss stream   |          -          |
-|    `msg`    |    `apollo::canbus::Chassis`     |  chassis message    |
-
-
-#### Output
-
-| Name  | Type                                    | Description           |
-| ----- | --------------------------------------- | --------------------- |
-| `msg` | `apollo::drivers::gnss::RawData`        |    gps bin raw data   |
-| `msg` | `apollo::drivers::gnss::RawData`        |   gps rtcm raw data   |
-| `msg` | `apollo::drivers::gnss::RawData`        |  gnss stream raw data |
-| `msg` | `apollo::drivers::gnss::StreamStatus`   |  gnss stream status   |
-
-#### configs
-
-| file path                                | type / struct                         | Description          |
-| ---------------------------------------- | ------------------------------------- | -------------------- |
-| `modules/drivers/gnss/gnss_conf.pb.txt`  | `apollo::drivers::gnss::conf::Config` |      gnss config     |
-
-
-#### How to Launch
-
-```bash
-cyber_launch start modules/drivers/gnss/launch/gnss.launch
-```
+Finally,use this command under apollo docker environment to build driver.
+>   ./apollo.sh build_opt driver/gnss

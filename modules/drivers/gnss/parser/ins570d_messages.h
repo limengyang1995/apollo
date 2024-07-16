@@ -26,11 +26,12 @@
 #include <limits>
 
 #include "modules/drivers/gnss/proto/config.pb.h"
+#include "INS570D_Define.h"
 
 namespace apollo {
 namespace drivers {
 namespace gnss {
-namespace novatel {
+namespace Ins570d {
 
 enum MessageId : uint16_t {
   BESTGNSSPOS = 1429,
@@ -67,10 +68,9 @@ constexpr uint16_t CRC_LENGTH = 4;
 #pragma pack(push, 1)  // Turn off struct padding.
 
 enum SyncByte : uint8_t {
-  SYNC_0 = 0xAA,
-  SYNC_1 = 0x44,
-  SYNC_2_LONG_HEADER = 0x12,
-  SYNC_2_SHORT_HEADER = 0x13,
+  SYNC_0 = 0xBD,
+  SYNC_1 = 0xDB,
+  SYNC_2 = 0x0B,
 };
 
 struct MessageType {
@@ -154,7 +154,7 @@ enum class SolutionType : uint32_t {
   DOPPLER_VELOCITY = 8,
   SINGLE = 16,
   PSRDIFF = 17,
-  WAAS = 18,
+  SBAS = 18,
   PROPOGATED = 19,
   OMNISTAR = 20,
   L1_FLOAT = 32,
@@ -565,7 +565,127 @@ inline ImuParameter GetImuParameter(ImuType type) {
   }
 }
 
-}  // namespace novatel
+int config_[62][2] = {
+  {HEADER_1, 1},            // 0
+  {HEADER_2, 1},            // 1
+  {HEADER_3, 1},            // 2
+  {ROLL_OFFSET, 2},       // 3
+  {PITCH_OFFSET, 2},      // 4
+  {YAW_OFFSET, 2},        // 5
+  {GYRO_X_OFFSET, 2},     // 6
+  {GYRO_Y_OFFSET, 2},     // 7
+  {GYRO_Z_OFFSET, 2},     // 8
+  {ACC_X_OFFSET, 2},      // 9
+  {ACC_Y_OFFSET, 2},      // 10
+  {ACC_Z_OFFSET, 2},      // 11
+  {LATITUDE_OFFSET, 4},   // 12
+  {LONGITUDE_OFFSET, 4},  // 13
+  {ALTITUDE_OFFSET, 4},   // 14
+  {VEL_N_OFFSET, 2},      // 15
+  {VEL_E_OFFSET, 2},      // 16
+  {VEL_D_OFFSET, 2},      // 17
+  {STATUS_OFFSET, 1},     // 18
+  {DATA_1_OFFSET, 2},     // 19
+  {DATA_2_OFFSET, 2},     // 20
+  {DATA_3_OFFSET, 2},     // 21
+  {TIME_OFFSET, 4},       // 22
+  {TYPE_OFFSET, 1},       // 23
+  {CHECKSUM1_OFFSET, 1},  // 24
+  {GPSWEEK_OFFSET, 4},    // 25
+  {CHECKSUM2_OFFSET, 1}   // 26
+};
+
+struct INS_STATUS {
+  INS_STATUS() {}
+  bool updated = false;
+  uint8_t header_1 = 0;
+  uint8_t header_2 = 0;
+  uint8_t header_3 = 0;
+  double roll = 0;
+  double pitch = 0;
+  double yaw = 0;
+  double gyro_x = 0;
+  double gyro_y = 0;
+  double gyro_z = 0;
+  double acc_x = 0;
+  double acc_y = 0;
+  double acc_z = 0;
+  double latitude = 0;
+  double longitude = 0;
+  double altitude = 0;
+  double vel_n = 0;
+  double vel_e = 0;
+  double vel_d = 0;
+  double vel_u = 0;
+
+  double qx = 0, qy = 0, qz = 0, qw = 1;
+  aligen_status ali = NOT_ALIGEN;
+
+  SolutionType fix_type;
+  uint8_t satellites_num = 0;
+  uint8_t wheel_speed_status = 0;
+  data_type data_type_;
+  double timestamp = 0;
+  //数据标准差
+  double lat_std = DBL_MAX;
+  double lon_std = DBL_MAX;
+  double alti_std = DBL_MAX;
+  double vn_std = DBL_MAX;
+  double ve_std = DBL_MAX;
+  double vd_std = DBL_MAX;
+  double vu_std = DBL_MAX;
+  double roll_std = DBL_MAX;
+  double pitch_std = DBL_MAX;
+  double yaw_std = DBL_MAX;
+  // 设备温度
+  double dev_temperature = 0;
+
+  void debugString(){
+    AERROR << "=======================================================\n"
+           << "roll" << roll << "\t pitch" << pitch << "\t yaw" << yaw << "\n"
+           << "acc_x " << acc_x << "\t acc_y" <<acc_y << "\t acc_z" << acc_z <<"\n"
+           << "gyro_x" << gyro_x << "\t gyro_y" <<gyro_y << "\t gyro_z" << gyro_z <<"\n"
+           << "vel_n " << vel_n << "\t vel_e" <<vel_e << "\t vel_d" << vel_d <<"\n"
+           << "latitude " << latitude << "\t longitude" <<longitude << "\t altitude" << altitude <<"\n"
+           << "lat_std " << lat_std << "\t lon_std" <<lon_std << "\t alti_std" << alti_std <<"\n"
+           << "vn_std " << vn_std << "\t ve_std" <<ve_std << "\t vd_std" << vd_std <<"\n"
+           << "roll_std " << roll_std << "\t pitch_std" <<pitch_std << "\t yaw_std" << yaw_std <<"\n"
+           << "wheel speed status " << wheel_speed_status <<"\n"
+           << "satellites_num" << satellites_num <<"\n"
+           << "gps Status" << static_cast<uint32_t>(fix_type) <<"\n";
+
+        // printf("gyro_x [%f] \t gyro_y [%f] \t gyro_z [%f] \n",gyro_x,gyro_y,gyro_z);
+        // printf("latitude [%f] \t longitude [%f] \t altitude [%f] \n",latitude,longitude,altitude);
+        // printf("vel_n [%f] \t vel_e [%f] \t vel_d [%f] \n",vel_n,vel_e,vel_d);
+
+//        printf("lat_std [%f] \t lon_std [%f] \t alti_std [%f] \n",lat_std,lon_std,alti_std);
+//        printf("vn_std [%f] \t ve_std [%f] \t vd_std [%f] \n",vn_std,ve_std,vd_std);
+//        printf("roll_std [%f] \t pitch_std [%f] \t yaw_std [%f] \n",roll_std,pitch_std,yaw_std);
+        // printf("wheel speed status [%x] \n",wheel_speed_status);
+        // printf("satellites_num: [%d] \n",satellites_num);
+        // printf("gps Status: [%x] \n",fix_type);
+  }
+};
+
+struct RTK_STATUS{
+    RTK_STATUS(){}
+    bool updated=false;
+    double latitude=0;
+    double longitude=0;
+    double altitude=0;
+    uint8_t fix_type=0;
+    uint8_t satellites_num=0;
+    //Timestamp
+    double timeStamp=0;
+    //HDOP
+    double hdop=0;
+    //数据标准差
+    double lat_std=DBL_MAX;
+    double lon_std=DBL_MAX;
+    double alti_std=DBL_MAX;
+};
+
+}  // namespace Ins570d
 }  // namespace gnss
 }  // namespace drivers
 }  // namespace apollo

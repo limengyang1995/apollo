@@ -22,9 +22,8 @@
 #include <string>
 #include <vector>
 
-#include "modules/common_msgs/drivers_msgs/can_card_parameter.pb.h"
-
 #include "cyber/cyber.h"
+
 #include "modules/drivers/gnss/util/macros.h"
 
 namespace apollo {
@@ -36,24 +35,11 @@ namespace gnss {
 class Stream {
  public:
   // Return a pointer to a Stream object. The caller should take ownership.
-  static Stream *create_tcp(const char *address, uint16_t port,
-                            uint32_t timeout_usec = 1000000);
-
-  static Stream *create_udp(const char *address, uint16_t port,
-                            uint32_t timeout_usec = 1000000);
 
   // Currently the following baud rates are supported:
   //  9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600.
   static Stream *create_serial(const char *device_name, uint32_t baud_rate,
                                uint32_t timeout_usec = 0);
-
-  static Stream *create_ntrip(const std::string &address, uint16_t port,
-                              const std::string &mountpoint,
-                              const std::string &user,
-                              const std::string &passwd,
-                              uint32_t timeout_s = 30);
-  static Stream *create_can(
-      const apollo::drivers::canbus::CANCardParameter &parameter);
 
   virtual ~Stream() {}
 

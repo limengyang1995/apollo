@@ -22,15 +22,14 @@
 
 #include "Eigen/Geometry"
 #include "boost/array.hpp"
-
-#include "modules/common_msgs/localization_msgs/imu.pb.h"
-#include "modules/common_msgs/sensor_msgs/gnss_best_pose.pb.h"
-#include "modules/common_msgs/sensor_msgs/gnss_raw_observation.pb.h"
-#include "modules/common_msgs/sensor_msgs/heading.pb.h"
-
 #include "cyber/cyber.h"
 #include "modules/common/adapters/adapter_gflags.h"
 #include "modules/common/util/message_util.h"
+#include "modules/drivers/gnss/proto/gnss_best_pose.pb.h"
+#include "modules/drivers/gnss/proto/gnss_raw_observation.pb.h"
+#include "modules/drivers/gnss/proto/heading.pb.h"
+// #include "modules/common_msgs/localization_msgs/imu.pb.h"
+
 #include "modules/drivers/gnss/parser/parser.h"
 #include "modules/drivers/gnss/util/time_conversion.h"
 
@@ -52,6 +51,16 @@ const char *WGS84_TEXT = "+proj=latlong +ellps=WGS84";
 static const boost::array<double, 36> POSE_COVAR = {
     2, 0, 0, 0,    0, 0, 0, 2, 0, 0, 0,    0, 0, 0, 2, 0, 0, 0,
     0, 0, 0, 0.01, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0, 0, 0, 0.01};
+
+Parser *CreateParser(config::Config config, bool is_base_station = false) {
+  switch (config.data().format()) {
+    case config::Stream::INS570D_BINARY:
+      return Parser::CreateIns570d(config);
+
+    default:
+      return nullptr;
+  }
+}
 
 }  // namespace
 
@@ -95,7 +104,7 @@ bool DataParser::Init() {
   gnssstatus_writer_->Write(gnss_status_);
 
   AINFO << "Creating data parser of format: " << config_.data().format();
-  data_parser_.reset(Parser::CreateParser(config_));
+  data_parser_.reset(CreateParser(config_, false));
   if (!data_parser_) {
     AFATAL << "Failed to create data parser.";
     return false;
@@ -112,11 +121,8 @@ void DataParser::ParseRawData(const std::string &msg) {
   }
 
   data_parser_->Update(msg);
-  MessageInfoVec messages;
-  data_parser_->GetMessages(&messages);
-  for (auto &message : messages) {
-    DispatchMessage(message);
-  }
+  data_parser_->GetMessage();
+  DispatchMessage();
 }
 
 void DataParser::CheckInsStatus(::apollo::drivers::gnss::Ins *ins) {
@@ -140,7 +146,8 @@ void DataParser::CheckInsStatus(::apollo::drivers::gnss::Ins *ins) {
         ins_status_.set_type(apollo::drivers::gnss::InsStatus::INVALID);
         break;
     }
-
+    //added by chihow
+    ins_status_.set_type(apollo::drivers::gnss::InsStatus::GOOD);
     common::util::FillHeader("gnss", &ins_status_);
     insstatus_writer_->Write(ins_status_);
   }
@@ -161,61 +168,22 @@ void DataParser::CheckGnssStatus(::apollo::drivers::gnss::Gnss *gnss) {
   gnssstatus_writer_->Write(gnss_status_);
 }
 
-void DataParser::DispatchMessage(const MessageInfo &message_info) {
-  auto &message = message_info.message_ptr;
-  switch (message_info.type) {
-    case MessageType::GNSS:
-      CheckGnssStatus(As<::apollo::drivers::gnss::Gnss>(message));
-      break;
-
-    case MessageType::BEST_GNSS_POS:
-      PublishBestpos(message);
-      break;
-
-    case MessageType::IMU:
-      PublishImu(message);
-      break;
-
-    case MessageType::INS:
-      CheckInsStatus(As<::apollo::drivers::gnss::Ins>(message));
-      PublishCorrimu(message);
-      PublishOdometry(message);
-
-      // if not has ins_stat message, publish ins_stat from best pose
-      if (!has_ins_stat_message_) {
-        MessagePtr msg_ptr;
-        if (data_parser_->GetInsStat(&msg_ptr)) {
-          auto ins_stat = std::make_shared<InsStat>(*As<InsStat>(msg_ptr));
-          if (ins_stat->has_ins_status()) {
-            common::util::FillHeader("gnss", ins_stat.get());
-            insstat_writer_->Write(ins_stat);
-          }
-        }
-      }
-      break;
-
-    case MessageType::INS_STAT:
-      PublishInsStat(message);
-      has_ins_stat_message_ = true;
-      break;
-
-    case MessageType::BDSEPHEMERIDES:
-    case MessageType::GPSEPHEMERIDES:
-    case MessageType::GLOEPHEMERIDES:
-      PublishEphemeris(message);
-      break;
-
-    case MessageType::OBSERVATION:
-      PublishObservation(message);
-      break;
-
-    case MessageType::HEADING:
-      PublishHeading(message);
-      break;
-
-    default:
-      break;
-  }
+void DataParser::DispatchMessage() {
+  MessagePtr message;
+  message = &gnss_;
+  CheckGnssStatus(As<::apollo::drivers::gnss::Gnss>(message));
+  message = &bestpos_;
+  PublishBestpos(message);
+  message = &imu_;
+  PublishImu(message);
+  message = &ins_;
+  CheckInsStatus(As<::apollo::drivers::gnss::Ins>(message));
+  PublishCorrimu(message);
+  PublishOdometry(message);
+  message = &ins_stat_;
+  PublishInsStat(message);
+  message = &heading_;
+  PublishHeading(message);
 }
 
 void DataParser::PublishInsStat(const MessagePtr message) {
@@ -251,8 +219,8 @@ void DataParser::PublishOdometry(const MessagePtr message) {
   Ins *ins = As<Ins>(message);
   auto gps = std::make_shared<Gps>();
 
-  double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
-  gps->mutable_header()->set_timestamp_sec(unix_sec);
+  // double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
+  gps->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
   auto *gps_msg = gps->mutable_localization();
 
   // 1. pose xyz
@@ -295,7 +263,7 @@ void DataParser::PublishCorrimu(const MessagePtr message) {
   Ins *ins = As<Ins>(message);
   auto imu = std::make_shared<CorrectedImu>();
   double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
-  imu->mutable_header()->set_timestamp_sec(unix_sec);
+  imu->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
 
   auto *imu_msg = imu->mutable_imu();
   imu_msg->mutable_linear_acceleration()->set_x(
