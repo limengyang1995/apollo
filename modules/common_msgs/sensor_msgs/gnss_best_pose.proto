@@ -61,6 +61,7 @@ enum SolutionType {
   PPP = 69;
   INS_PPP_CONVERGING = 73;
   INS_PPP = 74;
+  SBAS = 75;
 }
 
 enum DatumId {
