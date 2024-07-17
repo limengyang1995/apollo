@@ -1,11 +1,11 @@
 data {
     # format optional: NOVATEL_BINARY, HUACE_TEXT, ASENSING_BINARY, INS570D_BINARY, BROADGNSS_TEXT
-    format: NOVATEL_BINARY
+    format: INS570D_BINARY
 
     # protocol optional: serial, tcp, udp, ntrip, can_card_parameter
     serial {
-        device: "/dev/ttyACM0"
-        baud_rate: 115200
+        device: "/dev/ttysWK1"
+        baud_rate: 230400
     }
 
     # tcp, udp: e.g.
@@ -36,21 +36,21 @@ data {
 #    push_location: true
 #}
 
-rtk_to {
-    format: NOVATEL_BINARY
-    serial {
-        device: "/dev/ttyACM1"
-        baud_rate: 115200
-    }
-}
+#rtk_to {
+#    format: NOVATEL_BINARY
+#    serial {
+#        device: "/dev/ttyACM1"
+#        baud_rate: 115200
+#    }
+#}
 
-command {
-    format: NOVATEL_BINARY
-    serial {
-        device: "/dev/ttyACM2"
-        baud_rate: 115200
-    }
-}
+#command {
+#    format: NOVATEL_BINARY
+#    serial {
+#        device: "/dev/ttyACM2"
+#        baud_rate: 115200
+#    }
+#}
 
 rtk_solution_type: RTK_RECEIVER_SOLUTION
 imu_type: ADIS16488
@@ -97,5 +97,5 @@ gpsbin_folder: "/apollo/data/gpsbin"
 # login_commands: "log imutoantoffsetsb once\r\n"
 # login_commands: "log vehiclebodyrotationb onchanged\r\n"
 
-logout_commands: "EVENTOUTCONTROL MARK2 DISABLE\r\n"
-logout_commands: "EVENTOUTCONTROL MARK1 DISABLE\r\n"
+#logout_commands: "EVENTOUTCONTROL MARK2 DISABLE\r\n"
+#logout_commands: "EVENTOUTCONTROL MARK1 DISABLE\r\n"
