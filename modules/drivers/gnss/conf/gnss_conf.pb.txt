@@ -97,5 +97,5 @@ gpsbin_folder: "/apollo/data/gpsbin"
 # login_commands: "log imutoantoffsetsb once\r\n"
 # login_commands: "log vehiclebodyrotationb onchanged\r\n"
 
-logout_commands: "EVENTOUTCONTROL MARK2 DISABLE\r\n"
-logout_commands: "EVENTOUTCONTROL MARK1 DISABLE\r\n"
+#logout_commands: "EVENTOUTCONTROL MARK2 DISABLE\r\n"
+#logout_commands: "EVENTOUTCONTROL MARK1 DISABLE\r\n"
