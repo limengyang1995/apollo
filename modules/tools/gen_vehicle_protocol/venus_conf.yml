@@ -1,8 +1,8 @@
 # 指定dbc文件，这里以lincoln.dbc为例，注意这里需要指定到文件在apollo容器内的绝对路径
 # 默认把dbc放入在 /apollo_workspace/output/ 文件夹下
-dbc_file: /apollo/modules/tools/gen_vehicle_protocol/venus.dbc
+dbc_file:  /apollo_workspace/modules/tools/gen_vehicle_protocol/venus.dbc
 # 定义dbc转换成yml文件名称
-protocol_conf: /apollo/modules/tools/gen_vehicle_protocol/venus.yml
+protocol_conf:  /apollo_workspace/modules/tools/gen_vehicle_protocol/venus.yml
 # 定义车型名称，根据车型自定义
 car_type: venus
 # 定义控制报文协议列表，一般为空
@@ -16,6 +16,6 @@ use_demo_dbc: false
 
 # 定义dbc转换成代码的生成文件夹，默认如下文件夹即可
 #output_dir: /apollo/modules/canbus_vehicle
-output_dir: /apollo/modules/tools/gen_vehicle_protocol/output
+output_dir: /apollo_workspace/modules/tools/gen_vehicle_protocol/output
 # 定义新车型所对应的canbus配置文件，默认如下文件夹即可
-output_canbus_conf_dir: /apollo/modules/canbus/output
+output_canbus_conf_dir: /apollo_workspace/modules/canbus/output

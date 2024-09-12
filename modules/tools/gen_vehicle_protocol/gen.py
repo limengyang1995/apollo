@@ -51,7 +51,7 @@ def gen(conf):
     output_dir = conf["output_dir"]
     output_canbus_conf_dir = conf["output_canbus_conf_dir"]
     print("Generate the canbus_vehicle output dir is ", os.path.join(output_dir, car_type.lower()))
-    template_dir = "/apollo/modules/tools/gen_vehicle_protocol/template/"
+    template_dir = "/apollo_workspace/modules/tools/gen_vehicle_protocol/template/"
     use_demo_dbc = conf["use_demo_dbc"]
     if use_demo_dbc:
         print("use demo dbc")
