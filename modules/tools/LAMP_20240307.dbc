@@ -1,0 +1,152 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: LSU LCU
+
+
+BO_ 1042 LCU2: 8 LCU
+ SG_ LCU2_Width : 16|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU2_Steering : 8|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU2_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ LCU2_Hazard : 10|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU2_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ LCU2_Breathe : 32|3@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU2_Brake : 26|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU2_Beam : 18|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU2_Backup : 24|2@1+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 1184 LSU1: 8 LSU
+ SG_ LSU1_WidthStatus : 16|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LSU1_BreatheStatus : 32|3@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ LSU1_BrakeStatus : 26|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LSU1_BeamStatus : 18|2@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ LSU1_SteeringStatus : 8|2@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ LSU1_HazardStatus : 10|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LSU1_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ LSU1_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ LSU1_BackupStatus : 24|2@1+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 1040 LCU1: 8 LCU
+ SG_ LCU1_Breathe : 32|3@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU1_Width : 16|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU1_Steering : 8|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU1_LiveCounter : 60|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ LCU1_Hazard : 10|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU1_Checksum : 0|8@1+ (1,0) [0|255] "check" Vector__XXX
+ SG_ LCU1_Brake : 26|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU1_Beam : 18|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ LCU1_Backup : 24|2@1+ (1,0) [0|3] "" Vector__XXX
+
+
+
+CM_ BU_ LSU "车辆控制单元";
+CM_ BU_ LCU "自动控制单元";
+CM_ SG_ 1042 LCU2_Width "示宽灯请求";
+CM_ SG_ 1042 LCU2_Steering "转向灯请求";
+CM_ SG_ 1042 LCU2_LiveCounter "生命信号";
+CM_ SG_ 1042 LCU2_Hazard "警告灯请求";
+CM_ SG_ 1042 LCU2_Checksum "校验和";
+CM_ SG_ 1042 LCU2_Breathe "呼吸灯请求";
+CM_ SG_ 1042 LCU2_Brake "刹车灯请求";
+CM_ SG_ 1042 LCU2_Beam "照明灯请求";
+CM_ SG_ 1042 LCU2_Backup "倒车灯请求";
+CM_ SG_ 1184 LSU1_WidthStatus "示宽灯状态";
+CM_ SG_ 1184 LSU1_BreatheStatus "呼吸灯状态";
+CM_ SG_ 1184 LSU1_BrakeStatus "刹车灯状态";
+CM_ SG_ 1184 LSU1_BeamStatus "夜视灯状态";
+CM_ SG_ 1184 LSU1_SteeringStatus "转向灯状态";
+CM_ SG_ 1184 LSU1_HazardStatus "警示灯状态";
+CM_ SG_ 1184 LSU1_LiveCounter "生命信号";
+CM_ SG_ 1184 LSU1_Checksum "校验和";
+CM_ SG_ 1184 LSU1_BackupStatus "倒车灯状态";
+CM_ SG_ 1040 LCU1_Breathe "呼吸灯请求";
+CM_ SG_ 1040 LCU1_Width "示宽灯请求";
+CM_ SG_ 1040 LCU1_Steering "转向灯请求";
+CM_ SG_ 1040 LCU1_LiveCounter "生命信号";
+CM_ SG_ 1040 LCU1_Hazard "警告灯请求";
+CM_ SG_ 1040 LCU1_Checksum "校验和";
+CM_ SG_ 1040 LCU1_Brake "刹车灯请求";
+CM_ SG_ 1040 LCU1_Beam "照明灯请求";
+CM_ SG_ 1040 LCU1_Backup "倒车灯请求";
+BA_DEF_ SG_  "GenSigInvalidValue" INT 0 0;
+BA_DEF_ SG_  "GenSigStartValue" FLOAT 0 100000000000;
+BA_DEF_ BO_  "GenMsgType" ENUM  "N","T","R";
+BA_DEF_  "BusType" STRING ;
+BA_DEF_  "Baudrate" INT 0 1000000;
+BA_DEF_  "VersionDay" INT 0 31;
+BA_DEF_  "VersionMonth" INT 0 12;
+BA_DEF_  "VersionYear" INT 0 2099;
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 10000;
+BA_DEF_  "DBName" STRING ;
+BA_DEF_DEF_  "GenSigInvalidValue" 0;
+BA_DEF_DEF_  "GenSigStartValue" 0;
+BA_DEF_DEF_  "GenMsgType" "N";
+BA_DEF_DEF_  "BusType" "CAN";
+BA_DEF_DEF_  "Baudrate" 500000;
+BA_DEF_DEF_  "VersionDay" 1;
+BA_DEF_DEF_  "VersionMonth" 1;
+BA_DEF_DEF_  "VersionYear" 2020;
+BA_DEF_DEF_  "GenMsgCycleTime" 10;
+BA_DEF_DEF_  "DBName" "VENUS";
+BA_ "VersionYear" 2020;
+BA_ "VersionDay" 25;
+BA_ "VersionMonth" 7;
+BA_ "DBName" "LAMP";
+BA_ "GenMsgCycleTime" BO_ 1042 100;
+BA_ "GenMsgType" BO_ 1042 1;
+BA_ "GenMsgCycleTime" BO_ 1184 100;
+BA_ "GenMsgCycleTime" BO_ 1040 100;
+VAL_ 1042 LCU2_Width 3 "Reserved" 2 "On" 1 "Off" 0 "No Request" ;
+VAL_ 1042 LCU2_Steering 3 "Right" 2 "Left" 1 "Off" 0 "No Request" ;
+VAL_ 1042 LCU2_Hazard 3 "Reserved" 2 "On" 1 "Off" 0 "No Request" ;
+VAL_ 1042 LCU2_Breathe 7 "Always On" 6 "Interval 4s" 5 "Interval 3s" 4 "Interval 2s" 3 "Interval 1s" 2 "Interval 500ms" 1 "Off" 0 "No Request" ;
+VAL_ 1042 LCU2_Brake 3 "Reserved" 2 "On" 1 "Off" 0 "No Request" ;
+VAL_ 1042 LCU2_Beam 3 "High" 2 "Low" 1 "Off" 0 "No Request" ;
+VAL_ 1042 LCU2_Backup 3 "Reserved" 2 "On" 1 "Off" 0 "NoRequest" ;
+VAL_ 1184 LSU1_WidthStatus 3 "Invalid" 2 "Reserved" 1 "On" 0 "Off" ;
+VAL_ 1184 LSU1_BreatheStatus 7 "Invalid" 6 "Always On" 5 "Interval 4s" 4 "Interval 3s" 3 "Interval 2s" 2 "Interval 1s" 1 "Interval 500ms" 0 "Off" ;
+VAL_ 1184 LSU1_BrakeStatus 3 "Invalid" 2 "Reserved" 1 "On" 0 "Off" ;
+VAL_ 1184 LSU1_BeamStatus 3 "Invalid" 2 "High" 1 "Low" 0 "Off" ;
+VAL_ 1184 LSU1_SteeringStatus 3 "Invalid" 2 "Right" 1 "Left" 0 "Off" ;
+VAL_ 1184 LSU1_HazardStatus 3 "Invalid" 2 "Reserved" 1 "On" 0 "Off" ;
+VAL_ 1184 LSU1_BackupStatus 3 "Invalid" 2 "Reserved" 1 "On" 0 "Off" ;
+VAL_ 1040 LCU1_Breathe 7 "Always On" 6 "Interval 4s" 5 "Interval 3s" 4 "Interval 2s" 3 "Interval 1s" 2 "Interval 500ms" 1 "Off" 0 "No Request" ;
+VAL_ 1040 LCU1_Width 3 "Reserved" 2 "On" 1 "Off" 0 "No Request" ;
+VAL_ 1040 LCU1_Steering 3 "Right" 2 "Left" 1 "Off" 0 "No Request" ;
+VAL_ 1040 LCU1_Hazard 3 "Reserved" 2 "On" 1 "Off" 0 "No Request" ;
+VAL_ 1040 LCU1_Brake 3 "Reserved" 2 "On" 1 "Off" 0 "No Request" ;
+VAL_ 1040 LCU1_Beam 3 "High" 2 "Low" 1 "Off" 0 "No Request" ;
+VAL_ 1040 LCU1_Backup 3 "Reserved" 2 "On" 1 "Off" 0 "NoRequest" ;
+
