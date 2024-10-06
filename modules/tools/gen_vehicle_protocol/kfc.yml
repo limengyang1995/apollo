@@ -1,0 +1,348 @@
+car_type: kfc
+protocols:
+  '0':
+    id: '0'
+    name: vector__independent_sig_msg_0
+    protocol_type: report
+    sender: Vector__XXX
+    vars:
+    - bit: 0
+      description: "\xD2\xA3\xBF\xD8\xC6\xF7\xD3\xD0\xD0\xA7\xD7\xB4\xCC\xAC"
+      enum:
+        0: VCU1_REMOTEVALID_INACTIVE
+        1: VCU1_REMOTEVALID_TEMPORARY
+        2: VCU1_REMOTEVALID_ACTIVE
+        3: VCU1_REMOTEVALID_RESERVED
+      is_signed_var: false
+      len: 1
+      name: VCU1_RemoteValid
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  '310':
+    id: '310'
+    name: acu1_310
+    protocol_type: control
+    sender: ACU
+    vars:
+    - bit: 40
+      is_signed_var: false
+      len: 7
+      name: ACU1_TargetBrakingPosition
+      offset: 0.0
+      order: intel
+      physical_range: '[0|100]'
+      physical_unit: '%'
+      precision: 1.0
+      type: int
+    - bit: 32
+      is_signed_var: false
+      len: 7
+      name: ACU1_TargetThrottlePosition
+      offset: 0.0
+      order: intel
+      physical_range: '[0|100]'
+      physical_unit: '%'
+      precision: 1.0
+      type: int
+    - bit: 30
+      enum:
+        0: ACU1_DRIVINGCONTROLREQUEST_NO_REQUET
+        1: ACU1_DRIVINGCONTROLREQUEST_REQUEST
+        2: ACU1_DRIVINGCONTROLREQUEST_RESERVED
+        3: ACU1_DRIVINGCONTROLREQUEST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACU1_DrivingControlRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 59
+      enum:
+        0: ACU1_STANDSTILLST_INACTIVE
+        1: ACU1_STANDSTILLST_ACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACU1_StandStillSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 19
+      is_signed_var: false
+      len: 9
+      name: ACU1_TargetSteeringSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|500]'
+      physical_unit: deg/s
+      precision: 1.0
+      type: int
+    - bit: 8
+      is_signed_var: false
+      len: 11
+      name: ACU1_TargetSteeringAngle
+      offset: -600.0
+      order: intel
+      physical_range: '[-600|600]'
+      physical_unit: deg
+      precision: 1.0
+      type: int
+    - bit: 56
+      enum:
+        0: ACU1_TARGETGEAR_NO_REQUEST
+        1: ACU1_TARGETGEAR_P
+        2: ACU1_TARGETGEAR_D
+        3: ACU1_TARGETGEAR_N
+        4: ACU1_TARGETGEAR_R
+        5: ACU1_TARGETGEAR_RESERVED
+        6: ACU1_TARGETGEAR_RESERVED
+        7: ACU1_TARGETGEAR_RESERVED
+      is_signed_var: false
+      len: 3
+      name: ACU1_TargetGear
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 60
+      is_signed_var: false
+      len: 4
+      name: ACU1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACU1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 28
+      enum:
+        0: ACU1_STEERINGCONTROLREQUEST_NO_REQUET
+        1: ACU1_STEERINGCONTROLREQUEST_REQUEST
+        2: ACU1_STEERINGCONTROLREQUEST_RESERVED
+        3: ACU1_STEERINGCONTROLREQUEST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACU1_SteeringControlRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  '320':
+    id: '320'
+    name: vcu1_320
+    protocol_type: report
+    sender: VCU
+    vars:
+    - bit: 40
+      is_signed_var: false
+      len: 4
+      name: VCU1_SteeringMode
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 44
+      is_signed_var: false
+      len: 4
+      name: VCU1_DrivingMode
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 12
+      enum:
+        0: VCU1_STEERINGTAKEOVERST_INACTIVE
+        1: VCU1_STEERINGTAKEOVERST_TEMPORARY
+        2: VCU1_STEERINGTAKEOVERST_ACTIVE
+        3: VCU1_STEERINGTAKEOVERST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: VCU1_SteeringTakeOverSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 10
+      enum:
+        0: VCU1_STEERINGFAILUREST_NO_FAIL
+        1: VCU1_STEERINGFAILUREST_EPS_FAIL
+        2: VCU1_STEERINGFAILUREST_SAS_FAIL
+        3: VCU1_STEERINGFAILUREST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: VCU1_SteeringFailureSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 8
+      enum:
+        0: VCU1_STEERINGAUTOCONTROLST_INACTIVE
+        1: VCU1_STEERINGAUTOCONTROLST_ACTIVE
+        2: VCU1_STEERINGAUTOCONTROLST_RESERVED
+        3: VCU1_STEERINGAUTOCONTROLST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: VCU1_SteeringAutoControlSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 20
+      enum:
+        0: VCU1_DRIVINGTAKEOVERST_INACTIVE
+        1: VCU1_DRIVINGTAKEOVERST_TEMPORARY
+        2: VCU1_DRIVINGTAKEOVERST_TAKE_OVER
+        3: VCU1_DRIVINGTAKEOVERST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: VCU1_DrivingTakeOverSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 18
+      enum:
+        0: VCU1_DRIVINGFAILUREST_NO_FAIL
+        1: VCU1_DRIVINGFAILUREST_HCU_FAIL
+        2: VCU1_DRIVINGFAILUREST_MOTOR_FAIL
+        3: VCU1_DRIVINGFAILUREST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: VCU1_DrivingFailureSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 16
+      enum:
+        0: VCU1_DRIVINGAUTOCONTROLST_INACTIVE
+        1: VCU1_DRIVINGAUTOCONTROLST_ACTIVE
+        2: VCU1_DRIVINGAUTOCONTROLST_RESERVED
+        3: VCU1_DRIVINGAUTOCONTROLST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: VCU1_DrivingAutoControlSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 24
+      is_signed_var: false
+      len: 15
+      name: VCU1_VehicleSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|60]'
+      physical_unit: km/h
+      precision: 1.0
+      type: int
+    - bit: 60
+      is_signed_var: false
+      len: 4
+      name: VCU1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 14
+      enum:
+        0: VCU1_GEARINFO_P
+        1: VCU1_GEARINFO_R
+        2: VCU1_GEARINFO_N
+        3: VCU1_GEARINFO_D
+      is_signed_var: false
+      len: 2
+      name: VCU1_GearInfo
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: VCU1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 22
+      enum:
+        0: VCU1_BRAKEINFO_INACTIVE
+        1: VCU1_BRAKEINFO_ACTIVE
+        2: VCU1_BRAKEINFO_RESERVED
+        3: VCU1_BRAKEINFO_RESERVED
+      is_signed_var: false
+      len: 2
+      name: VCU1_BrakeInfo
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  '321':
+    id: '321'
+    name: agv_321
+    protocol_type: report
+    sender: Vector__XXX
+    vars:
+    - bit: 0
+      enum:
+        0: AGV_MESSAGE_ST_INIVD
+        1: AGV_MESSAGE_ST_STOP
+        2: AGV_MESSAGE_ST_ON
+      is_signed_var: false
+      len: 2
+      name: Agv_Message_St
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
