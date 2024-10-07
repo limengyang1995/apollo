@@ -53,5 +53,30 @@
         <dag_conf>/apollo/modules/localization/dag/dag_streaming_msf_visualizer.dag</dag_conf>
         <process_name>localization_visualizer</process_name>
     </module> -->
+    <module>
+        <name>prediction</name>
+        <dag_conf>/apollo/modules/prediction/dag/prediction.dag</dag_conf>
+        <process_name>prediction</process_name>
+    </module>
+    <module>
+        <name>routing</name>
+        <dag_conf>/apollo/modules/routing/dag/routing.dag</dag_conf>
+        <process_name></process_name>
+    </module>
+    <module>
+        <name>planning</name>
+        <dag_conf>/apollo/modules/planning/planning_component/dag/planning.dag</dag_conf>
+        <process_name>planning</process_name>
+    </module>
+    <module>
+        <name>control</name>
+        <dag_conf>/apollo/modules/control/control_component/dag/control.dag</dag_conf>
+        <process_name>control</process_name>
+    </module> 
+    <module>
+        <name>canbus</name>
+        <dag_conf>/apollo/modules/canbus/dag/canbus.dag</dag_conf>
+        <process_name>canbus</process_name>
+    </module>
 </cyber>
 
