@@ -54,7 +54,7 @@ data {
 
 rtk_solution_type: RTK_RECEIVER_SOLUTION
 imu_type: ADIS16488
-proj4_text: "+proj=utm +zone=50 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+proj4_text: "+proj=utm +zone=51 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
 tf {
     frame_id: "world"

@@ -255,8 +255,8 @@ void DataParser::PublishOdometry(const MessagePtr message) {
   Ins *ins = As<Ins>(message);
   auto gps = std::make_shared<Gps>();
 
-  double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
-  gps->mutable_header()->set_timestamp_sec(unix_sec);
+  // double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
+  gps->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
   auto *gps_msg = gps->mutable_localization();
 
   // 1. pose xyz
@@ -338,6 +338,7 @@ void DataParser::PublishHeading(const MessagePtr message) {
 void DataParser::GpsToTransformStamped(const std::shared_ptr<Gps> &gps,
                                        TransformStamped *transform) {
   transform->mutable_header()->set_timestamp_sec(gps->header().timestamp_sec());
+  AERROR<< "tf time----" <<gps->header().timestamp_sec();
   transform->mutable_header()->set_frame_id(config_.tf().frame_id());
   transform->set_child_frame_id(config_.tf().child_frame_id());
   auto translation = transform->mutable_transform()->mutable_translation();
