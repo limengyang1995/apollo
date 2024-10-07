@@ -1,8 +1,8 @@
 filter_naninf_points: true
 filter_nearby_box_points: true
-box_forward_x: 1
-box_backward_x: -3
-box_forward_y: 0.5
-box_backward_y: -0.5
+box_forward_x: 1.6
+box_backward_x: -0.46
+box_forward_y: 0.52
+box_backward_y: -0.52
 filter_high_z_points: true
-z_threshold: 2.0
+z_threshold: 3.0

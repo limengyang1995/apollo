@@ -1,4 +1,25 @@
 <cyber>
+    <desc>Apollo drivers</desc>
+    <version>1.0.0</version>
+    <module>
+        <name>gnss</name>
+        <dag_conf>/apollo/modules/drivers/gnss/dag/gnss.dag</dag_conf>
+        <process_name>gnss</process_name>
+    </module>
+
+    <module>
+        <name>hesai40</name>
+        <dag_conf>/apollo/modules/drivers/lidar/hesai/dag/hesai40.dag</dag_conf>
+        <process_name>hesai</process_name>
+    </module>
+
+    <module>
+        <name>static_transform</name>
+        <dag_conf>/apollo/modules/transform/dag/static_transform.dag</dag_conf>
+        <process_name></process_name>
+    </module>
+
+    
     <desc>Apollo lidar 3d object detection</desc>
     <version>1.0.0</version>
     <module>
@@ -13,17 +34,21 @@
         <process_name>lidar</process_name>
         <version>1.0.0</version>
     </module>
-
-    <module>
+    
+    <desc>Apollo localization</desc>
+    <version>1.0.0</version>
+    <!-- <module>
         <name>localization</name>
         <dag_conf>/apollo/modules/localization/dag/dag_streaming_msf_localization.dag</dag_conf>
         <process_name>localization</process_name>
-    </module>
+    </module> -->
+
     <module>
-        <name>localization_visualizer</name>
-        <dag_conf>/apollo/modules/localization/dag/dag_streaming_msf_visualizer.dag</dag_conf>
-        <process_name>localization_visualizer</process_name>
+        <name>localization</name>
+        <dag_conf>/apollo/modules/localization/dag/dag_streaming_rtk_localization.dag</dag_conf>
+        <process_name>localization</process_name>
     </module>
+    
 
     <module>
         <name>old_routing_adapter</name>
