@@ -655,7 +655,7 @@ Status MPCController::ComputeControlCommand(
 
   debug->set_calibration_value(calibration_value);
 
-  /* double throttle_cmd = 0.0;
+  double throttle_cmd = 0.0;
   double brake_cmd = 0.0;
   if (acceleration_cmd >= 0) {
     if (calibration_value >= 0) {
@@ -671,13 +671,13 @@ Status MPCController::ComputeControlCommand(
     } else {
       brake_cmd = std::max(-calibration_value, brake_lowerbound_);
     }
-  } */
+  }
 
   cmd->set_steering_rate(FLAGS_steer_angle_rate);
   // if the car is driven by acceleration, disgard the cmd->throttle and brake
-  //cmd->set_throttle(throttle_cmd);
-  //cmd->set_brake(brake_cmd);
-  cmd->set_acceleration(acceleration_cmd);
+  cmd->set_throttle(throttle_cmd);
+  cmd->set_brake(brake_cmd);
+  //cmd->set_acceleration(acceleration_cmd);
 
   debug->set_heading(vehicle_state->heading());
   debug->set_steering_position(chassis->steering_percentage());
