@@ -334,6 +334,7 @@ void KfcController::Brake(double pedal) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  AERROR << "break COMMAND 1 IS "<< pedal;
   acu1_310_->set_acu1_drivingcontrolrequest(Acu1_310::ACU1_DRIVINGCONTROLREQUEST_REQUEST);
   acu1_310_->set_acu1_targetbrakingposition(std::abs(int(pedal)));
  
@@ -350,6 +351,7 @@ void KfcController::Throttle(double pedal) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  AERROR << "PEDAL COMMAND 1 IS "<< pedal;
   acu1_310_->set_acu1_drivingcontrolrequest(Acu1_310::ACU1_DRIVINGCONTROLREQUEST_REQUEST);
   acu1_310_->set_acu1_targetthrottleposition(std::abs(int(pedal)));
  
@@ -368,6 +370,9 @@ void KfcController::Acceleration(double acc) {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
   */
+  AERROR << "PEDAL COMMAND 2 IS "<< acc;
+  acu1_310_->set_acu1_drivingcontrolrequest(Acu1_310::ACU1_DRIVINGCONTROLREQUEST_REQUEST);
+  acu1_310_->set_acu1_targetthrottleposition(std::abs(int(acc)));
 }
 
 // kfc default, +470 ~ -470 or other, left:+, right:-
@@ -384,7 +389,7 @@ void KfcController::Steer(double angle) {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
   acu1_310_->set_acu1_steeringcontrolrequest(Acu1_310::ACU1_STEERINGCONTROLREQUEST_REQUEST);
-  acu1_310_->set_acu1_targetsteeringangle(vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0);
+  acu1_310_->set_acu1_targetsteeringangle( - vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0);
 }
 
 // kfc default, steering with new angle speed
@@ -400,7 +405,7 @@ void KfcController::Steer(double angle, double angle_spd) {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
   acu1_310_->set_acu1_steeringcontrolrequest(Acu1_310::ACU1_STEERINGCONTROLREQUEST_REQUEST);
-  acu1_310_->set_acu1_targetsteeringangle(int(vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0));
+  acu1_310_->set_acu1_targetsteeringangle(-int(vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0));
   acu1_310_->set_acu1_targetsteeringspeed(int(vehicle_params_.max_steer_angle_rate() /M_PI * 180 * angle_spd / 100));
 }
 
@@ -513,6 +518,7 @@ bool KfcController::CheckChassisError() {
   if (message_manager_->GetSensorData(&chassis_detail) != ErrorCode::OK) {
     AERROR_EVERY(100) << "Get chassis detail failed.";
   }
+  /*
   if (!chassis_.has_check_response()) {
     AERROR_EVERY(100) << "ChassisDetail has no kfc vehicle info.";
     chassis_.mutable_engage_advice()->set_advice(
@@ -523,6 +529,7 @@ bool KfcController::CheckChassisError() {
   } else {
     chassis_.clear_engage_advice();
   }
+  */
 
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // steer fault
@@ -646,14 +653,14 @@ bool KfcController::CheckResponse(const int32_t flags, bool need_wait) {
     if (flags & CHECK_RESPONSE_STEER_UNIT_FLAG) {
       is_eps_online = chassis_detail.has_vcu1_320() &&
                       chassis_detail.vcu1_320().has_vcu1_steeringtakeoverst() &&
-                      chassis_detail.vcu1_320().vcu1_steeringtakeoverst();
+                      !chassis_detail.vcu1_320().vcu1_steeringtakeoverst();
       check_ok = check_ok && is_eps_online;
     }
 
     if (flags & CHECK_RESPONSE_SPEED_UNIT_FLAG) {
       is_vcu_online = chassis_detail.has_vcu1_320() &&
                       chassis_detail.vcu1_320().has_vcu1_drivingtakeoverst() &&
-                      chassis_detail.vcu1_320().vcu1_drivingtakeoverst();
+                      !chassis_detail.vcu1_320().vcu1_drivingtakeoverst();
       check_ok = check_ok && is_vcu_online;
     }
     if (check_ok) {

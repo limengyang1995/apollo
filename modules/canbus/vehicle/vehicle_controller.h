@@ -458,7 +458,7 @@ ErrorCode VehicleController<SensorType>::Update(
           AINFO << "control has received cloud control request:";
           mode = Chassis::REMOTE_CLOUD_DRIVE;
         } 
-        
+
         auto error_code = SetDrivingMode(mode);
         if (error_code != ErrorCode::OK) {
           AERROR << "Failed to set driving mode.";
@@ -478,10 +478,9 @@ ErrorCode VehicleController<SensorType>::Update(
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_SPEED_ONLY) {
     Gear(control_command.gear_location());
-    //Throttle(control_command.throttle());
-    Acceleration(control_command.acceleration());
-    Speed(control_command.speed());
-    //Brake(control_command.brake());
+    Throttle(control_command.throttle());
+    //Acceleration(control_command.acceleration());
+    Brake(control_command.brake());
     SetEpbBreak(control_command);
     SetLimits();
   }

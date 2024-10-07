@@ -98,9 +98,9 @@ message Vcu1_320 {
   }
   enum Vcu1_gearinfoType {
     VCU1_GEARINFO_P = 0;
-    VCU1_GEARINFO_R = 1;
+    VCU1_GEARINFO_D = 1;
     VCU1_GEARINFO_N = 2;
-    VCU1_GEARINFO_D = 3;
+    VCU1_GEARINFO_R = 3;
   }
   enum Vcu1_brakeinfoType {
     VCU1_BRAKEINFO_INACTIVE = 0;
