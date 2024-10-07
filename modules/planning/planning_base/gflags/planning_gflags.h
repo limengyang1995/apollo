@@ -206,6 +206,7 @@ DECLARE_double(path_bounds_decider_resolution);
 DECLARE_double(path_bounds_horizon);
 DECLARE_double(num_extra_tail_bound_point);
 DECLARE_bool(enable_pull_over_at_destination);
+DECLARE_bool(enable_uturn_at_narrow_street);
 
 DECLARE_double(obstacle_lat_buffer);
 DECLARE_double(obstacle_lon_start_buffer);

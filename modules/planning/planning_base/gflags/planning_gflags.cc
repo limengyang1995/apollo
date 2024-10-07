@@ -400,6 +400,8 @@ DEFINE_double(path_bounds_decider_resolution, 0.5,
 DEFINE_double(num_extra_tail_bound_point, 20, "The extra tail point number.");
 DEFINE_bool(enable_pull_over_at_destination, false,
             "Whether to pull over at destination");
+DEFINE_bool(enable_uturn_at_narrow_street, true,
+            "Whether to uturn at narrow street");
 DEFINE_double(replan_lateral_distance_threshold, 0.5,
               "The lateral distance threshold of replan");
 DEFINE_double(replan_longitudinal_distance_threshold, 2.5,
