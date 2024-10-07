@@ -334,7 +334,7 @@ void KfcController::Brake(double pedal) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
-  AERROR << "break COMMAND 1 IS "<< pedal;
+  AINFO << "break COMMAND 1 IS "<< pedal;
   acu1_310_->set_acu1_drivingcontrolrequest(Acu1_310::ACU1_DRIVINGCONTROLREQUEST_REQUEST);
   acu1_310_->set_acu1_targetbrakingposition(std::abs(int(pedal)));
  
@@ -351,7 +351,7 @@ void KfcController::Throttle(double pedal) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
-  AERROR << "PEDAL COMMAND 1 IS "<< pedal;
+  AINFO << "PEDAL COMMAND 1 IS "<< pedal;
   acu1_310_->set_acu1_drivingcontrolrequest(Acu1_310::ACU1_DRIVINGCONTROLREQUEST_REQUEST);
   acu1_310_->set_acu1_targetthrottleposition(std::abs(int(pedal)));
  
@@ -370,9 +370,6 @@ void KfcController::Acceleration(double acc) {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
   */
-  AERROR << "PEDAL COMMAND 2 IS "<< acc;
-  acu1_310_->set_acu1_drivingcontrolrequest(Acu1_310::ACU1_DRIVINGCONTROLREQUEST_REQUEST);
-  acu1_310_->set_acu1_targetthrottleposition(std::abs(int(acc)));
 }
 
 // kfc default, +470 ~ -470 or other, left:+, right:-
