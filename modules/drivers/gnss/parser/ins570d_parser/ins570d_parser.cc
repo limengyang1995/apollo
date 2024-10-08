@@ -297,7 +297,6 @@ void Ins570dParser::PrepareMessage(MessageInfoVec* messages) {
   ins570d_data_=*tmp_;
   // debug
   ins570d_data_.debugString();
-  AERROR<<"ENTER HANDLE:";
   HandleGnssBestpos();
   HandleBestPos();
   HandleCorrImuData();
@@ -319,10 +318,9 @@ void Ins570dParser::PrepareMessage(MessageInfoVec* messages) {
 void Ins570dParser::getRPY(Ins570d::INS_STATUS& tmp_)
 {
     // roll
-    AERROR<< "enter ger RPY";
     tmp_.roll=deg2rad(hex2Value<uint16_t>(dummy_array_.at(3),ANGLE_RESOLUTION));
     tmp_.pitch=deg2rad(hex2Value<uint16_t>(dummy_array_.at(4),ANGLE_RESOLUTION));
-    tmp_.yaw=deg2rad(-hex2Value<uint16_t>(dummy_array_.at(5),ANGLE_RESOLUTION));
+    tmp_.yaw=deg2rad(-hex2Value<uint16_t>(dummy_array_.at(5),ANGLE_RESOLUTION) + 90);
     
 }
 
@@ -344,7 +342,7 @@ void Ins570dParser::getWGS84(Ins570d::INS_STATUS &tmp_)
 {
     tmp_.latitude=hex2Value<uint32_t>(dummy_array_.at(12),WGS_RESOLUTION);
     tmp_.longitude=hex2Value<uint32_t>(dummy_array_.at(13),WGS_RESOLUTION);
-    tmp_.altitude=hex2Value<uint32_t>(dummy_array_.at(14),WGS_RESOLUTION);
+    tmp_.altitude=hex2Value<uint32_t>(dummy_array_.at(14),WGS_RESOLUTION) * 1e4;
 }
 
 void Ins570dParser::getVEL(Ins570d::INS_STATUS &tmp_)
@@ -612,7 +610,7 @@ bool Ins570dParser::HandleCorrImuData() {
   //   return false;
   // }
 
-  // ins_.mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
+  ins_.mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
   return true;
 }
 
@@ -675,7 +673,6 @@ bool Ins570dParser::HandleInsPvax() {
   // ins_stat_.mutable_header()->set_timestamp_sec(unix_sec);
   ins_stat_.set_ins_status(2);
 
-  AERROR<<"HANDLE INSPVA RETURN TRUE";
   ins_stat_.set_pos_type(2);
   return true;
 }
@@ -878,7 +875,7 @@ bool Ins570dParser::HandleHeading() {
   // heading_.set_solution_status(Ins570d::SolutionStatus::SOL_COMPUTED);
   heading_.set_position_type(SolutionType::NARROW_INT);
   // heading_.set_baseline_length(heading->length);
-  heading_.set_heading(ins570d_data_.yaw);
+  heading_.set_heading(ins570d_data_.yaw);  //turn 90 degree
   heading_.set_pitch(ins570d_data_.pitch);
   // heading_.set_reserved(heading->reserved);
   // heading_.set_heading_std_dev(heading->heading_std_dev);
