@@ -298,8 +298,8 @@ void DataParser::PublishOdometry(const MessagePtr message) {
 void DataParser::PublishCorrimu(const MessagePtr message) {
   Ins *ins = As<Ins>(message);
   auto imu = std::make_shared<CorrectedImu>();
-  double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
-  imu->mutable_header()->set_timestamp_sec(unix_sec);
+  //double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
+  imu->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());;
 
   auto *imu_msg = imu->mutable_imu();
   imu_msg->mutable_linear_acceleration()->set_x(
