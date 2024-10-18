@@ -29,6 +29,7 @@ apollo_component(
     deps = [
         "//cyber",
         "//modules/common/util:message_util",
+        "//modules/common/adapters:adapter_gflags",
         "//modules/common_msgs/external_command_msgs:command_status_cc_proto",
         "//modules/common_msgs/external_command_msgs:action_command_cc_proto",
         "//modules/common_msgs/external_command_msgs:chassis_command_cc_proto",
@@ -38,6 +39,7 @@ apollo_component(
         "//modules/common_msgs/external_command_msgs:speed_command_cc_proto",
         "//modules/common_msgs/external_command_msgs:valet_parking_command_cc_proto",
         "//modules/common_msgs/planning_msgs:planning_cc_proto",
+        "//modules/common_msgs/control_msgs:control_cmd_cc_proto",
         "//modules/external_command/external_driver/proto:sweeper_custom_command_cc_proto",
         "//modules/external_command/external_driver/proto:external_driver_config_cc_proto",
         "//modules/common_msgs/sensor_msgs:sensor_image_cc_proto",
