@@ -21,9 +21,11 @@
 #include <cctype>
 
 #include "modules/external_command/external_command_demo/proto/sweeper_custom_command.pb.h"
-
+#include "modules/common/adapters/adapter_gflags.h"
 #include "cyber/common/file.h"
 #include "cyber/record/record_reader.h"
+#include "cyber/common/log.h"
+
 
 using apollo::external_command::CommandStatus;
 
@@ -60,6 +62,11 @@ bool ExternalCommandDemo::Init() {
       node_->CreateClient<apollo::external_command::CommandStatusRequest,
                           CommandStatus>(
           "/apollo/external_command/command_status");
+
+  cloud_control_cmd_writer_ =
+        node_->CreateWriter<apollo::control::ControlCommand>(FLAGS_cloud_control_command_topic);
+  ACHECK(cloud_control_cmd_writer_ != nullptr);
+
   apollo::cyber::common::GetProtoFromFile(
       "modules/external_command/external_command_demo/conf/"
       "demo_config.pb.txt",
@@ -68,6 +75,7 @@ bool ExternalCommandDemo::Init() {
 }
 
 bool ExternalCommandDemo::Proc() {
+  SendCloudControlCommand(true, apollo::canbus::Chassis::GEAR_DRIVE, 100.0, 0.0, 50);
   int8_t revent = 0;  // short
   struct pollfd fd = {STDIN_FILENO, POLLIN, revent};
   switch (poll(&fd, 1, 100)) {
@@ -80,6 +88,7 @@ bool ExternalCommandDemo::Proc() {
       char data[50];
       std::cin.getline(data, 50);
       std::string input_command_string = data;
+      
       if (input_command_string == "pull_over") {
         // Pull over.
         SendActionCommand(
@@ -242,6 +251,21 @@ void ExternalCommandDemo::SendVehicleSignalCommand() {
   } else {
     std::cout << "******Finish sending command.******\n" << std::endl;
   }
+}
+
+void ExternalCommandDemo::SendCloudControlCommand(
+      const bool& cloud_takeover_request, 
+      const apollo::canbus::Chassis::GearPosition& gear_position,
+      const int& throttle, const int& brake, const int& steering_target){
+  auto command = std::make_shared<apollo::control::ControlCommand>();
+  command->set_cloud_takeover_request(cloud_takeover_request);
+  command->set_gear_location(gear_position);
+  command->set_throttle(throttle);
+  command->set_brake(brake);
+  command->set_steering_target(steering_target);
+  std::cout << "Sending cloud control command: " << command->DebugString()
+            << std::endl;
+  cloud_control_cmd_writer_->Write(command);
 }
 
 void ExternalCommandDemo::SendCustomChassisCommand() {

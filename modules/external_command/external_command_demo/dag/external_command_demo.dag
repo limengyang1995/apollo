@@ -5,7 +5,7 @@ module_config {
     class_name : "ExternalCommandDemo"
     config {
       name: "external_command_demo_component"
-      interval: 200 # milliseconds
+      interval: 100 # milliseconds
     }
   }
 }
