@@ -21,9 +21,10 @@
 #include <cctype>
 
 #include "modules/external_command/external_driver/proto/sweeper_custom_command.pb.h"
-
+#include "modules/common/adapters/adapter_gflags.h"
 #include "cyber/common/file.h"
 #include "cyber/record/record_reader.h"
+#include "cyber/common/log.h"
 
 #include "opencv2/opencv.hpp"
 #include "nlohmann/json.hpp"
@@ -52,6 +53,10 @@ bool ExternalDriver::Init() {
             "/apollo/external_command/valet_parking");
     status_client_ = node_->CreateClient<apollo::external_command::CommandStatusRequest, CommandStatus>(
             "/apollo/external_command/command_status");
+    cloud_control_cmd_writer_ =
+        node_->CreateWriter<apollo::control::ControlCommand>(FLAGS_cloud_control_command_topic);
+    ACHECK(cloud_control_cmd_writer_ != nullptr);
+
     apollo::cyber::common::GetProtoFromFile(
             "/apollo/modules/external_command/external_driver/conf/"
             "external_driver_config.pb.txt",
@@ -260,6 +265,20 @@ void ExternalDriver::SendVehicleSignalCommand() {
     } else {
         AINFO << "******Finish sending command.******\n" ;
     }
+}
+void ExternalDriver::SendCloudControlCommand(
+      const bool& cloud_takeover_request, 
+      const apollo::canbus::Chassis::GearPosition& gear_position,
+      const int& throttle, const int& brake, const int& steering_target){
+  auto command = std::make_shared<apollo::control::ControlCommand>();
+  command->set_cloud_takeover_request(cloud_takeover_request);
+  command->set_gear_location(gear_position);
+  command->set_throttle(throttle);
+  command->set_brake(brake);
+  command->set_steering_target(steering_target);
+  std::cout << "Sending cloud control command: " << command->DebugString()
+            << std::endl;
+  cloud_control_cmd_writer_->Write(command);
 }
 
 void ExternalDriver::SendCustomChassisCommand() {

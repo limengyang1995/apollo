@@ -28,6 +28,7 @@
 #include "modules/common_msgs/external_command_msgs/speed_command.pb.h"
 #include "modules/common_msgs/external_command_msgs/valet_parking_command.pb.h"
 #include "modules/common_msgs/planning_msgs/planning.pb.h"
+#include "modules/common_msgs/control_msgs/control_cmd.pb.h"
 #include "modules/external_command/external_driver/proto/external_driver_config.pb.h"
 
 #include "cyber/component/timer_component.h"
@@ -82,7 +83,12 @@ private:
             double target_speed);
 
     void SendValetParkingCommand(const std::string& parking_spot_id, double target_speed);
-
+    
+    void SendCloudControlCommand(
+      const bool& cloud_takeover_request, 
+      const apollo::canbus::Chassis::GearPosition& gear_position,
+      const int& throttle, const int& brake, const int& steering_target);
+    
     void SendVehicleSignalCommand();
 
     void SendCustomChassisCommand();
@@ -131,7 +137,7 @@ private:
             apollo::external_command::CommandStatusRequest,
             apollo::external_command::CommandStatus>>
             status_client_;
-
+    std::shared_ptr<apollo::cyber::Writer<apollo::control::ControlCommand>> cloud_control_cmd_writer_;
     uint64_t command_id_;
     const std::string module_name_;
 
