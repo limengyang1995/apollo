@@ -147,6 +147,9 @@ bool ActionCommandProcessor::GetCommandStatus(int64_t command_id,
     case external_command::ActionCommandType::SWITCH_TO_AUTO: {
       CheckModeSwitchFinished(canbus::Chassis::COMPLETE_AUTO_DRIVE, status);
     } break;
+    case external_command::ActionCommandType::SWITCH_TO_CLOUD: {
+      CheckModeSwitchFinished(canbus::Chassis::REMOTE_CLOUD_DRIVE, status);
+    } break;
     // Get status of "VIN_REQ".
     default: {
       // todo: Get the real result of control.
@@ -237,6 +240,12 @@ void ActionCommandProcessor::OnCommand(
       cyber::Async(&ActionCommandProcessor::SwitchToAutoMode, this,
                    module_name);
     } break;
+    case external_command::ActionCommandType::SWITCH_TO_CLOUD: {
+      // Chassis need be switched to manual mode before switch to auto mode.
+      // Use async function to wait for the chassis to be in auto mode.
+      cyber::Async(&ActionCommandProcessor::SwitchToCloudMode, this,
+                   module_name);
+    } break;
     // Send "ENTER_MISSION" message to planning.
     case external_command::ActionCommandType::ENTER_MISSION: {
       planning::PadMessage planning_message;
@@ -289,7 +298,34 @@ void ActionCommandProcessor::SwitchToAutoMode(const std::string& module_name) {
   SwitchMode(canbus::Chassis::COMPLETE_AUTO_DRIVE,
              control::DrivingAction::START, module_name);
 }
-
+void ActionCommandProcessor::SwitchToCloudMode(const std::string& module_name) {
+  last_mode_switch_status_.set_status(
+      apollo::external_command::CommandStatusType::RUNNING);
+  // Get the chassis' driving mode first.
+  auto* latest_chassis_status =
+      message_reader_->GetMessage<apollo::canbus::Chassis>(
+          chassis_status_name_);
+  if (nullptr == latest_chassis_status) {
+    UpdateModeSwitchStatus("Failed to get chassis data!", true);
+    return;
+  }
+  // Do nothing if chassis is already in auto mode.
+  if (canbus::Chassis::REMOTE_CLOUD_DRIVE ==
+      latest_chassis_status->driving_mode()) {
+    UpdateModeSwitchStatus("Chassis is already in auto mode.", false);
+    return;
+  }
+  // Make sure chassis is in manual mode.
+  if (!SwitchMode(canbus::Chassis::COMPLETE_MANUAL,
+                  control::DrivingAction::RESET, module_name)) {
+    UpdateModeSwitchStatus("Chassis cannot be switched to manual mode first!",
+                           true);
+    return;
+  }
+  // Switch to auto mode.
+  SwitchMode(canbus::Chassis::REMOTE_CLOUD_DRIVE,
+             control::DrivingAction::START, module_name);
+}
 void ActionCommandProcessor::SwitchToManualMode(
     const std::string& module_name) {
   last_mode_switch_status_.set_status(

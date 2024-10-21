@@ -25,6 +25,7 @@
 #include "cyber/common/file.h"
 #include "cyber/record/record_reader.h"
 #include "cyber/common/log.h"
+#include <string>
 
 #include "opencv2/opencv.hpp"
 #include "nlohmann/json.hpp"
@@ -121,13 +122,40 @@ bool ExternalDriver::Proc() {
 
     std::string data = rtc_client_.g_mylistener.recieve_msg;
     int msgtype = rtc_client_.g_mylistener.msg_type;
-    std::string input_command_string = "";
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         const nlohmann::json command = nlohmann::json::parse(data);
         input_command_string = command["action"];
+        AERROR << "send cloud control command: " << command["action"];
+        if (input_command_string == "cloud"){
+            cloud_takeover = command["takeover"];
+            cloud_gear = command["gear"];
+            cloud_throttle = command["throttle"];
+            cloud_brake = command["brake"];
+            cloud_steer = command["steer"];
+            switch (std::stoi(cloud_gear)) {
+                case 0:
+                    cloud_gear_position = apollo::canbus::Chassis::GEAR_NEUTRAL;
+                    break;
+                case 1:
+                    cloud_gear_position = apollo::canbus::Chassis::GEAR_DRIVE;
+                    break;
+                case 2:
+                    cloud_gear_position = apollo::canbus::Chassis::GEAR_REVERSE;
+                    break;
+                case 3:
+                    cloud_gear_position = apollo::canbus::Chassis::GEAR_PARKING;
+                    break;
+                default:
+                    cloud_gear_position = apollo::canbus::Chassis::GEAR_INVALID;
+            }
+                   
+        }
     }
-
-    if (input_command_string == "pull_over") {
+    if (input_command_string == "cloud"){
+        SendCloudControlCommand(std::stoi(cloud_takeover), cloud_gear_position, std::stoi(cloud_throttle), std::stoi(cloud_brake), std::stoi(cloud_steer));     
+        SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_CLOUD);
+    }
+    else if (input_command_string == "pull_over") {
         SendActionCommand(apollo::external_command::ActionCommandType::PULL_OVER);
     } else if (input_command_string == "stop") {
         // Stop planning.
@@ -270,14 +298,15 @@ void ExternalDriver::SendCloudControlCommand(
       const bool& cloud_takeover_request, 
       const apollo::canbus::Chassis::GearPosition& gear_position,
       const int& throttle, const int& brake, const int& steering_target){
+  AERROR<< "get cloud control command: " << cloud_takeover_request;
   auto command = std::make_shared<apollo::control::ControlCommand>();
   command->set_cloud_takeover_request(cloud_takeover_request);
   command->set_gear_location(gear_position);
   command->set_throttle(throttle);
   command->set_brake(brake);
   command->set_steering_target(steering_target);
-  std::cout << "Sending cloud control command: " << command->DebugString()
-            << std::endl;
+  //command->set_driving_mode(apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE);
+  AERROR<< "Sending cloud control command: " << command->DebugString();
   cloud_control_cmd_writer_->Write(command);
 }
 
