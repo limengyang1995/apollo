@@ -29,6 +29,8 @@ enum ActionCommandType {
   ENTER_MISSION = 53;
   // Exit mission model
   EXIT_MISSION = 54;
+  //cloud control mode
+  SWITCH_TO_CLOUD = 55;
 }
 
 message ActionCommand {

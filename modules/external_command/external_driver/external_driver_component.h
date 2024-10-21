@@ -140,6 +140,9 @@ private:
     std::shared_ptr<apollo::cyber::Writer<apollo::control::ControlCommand>> cloud_control_cmd_writer_;
     uint64_t command_id_;
     const std::string module_name_;
+    std::string input_command_string = "";
+    std::string cloud_takeover, cloud_gear, cloud_throttle, cloud_brake, cloud_steer = "";
+    apollo::canbus::Chassis::GearPosition cloud_gear_position;
 
 };
 
