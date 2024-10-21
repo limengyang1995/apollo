@@ -70,6 +70,7 @@ class ActionCommandProcessor : public CommandProcessorBase {
    * driving mode changed to auto mode.
    * @param module_name Name of module who send this action message.
    */
+  void SwitchToCloudMode(const std::string& module_name);
   void SwitchToManualMode(const std::string& module_name);
   /**
    * @brief Switch driving mode to the target mode.
