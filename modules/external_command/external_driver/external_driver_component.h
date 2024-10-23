@@ -53,16 +53,16 @@ public:
 
 
 private:
-  std::shared_ptr<cyber::Reader<apollo::drivers::Image>> reader_;
   RtcClient rtc_client_;
   std::shared_ptr<cyber::Writer<apollo::drivers::Image>> writer_;
   std::string destination;
   std::string id = "0";
   apollo::external_command::ExternalDriverConfig config_;
-
-private:    
-  bool ProcessImage(const std::shared_ptr<apollo::drivers::Image> &image);
-  void InternalProc();
+  std::vector< std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
+private:
+    bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
+//     bool InternalProc();
+    bool InitListener(const ExternalDriverConfig& config);
 
 
 private:
