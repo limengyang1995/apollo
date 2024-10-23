@@ -36,5 +36,9 @@ message ExternalDriverConfig {
   optional int32 fps = 25;
   optional string image_topic = 26;
   optional string destination_path = 27;
-  
+  optional Channel channel = 28;
+}
+
+message Channel {
+  repeated string input_camera_channel_name = 1;
 }

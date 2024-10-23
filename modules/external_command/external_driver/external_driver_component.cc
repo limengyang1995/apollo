@@ -72,54 +72,82 @@ bool ExternalDriver::Init() {
     }
     nlohmann::json endpoint = nlohmann::json::parse(f);
     destination = endpoint.dump();
+    InitListener(config_);
+
+    return true;
+}
+bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
+    for (const auto& channel : config.channel().input_camera_channel_name()) {
+        std::shared_ptr<cyber::Reader<apollo::drivers::Image>> reader_;
+        if (channel == "/apollo/sensor/camera/CAM_BACK/image") {
+            reader_ = node_->CreateReader<apollo::drivers::Image>(
+                    channel, [&](const std::shared_ptr<apollo::drivers::Image>& image) { ProcessImage(image); });
+        } else {
+            reader_ = node_->CreateReader<apollo::drivers::Image>(channel);
+        }
+        readers_.emplace_back(reader_);
+    }
 
     return true;
 }
 
-void ExternalDriver::InternalProc() {
-    // reader_->Observe();
-    // const auto image_msg = reader_->GetLatestObserved();
-    // ProcessImage(image_msg);
-    AINFO<< "msg type:" << rtc_client_.g_mylistener.msg_type;
-    if (rtc_client_.g_mylistener.msg_type != 301 && rtc_client_.g_mylistener.msg_type != 2000) {
-        reader_ = node_->CreateReader<apollo::drivers::Image>(
-                "/apollo/sensor/camera/front_6mm/image",
-                [&](const std::shared_ptr<apollo::drivers::Image>& image) { ProcessImage(image); });
-        AINFO << "start to read image and send to rtc cloud";
-    }
-}
 
 bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image) {
     if (image == nullptr) {
         return false;
     }
-    cv::Mat img_front(image->height(), image->width(), CV_8UC3, const_cast<char*>(image->data().data()));
-    cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
-    std::vector<unsigned char> buf;
-    cv::imencode(".jpg", img_front, buf);
+    std::vector<cv::Mat> img_;
+    for (int i = 0; i < readers_.size(); ++i) {
+        readers_[i]->Observe();
+        const auto camera_msg = readers_[i]->GetLatestObserved();
+        if (camera_msg == nullptr) {
+            return false;
+        }
+        cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
+        img_.emplace_back(img);
+    }
+    if (rtc_client_.g_mylistener.msg_type != 301 && rtc_client_.g_mylistener.msg_type != 2000 && img_.size() == 4) {
+        cv::Mat img_front = img_[0];
+        cv::Mat img_left = img_[1];
+        cv::Mat img_right = img_[2];
+        // const cv::Mat *img_back = &img_[3];
+        cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
+        cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
+
+        std::string rear_image_text = "Rear Image";
+        std::string left_image_text = "Left Image";
+        std::string right_image_text = "Right Image";
+
+        cv::Scalar color(0, 255, 0);
+        // cv::putText(img_back, rear_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1,
+        // cv::LINE_AA);
+        cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
+        cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
+
+        cv::Rect roi_left(0, 0, img_left.cols, img_left.rows);
+        cv::Rect roi_right(img_front.cols - img_right.cols, 0, img_right.cols, img_right.rows);
+
+        cv::Mat roi_left_rect = img_front(roi_left);
+        cv::Mat roi_right_rect = img_front(roi_right);
+
+        img_left.copyTo(roi_left_rect);
+        img_right.copyTo(roi_right_rect);
+        // cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
+        std::vector<unsigned char> buf;
+        cv::imencode(".jpg", img_front, buf);
+        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+        AERROR << "msg type:" << rtc_client_.g_mylistener.msg_type;
+    }
+
     // int n = 0;
     // n++;
     // if (n<5){
     //     rtc_client_.g_BrtcClient->sendMessageToUser(destination.c_str(),id.c_str());
     // }
 
-    rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
     return true;
 }
 bool ExternalDriver::Proc() {
-    // int8_t revent = 0;  // short
-    // struct pollfd fd = {STDIN_FILENO, POLLIN, revent};
-    // switch (poll(&fd, 1, 100)) {
-    // case -1:
-    //     AINFO << "Failed to read keyboard" ;
-    //     return false;
-    // case 0:
-    //     return true;
-    // default:
-    // char data[50];
-    // std::cin.getline(data, 50);
-    InternalProc();
-
     std::string data = rtc_client_.g_mylistener.recieve_msg;
     int msgtype = rtc_client_.g_mylistener.msg_type;
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
