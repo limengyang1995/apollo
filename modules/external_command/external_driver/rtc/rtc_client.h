@@ -43,7 +43,7 @@ private:
     std::string cer_path;
     std::string app_id;
     std::string lib_path;
-    std::string car_id;
+    const char* car_id;
     typedef baidurtc::BaiduRtcRoomClient* f_createBaiduRtcRoomClient();
 
     RtcParameterSettings s;
