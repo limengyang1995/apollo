@@ -3,6 +3,8 @@
 #include "modules/external_command/external_driver/rtc/rtc_client.h"
 #include <typeinfo>
 
+using namespace std;
+
 namespace apollo {
 namespace external_command {
 
@@ -40,19 +42,22 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
     s.VideoHeight = config.image_height();
     cer_path = config.cer_path();
     app_id = config.app_id();
-    car_id = config.car_id();
+    car_id = getenv("CARID");
+    if (car_id == nullptr) {
+        AERROR << "getenv CARID failed";
+    }
 
     g_BrtcClient->setParamSettings(&s, s.RTC_PARAM_SETTINGS_ALL);
     g_BrtcClient->setAppID(app_id.c_str());
     g_BrtcClient->setMediaServerURL("wss://rtc.exp.bcelive.com/janus");
     g_BrtcClient->setCER(cer_path.c_str());
 
-    std::string uid;
-    std::ostringstream os;
-    os << 1234500000 + rand() / 100000;
-    uid = os.str();
+    // std::string uid;
+    // std::ostringstream os;
+    // os << 1234500000 + rand() / 100000;
+    // uid = os.str();
 
-    g_BrtcClient->loginRoom("2131", uid.c_str(), car_id.c_str(), "token");
+    g_BrtcClient->loginRoom("2131", car_id, car_id, "token");
     SetListener(g_BrtcClient, g_mylistener);
     return true;
 }
