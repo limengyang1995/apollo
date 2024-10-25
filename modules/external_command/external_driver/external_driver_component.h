@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "nlohmann/json.hpp"
 
 #include "modules/common_msgs/external_command_msgs/action_command.pb.h"
 #include "modules/common_msgs/external_command_msgs/chassis_command.pb.h"
@@ -59,6 +60,8 @@ private:
   std::string id = "0";
   apollo::external_command::ExternalDriverConfig config_;
   std::vector< std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
+  nlohmann::json point;
+
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
 //     bool InternalProc();
