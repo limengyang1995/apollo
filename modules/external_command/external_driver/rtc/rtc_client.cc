@@ -43,6 +43,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
     cer_path = config.cer_path();
     app_id = config.app_id();
     car_id = getenv("CARID");
+    AERROR << "car_id:" << car_id;
     if (car_id == nullptr) {
         AERROR << "getenv CARID failed";
     }
@@ -52,12 +53,16 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
     g_BrtcClient->setMediaServerURL("wss://rtc.exp.bcelive.com/janus");
     g_BrtcClient->setCER(cer_path.c_str());
 
-    // std::string uid;
-    // std::ostringstream os;
-    // os << 1234500000 + rand() / 100000;
-    // uid = os.str();
-
-    g_BrtcClient->loginRoom("2131", car_id, car_id, "token");
+    std::string uid;
+    std::ostringstream os;
+    os << 1234500000 + rand() / 100000;
+    uid = os.str();
+    
+    if(!g_BrtcClient->loginRoom("2131", "110", car_id, "token")) {
+        AERROR << "loginRoom failed";
+        return false;
+    }
+    // g_BrtcClient->startPublish();
     SetListener(g_BrtcClient, g_mylistener);
     return true;
 }

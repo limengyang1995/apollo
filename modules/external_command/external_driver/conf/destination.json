@@ -1,14 +1,16 @@
-{
-    "destination": {
-        "end1": {
+{ 
+    "end_pose": {
             "x": 0,
             "y": 0,
             "heading": 3.14
         },
-        "end2": {
+    "point1": {
             "x": 0,
-            "y": 0,
-            "heading": 3.14
+            "y": 0
+        },
+
+    "point2": {
+            "x": 0,
+            "y": 0
         }
     }
-}

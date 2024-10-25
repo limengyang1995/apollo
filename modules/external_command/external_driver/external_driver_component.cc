@@ -70,8 +70,7 @@ bool ExternalDriver::Init() {
     if (f.fail()) {
         AERROR << "failed to load destination file";
     }
-    nlohmann::json endpoint = nlohmann::json::parse(f);
-    destination = endpoint.dump();
+    point = nlohmann::json::parse(f);
     InitListener(config_);
 
     return true;
@@ -106,7 +105,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
         img_.emplace_back(img);
     }
-    if (rtc_client_.g_mylistener.msg_type != 301 && rtc_client_.g_mylistener.msg_type != 2000 && img_.size() == 4) {
+    if (rtc_client_.g_mylistener.msg_type == 300 || rtc_client_.g_mylistener.msg_type == 2001 || rtc_client_.g_mylistener.msg_type == 302 && img_.size() == 4) {
         cv::Mat img_front = img_[0];
         cv::Mat img_left = img_[1];
         cv::Mat img_right = img_[2];
@@ -265,28 +264,21 @@ bool ExternalDriver::Proc() {
                 std::remove_if(command_id_string.begin(), command_id_string.end(), ::isspace), command_id_string.end());
         uint64_t id = std::atoi(command_id_string.c_str());
         CheckCommandStatus(id);
-    } else if (input_command_string == "free1") {
+    } else if (input_command_string == "free") {
         apollo::external_command::Pose end_pose;
-        end_pose.set_x(437556.02);
-        end_pose.set_y(4432540.34);
-        end_pose.set_heading(1.8);
+        end_pose.set_x(point["end_pose"]["x"]);
+        end_pose.set_y(point["end_pose"]["y"]);
+        end_pose.set_heading(point["end_pose"]["heading"]);
         std::vector<apollo::external_command::Point> way_points;
         apollo::external_command::Point point1;
         apollo::external_command::Point point2;
-        apollo::external_command::Point point3;
-        apollo::external_command::Point point4;
-        point1.set_x(437536.29);
-        point1.set_y(4432560.69);
-        point2.set_x(437536.29);
-        point2.set_y(4432510.69);
-        point3.set_x(437576.29);
-        point3.set_y(4432510.69);
-        point4.set_x(437576.29);
-        point4.set_y(4432560.69);
+        point1.set_x(point["point1"]["x"]);
+        point1.set_y(point["point1"]["y"]);
+        point2.set_x(point["point2"]["x"]);
+        point2.set_y(point["point2"]["y"]);
+
         way_points.emplace_back(point1);
         way_points.emplace_back(point2);
-        way_points.emplace_back(point3);
-        way_points.emplace_back(point4);
 
         SendFreespaceCommand(way_points, end_pose);
     } else {

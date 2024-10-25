@@ -27,3 +27,9 @@
 
 --map_dir=/apollo/modules/map/data/apollo_virutal_map
 --map_dir=/apollo/modules/map/data/ws_loop
+
+--map_dir=/apollo/modules/map/data/sunnyvale_big_loop
+
+--map_dir=/apollo/modules/map/data/sunnyvale_loop
+
+--map_dir=/apollo/modules/map/data/sunnyvale_big_loop

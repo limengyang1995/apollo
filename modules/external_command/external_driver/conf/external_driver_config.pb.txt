@@ -19,8 +19,8 @@ app_id: "appqemmzy5zk1im"
 lib_path: "/apollo/modules/external_command/external_driver/rtc/lib/libbaidurtc.so"
 car_id: "x888"
 video_maxkbps: 9000
-image_width: 1600
-image_height: 900
+image_width: 640
+image_height: 480
 fps: 15
 image_topic: "/apollo/sensor/image"
 destination_path: "/apollo/modules/external_command/external_driver/conf/destination.json"
