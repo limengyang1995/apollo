@@ -149,6 +149,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
 bool ExternalDriver::Proc() {
     std::string data = rtc_client_.g_mylistener.recieve_msg;
     int msgtype = rtc_client_.g_mylistener.msg_type;
+    std::string input_command_string;
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         const nlohmann::json command = nlohmann::json::parse(data);
         input_command_string = command["action"];
