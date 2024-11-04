@@ -105,7 +105,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
         img_.emplace_back(img);
     }
-    if (rtc_client_.g_mylistener.msg_type == 300 || rtc_client_.g_mylistener.msg_type == 2001 || rtc_client_.g_mylistener.msg_type == 302 && img_.size() == 4) {
+    if (is_start_publish && img_.size() == 4) {
         cv::Mat img_front = img_[0];
         cv::Mat img_left = img_[1];
         cv::Mat img_right = img_[2];
@@ -135,7 +135,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         std::vector<unsigned char> buf;
         cv::imencode(".jpg", img_front, buf);
         rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
-        AERROR << "msg type:" << rtc_client_.g_mylistener.msg_type;
+        AINFO << "start send image successfully!";
     }
 
     // int n = 0;
@@ -148,12 +148,20 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
 }
 bool ExternalDriver::Proc() {
     std::string data = rtc_client_.g_mylistener.recieve_msg;
+    AINFO << "recieve cloud command: " << data;
     int msgtype = rtc_client_.g_mylistener.msg_type;
     std::string input_command_string;
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         const nlohmann::json command = nlohmann::json::parse(data);
         input_command_string = command["action"];
-        AERROR << "send cloud control command: " << command["action"];
+        if (command.contains("is_start_publish")){
+            if (command["is_start_publish"] == "true"){
+                is_start_publish = true;
+            }else{
+                is_start_publish = false;
+            }
+        }
+     
         if (input_command_string == "cloud"){
             cloud_takeover = command["takeover"];
             cloud_gear = command["gear"];
@@ -179,6 +187,7 @@ bool ExternalDriver::Proc() {
                    
         }
     }
+    
     if (input_command_string == "cloud"){
         SendCloudControlCommand(std::stoi(cloud_takeover), cloud_gear_position, std::stoi(cloud_throttle), std::stoi(cloud_brake), std::stoi(cloud_steer));     
         SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_CLOUD);

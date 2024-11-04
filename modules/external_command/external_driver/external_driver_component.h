@@ -61,6 +61,7 @@ private:
   apollo::external_command::ExternalDriverConfig config_;
   std::vector< std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
   nlohmann::json point;
+  bool is_start_publish = false;
 
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
