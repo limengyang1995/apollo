@@ -71,7 +71,6 @@ void MyListener::OnRtcMessage(RtcMessage& msg) {
     if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE){
         recieve_msg = msg.extra_info;
         re_mark = true;
-        AERROR << "recieve_msg_onrtc:" << msg.extra_info;
     }else{
         recieve_msg = "";
     }
