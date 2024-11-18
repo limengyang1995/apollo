@@ -784,17 +784,17 @@ bool VenusController::CheckResponse(const int32_t flags, bool need_wait) {
     if (flags & CHECK_RESPONSE_STEER_UNIT_FLAG) {
       is_eps_online = chassis_detail.has_vcu5_56a() &&
                       chassis_detail.vcu5_56a().has_vcu5_frontsteeringtakeoverst() &&
-                      chassis_detail.vcu5_56a().vcu5_frontsteeringtakeoverst();
+                      !chassis_detail.vcu5_56a().vcu5_frontsteeringtakeoverst();
       check_ok = check_ok && is_eps_online;
     }
 
     if (flags & CHECK_RESPONSE_SPEED_UNIT_FLAG) {
       is_vcu_online = chassis_detail.has_vcu5_56a() &&
                       chassis_detail.vcu5_56a().has_vcu5_drivingtakeoverst() &&
-                      chassis_detail.vcu5_56a().vcu5_drivingtakeoverst();
+                      !chassis_detail.vcu5_56a().vcu5_drivingtakeoverst();
       is_esp_online = chassis_detail.has_vcu5_56a() &&
                       chassis_detail.vcu5_56a().has_vcu5_brakingtakeoverst() &&
-                      chassis_detail.vcu5_56a().vcu5_brakingtakeoverst();
+                      !chassis_detail.vcu5_56a().vcu5_brakingtakeoverst();
       check_ok = check_ok && is_vcu_online && is_esp_online;
     }
     if (check_ok) {
