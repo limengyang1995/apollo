@@ -62,11 +62,15 @@ private:
   std::vector< std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
   nlohmann::json point;
   bool is_start_publish = false;
-
+  std::shared_ptr<cyber::Reader<localization::LocalizationEstimate>> localization_reader_;
+  std::mutex mutex_;
+  const nlohmann::json data_to_cloud;
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
 //     bool InternalProc();
     bool InitListener(const ExternalDriverConfig& config);
+    bool SendDataToCloud(const int64_t &feed_id);
+    localization::LocalizationEstimate localization_;
 
 
 private:

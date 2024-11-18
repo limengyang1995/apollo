@@ -33,7 +33,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
 
     s.AsPublisher = true;
     s.AsListener = false;
-    s.AutoPublish = true;
+    s.AutoPublish = false;
 
     s.VideoFps = 15;
 
@@ -71,6 +71,9 @@ void MyListener::OnRtcMessage(RtcMessage& msg) {
     if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE){
         recieve_msg = msg.extra_info;
         re_mark = true;
+        feed_id = msg.data.feedId;
+        AERROR << "request id: " << feed_id; 
+
     }else{
         recieve_msg = "";
     }

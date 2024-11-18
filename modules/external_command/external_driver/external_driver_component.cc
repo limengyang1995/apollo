@@ -28,7 +28,7 @@
 #include <string>
 
 #include "opencv2/opencv.hpp"
-#include "nlohmann/json.hpp"
+// #include "nlohmann/json.hpp"
 #include <fstream>
 
 namespace apollo {
@@ -72,6 +72,11 @@ bool ExternalDriver::Init() {
     }
     point = nlohmann::json::parse(f);
     InitListener(config_);
+    localization_reader_ = node_->CreateReader<apollo::localization::LocalizationEstimate>(
+            FLAGS_localization_topic, [this](const std::shared_ptr<apollo::localization::LocalizationEstimate>& localization) {
+                std::lock_guard<std::mutex> lock(mutex_);
+                localization_.CopyFrom(*localization);
+            });
 
     return true;
 }
@@ -87,10 +92,21 @@ bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
         readers_.emplace_back(reader_);
     }
 
+
     return true;
 }
 
+bool ExternalDriver::SendDataToCloud(const int64_t &feed_id) {
+    std::string msg = "vehicle pose";
+    rtc_client_.g_BrtcClient->sendMessageToUser(msg.c_str(), std::to_string(feed_id).c_str());
+    // rtc_client_.g_BrtcClient->sendData(msg.c_str())
+ 
+    
 
+    
+    return true;    
+    
+}
 bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image) {
     if (image == nullptr) {
         return false;
@@ -138,18 +154,14 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         AINFO << "start send image successfully!";
     }
 
-    // int n = 0;
-    // n++;
-    // if (n<5){
-    //     rtc_client_.g_BrtcClient->sendMessageToUser(destination.c_str(),id.c_str());
-    // }
-
     return true;
 }
 bool ExternalDriver::Proc() {
     std::string data = rtc_client_.g_mylistener.recieve_msg;
     AINFO << "recieve cloud command: " << data;
     int msgtype = rtc_client_.g_mylistener.msg_type;
+    int64_t id = rtc_client_.g_mylistener.feed_id;
+    SendDataToCloud(id);
     std::string input_command_string;
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         const nlohmann::json command = nlohmann::json::parse(data);
