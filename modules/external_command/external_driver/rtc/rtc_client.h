@@ -25,6 +25,7 @@ public:
     int msg_type;
     std::string recieve_msg = "";
     bool re_mark = false;
+    int64_t feed_id;
 
 public:
     void OnRtcMessage(RtcMessage& msg) override;

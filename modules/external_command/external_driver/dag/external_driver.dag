@@ -5,7 +5,7 @@ module_config {
     class_name : "ExternalDriver"
     config {
       name: "external_driver_component"
-      interval: 100 # milliseconds
+      interval: 500 # milliseconds
     }
   }
 }
