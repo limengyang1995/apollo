@@ -30,6 +30,7 @@
 #include "modules/common_msgs/external_command_msgs/valet_parking_command.pb.h"
 #include "modules/common_msgs/planning_msgs/planning.pb.h"
 #include "modules/common_msgs/control_msgs/control_cmd.pb.h"
+#include "modules/common_msgs/localization_msgs/localization.pb.h"
 #include "modules/external_command/external_driver/proto/external_driver_config.pb.h"
 
 #include "cyber/component/timer_component.h"
@@ -45,7 +46,7 @@ namespace external_command {
 class ExternalDriver final : public apollo::cyber::TimerComponent {
 public:
     ExternalDriver() = default;
-    ~ExternalDriver() = default;    
+    ~ExternalDriver(){AERROR<<"destory---------";};    
 
 
     bool Init() override;
@@ -55,6 +56,8 @@ public:
 
 private:
   RtcClient rtc_client_;
+  RtcClient rtc_client_second_;
+
   std::shared_ptr<cyber::Writer<apollo::drivers::Image>> writer_;
   std::string destination;
   std::string id = "0";
@@ -62,15 +65,19 @@ private:
   std::vector< std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
   nlohmann::json point;
   bool is_start_publish = false;
-  std::shared_ptr<cyber::Reader<localization::LocalizationEstimate>> localization_reader_;
+  std::shared_ptr<cyber::Reader<localization::LocalizationEstimate>> localization_reader_pose;
   std::mutex mutex_;
   const nlohmann::json data_to_cloud;
+  std::future<void> data_to_cloud_future;
+  bool is_stop = false;
+  int connect_detect_num = 0;
+  
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
 //     bool InternalProc();
     bool InitListener(const ExternalDriverConfig& config);
-    bool SendDataToCloud(const int64_t &feed_id);
     localization::LocalizationEstimate localization_;
+    void SendDataToCloud();
 
 
 private:

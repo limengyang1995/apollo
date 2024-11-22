@@ -62,20 +62,23 @@ bool ExternalDriver::Init() {
             "/apollo/modules/external_command/external_driver/conf/"
             "external_driver_config.pb.txt",
             &config_);
-    // reader_ = node_->CreateReader<apollo::drivers::Image>("/apollo/sensor/camera/front_6mm/image", nullptr);
 
     rtc_client_.CreateClient(config_);
+    rtc_client_second_.CreateClient(config_);
 
     std::ifstream f(config_.destination_path());
     if (f.fail()) {
         AERROR << "failed to load destination file";
     }
     point = nlohmann::json::parse(f);
+    data_to_cloud_future = cyber::Async(&ExternalDriver::SendDataToCloud, this);
     InitListener(config_);
-    localization_reader_ = node_->CreateReader<apollo::localization::LocalizationEstimate>(
+    localization_reader_pose = node_->CreateReader<apollo::localization::LocalizationEstimate>(
             FLAGS_localization_topic, [this](const std::shared_ptr<apollo::localization::LocalizationEstimate>& localization) {
+
                 std::lock_guard<std::mutex> lock(mutex_);
                 localization_.CopyFrom(*localization);
+                std::this_thread::sleep_for(std::chrono::seconds(1));
             });
 
     return true;
@@ -96,23 +99,38 @@ bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
     return true;
 }
 
-bool ExternalDriver::SendDataToCloud(const int64_t &feed_id) {
-    std::string msg = "vehicle pose";
-    rtc_client_.g_BrtcClient->sendMessageToUser(msg.c_str(), std::to_string(feed_id).c_str());
-    // rtc_client_.g_BrtcClient->sendData(msg.c_str())
- 
+void ExternalDriver::SendDataToCloud() {
+   
+    // nlohmann::json vehicle_data;
+    // vehicle_data["x"] = localization_.pose().position().x();
+    // vehicle_data["y"] = localization_.pose().position().y();
+    // vehicle_data["z"] = localization_.pose().position().z();
     
+    // std::string vehicle_data_str = vehicle_data.dump();
+    // const char* vehicle_data_char = vehicle_data.dump().c_str();
+    // rtc_client_.g_BrtcClient->sendData(vehicle_data_char, vehicle_data_str.size());
+    // AERROR<<"start send data successfully!";
+   
+    while (true) {
+        cyber::SleepFor(std::chrono::milliseconds(1000));
+        std::string vehicle_data;
+        std::string x = std::to_string(localization_.pose().position().x());
+        std::string y = std::to_string(localization_.pose().position().y());
+        std::string z = std::to_string(localization_.pose().position().z());
+        vehicle_data = "{\"x\":" + x + ", \"y\":" + y + ", \"z\":" + z + "}";
+        rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
 
-    
-    return true;    
-    
+        AERROR<<vehicle_data;
+    }
+
 }
+
 bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image) {
     if (image == nullptr) {
         return false;
     }
     std::vector<cv::Mat> img_;
-    for (int i = 0; i < readers_.size(); ++i) {
+    for (u_int16_t i = 0; i < readers_.size(); ++i) {
         readers_[i]->Observe();
         const auto camera_msg = readers_[i]->GetLatestObserved();
         if (camera_msg == nullptr) {
@@ -134,10 +152,8 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         std::string right_image_text = "Right Image";
 
         cv::Scalar color(0, 255, 0);
-        // cv::putText(img_back, rear_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1,
-        // cv::LINE_AA);
-        cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
-        cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv::LINE_AA);
+        cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1, cv::LINE_AA);
+        cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1, cv::LINE_AA);
 
         cv::Rect roi_left(0, 0, img_left.cols, img_left.rows);
         cv::Rect roi_right(img_front.cols - img_right.cols, 0, img_right.cols, img_right.rows);
@@ -150,22 +166,34 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         // cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
         std::vector<unsigned char> buf;
         cv::imencode(".jpg", img_front, buf);
+     
+   
         rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
-        AINFO << "start send image successfully!";
+        rtc_client_second_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+        return true;
+    }
+    else {
+        return false;
     }
 
-    return true;
+    
 }
 bool ExternalDriver::Proc() {
+    
     std::string data = rtc_client_.g_mylistener.recieve_msg;
-    AINFO << "recieve cloud command: " << data;
-    int msgtype = rtc_client_.g_mylistener.msg_type;
-    int64_t id = rtc_client_.g_mylistener.feed_id;
-    SendDataToCloud(id);
+    // int msgtype = rtc_client_.g_mylistener.msg_type;
+    // int64_t id = rtc_client_.g_mylistener.feed_id;
+
     std::string input_command_string;
+    nlohmann::json command;
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
-        const nlohmann::json command = nlohmann::json::parse(data);
-        input_command_string = command["action"];
+        try{
+        command = nlohmann::json::parse(data);
+        AINFO << "recieve msg from remote control \n" << command.dump();
+        input_command_string = command["action"];}
+        catch (const std::exception& e) {
+            AERROR << "json parse error" << e.what();
+        }
         if (command.contains("is_start_publish")){
             if (command["is_start_publish"] == "true"){
                 is_start_publish = true;
@@ -256,15 +284,16 @@ bool ExternalDriver::Proc() {
     } else if (input_command_string == "lane") {
         // Modify way point as needed.
         apollo::external_command::Pose way_point;
-        way_point.set_x(config_.point1_x());
-        way_point.set_y(config_.point1_y());
-        way_point.set_heading(0.0);
+        // way_point.set_x(config_.point1_x());
+        // way_point.set_y(config_.point1_y());
+        // way_point.set_heading(0.0);
         std::vector<apollo::external_command::Pose> way_points;
         way_points.emplace_back(way_point);
         apollo::external_command::Pose end_pose;
-        end_pose.set_x(config_.end_pose_x());
-        end_pose.set_y(config_.end_pose_y());
-        end_pose.set_heading(config_.end_pose_heading());
+        
+        end_pose.set_x(command["order_des"]["x"]);
+        end_pose.set_y(command["order_des"]["y"]);
+        end_pose.set_heading(command["order_des"]["heading"]);
         SendLaneFollowCommand(way_points, end_pose, config_.target_speed());
     } else if (input_command_string == "path_loc") {
         SendPathFollowCommandWithLocationRecord(config_.file_of_path_follow_with_localization_record());
@@ -304,7 +333,7 @@ bool ExternalDriver::Proc() {
 
         SendFreespaceCommand(way_points, end_pose);
     } else {
-        AINFO << "Invalid input!" << input_command_string;
+        AINFO << "command not found!";
     }
     rtc_client_.g_mylistener.re_mark = false;
     return true;
