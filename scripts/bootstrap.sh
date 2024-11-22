@@ -63,7 +63,7 @@ function start_plus() {
   ./scripts/monitor.sh start
   ./scripts/dreamview_plus.sh start
   if [ $? -eq 0 ]; then
-    sleep 2 # wait for some time before starting to check
+    sleep 6 # wait for some time before starting to check
     http_status="$(curl -o /dev/null -x '' -I -L -s -w '%{http_code}' ${DREAMVIEW_PLUS_URL})"
     if [ $http_status -eq 200 ]; then
       echo "Dreamview Plus is running at" $DREAMVIEW_PLUS_URL

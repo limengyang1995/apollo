@@ -1,5 +1,3 @@
-#pragma once
-
 #include "modules/external_command/external_driver/rtc/rtc_client.h"
 #include <typeinfo>
 
@@ -33,9 +31,9 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
 
     s.AsPublisher = true;
     s.AsListener = false;
-    s.AutoPublish = false;
+    s.AutoPublish = true;
 
-    s.VideoFps = 15;
+    s.VideoFps = 10;
 
     s.VideoMaxkbps = config.video_maxkbps();
     s.VideoWidth = config.image_width();
@@ -43,22 +41,25 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
     cer_path = config.cer_path();
     app_id = config.app_id();
     car_id = getenv("CARID");
-    AERROR << "car_id:" << car_id;
-    if (car_id == nullptr) {
-        AERROR << "getenv CARID failed";
-    }
+    std::string car_id_str(car_id);
+    
+        
+    car_id_str = car_id_str.substr(2);
+    AERROR << "car_id:" << car_id_str;
+  
 
     g_BrtcClient->setParamSettings(&s, s.RTC_PARAM_SETTINGS_ALL);
     g_BrtcClient->setAppID(app_id.c_str());
     g_BrtcClient->setMediaServerURL("wss://rtc.exp.bcelive.com/janus");
     g_BrtcClient->setCER(cer_path.c_str());
+    // g_BrtcClient->enableBaiduRtcLog(config.enable_rtc_log());
 
     std::string uid;
     std::ostringstream os;
-    os << 1234500000 + rand() / 100000;
+    os << car_id_str + std::to_string(00) + std::to_string(rand()/100);
     uid = os.str();
     
-    if(!g_BrtcClient->loginRoom("2131", "110", car_id, "token")) {
+    if(!g_BrtcClient->loginRoom("2131",uid.c_str(), car_id, "token")) {
         AERROR << "loginRoom failed";
         return false;
     }
@@ -72,8 +73,6 @@ void MyListener::OnRtcMessage(RtcMessage& msg) {
         recieve_msg = msg.extra_info;
         re_mark = true;
         feed_id = msg.data.feedId;
-        AERROR << "request id: " << feed_id; 
-
     }else{
         recieve_msg = "";
     }

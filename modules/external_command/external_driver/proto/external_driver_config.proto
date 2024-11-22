@@ -37,6 +37,7 @@ message ExternalDriverConfig {
   optional string image_topic = 26;
   optional string destination_path = 27;
   optional Channel channel = 28;
+  optional bool enable_rtc_log = 29;
 }
 
 message Channel {
