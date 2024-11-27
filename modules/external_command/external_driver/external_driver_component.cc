@@ -64,7 +64,7 @@ bool ExternalDriver::Init() {
             &config_);
 
     rtc_client_.CreateClient(config_);
-    rtc_client_second_.CreateClient(config_);
+    // rtc_client_second_.CreateClient(config_);
 
     std::ifstream f(config_.destination_path());
     if (f.fail()) {
@@ -110,15 +110,16 @@ void ExternalDriver::SendDataToCloud() {
     // const char* vehicle_data_char = vehicle_data.dump().c_str();
     // rtc_client_.g_BrtcClient->sendData(vehicle_data_char, vehicle_data_str.size());
     // AERROR<<"start send data successfully!";
-   
+    std::string car_id(getenv("CARID"));
     while (true) {
         cyber::SleepFor(std::chrono::milliseconds(1000));
         std::string vehicle_data;
         std::string x = std::to_string(localization_.pose().position().x());
         std::string y = std::to_string(localization_.pose().position().y());
         std::string z = std::to_string(localization_.pose().position().z());
-        vehicle_data = "{\"x\":" + x + ", \"y\":" + y + ", \"z\":" + z + "}";
-        rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
+        vehicle_data = "{\"car_id\":" + car_id + ",\"x\":" + x + ", \"y\":" + y + ", \"z\":" + z + "}";
+        // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
+        rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.c_str(), "0");
 
         AERROR<<vehicle_data;
     }
@@ -140,36 +141,42 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         img_.emplace_back(img);
     }
     if (is_start_publish && img_.size() == 4) {
-        cv::Mat img_front = img_[0];
-        cv::Mat img_left = img_[1];
-        cv::Mat img_right = img_[2];
+        // cv::Mat img_front = img_[0];
+        // cv::Mat img_left = img_[1];
+        // cv::Mat img_right = img_[2];
         // const cv::Mat *img_back = &img_[3];
-        cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
-        cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
+        // cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
+        // cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
 
-        std::string rear_image_text = "Rear Image";
-        std::string left_image_text = "Left Image";
-        std::string right_image_text = "Right Image";
+        // std::string rear_image_text = "Rear Image";
+        // std::string left_image_text = "Left Image";
+        // std::string right_image_text = "Right Image";
 
-        cv::Scalar color(0, 255, 0);
-        cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1, cv::LINE_AA);
-        cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1, cv::LINE_AA);
+        // cv::Scalar color(255, 0, 0);
+        // cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1, cv::LINE_AA);
+        // cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1, cv::LINE_AA);
 
-        cv::Rect roi_left(0, 0, img_left.cols, img_left.rows);
-        cv::Rect roi_right(img_front.cols - img_right.cols, 0, img_right.cols, img_right.rows);
+        // cv::Rect roi_left(0, 0, img_left.cols, img_left.rows);
+        // cv::Rect roi_right(img_front.cols - img_right.cols, 0, img_right.cols, img_right.rows);
 
-        cv::Mat roi_left_rect = img_front(roi_left);
-        cv::Mat roi_right_rect = img_front(roi_right);
+        // cv::Mat roi_left_rect = img_front(roi_left);
+        // cv::Mat roi_right_rect = img_front(roi_right);
 
-        img_left.copyTo(roi_left_rect);
-        img_right.copyTo(roi_right_rect);
+        // img_left.copyTo(roi_left_rect);
+        // img_right.copyTo(roi_right_rect);
         // cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
-        std::vector<unsigned char> buf;
-        cv::imencode(".jpg", img_front, buf);
-     
+        // std::vector<unsigned char> buf;
+        std::vector<unsigned char> buf_stitch;
+        // cv::imencode(".jpg", img_front, buf);
+
+        std::vector<cv::Mat> images_to_concat = {img_[1], img_[0], img_[2]};
+        cv::Mat images_stitch;
+        cv::hconcat(images_to_concat, images_stitch);
+        cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
+        cv::imencode(".jpg", images_stitch, buf_stitch);
    
-        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
-        rtc_client_second_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+        // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         return true;
     }
     else {
@@ -186,10 +193,13 @@ bool ExternalDriver::Proc() {
 
     std::string input_command_string;
     nlohmann::json command;
+    
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
+        
         try{
         command = nlohmann::json::parse(data);
         AINFO << "recieve msg from remote control \n" << command.dump();
+        
         input_command_string = command["action"];}
         catch (const std::exception& e) {
             AERROR << "json parse error" << e.what();
@@ -229,7 +239,7 @@ bool ExternalDriver::Proc() {
     }
     
     if (input_command_string == "cloud"){
-        SendCloudControlCommand(std::stoi(cloud_takeover), cloud_gear_position, std::stoi(cloud_throttle), std::stoi(cloud_brake), std::stoi(cloud_steer));     
+        SendCloudControlCommand(std::stoi(cloud_takeover), cloud_gear_position, std::stof(cloud_throttle), std::stof(cloud_brake), std::stof(cloud_steer));     
         SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_CLOUD);
     }
     else if (input_command_string == "pull_over") {
@@ -368,16 +378,16 @@ void ExternalDriver::SendVehicleSignalCommand() {
 void ExternalDriver::SendCloudControlCommand(
       const bool& cloud_takeover_request, 
       const apollo::canbus::Chassis::GearPosition& gear_position,
-      const int& throttle, const int& brake, const int& steering_target){
-  AERROR<< "get cloud control command: " << cloud_takeover_request;
+      const float& throttle, const float& brake, const float& steering_target){
+  AINFO<< "get cloud control command: " << cloud_takeover_request;
   auto command = std::make_shared<apollo::control::ControlCommand>();
   command->set_cloud_takeover_request(cloud_takeover_request);
   command->set_gear_location(gear_position);
-  command->set_throttle(throttle);
-  command->set_brake(brake);
-  command->set_steering_target(steering_target);
+  command->set_throttle(throttle*100);
+  command->set_brake(brake*100);
+  command->set_steering_target(steering_target*100);
   //command->set_driving_mode(apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE);
-  AERROR<< "Sending cloud control command: " << command->DebugString();
+//   AERROR<< "Sending cloud control command: " << command->DebugString();
   cloud_control_cmd_writer_->Write(command);
 }
 

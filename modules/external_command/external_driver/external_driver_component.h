@@ -102,7 +102,7 @@ private:
     void SendCloudControlCommand(
       const bool& cloud_takeover_request, 
       const apollo::canbus::Chassis::GearPosition& gear_position,
-      const int& throttle, const int& brake, const int& steering_target);
+      const float& throttle, const float& brake, const float& steering_target);
     
     void SendVehicleSignalCommand();
 
