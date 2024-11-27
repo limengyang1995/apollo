@@ -456,7 +456,6 @@ void ActionCommandProcessor::UpdateModeSwitchStatus(const std::string& message,
         apollo::external_command::CommandStatusType::FINISHED);
   }
   last_mode_switch_status_.set_message(message);
-  AERROR << message;
 }
 
 }  // namespace external_command
