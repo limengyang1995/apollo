@@ -86,7 +86,7 @@ bool ExternalDriver::Init() {
 bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
     for (const auto& channel : config.channel().input_camera_channel_name()) {
         std::shared_ptr<cyber::Reader<apollo::drivers::Image>> reader_;
-        if (channel == "/apollo/sensor/camera/CAM_BACK/image") {
+        if (channel == "/apollo/sensor/camera/front_6mm/image") {
             reader_ = node_->CreateReader<apollo::drivers::Image>(
                     channel, [&](const std::shared_ptr<apollo::drivers::Image>& image) { ProcessImage(image); });
         } else {
@@ -121,7 +121,7 @@ void ExternalDriver::SendDataToCloud() {
         // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
         rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.c_str(), "0");
 
-        AERROR<<vehicle_data;
+        AINFO<<vehicle_data;
     }
 
 }
@@ -131,17 +131,22 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         return false;
     }
     std::vector<cv::Mat> img_;
+   
     for (u_int16_t i = 0; i < readers_.size(); ++i) {
         readers_[i]->Observe();
         const auto camera_msg = readers_[i]->GetLatestObserved();
         if (camera_msg == nullptr) {
+            AERROR << "camera message is nullptr";
             return false;
         }
         cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
         img_.emplace_back(img);
     }
-    if (is_start_publish && img_.size() == 4) {
-        // cv::Mat img_front = img_[0];
+    // img_.size()
+    
+    if (is_start_publish) {
+        cv::Mat img_front = img_[0];
+        
         // cv::Mat img_left = img_[1];
         // cv::Mat img_right = img_[2];
         // const cv::Mat *img_back = &img_[3];
@@ -165,18 +170,19 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         // img_left.copyTo(roi_left_rect);
         // img_right.copyTo(roi_right_rect);
         // cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
-        // std::vector<unsigned char> buf;
-        std::vector<unsigned char> buf_stitch;
-        // cv::imencode(".jpg", img_front, buf);
+        std::vector<unsigned char> buf;
+        // std::vector<unsigned char> buf_stitch;
+        cv::imencode(".jpg", img_front, buf);
 
-        std::vector<cv::Mat> images_to_concat = {img_[1], img_[0], img_[2]};
-        cv::Mat images_stitch;
-        cv::hconcat(images_to_concat, images_stitch);
-        cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
-        cv::imencode(".jpg", images_stitch, buf_stitch);
-   
-        // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
-        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
+        // std::vector<cv::Mat> images_to_concat = {img_[1], img_[0], img_[2]};
+        // cv::Mat images_stitch;
+        // cv::hconcat(images_to_concat, images_stitch);
+        // cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
+        // cv::imencode(".jpg", images_stitch, buf_stitch);
+        
+        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+        
+        // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         return true;
     }
     else {

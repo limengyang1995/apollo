@@ -465,7 +465,7 @@ void VenusController::Brake(double pedal) {
 
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
-  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_NOREQUET);
+  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
   acu2_532_->set_acu2_brakingcontrolmode(Acu2_532::ACU2_BRAKINGCONTROLMODE_POSITION);
   acu2_532_->set_acu2_targetbrakingposition(std::abs(int(pedal)));
 

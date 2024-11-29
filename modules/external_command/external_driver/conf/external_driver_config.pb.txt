@@ -15,9 +15,7 @@ image_topic: "/apollo/sensor/image"
 
 destination_path: "/apollo/modules/external_command/external_driver/conf/destination.json"
 channel{
-    input_camera_channel_name: "/apollo/sensor/camera/CAM_FRONT/image"
-    input_camera_channel_name: "/apollo/sensor/camera/CAM_FRONT_LEFT/image"
-    input_camera_channel_name: "/apollo/sensor/camera/CAM_FRONT_RIGHT/image"
-    input_camera_channel_name: "/apollo/sensor/camera/CAM_BACK/image"
+    input_camera_channel_name: "/apollo/sensor/camera/front_6mm/image"
+    input_camera_channel_name: "/apollo/sensor/camera/front_12mm/image"
 }
 enable_rtc_log:false
