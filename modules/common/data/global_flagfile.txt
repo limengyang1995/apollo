@@ -34,4 +34,4 @@
 
 --map_dir=/apollo/modules/map/data/sunnyvale_big_loop
 
---map_dir=/apollo/modules/map/data/ReleaseMap_202408221610
+--map_dir=/apollo/modules/map/data/ws-yuanzi-double
