@@ -29,6 +29,7 @@
   <depend repo_name="portaudio">3rd-portaudio</depend>
   <depend repo_name="ffmpeg" lib_names="avcodec,avformat,swscale,avutil">3rd-ffmpeg</depend>
   <depend repo_name="adv_plat" lib_names="adv_plat">3rd-adv-plat</depend>
+  <depend repo_name="libtorch_gpu" lib_names="libtorch_gpu">3rd-libtorch-gpu</depend>
 
   <depend expose="False">3rd-pcl</depend>
   <depend>libpcap-dev</depend>
@@ -39,6 +40,9 @@
   <depend expose="False">3rd-bazel-skylib</depend>
   <depend expose="False">3rd-rules-proto</depend>
   <depend expose="False">3rd-py</depend>
+  <depend expose="False">3rd-tensorrt</depend>
+  <depend expose="False">3rd-gpus</depend>
+
 
   <type>module</type>
   <src_path url="https://github.com/ApolloAuto/apollo">//modules/drivers/camera</src_path>
