@@ -77,7 +77,7 @@ function create_lossy_map() {
 cd $IN_FOLDER
 mkdir -p $OUT_MAP_FOLDER
 mkdir -p $PARSED_DATA_FOLDER
-for item in $(ls -l *sensor* | awk '{print $9}'); do
+for item in $(ls -l *record* | awk '{print $9}'); do
   SEGMENTS=$(echo $item | awk -F'.' '{print NF}')
   DIR_NAME=$(echo $item | cut -d . -f ${SEGMENTS})
   DIR_NAME="${PARSED_DATA_FOLDER}/${DIR_NAME}"
