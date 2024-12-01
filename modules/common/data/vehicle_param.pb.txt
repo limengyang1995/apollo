@@ -1,7 +1,7 @@
 vehicle_param {
-  brand: KFC
+  brand: VENUS
   vehicle_id {
-      other_unique_id: "kfc"
+      other_unique_id: "venus001"
   }
   front_edge_to_center: 1.600
   back_edge_to_center: 0.450
@@ -14,9 +14,9 @@ vehicle_param {
   min_turn_radius: 3.0
   max_acceleration: 1.6
   max_deceleration: -6.0
-  max_steer_angle: 5.233333
-  max_steer_angle_rate: 5.233333
-  steer_ratio: 27
+  max_steer_angle: 6.1
+  max_steer_angle_rate: 6.1
+  steer_ratio: 14.6
   wheel_base: 1.2
   wheel_rolling_radius: 0.25
   max_abs_speed_when_stopped: 0.2

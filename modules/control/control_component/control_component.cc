@@ -310,21 +310,10 @@ Status ControlComponent::ProduceControlCommand(
     }
   }
 
-  // if planning set estop, then no control process triggered
-  if (estop_) {
-    AWARN_EVERY(100) << "Estop triggered! No control core method executed!";
-    // set Estop command
-    control_command->set_speed(0);
-    control_command->set_throttle(0);
-    control_command->set_brake(FLAGS_soft_estop_brake);
-    control_command->set_gear_location(Chassis::GEAR_DRIVE);
-    previous_steering_command_ =
-        injector_->previous_control_command_mutable()->steering_target();
-    control_command->set_steering_target(previous_steering_command_);
-  }
-
+  //  cloud control has priority over planning
   //cloud_takeover_ = local_view_.cloud_control_cmd().cloud_takeover_request() ;
   if (FLAGS_enable_cloud_drive && receive_cloud_cmd_ && cloud_takeover_){
+    AERROR << "!!!!!!!!!!!!!!!!11Cloud takeover triggered!";
     control_command->set_speed(local_view_.cloud_control_cmd().speed());
     control_command->set_throttle(local_view_.cloud_control_cmd().throttle());
     control_command->set_brake(local_view_.cloud_control_cmd().brake());
@@ -333,6 +322,18 @@ Status ControlComponent::ProduceControlCommand(
     control_command->set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
     control_command->set_cloud_takeover_request(true);
   }else{
+    // if planning set estop, then no control process triggered
+    if (estop_) {
+      AERROR << "Estop triggered! No control core method executed!";
+      // set Estop command
+      control_command->set_speed(0);
+      control_command->set_throttle(0);
+      control_command->set_brake(FLAGS_soft_estop_brake);
+      control_command->set_gear_location(Chassis::GEAR_DRIVE);
+      previous_steering_command_ =
+          injector_->previous_control_command_mutable()->steering_target();
+      control_command->set_steering_target(previous_steering_command_);
+    }
     control_command->set_cloud_takeover_request(false);
   }
 
@@ -481,7 +482,8 @@ bool ControlComponent::Proc() {
 
   Status status;
   if (local_view_.chassis().driving_mode() ==
-      apollo::canbus::Chassis::COMPLETE_AUTO_DRIVE) {
+      apollo::canbus::Chassis::COMPLETE_AUTO_DRIVE || local_view_.chassis().driving_mode() ==
+      apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE) {
     status = ProduceControlCommand(&control_command);
     ADEBUG << "Produce control command normal.";
   } else {
@@ -634,6 +636,7 @@ Status ControlComponent::CheckTimestamp(const LocalView &local_view) {
 
 void ControlComponent::ResetAndProduceZeroControlCommand(
     ControlCommand *control_command) {
+  AERROR << "Reset and produce zero control command.!!!!!!!!!";
   control_command->set_throttle(0.0);
   control_command->set_steering_target(0.0);
   control_command->set_steering_rate(0.0);

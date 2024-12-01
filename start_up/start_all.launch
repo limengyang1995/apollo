@@ -34,12 +34,17 @@
         <process_name>lidar</process_name>
         <version>1.0.0</version>
     </module>
-    
+    <module>
+        <name>camera</name>
+        <dag_conf>/apollo/modules/drivers/camera/dag/camera.dag</dag_conf>
+        <process_name>usb_cam</process_name>
+    </module>
+
     <desc>Apollo localization</desc>
     <version>1.0.0</version>
     <!-- <module>
         <name>localization</name>
-        <dag_conf>/apollo/modules/localization/dag/dag_streaming_msf_localization.dag</dag_conf>
+        <dag_conf>/apollo/modules/localization/dag/dag_streaming_ndt_localization.dag</dag_conf>
         <process_name>localization</process_name>
     </module> -->
 
@@ -77,6 +82,23 @@
         <name>canbus</name>
         <dag_conf>/apollo/modules/canbus/dag/canbus.dag</dag_conf>
         <process_name>canbus</process_name>
+    </module>
+
+    <module>
+        <name>old_routing_adapter</name>
+        <dag_conf>/apollo/modules/external_command/old_routing_adapter/dag/old_routing_adapter.dag</dag_conf>
+        <process_name>old_routing_adapter</process_name>
+    </module>
+    
+    <module>
+        <name>external_command_process</name>
+        <dag_conf>/apollo/modules/external_command/process_component/dag/external_command_process.dag</dag_conf>
+        <process_name>external_command_process</process_name>
+    </module>
+    <module>
+        <name>external_driver</name>
+        <dag_conf>/apollo/modules/external_command/external_driver/dag/external_driver.dag</dag_conf>
+        <process_name>external_driver</process_name>
     </module>
 </cyber>
 
