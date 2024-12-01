@@ -146,6 +146,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
     
     if (is_start_publish) {
         cv::Mat img_front = img_[0];
+        cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
         
         // cv::Mat img_left = img_[1];
         // cv::Mat img_right = img_[2];
@@ -199,6 +200,7 @@ bool ExternalDriver::Proc() {
 
     std::string input_command_string;
     nlohmann::json command;
+    AERROR << "recieve msg from remote control \n" << data;
     
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         
@@ -245,7 +247,7 @@ bool ExternalDriver::Proc() {
     }
     
     if (input_command_string == "cloud"){
-        SendCloudControlCommand(std::stoi(cloud_takeover), cloud_gear_position, std::stof(cloud_throttle), std::stof(cloud_brake), std::stof(cloud_steer));     
+        SendCloudControlCommand(std::stoi(cloud_takeover), cloud_gear_position, std::stof(cloud_throttle), std::stof(cloud_brake), -std::stof(cloud_steer));     
         SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_CLOUD);
     }
     else if (input_command_string == "pull_over") {
