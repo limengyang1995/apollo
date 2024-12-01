@@ -1,57 +1,37 @@
-load("//tools:apollo_package.bzl", "apollo_package", "apollo_cc_library", "apollo_component")
+load("//tools:apollo_package.bzl", "apollo_cc_binary", "apollo_cc_library", "apollo_cc_test", "apollo_component", "apollo_package")
 load("//tools:cpplint.bzl", "cpplint")
-load("//tools/platform:build_defs.bzl", "if_x86_64", "if_aarch64", "if_gpu")
+load("//tools/platform:build_defs.bzl", "if_profiler")
+load("//third_party/gpus:common.bzl", "gpu_library", "if_cuda", "if_rocm")
+
 
 package(default_visibility = ["//visibility:public"])
 
 CAMERA_COPTS = ['-DMODULE_NAME=\\"camera\\"']
 
-apollo_component(
-    name = "libcamera_component.so",
-    srcs = ["camera_component.cc"],
-    hdrs = ["camera_component.h"],
-    copts = CAMERA_COPTS,
-    linkopts = [
-        "-latomic",
-    ],
-    deps = [
-        ":apollo_camera_util",
-        "//cyber",
-        "//modules/common_msgs/basic_msgs:error_code_cc_proto",
-        "//modules/common_msgs/basic_msgs:header_cc_proto",
-        "//modules/common_msgs/sensor_msgs:sensor_image_cc_proto",
-        "@ffmpeg//:avcodec",
-        "@ffmpeg//:avformat",
-        "@ffmpeg//:swscale",
-    ],
-)
-
-apollo_component(
-    name = "libcamera_compress_component.so",
-    srcs = ["compress_component.cc"],
-    hdrs = ["compress_component.h"],
-    copts = CAMERA_COPTS,
-    deps = [
-        "//cyber",
-        "//modules/common_msgs/basic_msgs:error_code_cc_proto",
-        "//modules/common_msgs/basic_msgs:header_cc_proto",
-        "//modules/drivers/camera/proto:config_cc_proto",
-        "//modules/common_msgs/sensor_msgs:sensor_image_cc_proto",
-        "@opencv//:core",
-        "@opencv//:highgui",
-        "@opencv//:imgcodecs",
-        "@opencv//:imgproc",
-    ],
-)
-
 filegroup(
-    name = "runtime_data",
+    name = "camera_driver_files",
     srcs = glob([
-        "conf/*.txt",
-        "dag/*.dag",
-        "launch/*.launch",
+        "conf/**",
+        "dag/**",
+        "data/**",
+        "launch/**",
     ]),
 )
+apollo_cc_library(
+    name = "camera_common",
+    hdrs = ["common.h"],
+)
+
+gpu_library(
+    name = "process_image_cuda",
+    srcs = ["yuyv2rgb.cu"],
+    hdrs = ["yuyv2rgb.h"],
+    deps = 
+        [":camera_common",]
+        + if_cuda([
+        "@local_config_cuda//cuda:cudart",
+    ]), 
+)     
 
 apollo_cc_library(
     name = "apollo_camera_util",
@@ -75,19 +55,68 @@ apollo_cc_library(
             ],
             "@platforms//cpu:aarch64": [
                 "usb_cam.h",
+                
             ],
         },
         no_match_error = "Please Build with an ARM or Linux x86_64 platform",
     ),
+    copts = CAMERA_COPTS + if_profiler() + ["-DENABLE_PROFILER=1"],
     deps = [
+        ":process_image_cuda",
+        ":camera_common",
         "@boost",
         "//cyber",
+
         "//modules/drivers/camera/proto:config_cc_proto",
         "@ffmpeg//:avcodec",
-    ] + if_x86_64(
-        ["@adv_plat"],
-    ),
+        "@libtorch_gpu",
+        
+        ] + if_cuda([
+        "@local_config_cuda//cuda:cuda_headers",
+        "@local_config_cuda//cuda:cudart",
+        ]),
 )
 
+apollo_component(
+    name = "libcamera_component.so",
+    srcs = ["camera_component.cc"],
+    hdrs = ["camera_component.h"],
+    copts = CAMERA_COPTS,
+    linkopts = [
+        "-latomic",
+    ],
+    deps = [
+        ":apollo_camera_util",
+        "//cyber",
+        "//modules/common_msgs/basic_msgs:error_code_cc_proto",
+        "//modules/common_msgs/basic_msgs:header_cc_proto",
+        "//modules/common_msgs/sensor_msgs:sensor_image_cc_proto",
+        "@ffmpeg//:avcodec",
+        "@ffmpeg//:avformat",
+        "@ffmpeg//:swscale",
+         
+    ],
+)
+
+apollo_component(
+    name = "libcamera_compress_component.so",
+    srcs = ["compress_component.cc"],
+    hdrs = ["compress_component.h"],
+    copts = CAMERA_COPTS,
+    deps = [
+        "//cyber",
+        "//modules/common_msgs/basic_msgs:error_code_cc_proto",
+        "//modules/common_msgs/basic_msgs:header_cc_proto",
+        "//modules/drivers/camera/proto:config_cc_proto",
+        "//modules/common_msgs/sensor_msgs:sensor_image_cc_proto",
+        "@opencv//:core",
+        "@opencv//:highgui",
+        "@opencv//:imgcodecs",
+        "@opencv//:imgproc",
+    ],
+)
+
+
 apollo_package()
+
 cpplint()
