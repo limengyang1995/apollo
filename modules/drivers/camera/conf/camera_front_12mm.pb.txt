@@ -23,7 +23,7 @@ trigger_internal: 0
 trigger_fps: 15
 raw_channel_name: "/apollo/sensor/camera/front_12mm/raw/image"
 channel_name: "/apollo/sensor/camera/front_12mm/image"
-device_wait_ms: 2000
+device_wait_ms: 20
 spin_rate: 200
 output_type: RGB
 
@@ -39,4 +39,4 @@ time_compensator_conf {
     compensator_fnode: "/sys/devices/system/clocksource/clocksource0/offset_ns"
 }
 
-arm_gpu_acceleration: true
+arm_gpu_acceleration: false
