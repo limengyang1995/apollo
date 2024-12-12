@@ -617,6 +617,8 @@ struct INS_STATUS {
   double vel_e = 0;
   double vel_d = 0;
   double vel_u = 0;
+  int gps_week = 0;
+  double gps_millisecs = 0.0;
 
   double qx = 0, qy = 0, qz = 0, qw = 1;
   aligen_status ali = NOT_ALIGEN;

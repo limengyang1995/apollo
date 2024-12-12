@@ -129,6 +129,7 @@ class Ins570dParser : public Parser {
   void getALISTATUS(Ins570d::INS_STATUS& tmp_);
   void getLOOPDATA(Ins570d::INS_STATUS& tmp_);
   void getDATA123(double data123[]);
+  void getGPSTIME(Ins570d::INS_STATUS& tmp_);
   void getPOSI_STD(Ins570d::INS_STATUS& tmp_);
   void getVEL_STD(Ins570d::INS_STATUS& tmp_);
   void getPOSE_STD(Ins570d::INS_STATUS& tmp_);
@@ -294,6 +295,7 @@ void Ins570dParser::PrepareMessage(MessageInfoVec* messages) {
   getVEL(*tmp_);
   getALISTATUS(*tmp_);
   getLOOPDATA(*tmp_);
+  getGPSTIME(*tmp_);
   ins570d_data_=*tmp_;
   // debug
   ins570d_data_.debugString();
@@ -326,16 +328,16 @@ void Ins570dParser::getRPY(Ins570d::INS_STATUS& tmp_)
 
 void Ins570dParser::getGYRO(Ins570d::INS_STATUS &tmp_)
 {
-    tmp_.gyro_x=hex2Value<uint16_t>(dummy_array_.at(6),GYRO_RESOLUTION);
-    tmp_.gyro_y=hex2Value<uint16_t>(dummy_array_.at(7),GYRO_RESOLUTION);
-    tmp_.gyro_z=hex2Value<uint16_t>(dummy_array_.at(8),GYRO_RESOLUTION);
+    tmp_.gyro_x=-hex2Value<uint16_t>(dummy_array_.at(7),GYRO_RESOLUTION);
+    tmp_.gyro_y=hex2Value<uint16_t>(dummy_array_.at(6),GYRO_RESOLUTION);
+    tmp_.gyro_z=-hex2Value<uint16_t>(dummy_array_.at(8),GYRO_RESOLUTION);
 }
 
 void Ins570dParser::getACC(Ins570d::INS_STATUS &tmp_)
 {
-    tmp_.acc_x=hex2Value<uint16_t>(dummy_array_.at(9),ACC_RESOLUTION);
-    tmp_.acc_y=hex2Value<uint16_t>(dummy_array_.at(10),ACC_RESOLUTION);
-    tmp_.acc_z=hex2Value<uint16_t>(dummy_array_.at(11),ACC_RESOLUTION);
+    tmp_.acc_x=-hex2Value<uint16_t>(dummy_array_.at(10),ACC_RESOLUTION) * 9.80;
+    tmp_.acc_y=hex2Value<uint16_t>(dummy_array_.at(9),ACC_RESOLUTION) * 9.80;
+    tmp_.acc_z=-hex2Value<uint16_t>(dummy_array_.at(11),ACC_RESOLUTION) * 9.80;
 }
 
 void Ins570dParser::getWGS84(Ins570d::INS_STATUS &tmp_)
@@ -440,6 +442,13 @@ void Ins570dParser::getGPSSTATUS(Ins570d::INS_STATUS &tmp_)
     tmp_.satellites_num=data[1];
 }
 
+void Ins570dParser::getGPSTIME(Ins570d::INS_STATUS &tmp_){
+    tmp_.timestamp = (uint32_t)dummy_array_.at(25) * SECONDS_PER_WEEK + 
+                      hex2Value<uint32_t>(dummy_array_.at(22),TIMESTAMP_RESOLUTION);
+    //tmp_.gps_week=hex2Value<uint16_t>(dummy_array_.at(25),1);
+    //tmp_.gps_millisecs= 0.25 * hex2Value<uint32_t>(dummy_array_.at(22),1);
+}
+
 void Ins570dParser::getWHEELSPEEDSTATUS(Ins570d::INS_STATUS &tmp_)
 {
     tmp_.wheel_speed_status=hex2Value<uint16_t>(dummy_array_.at(20),1);
@@ -447,9 +456,9 @@ void Ins570dParser::getWHEELSPEEDSTATUS(Ins570d::INS_STATUS &tmp_)
 
 bool Ins570dParser::HandleGnssBestpos() {
   bestpos_.set_sol_status(SolutionStatus::SOL_COMPUTED);
-  // bestpos_.set_sol_type(static_cast<apollo::drivers::gnss::SolutionType>
-  //                       (ins570d_data_.fix_type));
-  bestpos_.set_sol_type(SolutionType::NARROW_INT);
+  bestpos_.set_sol_type(static_cast<apollo::drivers::gnss::SolutionType>
+                         (ins570d_data_.fix_type));
+  // bestpos_.set_sol_type(SolutionType::NARROW_INT);
   bestpos_.set_latitude(ins570d_data_.latitude);
   bestpos_.set_longitude(ins570d_data_.longitude);
   bestpos_.set_height_msl(ins570d_data_.altitude);
@@ -551,6 +560,7 @@ bool Ins570dParser::HandleBestPos() {
   //   gnss_.set_measurement_time(seconds);
   //   return false;
   // }
+  bestpos_.set_measurement_time(ins570d_data_.timestamp);
   return true;
 }
 
@@ -738,11 +748,11 @@ bool Ins570dParser::HandleRawImuX(const Ins570d::RawImuX* imu) {
   // imu_measurement_time_previous_ = time;
   return true;
 }
-// bool Ins570dParser::HandleRawImu(const Ins570d::RawImu* imu) 
 bool Ins570dParser::HandleRawImu() {
+// bool Ins570dParser::HandleRawImu() {
   // double gyro_scale = 0.0;
   // double accel_scale = 0.0;
-  // float imu_measurement_span = 1.0f / 200.0f;
+  float imu_measurement_span = 1.0f / 200.0f;
   rfu_to_flu(ins570d_data_.acc_x,
              ins570d_data_.acc_y,
              ins570d_data_.acc_z,
@@ -751,6 +761,16 @@ bool Ins570dParser::HandleRawImu() {
              ins570d_data_.gyro_y,
              ins570d_data_.gyro_z,
              imu_.mutable_angular_velocity());
+  //double time = ins570d_data_.gps_week * SECONDS_PER_WEEK + ins570d_data_.gps_millisecs * 1e3;
+  // if (imu_measurement_time_previous_ > 0.0 &&
+  //     fabs(time - imu_measurement_time_previous_ - imu_measurement_span) >
+  //         1e-4) {
+  //   AWARN << "Unexpected delay between two IMU measurements at: "
+  //         << time - imu_measurement_time_previous_;
+  // }
+
+  imu_.set_measurement_time(ins570d_data_.timestamp);
+  // imu_measurement_time_previous_ = time;
   return true;
 }
 
@@ -890,7 +910,7 @@ bool Ins570dParser::HandleHeading() {
   // heading_.set_galileo_beidou_sig_mask(heading->galileo_beidou_sig_mask);
   // heading_.set_gps_glonass_sig_mask(heading->gps_glonass_sig_mask);
   // double seconds = gps_week * SECONDS_PER_WEEK + gps_millisecs * 1e-3;
-  // heading_.set_measurement_time(seconds);
+  heading_.set_measurement_time(ins570d_data_.timestamp);
   return true;
 }
 
