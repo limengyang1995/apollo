@@ -597,7 +597,7 @@ bool Ins570dParser::HandleBestVel(const Ins570d::BestVel* vel) {
 
 bool Ins570dParser::HandleCorrImuData() {
   ins_.mutable_euler_angles()->set_x(ins570d_data_.roll);
-  ins_.mutable_euler_angles()->set_y(-ins570d_data_.pitch);
+  ins_.mutable_euler_angles()->set_y(ins570d_data_.pitch);
   ins_.mutable_euler_angles()->set_z(ins570d_data_.yaw);
   ins_.mutable_position()->set_lon(ins570d_data_.longitude);
   ins_.mutable_position()->set_lat(ins570d_data_.latitude);
