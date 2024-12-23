@@ -303,7 +303,7 @@ void Ins570dParser::PrepareMessage(MessageInfoVec* messages) {
   getVEL(*tmp_);
   getALISTATUS(*tmp_);
   getLOOPDATA(*tmp_);
-  getGPSTIME(*tmp_);
+  // getGPSTIME(*tmp_);
   ins570d_data_=*tmp_;
   // debug
   ins570d_data_.debugString();
