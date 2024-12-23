@@ -50,10 +50,22 @@ void BacksideVehicle::MakeLaneKeepingObstacleDecision(
   const double adc_length_s =
       adc_sl_boundary.end_s() - adc_sl_boundary.start_s();
   for (const auto* obstacle : path_decision->obstacles().Items()) {
+    if (obstacle->PerceptionSLBoundary().start_s() < adc_sl_boundary.end_s() && 
+        (obstacle->PerceptionSLBoundary().end_l() < -1.75 || obstacle->PerceptionSLBoundary().start_l() > 1.75)) {
+      // ignore such vehicles.
+      path_decision->AddLongitudinalDecision("backside_vehicle/sl < adc.end_s",
+                                             obstacle->Id(), ignore);
+      path_decision->AddLateralDecision("backside_vehicle/sl < adc.end_s",
+                                        obstacle->Id(), ignore);
+      continue;
+    }
+    
     if (obstacle->PerceptionSLBoundary().end_s() >= adc_sl_boundary.start_s()) {
       // don't ignore such vehicles.
       continue;
     }
+
+    
 
     if (obstacle->IsCautionLevelObstacle() &&
           obstacle->PerceptionSLBoundary().start_s() >=
@@ -70,13 +82,14 @@ void BacksideVehicle::MakeLaneKeepingObstacleDecision(
       continue;
     }
     // Ignore the car comes from back of ADC
-    if (obstacle->reference_line_st_boundary().min_s() < -adc_length_s) {
+    if (obstacle->reference_line_st_boundary().min_s() < -1) {
       path_decision->AddLongitudinalDecision("backside_vehicle/st-min-s < adc",
                                              obstacle->Id(), ignore);
       path_decision->AddLateralDecision("backside_vehicle/st-min-s < adc",
                                         obstacle->Id(), ignore);
       continue;
     }
+    
 
     const double lane_boundary = config_.backside_lane_width();
     if (obstacle->PerceptionSLBoundary().start_s() < adc_sl_boundary.end_s()) {

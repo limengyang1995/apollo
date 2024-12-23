@@ -38,6 +38,7 @@
   <depend expose="False">3rd-pcl</depend>
 
   <depend expose="False">3rd-rules-proto</depend>
+  <depend repo_name="dreamview-plus-toolbox-installer" type="binary">dreamview-plus-toolbox-installer</depend>
 
   <src_path url="https://github.com/ApolloAuto/apollo">//modules/dreamview_plus</src_path>
 
