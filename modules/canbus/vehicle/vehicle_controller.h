@@ -453,6 +453,12 @@ ErrorCode VehicleController<SensorType>::Update(
             break;
           }
         }
+
+        if (control_command.has_cloud_takeover_request() && control_command.cloud_takeover_request() == true){
+          AINFO << "control has received cloud control request:";
+          mode = Chassis::REMOTE_CLOUD_DRIVE;
+        } 
+        
         auto error_code = SetDrivingMode(mode);
         if (error_code != ErrorCode::OK) {
           AERROR << "Failed to set driving mode.";
@@ -461,17 +467,7 @@ ErrorCode VehicleController<SensorType>::Update(
         }
       }
 
-      if (control_command.has_cloud_takeover_request() && control_command.cloud_takeover_request() == true){
-        AINFO << "control has received cloud control request:";
-        mode = Chassis::REMOTE_CLOUD_DRIVE;
-      } 
 
-      auto error_code = SetDrivingMode(mode);
-      if (error_code != ErrorCode::OK) {
-        AERROR << "Failed to set driving mode.";
-      } else {
-        AINFO << "Set driving mode success.";
-      }
     } else {
       ADEBUG << "pad msg time out, current time interval is "
              << pad_msg_time_diff << " s, threshold is "

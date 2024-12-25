@@ -323,6 +323,10 @@ ErrorCode DemoController::EnableAutoMode() {
   return ErrorCode::OK;
 }
 
+ErrorCode DemoController::EnableCloudMode() {
+  return ErrorCode::OK;
+}
+
 ErrorCode DemoController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();
