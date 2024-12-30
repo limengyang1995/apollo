@@ -25,7 +25,7 @@ raw_channel_name: "/apollo/sensor/camera/front_12mm/raw/image"
 channel_name: "/apollo/sensor/camera/front_12mm/image"
 
 device_wait_ms: 20
-spin_rate: 200
+spin_rate: 100
 output_type: RGB
 
 compress_conf {
