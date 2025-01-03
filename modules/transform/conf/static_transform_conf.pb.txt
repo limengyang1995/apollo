@@ -4,6 +4,12 @@ extrinsic_file {
     file_path: "/apollo/modules/drivers/lidar/hesai/params/hesai40_novatel_extrinsics.yaml"
     enable: true
 }
+extrinsic_file {
+    frame_id: "novatel"
+    child_frame_id: "hesai64"
+    file_path: "/apollo/map_test/velodyne64_novatel_extrinsics.yaml"
+    enable: true
+}
 
 extrinsic_file {
     frame_id: "localization"
