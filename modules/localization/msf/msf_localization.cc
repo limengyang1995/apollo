@@ -197,17 +197,21 @@ void MSFLocalization::InitParams() {
 void MSFLocalization::OnPointCloud(
     const std::shared_ptr<drivers::PointCloud> &message) {
   ++pcd_msg_index_;
+  AERROR << "pcd_msg_index: " <<pcd_msg_index_;
+  AERROR << "point cloud step: " << FLAGS_point_cloud_step; 
   if (pcd_msg_index_ % FLAGS_point_cloud_step != 0) {
+    AERROR << " point cloud step wrong ";
     return;
   }
 
   localization_integ_.PcdProcess(*message);
 
   const auto &result = localization_integ_.GetLastestLidarLocalization();
-
+  AERROR << "result state is : ";
   if (result.state() == msf::LocalizationMeasureState::OK ||
       result.state() == msf::LocalizationMeasureState::VALID) {
     // publish lidar message to debug
+    AERROR << "result ok or valid";
     publisher_->PublishLocalizationMsfLidar(result.localization());
   }
 }
