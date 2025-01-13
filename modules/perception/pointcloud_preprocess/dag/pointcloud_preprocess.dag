@@ -7,7 +7,7 @@ module_config {
       config_file_path : "modules/perception/pointcloud_preprocess/conf/pointcloud_preprocess_config.pb.txt"
       flag_file_path: "modules/perception/data/flag/perception_common.flag"
       readers {
-        channel: "/apollo/sensor/hesai40/compensator/PointCloud2"
+        channel: "/apollo/sensor/hesai64/compensator/PointCloud2"
       }
     }
   }

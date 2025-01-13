@@ -2,13 +2,13 @@ extrinsic_file {
     frame_id: "novatel"
     child_frame_id: "hesai40"
     file_path: "modules/drivers/lidar/hesai/params/hesai40_novatel_extrinsics.yaml"
-    enable: true
+    enable: false
 }
 
 extrinsic_file {
     frame_id: "novatel"
     child_frame_id: "hesai64"
-    file_path: "map_test/velodyne64_novatel_extrinsics.yaml"
+    file_path: "modules/drivers/lidar/velodyne/params/hesai64_novatel_extrinsics.yaml"
     enable: true
 }
 extrinsic_file {

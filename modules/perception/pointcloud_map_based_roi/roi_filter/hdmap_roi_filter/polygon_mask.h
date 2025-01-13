@@ -145,6 +145,9 @@ template <typename T>
 bool DrawPolygonsMask(
     const std::vector<typename PolygonScanCvter<T>::Polygon>& polygons,
     Bitmap2D* bitmap, const double extend_dist, const bool no_edge_table) {
+  if(bitmap == nullptr){
+    AERROR << "nullptr!!!!!!!!!!!!!!!!!";
+  }
   for (const auto& polygon : polygons) {
     bool flag = DrawPolygonMask<T>(polygon, bitmap, extend_dist, no_edge_table);
     if (!flag) {

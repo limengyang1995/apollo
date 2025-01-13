@@ -4,7 +4,7 @@ sensor_meta {
     orientation: PANORAMIC
 }
 sensor_meta {
-    name: "hesai40"
+    name: "hesai64"
     type: VELODYNE_64
     orientation: PANORAMIC
     is_main_sensor: true
