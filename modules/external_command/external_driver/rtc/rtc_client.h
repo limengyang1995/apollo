@@ -36,7 +36,7 @@ public:
     RtcClient() = default;
     virtual ~RtcClient() = default;
     void SetListener(baidurtc::BaiduRtcRoomClient* client, MyListener& listener);
-    bool CreateClient(const ExternalDriverConfig& config);
+    bool CreateClient(const ExternalDriverConfig& config, std::string camera_name);
     MyListener g_mylistener;
     baidurtc::BaiduRtcRoomClient* g_BrtcClient;
 
@@ -46,6 +46,7 @@ private:
     std::string lib_path;
     const char* car_id;
     typedef baidurtc::BaiduRtcRoomClient* f_createBaiduRtcRoomClient();
+    typedef void f_enable(int e);
 
     RtcParameterSettings s;
 

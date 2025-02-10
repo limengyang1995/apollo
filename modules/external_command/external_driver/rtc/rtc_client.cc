@@ -10,7 +10,7 @@ void RtcClient::SetListener(baidurtc::BaiduRtcRoomClient* client, MyListener& li
     client->registerRtcMessageListener(&listener);
 }
 
-bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
+bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string camera_name) {
     void* handle = dlopen(
             "/apollo_workspace/modules/external_command/external_driver/rtc/lib/libbaidurtc.so",
             RTLD_LAZY | RTLD_DEEPBIND);
@@ -21,6 +21,10 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
 
     f_createBaiduRtcRoomClient* Client
             = (f_createBaiduRtcRoomClient*)dlsym(handle, "_ZN8baidurtc24createBaiduRtcRoomClientEv");
+    f_enable *enableLog = (f_enable*)dlsym(handle, "enableBaiduRtcLog");
+    if (enableLog){
+        enableLog(0);
+    };
     g_BrtcClient = Client();
     s.HasData = true;
     s.HasVideo = true;
@@ -28,6 +32,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
     s.AudioINChannel = 1;
     s.AudioINFrequency = 16000;
     s.ImageINType = RTC_IMAGE_TYPE_JPEG;
+    s.ImageOUTType = RTC_IMAGE_TYPE_H264;
 
     s.AsPublisher = true;
     s.AsListener = false;
@@ -42,10 +47,11 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
     app_id = config.app_id();
     car_id = getenv("CARID");
     std::string car_id_str(car_id);
+    // car_id = (car_id_str+camera_name).c_str();
+    // AERROR << "car_id:" << car_id;
     
         
     car_id_str = car_id_str.substr(2);
-    AERROR << "car_id:" << car_id_str;
   
 
     g_BrtcClient->setParamSettings(&s, s.RTC_PARAM_SETTINGS_ALL);
@@ -64,7 +70,11 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config) {
         return false;
     }
     // g_BrtcClient->startPublish();
-    SetListener(g_BrtcClient, g_mylistener);
+    if (camera_name == "all") {
+        AERROR<<"listener set for all camera";
+        SetListener(g_BrtcClient, g_mylistener);
+    }
+    // SetListener(g_BrtcClient, g_mylistener);
     return true;
 }
 void MyListener::OnRtcMessage(RtcMessage& msg) {
