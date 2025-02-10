@@ -46,7 +46,7 @@ namespace external_command {
 class ExternalDriver final : public apollo::cyber::TimerComponent {
 public:
     ExternalDriver() = default;
-    ~ExternalDriver(){AERROR<<"destory---------";};    
+    ~ExternalDriver() = default;    
 
 
     bool Init() override;
@@ -56,7 +56,10 @@ public:
 
 private:
   RtcClient rtc_client_;
-  RtcClient rtc_client_second_;
+  RtcClient rtc_client_1_;
+  RtcClient rtc_client_2_;
+  RtcClient rtc_client_3_;
+  RtcClient rtc_client_4_;
 
   std::shared_ptr<cyber::Writer<apollo::drivers::Image>> writer_;
   std::string destination;

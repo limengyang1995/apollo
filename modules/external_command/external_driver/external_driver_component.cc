@@ -62,9 +62,16 @@ bool ExternalDriver::Init() {
             "/apollo/modules/external_command/external_driver/conf/"
             "external_driver_config.pb.txt",
             &config_);
-
-    rtc_client_.CreateClient(config_);
-    // rtc_client_second_.CreateClient(config_);
+    
+    rtc_client_.CreateClient(config_,"all");
+    cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_1_.CreateClient(config_,"left");
+    cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_2_.CreateClient(config_,"right");
+    cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_3_.CreateClient(config_,"back");
+    cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_4_.CreateClient(config_,"front");
 
     std::ifstream f(config_.destination_path());
     if (f.fail()) {
@@ -147,8 +154,17 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
     if (is_start_publish) {
         cv::Mat img_front = img_[0];
         cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
-        
-        // cv::Mat img_left = img_[1];
+        cv::Mat img_left = img_[1];
+        cv::cvtColor(img_left, img_left, cv::COLOR_RGB2BGR);
+        cv::Mat img_right = img_[0];
+        cv::cvtColor(img_right, img_right, cv::COLOR_RGB2BGR);
+        cv::Mat img_back = img_[1];
+        cv::cvtColor(img_back, img_back, cv::COLOR_RGB2BGR);
+
+        cv::resize(img_front, img_front, cv::Size(), 0.35, 0.35);
+        cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
+        cv::resize(img_back, img_back, cv::Size(), 0.35, 0.35);
+        cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
         // cv::Mat img_right = img_[2];
         // const cv::Mat *img_back = &img_[3];
         // cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
@@ -172,16 +188,35 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         // img_right.copyTo(roi_right_rect);
         // cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
         std::vector<unsigned char> buf;
+        std::vector<unsigned char> buf_left;
+        std::vector<unsigned char> buf_right;
+        std::vector<unsigned char> buf_back;
+        std::vector<unsigned char> buf_stitch;
+
         // std::vector<unsigned char> buf_stitch;
         cv::imencode(".jpg", img_front, buf);
-
-        // std::vector<cv::Mat> images_to_concat = {img_[1], img_[0], img_[2]};
-        // cv::Mat images_stitch;
-        // cv::hconcat(images_to_concat, images_stitch);
-        // cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
-        // cv::imencode(".jpg", images_stitch, buf_stitch);
+        cv::imencode(".jpg", img_left, buf_left);
+        cv::imencode(".jpg", img_right, buf_right);
+        cv::imencode(".jpg", img_back, buf_back);
         
-        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+        cv::resize(img_back, img_back, cv::Size(), 0.35, 0.35);
+        cv::Rect roi_back(img_front.cols / 2, 0, img_back.cols, img_back.rows);
+        cv::Mat roi_back_rect = img_front(roi_back);
+        img_back.copyTo(roi_back_rect);
+
+        std::vector<cv::Mat> images_to_concat = {img_left, img_front, img_right};
+        cv::Mat images_stitch;
+        cv::hconcat(images_to_concat, images_stitch);
+        // cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
+        cv::imencode(".jpg", images_stitch, buf_stitch);
+        
+        
+        rtc_client_1_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_left.data()), buf_left.size());
+        rtc_client_2_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_right.data()), buf_right.size());
+        rtc_client_3_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_back.data()), buf_back.size());
+        rtc_client_4_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
+        AERROR<<"start send image successfully!";
         
         // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         return true;
@@ -207,8 +242,10 @@ bool ExternalDriver::Proc() {
         try{
         command = nlohmann::json::parse(data);
         AINFO << "recieve msg from remote control \n" << command.dump();
-        
-        input_command_string = command["action"];}
+        if (command.contains("action") && !command["action"].is_null()){
+        input_command_string = command["action"];
+        }
+        }
         catch (const std::exception& e) {
             AERROR << "json parse error" << e.what();
         }
