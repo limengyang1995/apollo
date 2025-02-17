@@ -60,7 +60,7 @@ void PCDExporter::CompensatedPcdCallback(const std::string &msg_string) {
 
 void PCDExporter::WritePcdFile(const std::string &filename,
                                const drivers::PointCloud &msg) {
-  pcl::PointCloud<velodyne::PointXYZIT> cloud;
+  pcl::PointCloud<velodyne::PointXYZIRT> cloud;
   cloud.width = msg.width();
   cloud.height = msg.height();
   cloud.is_dense = false;
@@ -77,8 +77,12 @@ void PCDExporter::WritePcdFile(const std::string &filename,
     cloud.points[i].x = msg.point(i).x();
     cloud.points[i].y = msg.point(i).y();
     cloud.points[i].z = msg.point(i).z();
-    cloud.points[i].intensity =
-        static_cast<unsigned char>(msg.point(i).intensity());
+    cloud.points[i].timestamp = msg.point(i).timestamp() * 1e-9;
+    //std::cout <<"timestamp: "<< cloud.points[i].timestamp << std::endl;
+    cloud.points[i].intensity = msg.point(i).intensity();
+    cloud.points[i].ring = msg.point(i).ring();
+    //std::cout <<"ring: "<< cloud.points[i].ring << std::endl;
+
   }
 
   pcl::io::savePCDFileBinaryCompressed(filename, cloud);
