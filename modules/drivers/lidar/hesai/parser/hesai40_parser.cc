@@ -207,6 +207,7 @@ void Hesai40Parser::CalcPointXYZIT(Hesai40Packet *pkt, int blockid) {
     new_point->set_y(x);
     new_point->set_z(z);
     new_point->set_intensity(unit.intensity);
+    new_point->set_ring(i);
 
     if (pkt->echo == 0x39) {
       // dual return, block 0&1 (2&3 , 4*5 ...)'s timestamp is the same.
