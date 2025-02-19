@@ -3,6 +3,20 @@ load("//tools:apollo_package.bzl", "apollo_cc_binary", "apollo_cc_library", "apo
 
 package(default_visibility = ["//visibility:public"])
 
+# native.cc_library(
+#     name = "rtcClient",
+#     srcs = "rtc/lib/libbaidurtc.so",
+#     hdrs = [
+#         "rtc/rtc_client.h",
+#         "rtc/BaiduRtcInterface.h",
+#         "rtc/BaiduRtcCommonDefine.h",
+#         "rtc/BaiduExternalVideoRendererInterface.h",
+#         "rtc/BaiduExternalVideoCapturerInterface.h",
+#         "rtc/BaiduExternalDataRendererInterface.h",
+#         "rtc/BaiduExternalAudioRendererInterface.h"],
+#     tags = ["shared_library"],)
+
+
 apollo_cc_library(
     name = "baidu_rtc_sdk",
     srcs = ["rtc/rtc_client.cc",],
@@ -18,6 +32,7 @@ apollo_cc_library(
     
         "//cyber",
         "//modules/external_command/external_driver/proto:external_driver_config_cc_proto", 
+        # ":rtcClient"
     ],
 )
 

@@ -65,13 +65,13 @@ bool ExternalDriver::Init() {
     
     rtc_client_.CreateClient(config_,"all");
     cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_1_.CreateClient(config_,"left");
+    rtc_client_1_.CreateClient(config_,"front");
     cyber::SleepFor(std::chrono::seconds(1));
     rtc_client_2_.CreateClient(config_,"right");
     cyber::SleepFor(std::chrono::seconds(1));
     rtc_client_3_.CreateClient(config_,"back");
     cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_4_.CreateClient(config_,"front");
+    rtc_client_4_.CreateClient(config_,"left");
 
     std::ifstream f(config_.destination_path());
     if (f.fail()) {
@@ -187,20 +187,21 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         // img_left.copyTo(roi_left_rect);
         // img_right.copyTo(roi_right_rect);
         // cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
-        std::vector<unsigned char> buf;
+        std::vector<unsigned char> buf_front;
         std::vector<unsigned char> buf_left;
         std::vector<unsigned char> buf_right;
         std::vector<unsigned char> buf_back;
         std::vector<unsigned char> buf_stitch;
 
         // std::vector<unsigned char> buf_stitch;
-        cv::imencode(".jpg", img_front, buf);
+        cv::imencode(".jpg", img_front, buf_front);
         cv::imencode(".jpg", img_left, buf_left);
         cv::imencode(".jpg", img_right, buf_right);
         cv::imencode(".jpg", img_back, buf_back);
         
         cv::resize(img_back, img_back, cv::Size(), 0.35, 0.35);
-        cv::Rect roi_back(img_front.cols / 2, 0, img_back.cols, img_back.rows);
+        // 定义矩形区域的左上角坐标（x, y）和矩形的宽度（width）与高度（height）
+        cv::Rect roi_back((img_front.cols - img_back.cols) / 2, 0, img_back.cols, img_back.rows);
         cv::Mat roi_back_rect = img_front(roi_back);
         img_back.copyTo(roi_back_rect);
 
@@ -210,13 +211,30 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         // cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
         cv::imencode(".jpg", images_stitch, buf_stitch);
         
-        
-        rtc_client_1_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_left.data()), buf_left.size());
-        rtc_client_2_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_right.data()), buf_right.size());
-        rtc_client_3_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_back.data()), buf_back.size());
-        rtc_client_4_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf.data()), buf.size());
+        for (std::string cam : request_camera){
+            if (cam == "front"){
+                rtc_client_4_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_front.data()), buf_front.size());
+                AERROR<<"start send front image successfully!";
+                }else if (cam == "back"){
+                rtc_client_3_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_back.data()), buf_back.size());
+                AERROR<<"start send back image successfully!";
+                }else if (cam == "left"){
+                rtc_client_1_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_left.data()), buf_left.size());
+                AERROR<<"start send left image successfully!";
+                }else if (cam == "right"){
+                rtc_client_1_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_right.data()), buf_right.size());
+                AERROR<<"start send right image successfully!";
+                }else{
+                    continue;
+                }
+            
+        }
+        // rtc_client_1_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_left.data()), buf_left.size());
+        // rtc_client_2_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_right.data()), buf_right.size());
+        // rtc_client_3_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_back.data()), buf_back.size());
+        // rtc_client_4_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_front.data()), buf.size());
         rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
-        AERROR<<"start send image successfully!";
+        // AERROR<<"start send image successfully!";
         
         // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         return true;
@@ -255,6 +273,13 @@ bool ExternalDriver::Proc() {
             }else{
                 is_start_publish = false;
             }
+        }
+        if (command.contains("active_cameras")){
+            request_camera = command["active_cameras"].get<std::vector<std::string>>();
+
+            // for (auto& cam : request_camera_.items()){
+            //     request_camera.push_back(cam.value());
+            // }
         }
      
         if (input_command_string == "cloud"){

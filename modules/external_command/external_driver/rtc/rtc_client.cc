@@ -47,7 +47,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string came
     app_id = config.app_id();
     car_id = getenv("CARID");
     std::string car_id_str(car_id);
-    // car_id = (car_id_str+camera_name).c_str();
+    std::string display_name = car_id_str+"_"+camera_name;
     // AERROR << "car_id:" << car_id;
     
         
@@ -65,7 +65,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string came
     os << car_id_str + std::to_string(00) + std::to_string(rand()/100);
     uid = os.str();
     
-    if(!g_BrtcClient->loginRoom("2131",uid.c_str(), car_id, "token")) {
+    if(!g_BrtcClient->loginRoom("2131",uid.c_str(), display_name.c_str(), "token")) {
         AERROR << "loginRoom failed";
         return false;
     }
