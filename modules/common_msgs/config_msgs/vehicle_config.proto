@@ -39,6 +39,7 @@ enum VehicleBrand {
   NEOLIX = 9;
   VENUS = 10;
   KFC = 11;
+  JT = 12;
 }
 
 message LatencyParam {

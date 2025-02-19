@@ -1,0 +1,3468 @@
+car_type: jt
+protocols:
+  '0':
+    id: '0'
+    name: vector__independent_sig_msg_0
+    protocol_type: report
+    sender: Vector__XXX
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: EPB1_Checksum_Copy_4
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACS3_Data7
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACS3_Data6
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACS3_Data5
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACS3_Data4
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACS3_Data3
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACS3_Data2
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACS3_Data1
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACS3_Data0
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: DCDC1_Temperature
+      offset: -40.0
+      order: intel
+      physical_range: '[-40|210]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 2
+      name: DCDC1_Status
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: DCDC1_OutputVoltage
+      offset: 0.0
+      order: intel
+      physical_range: '[0|25]'
+      physical_unit: V
+      precision: 0.1
+      type: double
+    - bit: 0
+      is_signed_var: false
+      len: 10
+      name: DCDC1_OutputCurrent
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1000]'
+      physical_unit: A
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: DCDC1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 10
+      name: DCDC1_InputVoltage
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1000]'
+      physical_unit: V
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: DCDC1_InputCurrent
+      offset: 0.0
+      order: intel
+      physical_range: '[0|25]'
+      physical_unit: A
+      precision: 0.1
+      type: double
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: DCDC1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 12
+      name: MCU1_TMTorque
+      offset: -500.0
+      order: intel
+      physical_range: '[-500|500]'
+      physical_unit: Nm
+      precision: 0.25
+      type: double
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: MCU1_TMTemperature
+      offset: -40.0
+      order: intel
+      physical_range: '[-40|210]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 16
+      name: MCU1_TMSpeed
+      offset: -30000.0
+      order: intel
+      physical_range: '[-30000|30000]'
+      physical_unit: rpm
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 9
+      name: MCU1_TMCapacitanceVoltage
+      offset: 0.0
+      order: intel
+      physical_range: '[0|500]'
+      physical_unit: V
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: MCU1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: MCU1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: ESC1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: ESC1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: This signal indicates the yaw rate data (real data; sign depends
+        on mounting position).anticlockwise=positive, clockwise=negative
+      is_signed_var: false
+      len: 12
+      name: ESC1_YawRate
+      offset: -100.0
+      order: intel
+      physical_range: '[-100|100]'
+      physical_unit: deg/s
+      precision: 0.05
+      type: double
+    - bit: 0
+      description: The signal is LongitudinalAcceleration(exact value).Positive value
+        represents  forward,  negative value represents backward.
+      is_signed_var: false
+      len: 12
+      name: ESC1_AccelerationX
+      offset: -20.0
+      order: intel
+      physical_range: '[-20|20]'
+      physical_unit: m/s2
+      precision: 0.01
+      type: double
+    - bit: 0
+      description: The signal is Lateral Acceleration(exact value).Positive value
+        represents right side of vehicle, negative value represents  left side of
+        vehicle.
+      is_signed_var: false
+      len: 12
+      name: ESC1_AccelerationY
+      offset: -20.0
+      order: intel
+      physical_range: '[-20|20]'
+      physical_unit: m/s2
+      precision: 0.01
+      type: double
+    - bit: 0
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: ENV1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: ENV1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: Indicates the GPS year
+      is_signed_var: false
+      len: 6
+      name: ENV1_TimeYear
+      offset: 2000.0
+      order: intel
+      physical_range: '[2000|2063]'
+      physical_unit: Year
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: 'Indicates the GPS second '
+      is_signed_var: false
+      len: 6
+      name: ENV1_TimeSecond
+      offset: 0.0
+      order: intel
+      physical_range: '[0|59]'
+      physical_unit: Second
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: Indicates the GPS month
+      is_signed_var: false
+      len: 4
+      name: ENV1_TimeMonth
+      offset: 1.0
+      order: intel
+      physical_range: '[1|12]'
+      physical_unit: Month
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: 'Indicates the GPS minute  '
+      is_signed_var: false
+      len: 6
+      name: ENV1_TimeMinute
+      offset: 0.0
+      order: intel
+      physical_range: '[0|59]'
+      physical_unit: Minute
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: Indicates the GPS hour
+      is_signed_var: false
+      len: 5
+      name: ENV1_TimeHour
+      offset: 0.0
+      order: intel
+      physical_range: '[0|23]'
+      physical_unit: Hour
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: Indicates the GPS day
+      is_signed_var: false
+      len: 5
+      name: ENV1_TimeDay
+      offset: 1.0
+      order: intel
+      physical_range: '[1|31]'
+      physical_unit: Day
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: 'This signal delivers information about rain intensity: from 0%
+        (no rain) to 100% (very heavy rain).'
+      is_signed_var: false
+      len: 4
+      name: ENV1_RainIntensity
+      offset: 0.0
+      order: intel
+      physical_range: '[0|150]'
+      physical_unit: '%'
+      precision: 10.0
+      type: double
+    - bit: 0
+      description: This signal  indicate the high precision light intensity expressed
+        in 10 Bit.
+      is_signed_var: false
+      len: 10
+      name: ENV1_BrightnessH
+      offset: 0.0
+      order: intel
+      physical_range: '[0|6138]'
+      physical_unit: LUX
+      precision: 6.0
+      type: double
+    - bit: 0
+      description: The signal indicates the status of LKA function
+      enum:
+        0: EPS1_LKASTATUS_TEMPORARY_INHIBIT
+        1: EPS1_LKASTATUS_AVAILABLE_FOR_CONTROL
+        2: EPS1_LKASTATUS_ACTIVE
+        3: EPS1_LKASTATUS_PERMANENTLY_FAIL
+        4: EPS1_LKASTATUS_NOT_CONFIGURED
+        5: EPS1_LKASTATUS_RESERVED
+        6: EPS1_LKASTATUS_RESERVED
+        7: EPS1_LKASTATUS_RESERVED
+      is_signed_var: false
+      len: 3
+      name: EPS1_LKAStatus
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 0
+      description: The signal indicates the load of the electric steering motor. If
+        the load could not be measured or an error is detected on the motor, the invalid
+        value of the signal is set
+      is_signed_var: false
+      len: 8
+      name: EPS1_ElectricLoad
+      offset: 0.0
+      order: intel
+      physical_range: '[0|120]'
+      physical_unit: A
+      precision: 0.5
+      type: double
+    - bit: 0
+      description: The signal indicates the status of APA function error
+      enum:
+        0: EPS1_APAERRORSTATUS_NO_ERROR
+        1: EPS1_APAERRORSTATUS_ERROR
+      is_signed_var: false
+      len: 1
+      name: EPS1_APAErrorStatus
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 0
+      description: EPS APA Request Feedback
+      enum:
+        0: EPS1_APAREQUESTFEEDBACK_DISABLE
+        1: EPS1_APAREQUESTFEEDBACK_ENABLE
+      is_signed_var: false
+      len: 1
+      name: EPS1_APARequestFeedback
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 0
+      description: EPS APA Abort Feedback
+      enum:
+        0: EPS1_APAABORTFEEDBACK_NO_DRIVING_INTERUPTION
+        1: EPS1_APAABORTFEEDBACK_RECOVERABLE_INTERRUPTION
+        2: EPS1_APAABORTFEEDBACK_VEHICLE_SPEED_INVALID_OR_TIMEOUT
+        3: EPS1_APAABORTFEEDBACK_STEERING_WHEEL_ANGLE_REQ_EXCEEDS_LIMITS
+        4: EPS1_APAABORTFEEDBACK_STEERING_WHEEL_ANGLE_SPEED_REQ_EXCEEDS_LIMITS
+        5: EPS1_APAABORTFEEDBACK_STEERING_WHEEL_ANGLE_INVALID_OR_TIMEOUT
+        6: EPS1_APAABORTFEEDBACK_HAD_CONTROL_SIGNAL_INVALID_OR_TIMEOUT
+        7: EPS1_APAABORTFEEDBACK_CAN_BUS_OFF
+        8: EPS1_APAABORTFEEDBACK_STEERING_WHEEL_ANGLE_SPEED_EXCEEDS_LIMITS_WHEN_IN_CONTROL
+        9: EPS1_APAABORTFEEDBACK_EPS_INTERNAL_FAILURE_WITH_LIMITED_STEERING_ASSISTANCE
+        10: EPS1_APAABORTFEEDBACK_GEAR_SIGNAL_INVALID_OR_TIMEOUT
+        11: EPS1_APAABORTFEEDBACK_EPS_CONTROL_REQ_RECEIVED_WHEN_IN_CONTOL
+        12: EPS1_APAABORTFEEDBACK_DIFFERENCE_OF_THE_TWO_NEIGHBORING_STEERING_WHEEL_ANGLE_REQ_SIGNALS_EXCEEDS_LIMITS
+        13: EPS1_APAABORTFEEDBACK_DIFFERENCE_OF_STEERING_WHEEL_ANGLE_REQ_AND_STEERING_WHEEL_ANGLE_EXCEEDS_LIMITS
+        14: EPS1_APAABORTFEEDBACK_VEHICLE_SPEED_EXCEEDS_LIMITS_WHEN_IN_CONTROL
+        15: EPS1_APAABORTFEEDBACK_EPS_SYSTEM_CRITICAL_FAILURE_NO_STEERING_ASSISTANCE
+        16: EPS1_APAABORTFEEDBACK_EPS_CONTROL_ACTIVE_RECEIVED_WITHOUT_HANDSHAKING
+        17: EPS1_APAABORTFEEDBACK_HANDSHAKING_TIMEOUT
+        18: EPS1_APAABORTFEEDBACK_DIFFERENCE_OF_THE_FIRST_STEERING_WHEEL_ANGLE_REQ_SIGNAL_AND_STEERING_WHEEL_ANGLE_EXCEEDS_LIMITS
+        19: EPS1_APAABORTFEEDBACK_RESERVED
+        20: EPS1_APAABORTFEEDBACK_RESERVED
+        21: EPS1_APAABORTFEEDBACK_RESERVED
+        22: EPS1_APAABORTFEEDBACK_RESERVED
+        23: EPS1_APAABORTFEEDBACK_RESERVED
+        24: EPS1_APAABORTFEEDBACK_RESERVED
+        25: EPS1_APAABORTFEEDBACK_RESERVED
+        26: EPS1_APAABORTFEEDBACK_RESERVED
+        27: EPS1_APAABORTFEEDBACK_RESERVED
+        28: EPS1_APAABORTFEEDBACK_RESERVED
+        29: EPS1_APAABORTFEEDBACK_RESERVED
+        30: EPS1_APAABORTFEEDBACK_RESERVED
+        31: EPS1_APAABORTFEEDBACK_RESERVED
+      is_signed_var: false
+      len: 5
+      name: EPS1_APAAbortFeedback
+      offset: 0.0
+      order: intel
+      physical_range: '[0|31]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 0
+      description: The signal indicates the actual applied overlay toque in EPS.
+      is_signed_var: false
+      len: 11
+      name: EPS1_OverlayInputTorque
+      offset: -10.0
+      order: intel
+      physical_range: '[-10|10]'
+      physical_unit: Nm
+      precision: 0.01
+      type: double
+    - bit: 0
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: EPS1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The signal indicates the torque measured by the torque sensor at
+        the steering wheel
+      is_signed_var: false
+      len: 11
+      name: EPS1_HandSteeringTorque
+      offset: -10.0
+      order: intel
+      physical_range: '[-10|10]'
+      physical_unit: Nm
+      precision: 0.01
+      type: double
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: EPS1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 3
+      name: BDRR_WinButtonRR_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 3
+      name: BDRL_WinButtonRL_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 3
+      name: BDFR_WinButtonFR_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: true
+      len: 32
+      name: A_Test_Data
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_MirRightButton_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_MirLeftButton_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_MirButtonUP_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_MirButtonRight_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_MirButtonLeft_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_MirButtonDown_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_UnLockButton_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_LockButton_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: BDFL_BootButtonFL_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 3
+      name: BDFL_WinButtonRR_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 3
+      name: BDFL_WinButtonRL_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 3
+      name: BDFL_WinButtonFR_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 3
+      name: BDFL_WinButtonFL_ST
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+  '151':
+    id: '151'
+    name: acu1_151
+    protocol_type: control
+    sender: ACU
+    vars:
+    - bit: 40
+      description: This signal is steering torque request
+      is_signed_var: false
+      len: 12
+      name: ACU1_SteeringTargetTorque
+      offset: -20.0
+      order: intel
+      physical_range: '[-20|20]'
+      physical_unit: Nm
+      precision: 0.01
+      type: double
+    - bit: 24
+      description: This signal is steering speed request
+      is_signed_var: false
+      len: 9
+      name: ACU1_SteeringTargetSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|500]'
+      physical_unit: deg/s
+      precision: 1.0
+      signal_type: speed
+      type: int
+    - bit: 56
+      description: This signal is the status of steering control request
+      enum:
+        0: ACU1_STEERINGCONTROLFLAG_NO_REQUEST
+        1: ACU1_STEERINGCONTROLFLAG_REQUEST
+        2: ACU1_STEERINGCONTROLFLAG_RESERVED
+        3: ACU1_STEERINGCONTROLFLAG_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACU1_SteeringControlFlag
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 8
+      description: This signal is steering angle request
+      is_signed_var: false
+      len: 14
+      name: ACU1_SteeringTargetAngle
+      offset: -600.0
+      order: intel
+      physical_range: '[-600|600]'
+      physical_unit: deg
+      precision: 0.1
+      type: double
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: ACU1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: ACU1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+  '152':
+    id: '152'
+    name: acu2_152
+    protocol_type: control
+    sender: ACU
+    vars:
+    - bit: 18
+      is_signed_var: false
+      len: 6
+      name: ACU2_DrivingTargetSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|126]'
+      physical_unit: km/h
+      precision: 2.0
+      type: double
+    - bit: 40
+      description: This signal is acceleration pedal position request
+      is_signed_var: false
+      len: 11
+      name: ACU2_DrivingTargetTorque
+      offset: 0.0
+      order: intel
+      physical_range: '[0|350]'
+      physical_unit: Nm
+      precision: 0.25
+      type: double
+    - bit: 24
+      description: This signal is acceleration pedal position request
+      is_signed_var: false
+      len: 10
+      name: ACU2_DrivingTargetThrottle
+      offset: 0.0
+      order: intel
+      physical_range: '[0|100]'
+      physical_unit: '%'
+      precision: 0.1
+      type: double
+    - bit: 56
+      description: This signal is the status of the driving control request
+      enum:
+        0: ACU2_DRIVINGCONTROLFLAG_NO_REQUEST
+        1: ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE
+        2: ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED
+        3: ACU2_DRIVINGCONTROLFLAG_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACU2_DrivingControlFlag
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 8
+      description: This signal is acceleration pedal position request
+      is_signed_var: false
+      len: 10
+      name: ACU2_DrivingTargetAcceleration
+      offset: 0.0
+      order: intel
+      physical_range: '[0|10]'
+      physical_unit: m/s2
+      precision: 0.01
+      type: double
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: ACU2_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: ACU2_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+  '153':
+    id: '153'
+    name: acu3_153
+    protocol_type: control
+    sender: ACU
+    vars:
+    - bit: 52
+      description: This signal is the status of the braking control request
+      enum:
+        0: ACU3_EPBCONTROLFLAG_NO_REQUEST
+        1: ACU3_EPBCONTROLFLAG_RELEASE
+        2: ACU3_EPBCONTROLFLAG_LOCK
+        3: ACU3_EPBCONTROLFLAG_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACU3_EPBControlFlag
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 48
+      description: This signal is gear request
+      enum:
+        0: ACU3_GEARTARGET_P
+        1: ACU3_GEARTARGET_R
+        2: ACU3_GEARTARGET_N
+        3: ACU3_GEARTARGET_D
+        4: ACU3_GEARTARGET_RESERVED
+        5: ACU3_GEARTARGET_RESERVED
+        6: ACU3_GEARTARGET_RESERVED
+        7: ACU3_GEARTARGET_RESERVED
+      is_signed_var: false
+      len: 3
+      name: ACU3_GearTarget
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 51
+      description: This signal is the status of the gear control request
+      enum:
+        0: ACU3_GEARCONTROLFLAG_NO_REQUEST
+        1: ACU3_GEARCONTROLFLAG_REQUEST
+      is_signed_var: false
+      len: 1
+      name: ACU3_GearControlFlag
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 24
+      description: This signal is deceleration request for wheel brake
+      is_signed_var: false
+      len: 10
+      name: ACU3_BrakingTargetPressure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|10]'
+      physical_unit: Mpa
+      precision: 0.01
+      type: double
+    - bit: 8
+      description: This signal is deceleration request for wheel brake
+      is_signed_var: false
+      len: 10
+      name: ACU3_BrakingTargetDeceleration
+      offset: 0.0
+      order: intel
+      physical_range: '[-10|0]'
+      physical_unit: m/s2
+      precision: -0.01
+      type: double
+    - bit: 40
+      description: This signal is the status of the braking control request
+      enum:
+        0: ACU3_BRAKINGCONTROLFLAG_NO_REQUEST
+        1: ACU3_BRAKINGCONTROLFLAG_REQUEST
+        2: ACU3_BRAKINGCONTROLFLAG_RESERVED
+        3: ACU3_BRAKINGCONTROLFLAG_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACU3_BrakingControlFlag
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: ACU3_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: ACU3_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+  '154':
+    id: '154'
+    name: acu4_154
+    protocol_type: control
+    sender: ACU
+    vars:
+    - bit: 32
+      description: '1: KL15 ON  3KL15 OFF'
+      is_signed_var: false
+      len: 2
+      name: ACU4_PowerRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 30
+      description: 1:fall  2:rise 3:stop
+      is_signed_var: false
+      len: 2
+      name: ACU4_RRWindow_Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 28
+      description: 1:fall  2:rise 3:stop
+      is_signed_var: false
+      len: 2
+      name: ACU4_RLWindow_Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 16
+      description: 1:lock  2:unlock
+      is_signed_var: false
+      len: 2
+      name: ACU4_Lock_Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 26
+      description: 1:fall  2:rise 3:stop
+      is_signed_var: false
+      len: 2
+      name: ACU4_FRWindow_Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 24
+      description: 1:fall  2:rise 3:stop
+      is_signed_var: false
+      len: 2
+      name: ACU4_FLWindow_Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 18
+      description: 1:on  2:off 3:stop
+      is_signed_var: false
+      len: 2
+      name: ACU4_Boot_Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 22
+      is_signed_var: false
+      len: 2
+      name: ACU4_RearWiperRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 59
+      is_signed_var: false
+      len: 1
+      name: ACU4_LED4Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 58
+      is_signed_var: false
+      len: 1
+      name: ACU4_LED3Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 57
+      is_signed_var: false
+      len: 1
+      name: ACU4_LED2Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 56
+      is_signed_var: false
+      len: 1
+      name: ACU4_LED1Request
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 11
+      description: This signal is the the horn lamp or request
+      is_signed_var: false
+      len: 1
+      name: ACU4_LampHorn
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 14
+      description: 0 stop 1 horn
+      is_signed_var: false
+      len: 2
+      name: ACU4_WhistleRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 20
+      description: 0 stop 1:inject water 2slow 3fast
+      is_signed_var: false
+      len: 2
+      name: ACU4_FrontWiperRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 12
+      description: "0:OFF 1:LOW 2\xA3\xBAHIGH"
+      is_signed_var: false
+      len: 2
+      name: ACU4_BeamLampRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: ACU4_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: ACU4_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 8
+      description: This signal is steering light request
+      enum:
+        0: ACU4_STEERINGLAMPREQUEST_OFF
+        1: ACU4_STEERINGLAMPREQUEST_LEFT_ON
+        2: ACU4_STEERINGLAMPREQUEST_RIGHT_ON
+        3: ACU4_STEERINGLAMPREQUEST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACU4_SteeringLampRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 10
+      description: This signal is hazard light request
+      enum:
+        0: ACU4_HAZARDLAMPREQUEST_OFF
+        1: ACU4_HAZARDLAMPREQUEST_ON
+      is_signed_var: false
+      len: 1
+      name: ACU4_HazardLampRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  '200':
+    id: '200'
+    name: bcm2_200
+    protocol_type: report
+    sender: Vector__XXX
+    vars:
+    - bit: 1
+      is_signed_var: false
+      len: 1
+      name: Key_Unlock
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      is_signed_var: false
+      len: 1
+      name: Key_Lock
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+  20c:
+    id: 20c
+    name: acs1_20c
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 48
+      is_signed_var: false
+      len: 2
+      name: ACS1_WorkMode
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 12
+      description: This signal indicates the state machine of steering.
+      is_signed_var: false
+      len: 4
+      name: ACS1_SteeringStateMachine
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: value
+      precision: 1.0
+      type: int
+    - bit: 36
+      description: This signal indicates the state machine of gear.
+      is_signed_var: false
+      len: 4
+      name: ACS1_GearStateMachine
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: value
+      precision: 1.0
+      type: int
+    - bit: 20
+      description: This signal indicates the state machine of driving.
+      enum:
+        0: ACS1_DRIVINGSTATEMACHINE_IDLE
+        1: ACS1_DRIVINGSTATEMACHINE_CHECK
+        2: ACS1_DRIVINGSTATEMACHINE_MANUAL
+        3: ACS1_DRIVINGSTATEMACHINE_REMOTE
+        4: ACS1_DRIVINGSTATEMACHINE_IPC
+        5: ACS1_DRIVINGSTATEMACHINE_INTERVENTION
+        6: ACS1_DRIVINGSTATEMACHINE_EMERGENCY
+        7: ACS1_DRIVINGSTATEMACHINE_ERROR
+      is_signed_var: false
+      len: 4
+      name: ACS1_DrivingStateMachine
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: value
+      precision: 1.0
+      type: enum
+    - bit: 28
+      description: This signal indicates the state machine of braking.
+      is_signed_var: false
+      len: 4
+      name: ACS1_BrakingStateMachine
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: value
+      precision: 1.0
+      type: int
+    - bit: 34
+      description: This signal indicates the gear is under maunal taking over.
+      enum:
+        0: ACS1_GEARTAKEOVERST_INACTIVE
+        1: ACS1_GEARTAKEOVERST_TEMP_ACTIVE
+        2: ACS1_GEARTAKEOVERST_ACTIVE
+        3: ACS1_GEARTAKEOVERST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_GearTakeOverSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 46
+      description: This signal indicates the gear is in fault status
+      enum:
+        0: ACS1_GEARFAILUREST_NO_FAIL
+        1: ACS1_GEARFAILUREST_EGSM_FAIL
+        2: ACS1_GEARFAILUREST_HCU_FAIL
+        3: ACS1_GEARFAILUREST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_GearFailureSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 32
+      description: This signal indicates the gear is under automatical control or
+        not.
+      enum:
+        0: ACS1_GEARAUTOCONTROLST_INACTIVE
+        1: ACS1_GEARAUTOCONTROLST_ACTIVE
+        2: ACS1_GEARAUTOCONTROLST_RESERVED
+        3: ACS1_GEARAUTOCONTROLST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_GearAutoControlSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 10
+      description: This signal indicates the steering is under maunal taking over.
+      enum:
+        0: ACS1_STEERINGTAKEOVERST_INACTIVE
+        1: ACS1_STEERINGTAKEOVERST_TEMP_ACTIVE
+        2: ACS1_STEERINGTAKEOVERST_ACTIVE
+        3: ACS1_STEERINGTAKEOVERST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_SteeringTakeOverSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 40
+      description: This signal indicates the steering is in fault status
+      enum:
+        0: ACS1_STEERINGFAILUREST_NO_FAIL
+        1: ACS1_STEERINGFAILUREST_EPS_FAIL
+        2: ACS1_STEERINGFAILUREST_SAS_FAIL
+        3: ACS1_STEERINGFAILUREST_APA_FAIL
+      is_signed_var: false
+      len: 2
+      name: ACS1_SteeringFailureSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 8
+      description: This signal indicates the steering is under automatical control
+        or not.
+      enum:
+        0: ACS1_STEERINGAUTOCONTROLST_INACTIVE
+        1: ACS1_STEERINGAUTOCONTROLST_ACTIVE
+        2: ACS1_STEERINGAUTOCONTROLST_RESERVED
+        3: ACS1_STEERINGAUTOCONTROLST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_SteeringAutoControlSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: ACS1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 18
+      description: This signal indicates the driving is under maunal taking over.
+      enum:
+        0: ACS1_DRIVINGTAKEOVERST_INACTIVE
+        1: ACS1_DRIVINGTAKEOVERST_TEMP_ACTIVE
+        2: ACS1_DRIVINGTAKEOVERST_ACTIVE
+        3: ACS1_DRIVINGTAKEOVERST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_DrivingTakeOverSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 42
+      description: This signal indicates the driving is in fault status
+      enum:
+        0: ACS1_DRIVINGFAILUREST_NO_FAIL
+        1: ACS1_DRIVINGFAILUREST_HCU_FAIL
+        2: ACS1_DRIVINGFAILUREST_RESERVED
+        3: ACS1_DRIVINGFAILUREST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_DrivingFailureSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 16
+      description: This signal indicates the driving is under automatical control
+        or not.
+      enum:
+        0: ACS1_DRIVINGAUTOCONTROLST_INACTIVE
+        1: ACS1_DRIVINGAUTOCONTROLST_ACTIVE
+        2: ACS1_DRIVINGAUTOCONTROLST_RESERVED
+        3: ACS1_DRIVINGAUTOCONTROLST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_DrivingAutoControlSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: ACS1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 26
+      description: This signal indicates the braking is under maunal taking over.
+      enum:
+        0: ACS1_BRAKINGTAKEOVERST_INACTIVE
+        1: ACS1_BRAKINGTAKEOVERST_TEMP_ACTIVE
+        2: ACS1_BRAKINGTAKEOVERST_ACTIVE
+        3: ACS1_BRAKINGTAKEOVERST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_BrakingTakeOverSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 44
+      description: This signal indicates the braking is in fault status
+      enum:
+        0: ACS1_BRAKINGFAILUREST_NO_FAIL
+        1: ACS1_BRAKINGFAILUREST_ESP_FAIL
+        2: ACS1_BRAKINGFAILUREST_SS_FAIL
+        3: ACS1_BRAKINGFAILUREST_HCU_FAIL
+      is_signed_var: false
+      len: 2
+      name: ACS1_BrakingFailureSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 24
+      description: This signal indicates the braking is under automatical control
+        or not.
+      enum:
+        0: ACS1_BRAKINGAUTOCONTROLST_INACTIVE
+        1: ACS1_BRAKINGAUTOCONTROLST_ACTIVE
+        2: ACS1_BRAKINGAUTOCONTROLST_RESERVED
+        3: ACS1_BRAKINGAUTOCONTROLST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: ACS1_BrakingAutoControlSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  20d:
+    id: 20d
+    name: acs2_20d
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 39
+      description: This signal indicates the validity of CAN5
+      enum:
+        0: ACS2_VALIDITYCAN7_ACTIVE
+        1: ACS2_VALIDITYCAN7_DEACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACS2_ValidityCAN7
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 38
+      description: This signal indicates the validity of CAN4
+      enum:
+        0: ACS2_VALIDITYCAN6_ACTIVE
+        1: ACS2_VALIDITYCAN6_DEACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACS2_ValidityCAN6
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 37
+      description: This signal indicates the validity of CAN5
+      enum:
+        0: ACS2_VALIDITYCAN5_ACTIVE
+        1: ACS2_VALIDITYCAN5_DEACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACS2_ValidityCAN5
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 36
+      description: This signal indicates the validity of CAN4
+      enum:
+        0: ACS2_VALIDITYCAN4_ACTIVE
+        1: ACS2_VALIDITYCAN4_DEACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACS2_ValidityCAN4
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 35
+      description: This signal indicates the validity of CAN3
+      enum:
+        0: ACS2_VALIDITYCAN3_ACTIVE
+        1: ACS2_VALIDITYCAN3_DEACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACS2_ValidityCAN3
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 34
+      description: This signal indicates the validity of CAN2
+      enum:
+        0: ACS2_VALIDITYCAN2_ACTIVE
+        1: ACS2_VALIDITYCAN2_DEACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACS2_ValidityCAN2
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 33
+      description: This signal indicates the validity of CAN1
+      enum:
+        0: ACS2_VALIDITYCAN1_ACTIVE
+        1: ACS2_VALIDITYCAN1_DEACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACS2_ValidityCAN1
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 32
+      description: This signal indicates the validity of CAN0
+      enum:
+        0: ACS2_VALIDITYCAN0_ACTIVE
+        1: ACS2_VALIDITYCAN0_DEACTIVE
+      is_signed_var: false
+      len: 1
+      name: ACS2_ValidityCAN0
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 40
+      description: This signal indicates the version of software
+      is_signed_var: false
+      len: 16
+      name: ACS2_Version
+      offset: 0.0
+      order: intel
+      physical_range: '[0|655.35]'
+      physical_unit: version
+      precision: 0.01
+      type: double
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: ACS2_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 8
+      description: This signal indicates the state of Jerk Button
+      enum:
+        0: ACS2_BUTTONJERK_NO_PRESS
+        1: ACS2_BUTTONJERK_PRESS
+      is_signed_var: false
+      len: 1
+      name: ACS2_ButtonJerk
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: ACS2_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 11
+      description: This signal indicates the state of Button2
+      enum:
+        0: ACS2_BUTTON3_NO_PRESS
+        1: ACS2_BUTTON3_PRESS
+      is_signed_var: false
+      len: 1
+      name: ACS2_Button3
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 10
+      description: This signal indicates the state of Button2
+      enum:
+        0: ACS2_BUTTON2_NO_PRESS
+        1: ACS2_BUTTON2_PRESS
+      is_signed_var: false
+      len: 1
+      name: ACS2_Button2
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 9
+      description: This signal indicates the state of Button1
+      enum:
+        0: ACS2_BUTTON1_NO_PRESS
+        1: ACS2_BUTTON1_PRESS
+      is_signed_var: false
+      len: 1
+      name: ACS2_Button1
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  '210':
+    id: '210'
+    name: vcu1_210
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 48
+      description: The signal indicates the actual applied overlay toque in EPS.
+      is_signed_var: false
+      len: 11
+      name: VCU1_OverlayInputTorque
+      offset: -10.0
+      order: intel
+      physical_range: '[-10|10]'
+      physical_unit: Nm
+      precision: 0.01
+      type: double
+    - bit: 36
+      description: The signal indicates the torque measured by the torque sensor at
+        the steering wheel
+      is_signed_var: false
+      len: 11
+      name: VCU1_HandSteeringTorque
+      offset: -10.0
+      order: intel
+      physical_range: '[-10|10]'
+      physical_unit: Nm
+      precision: 0.01
+      type: double
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: VCU1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: VCU1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 22
+      description: This signal indicates the teering wheel rotation speed. anticlockwise=negative,
+        clockwise=positive
+      is_signed_var: false
+      len: 14
+      name: VCU1_SteeringSpeed
+      offset: -600.0
+      order: intel
+      physical_range: '[-600|600]'
+      physical_unit: deg/s
+      precision: 0.1
+      signal_type: speed
+      type: double
+    - bit: 8
+      description: This signal indicates the angle of steering wheel. anticlockwise=negative,
+        clockwise=positive
+      is_signed_var: false
+      len: 14
+      name: VCU1_SteeringAngle
+      offset: -600.0
+      order: intel
+      physical_range: '[-600|600]'
+      physical_unit: deg
+      precision: 0.1
+      type: double
+  '211':
+    id: '211'
+    name: vcu2_211
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 40
+      description: The signal indicates the actual pressure in the master cylinder.
+      is_signed_var: false
+      len: 11
+      name: VCU2_MasterCylinderPressure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|200]'
+      physical_unit: bar
+      precision: 0.1
+      type: double
+    - bit: 52
+      description: This signal indicates the brake pedal status.
+      enum:
+        0: VCU2_BRAKEPEDALST_NO_ACTUATED
+        1: VCU2_BRAKEPEDALST_ACTUATED
+        2: VCU2_BRAKEPEDALST_RESERVED
+        3: VCU2_BRAKEPEDALST_ERROR
+      is_signed_var: false
+      len: 2
+      name: VCU2_BrakePedalSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 24
+      description: The signal describes the raw vehicle speed calculated by ABS.
+      is_signed_var: false
+      len: 15
+      name: VCU2_VehicleSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|300]'
+      physical_unit: km/h
+      precision: 0.01
+      signal_type: speed
+      type: double
+    - bit: 54
+      description: The signal indicates driving direction of the vehicle.
+      enum:
+        0: VCU2_DRIVINGDIRECTION_STOP
+        1: VCU2_DRIVINGDIRECTION_FORWARD
+        2: VCU2_DRIVINGDIRECTION_BACKWARD
+        3: VCU2_DRIVINGDIRECTION_INVALID_VALUE
+      is_signed_var: false
+      len: 2
+      name: VCU2_DrivingDirection
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 16
+      description: This signal indicates the calculated acceleration pedal position
+        in cruise control mode.
+      is_signed_var: false
+      len: 8
+      name: VCU2_CalAccelerationPedalPositio
+      offset: 0.0
+      order: intel
+      physical_range: '[0|100]'
+      physical_unit: '%'
+      precision: 0.4
+      type: double
+    - bit: 8
+      description: This signal indicates the actual acceleration pedal position
+      is_signed_var: false
+      len: 8
+      name: VCU2_AccelPedalPosition
+      offset: 0.0
+      order: intel
+      physical_range: '[0|100]'
+      physical_unit: '%'
+      precision: 0.4
+      type: double
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: VCU2_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: VCU2_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+  '212':
+    id: '212'
+    name: vcu3_212
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 32
+      is_signed_var: false
+      len: 11
+      name: VCU3_ThrottleVoltage
+      offset: 0.0
+      order: intel
+      physical_range: '[0|2000]'
+      physical_unit: mV
+      precision: 1.0
+      type: int
+    - bit: 22
+      description: The signal indicates if the  ON/OFF cruise control switch is actived
+        or not.
+      enum:
+        0: VCU3_MAINSWITCH_INACTIVE
+        1: VCU3_MAINSWITCH_ACTIVE
+      is_signed_var: false
+      len: 1
+      name: VCU3_MainSwitch
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 26
+      description: The signal indicates if the increase speed switch is actived or
+        not
+      enum:
+        0: VCU3_INCREASESPEEDSWITCH_INACTIVE
+        1: VCU3_INCREASESPEEDSWITCH_ACTIVE
+      is_signed_var: false
+      len: 1
+      name: VCU3_IncreaseSpeedSwitch
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      signal_type: speed
+      type: enum
+    - bit: 24
+      description: The signal indicates if  increase distance switch is actived or
+        not
+      enum:
+        0: VCU3_INCREASEDISTANCESWITCH_INACTIVE
+        1: VCU3_INCREASEDISTANCESWITCH_ACTIVE
+      is_signed_var: false
+      len: 1
+      name: VCU3_IncreaseDistanceSwitch
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 27
+      description: The signal indicates if the decrease speed switch is actived or
+        not.
+      enum:
+        0: VCU3_DECREASESPEEDSWITCH_INACTIVE
+        1: VCU3_DECREASESPEEDSWITCH_ACTIVE
+      is_signed_var: false
+      len: 1
+      name: VCU3_DecreaseSpeedSwitch
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      signal_type: speed
+      type: enum
+    - bit: 25
+      description: The signal indicates if decrease distance switch is actived or
+        not
+      enum:
+        0: VCU3_DECREASEDISTANCESWITCH_INACTIVE
+        1: VCU3_DECREASEDISTANCESWITCH_ACTIVE
+      is_signed_var: false
+      len: 1
+      name: VCU3_DecreaseDistanceSwitch
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 23
+      description: The signal indicates if the cancel cruise control switch is actived
+        or not
+      enum:
+        0: VCU3_CANCELSWITCH_INACTIVE
+        1: VCU3_CANCELSWITCH_ACTIVE
+      is_signed_var: false
+      len: 1
+      name: VCU3_CancelSwitch
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 20
+      description: This signal indicate the security button in the knob is pressed
+        or not.
+      enum:
+        0: VCU3_GEARSECURITYBUTTON_NO_PRESSED
+        1: VCU3_GEARSECURITYBUTTON_PRESSED
+      is_signed_var: false
+      len: 1
+      name: VCU3_GearSecurityButton
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 21
+      description: This signal indicate the park button in the knob is pressed or
+        not.
+      enum:
+        0: VCU3_GEARPARKBUTTON_NO_PRESSED
+        1: VCU3_GEARPARKBUTTON_PRESSED
+      is_signed_var: false
+      len: 1
+      name: VCU3_GearParkButton
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 16
+      description: This signal indicate the current lever position.
+      enum:
+        0: VCU3_GEARLEVERPOSITION_POSITION_0
+        1: VCU3_GEARLEVERPOSITION_POSITION_ADD1
+        2: VCU3_GEARLEVERPOSITION_POSITION_ADD2
+        3: VCU3_GEARLEVERPOSITION_POSITION_SUB1
+        4: VCU3_GEARLEVERPOSITION_POSITION_SUB2
+        5: VCU3_GEARLEVERPOSITION_RESERVED
+        6: VCU3_GEARLEVERPOSITION_RESERVED
+        7: VCU3_GEARLEVERPOSITION_INVALID_VALUE
+      is_signed_var: false
+      len: 3
+      name: VCU3_GearLeverPosition
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 28
+      description: This signal indicate the EPB switch status.
+      enum:
+        0: VCU3_EPBSWITCH_NO_PRESS
+        1: VCU3_EPBSWITCH_UP
+        2: VCU3_EPBSWITCH_DOWN
+        3: VCU3_EPBSWITCH_RESERVED
+      is_signed_var: false
+      len: 2
+      name: VCU3_EPBSwitch
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 48
+      is_signed_var: false
+      len: 10
+      name: VCU3_VacuumPressure
+      offset: -108.0
+      order: intel
+      physical_range: '[-108|96.6]'
+      physical_unit: kPa
+      precision: 0.2
+      type: double
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: VCU3_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 8
+      description: This signal indicates the lever position information which should
+        be displayed on the dashboard. For H72G, only P,R,N,D,M,no connection.
+      enum:
+        0: VCU3_LEVERINFO_P
+        1: VCU3_LEVERINFO_R
+        2: VCU3_LEVERINFO_N
+        3: VCU3_LEVERINFO_D
+        4: VCU3_LEVERINFO_S
+        5: VCU3_LEVERINFO_M
+        6: VCU3_LEVERINFO_W
+        7: VCU3_LEVERINFO_E
+        8: VCU3_LEVERINFO_B
+        9: VCU3_LEVERINFO_RESERVED
+        10: VCU3_LEVERINFO_RESERVED
+        11: VCU3_LEVERINFO_RESERVED
+        12: VCU3_LEVERINFO_RESERVED
+        13: VCU3_LEVERINFO_RESERVED
+        14: VCU3_LEVERINFO_NO_CONNECTION
+        15: VCU3_LEVERINFO_INVALID_VALUE
+      is_signed_var: false
+      len: 4
+      name: VCU3_LeverInfo
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 30
+      description: The signal indicates the working status of EPB.
+      enum:
+        0: VCU3_EPBSTATUS_RELEASED
+        1: VCU3_EPBSTATUS_RELEASING_OR_LOCKING
+        2: VCU3_EPBSTATUS_LOCKED
+        3: VCU3_EPBSTATUS_UNKNOW
+      is_signed_var: false
+      len: 2
+      name: VCU3_EPBStatus
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: VCU3_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 12
+      description: The signal indicates to the actual gear status, it shows in which
+        gear the transmission system is in at the moment (engaged gear).
+      enum:
+        0: VCU3_ACTUALGEAR_P
+        1: VCU3_ACTUALGEAR_R
+        2: VCU3_ACTUALGEAR_N
+        3: VCU3_ACTUALGEAR_1
+        4: VCU3_ACTUALGEAR_2
+        5: VCU3_ACTUALGEAR_3
+        6: VCU3_ACTUALGEAR_4
+        7: VCU3_ACTUALGEAR_5
+        8: VCU3_ACTUALGEAR_6
+        9: VCU3_ACTUALGEAR_7
+        10: VCU3_ACTUALGEAR_8
+        11: VCU3_ACTUALGEAR_RESERVED
+        12: VCU3_ACTUALGEAR_RESERVED
+        13: VCU3_ACTUALGEAR_RESERVED
+        14: VCU3_ACTUALGEAR_NO_CONNECTION
+        15: VCU3_ACTUALGEAR_INVALID_VALUE
+      is_signed_var: false
+      len: 4
+      name: VCU3_ActualGear
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  '260':
+    id: '260'
+    name: ws1_260
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 48
+      description: This signal is rear right wheel speed which sent by ABS without
+        filtering.
+      is_signed_var: false
+      len: 15
+      name: WS1_WheelSpeed_RR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|300]'
+      physical_unit: km/h
+      precision: 0.01
+      signal_type: speed
+      type: double
+    - bit: 32
+      description: This signal is rear left wheel speed which sent by ABS without
+        filtering.
+      is_signed_var: false
+      len: 15
+      name: WS1_WheelSpeed_RL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|300]'
+      physical_unit: km/h
+      precision: 0.01
+      signal_type: speed
+      type: double
+    - bit: 16
+      description: This signal is front right wheel speed which sent by ABS without
+        filtering.
+      is_signed_var: false
+      len: 15
+      name: WS1_WheelSpeed_FR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|300]'
+      physical_unit: km/h
+      precision: 0.01
+      signal_type: speed
+      type: double
+    - bit: 0
+      description: This signal is front left wheel speed which sent by ABS without
+        filtering.
+      is_signed_var: false
+      len: 15
+      name: WS1_WheelSpeed_FL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|300]'
+      physical_unit: km/h
+      precision: 0.01
+      signal_type: speed
+      type: double
+  '261':
+    id: '261'
+    name: ws2_261
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: WS2_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: WS2_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 46
+      description: This signal is the the rear right  wheel speed direction.
+      enum:
+        0: WS2_WHEELSPEEDDIRECTION_RR_STOP
+        1: WS2_WHEELSPEEDDIRECTION_RR_FORWARD
+        2: WS2_WHEELSPEEDDIRECTION_RR_BACKWARD
+        3: WS2_WHEELSPEEDDIRECTION_RR_INVALID_VALUE
+      is_signed_var: false
+      len: 2
+      name: WS2_WheelSpeedDirection_RR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      signal_type: speed
+      type: enum
+    - bit: 44
+      description: This signal is the the rear left wheel speed direction.
+      enum:
+        0: WS2_WHEELSPEEDDIRECTION_RL_STOP
+        1: WS2_WHEELSPEEDDIRECTION_RL_FORWARD
+        2: WS2_WHEELSPEEDDIRECTION_RL_BACKWARD
+        3: WS2_WHEELSPEEDDIRECTION_RL_INVALID_VALUE
+      is_signed_var: false
+      len: 2
+      name: WS2_WheelSpeedDirection_RL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      signal_type: speed
+      type: enum
+    - bit: 42
+      description: This signal is the the front right wheel speed direction.
+      enum:
+        0: WS2_WHEELSPEEDDIRECTION_FR_STOP
+        1: WS2_WHEELSPEEDDIRECTION_FR_FORWARD
+        2: WS2_WHEELSPEEDDIRECTION_FR_BACKWARD
+        3: WS2_WHEELSPEEDDIRECTION_FR_INVALID_VALUE
+      is_signed_var: false
+      len: 2
+      name: WS2_WheelSpeedDirection_FR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      signal_type: speed
+      type: enum
+    - bit: 40
+      description: This signal is the the front left wheel speed direction.
+      enum:
+        0: WS2_WHEELSPEEDDIRECTION_FL_STOP
+        1: WS2_WHEELSPEEDDIRECTION_FL_FORWARD
+        2: WS2_WHEELSPEEDDIRECTION_FL_BACKWARD
+        3: WS2_WHEELSPEEDDIRECTION_FL_INVALID_VALUE
+      is_signed_var: false
+      len: 2
+      name: WS2_WheelSpeedDirection_FL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      signal_type: speed
+      type: enum
+    - bit: 32
+      description: This signal is the rear right wheel speed pulse(raw data).
+      is_signed_var: false
+      len: 8
+      name: WS2_WheelPulse_RR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|254]'
+      physical_unit: pulse
+      precision: 1.0
+      signal_type: speed
+      type: int
+    - bit: 24
+      description: This signal is the rear left wheel speed pulse(raw data).
+      is_signed_var: false
+      len: 8
+      name: WS2_WheelPulse_RL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|254]'
+      physical_unit: pulse
+      precision: 1.0
+      signal_type: speed
+      type: int
+    - bit: 16
+      description: This signal is the front right wheel speed pulse(raw data).
+      is_signed_var: false
+      len: 8
+      name: WS2_WheelPulse_FR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|254]'
+      physical_unit: pulse
+      precision: 1.0
+      signal_type: speed
+      type: int
+    - bit: 8
+      description: This signal is the front left wheel speed pulse(raw data).
+      is_signed_var: false
+      len: 8
+      name: WS2_WheelPulse_FL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|254]'
+      physical_unit: pulse
+      precision: 1.0
+      signal_type: speed
+      type: int
+  '268':
+    id: '268'
+    name: gw1_268
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 30
+      is_signed_var: false
+      len: 2
+      name: GW1_EVReady
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 28
+      is_signed_var: false
+      len: 2
+      name: GW1_HVReady
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: GW1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: GW1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 32
+      description: This signal is drive distance since prime start
+      is_signed_var: false
+      len: 25
+      name: GW1_OdometerValue
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3355443]'
+      physical_unit: km
+      precision: 0.1
+      type: double
+    - bit: 16
+      description: Indicates the time between last KL15 Off and this KL15 on
+      is_signed_var: false
+      len: 12
+      name: GW1_IgnitionOffTime
+      offset: 0.0
+      order: intel
+      physical_range: '[0|4093]'
+      physical_unit: minute
+      precision: 1.0
+      type: int
+    - bit: 8
+      description: This signal indicates fuel value, used for powertrain diagnostic.
+      is_signed_var: false
+      len: 8
+      name: GW1_FuelValue
+      offset: 0.0
+      order: intel
+      physical_range: '[0|254]'
+      physical_unit: L
+      precision: 1.0
+      type: int
+  '288':
+    id: '288'
+    name: bms1_288
+    protocol_type: report
+    sender: EV
+    vars:
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: BMS1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 58
+      is_signed_var: false
+      len: 1
+      name: BMS1_HeatingRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: BMS1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 8
+      is_signed_var: false
+      len: 10
+      name: BMS1_BatteryPackVoltage
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1000]'
+      physical_unit: V
+      precision: 1.0
+      type: int
+    - bit: 32
+      is_signed_var: false
+      len: 8
+      name: BMS1_BatteryPackTemperature
+      offset: -40.0
+      order: intel
+      physical_range: '[-40|210]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 40
+      is_signed_var: false
+      len: 8
+      name: BMS1_BatteryPackSOH
+      offset: 0.0
+      order: intel
+      physical_range: '[0|100]'
+      physical_unit: '%'
+      precision: 1.0
+      type: int
+    - bit: 48
+      is_signed_var: false
+      len: 10
+      name: BMS1_BatteryPackSOC
+      offset: 0.0
+      order: intel
+      physical_range: '[0|100]'
+      physical_unit: '%'
+      precision: 0.1
+      type: double
+    - bit: 18
+      is_signed_var: false
+      len: 14
+      name: BMS1_BatteryPackCurrent
+      offset: -800.0
+      order: intel
+      physical_range: '[-800|800]'
+      physical_unit: A
+      precision: 0.1
+      type: double
+  28c:
+    id: 28c
+    name: chu1_28c
+    protocol_type: report
+    sender: EV
+    vars:
+    - bit: 32
+      is_signed_var: false
+      len: 8
+      name: CHU1_Temperature
+      offset: -40.0
+      order: intel
+      physical_range: '[-40|210]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 40
+      is_signed_var: false
+      len: 2
+      name: CHU1_Status
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 45
+      is_signed_var: false
+      len: 1
+      name: CHU1_RechargeRequest
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 18
+      is_signed_var: false
+      len: 10
+      name: CHU1_OutputVoltage
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1000]'
+      physical_unit: V
+      precision: 1.0
+      type: int
+    - bit: 8
+      is_signed_var: false
+      len: 10
+      name: CHU1_OutputCurrent
+      offset: 0.0
+      order: intel
+      physical_range: '[0|100]'
+      physical_unit: A
+      precision: 0.1
+      type: double
+    - bit: 42
+      is_signed_var: false
+      len: 2
+      name: CHU1_Mode
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: CHU1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 44
+      is_signed_var: false
+      len: 1
+      name: CHU1_CPStatus
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: bool
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: CHU1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+  28d:
+    id: 28d
+    name: chu2_28d
+    protocol_type: report
+    sender: EV
+    vars:
+    - bit: 40
+      is_signed_var: false
+      len: 8
+      name: CHU2_RemainingChargeTime
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1000]'
+      physical_unit: Min
+      precision: 5.0
+      type: double
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: CHU2_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 48
+      is_signed_var: false
+      len: 2
+      name: CHU2_InsulationMonitorWarning
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 28
+      is_signed_var: false
+      len: 12
+      name: CHU2_InstantPowerConsumption
+      offset: -500.0
+      order: intel
+      physical_range: '[-500|1500]'
+      physical_unit: Kw
+      precision: 0.5
+      type: double
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: CHU2_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 54
+      is_signed_var: false
+      len: 2
+      name: CHU2_ChargeStationStatus
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 50
+      is_signed_var: false
+      len: 2
+      name: CHU2_ChargeStationParameterConfi
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 18
+      is_signed_var: false
+      len: 10
+      name: CHU2_ChargeStationOutputVoltage
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1000]'
+      physical_unit: V
+      precision: 1.0
+      type: int
+    - bit: 8
+      is_signed_var: false
+      len: 10
+      name: CHU2_ChargeStationOutputCurrent
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1000]'
+      physical_unit: A
+      precision: 1.0
+      type: int
+    - bit: 52
+      is_signed_var: false
+      len: 2
+      name: CHU2_ChargeStationHandShakeStatu
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+  2a0:
+    id: 2a0
+    name: bcm1_2a0
+    protocol_type: report
+    sender: PT
+    vars:
+    - bit: 54
+      description: The signal is sent to indicate the Driver Seat Belt is buckled
+        or Unbuckled.
+      enum:
+        0: BCM1_PASSENGERSIDEBUCKLE_UNBUCKLED
+        1: BCM1_PASSENGERSIDEBUCKLE_BUCKLED
+        2: BCM1_PASSENGERSIDEBUCKLE_RESERVED
+        3: BCM1_PASSENGERSIDEBUCKLE_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_PassengerSideBuckle
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 37
+      description: This signal informs about the wiper speed requested by the Sensor
+        according to rain intensity or other factors
+      enum:
+        0: BCM1_WIPERSPEED_NO_WIPE
+        1: BCM1_WIPERSPEED_42_TIMES_MIN
+        2: BCM1_WIPERSPEED_45_TIMES_MIN
+        3: BCM1_WIPERSPEED_48_TIMES_MIN
+        4: BCM1_WIPERSPEED_51_TIMES_MIN
+        5: BCM1_WIPERSPEED_54_TIMES_MIN
+        6: BCM1_WIPERSPEED_57_TIMES_MIN
+        7: BCM1_WIPERSPEED_60_TIMES_MIN
+      is_signed_var: false
+      len: 3
+      name: BCM1_WiperSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      signal_type: speed
+      type: enum
+    - bit: 32
+      description: The signal indicates the status of position light.
+      enum:
+        0: BCM1_POSITIONLIGHTST_OFF
+        1: BCM1_POSITIONLIGHTST_ON
+        2: BCM1_POSITIONLIGHTST_RESERVED
+        3: BCM1_POSITIONLIGHTST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_PositionLightSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 50
+      description: Fold status of right mirror
+      enum:
+        0: BCM1_MIRRORFOLDST_FR_UNFOLD
+        1: BCM1_MIRRORFOLDST_FR_FOLD
+        2: BCM1_MIRRORFOLDST_FR_RESERVED
+        3: BCM1_MIRRORFOLDST_FR_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_MirrorFoldSt_FR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 48
+      description: Fold status of left mirror
+      enum:
+        0: BCM1_MIRRORFOLDST_FL_UNFOLD
+        1: BCM1_MIRRORFOLDST_FL_FOLD
+        2: BCM1_MIRRORFOLDST_FL_RESERVED
+        3: BCM1_MIRRORFOLDST_FL_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_MirrorFoldSt_FL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 52
+      description: The signal is sent to indicate the Driver Seat Belt is buckled
+        or Unbuckled.
+      enum:
+        0: BCM1_DRIVERSIDEBUCKLE_UNBUCKLED
+        1: BCM1_DRIVERSIDEBUCKLE_BUCKLED
+        2: BCM1_DRIVERSIDEBUCKLE_RESERVED
+        3: BCM1_DRIVERSIDEBUCKLE_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_DriverSideBuckle
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 34
+      description: The signal indicates front wiper status.
+      enum:
+        0: BCM1_WIPERSTATUS_OFF
+        1: BCM1_WIPERSTATUS_TIP
+        2: BCM1_WIPERSTATUS_INTERVAL_OR_AUTO_LEVER
+        3: BCM1_WIPERSTATUS_LOW_SPEED
+        4: BCM1_WIPERSTATUS_HIGH_SPEED
+        5: BCM1_WIPERSTATUS_RESERVED
+        6: BCM1_WIPERSTATUS_RESERVED
+        7: BCM1_WIPERSTATUS_RESERVED
+      is_signed_var: false
+      len: 3
+      name: BCM1_WiperStatus
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 21
+      description: This signal indicates luggage door status
+      enum:
+        0: BCM1_LUGGAGEDOORST_CLOSE
+        1: BCM1_LUGGAGEDOORST_OPEN
+      is_signed_var: false
+      len: 1
+      name: BCM1_LuggageDoorSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 28
+      description: The signal  indicates the status of low beam indicator.
+      enum:
+        0: BCM1_LOWBEAMST_OFF
+        1: BCM1_LOWBEAMST_ON
+        2: BCM1_LOWBEAMST_RESERVED
+        3: BCM1_LOWBEAMST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_LowBeamSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 30
+      description: The signal  indicates the status of high beam indicator.
+      enum:
+        0: BCM1_HIGHBEAMST_OFF
+        1: BCM1_HIGHBEAMST_ON
+        2: BCM1_HIGHBEAMST_RESERVED
+        3: BCM1_HIGHBEAMST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_HighBeamSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 20
+      description: This signal shows engine hood status.
+      enum:
+        0: BCM1_ENGHOODST_CLOSE
+        1: BCM1_ENGHOODST_OPEN
+      is_signed_var: false
+      len: 1
+      name: BCM1_EngHoodSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 14
+      description: This signal indicates the lock state of RR door.
+      enum:
+        0: BCM1_RRDOORLOCKST_LOCK
+        1: BCM1_RRDOORLOCKST_UNLOCK
+        2: BCM1_RRDOORLOCKST_RESERVED
+        3: BCM1_RRDOORLOCKST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_RRDoorLockSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 19
+      description: This signal indicates the state of RR door.
+      enum:
+        0: BCM1_RRDOORST_CLOSE
+        1: BCM1_RRDOORST_OPEN
+      is_signed_var: false
+      len: 1
+      name: BCM1_RRDoorSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 12
+      description: This signal indicates the lock state of RL door.
+      enum:
+        0: BCM1_RLDOORLOCKST_LOCK
+        1: BCM1_RLDOORLOCKST_UNLOCK
+        2: BCM1_RLDOORLOCKST_RESERVED
+        3: BCM1_RLDOORLOCKST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_RLDoorLockSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 18
+      description: This signal indicates the state of RL door.
+      enum:
+        0: BCM1_RLDOORST_CLOSE
+        1: BCM1_RLDOORST_OPEN
+      is_signed_var: false
+      len: 1
+      name: BCM1_RLDoorSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 10
+      description: This signal indicates the lock state of passenger door.
+      enum:
+        0: BCM1_PASSENGERDOORLOCKST_LOCK
+        1: BCM1_PASSENGERDOORLOCKST_UNLOCK
+        2: BCM1_PASSENGERDOORLOCKST_RESERVED
+        3: BCM1_PASSENGERDOORLOCKST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_PassengerDoorLockSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 17
+      description: This signal indicates the state of passenger door.
+      enum:
+        0: BCM1_PASSENGERDOORST_CLOSE
+        1: BCM1_PASSENGERDOORST_OPEN
+      is_signed_var: false
+      len: 1
+      name: BCM1_PassengerDoorSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 8
+      description: This signal indicates the lock state of driver door.
+      enum:
+        0: BCM1_DRIVERDOORLOCKST_LOCK
+        1: BCM1_DRIVERDOORLOCKST_UNLOCK
+        2: BCM1_DRIVERDOORLOCKST_RESERVED
+        3: BCM1_DRIVERDOORLOCKST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_DriverDoorLockSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 16
+      description: This signal indicates the state of driver door.
+      enum:
+        0: BCM1_DRIVERDOORST_CLOSE
+        1: BCM1_DRIVERDOORST_OPEN
+      is_signed_var: false
+      len: 1
+      name: BCM1_DriverDoorSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: BCM1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: BCM1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+    - bit: 24
+      description: The signal indicates the driving status of the turn light.
+      enum:
+        0: BCM1_STEERINGLIGHTST_OFF
+        1: BCM1_STEERINGLIGHTST_LEFT_ON
+        2: BCM1_STEERINGLIGHTST_RIGHT_ON
+        3: BCM1_STEERINGLIGHTST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_SteeringLightSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 26
+      description: The signal indicates Indicates the Hazard Warning is active or
+        not
+      enum:
+        0: BCM1_HAZARDLIGHTST_OFF
+        1: BCM1_HAZARDLIGHTST_ON
+        2: BCM1_HAZARDLIGHTST_RESERVED
+        3: BCM1_HAZARDLIGHTST_RESERVED
+      is_signed_var: false
+      len: 2
+      name: BCM1_HazardLightSt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  2a1:
+    id: 2a1
+    name: epb1_2a1
+    protocol_type: report
+    sender: Vector__XXX
+    vars:
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: EPB1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 12
+      description: '0:no request 1: lock 2 :release 3: reserved'
+      is_signed_var: false
+      len: 2
+      name: EPB1_EPBSwitch
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 14
+      description: '0: released 1: locked 2: releasing 3:locking'
+      is_signed_var: false
+      len: 2
+      name: EPB1_EPBStatus
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: EPB1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|0]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+  3b1:
+    id: 3b1
+    name: ur1_3b1
+    protocol_type: report
+    sender: SS
+    vars:
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: UR1_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 38
+      description: This signal indicates the obstacle detection distance by front
+        right radar
+      is_signed_var: false
+      len: 10
+      name: UR1_DistanceValue_FR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 28
+      description: This signal indicates the obstacle detection distance by front
+        middle right radar
+      is_signed_var: false
+      len: 10
+      name: UR1_DistanceValue_FMR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 18
+      description: This signal indicates the obstacle detection distance by front
+        middle left radar
+      is_signed_var: false
+      len: 10
+      name: UR1_DistanceValue_FML
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 8
+      description: This signal indicates the obstacle detection distance by front
+        left radar
+      is_signed_var: false
+      len: 10
+      name: UR1_DistanceValue_FL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: UR1_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+  3b2:
+    id: 3b2
+    name: ur2_3b2
+    protocol_type: report
+    sender: SS
+    vars:
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: UR2_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 38
+      description: This signal indicates the obstacle detection distance by rear right
+        radar
+      is_signed_var: false
+      len: 10
+      name: UR2_DistanceValue_RR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 28
+      description: This signal indicates the obstacle detection distance by rear middle
+        right radar
+      is_signed_var: false
+      len: 10
+      name: UR2_DistanceValue_RMR
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 18
+      description: This signal indicates the obstacle detection distance by rear middle
+        left radar
+      is_signed_var: false
+      len: 10
+      name: UR2_DistanceValue_RML
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 8
+      description: This signal indicates the obstacle detection distance by rear left
+        radar
+      is_signed_var: false
+      len: 10
+      name: UR2_DistanceValue_RL
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: UR2_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
+  3b3:
+    id: 3b3
+    name: ur3_3b3
+    protocol_type: report
+    sender: SS
+    vars:
+    - bit: 60
+      description: The Livecounter is used to check the signal consistency of the
+        messages
+      is_signed_var: false
+      len: 4
+      name: UR3_LiveCounter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: count
+      precision: 1.0
+      type: int
+    - bit: 38
+      description: This signal indicates the obstacle detection distance by rear right
+        side radar
+      is_signed_var: false
+      len: 10
+      name: UR3_DistanceValue_RRS
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 28
+      description: This signal indicates the obstacle detection distance by rear left
+        side radar
+      is_signed_var: false
+      len: 10
+      name: UR3_DistanceValue_RLS
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 18
+      description: This signal indicates the obstacle detection distance by front
+        right side radar
+      is_signed_var: false
+      len: 10
+      name: UR3_DistanceValue_FRS
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 8
+      description: This signal indicates the obstacle detection distance by front
+        left side radar
+      is_signed_var: false
+      len: 10
+      name: UR3_DistanceValue_FLS
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1023]'
+      physical_unit: cm
+      precision: 1.0
+      type: int
+    - bit: 0
+      description: The checksum is used to check whether the data transmission errors
+      is_signed_var: false
+      len: 8
+      name: UR3_Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: check
+      precision: 1.0
+      type: int
