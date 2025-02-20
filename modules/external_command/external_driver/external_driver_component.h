@@ -67,13 +67,14 @@ private:
   apollo::external_command::ExternalDriverConfig config_;
   std::vector< std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
   nlohmann::json point;
-  bool is_start_publish = false;
+  bool is_start_publish = true;
   std::shared_ptr<cyber::Reader<localization::LocalizationEstimate>> localization_reader_pose;
   std::mutex mutex_;
   const nlohmann::json data_to_cloud;
   std::future<void> data_to_cloud_future;
   bool is_stop = false;
   int connect_detect_num = 0;
+  std::vector<std::string> request_camera = {"None"};
   
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
