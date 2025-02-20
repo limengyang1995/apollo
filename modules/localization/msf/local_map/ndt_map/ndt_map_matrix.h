@@ -170,6 +170,7 @@ class NdtMapMatrix : public BaseMapMatrix {
   virtual unsigned int GetBinarySize() const;
 
   virtual void GetIntensityImg(cv::Mat* intensity_img) const;
+  
 
   /**@brief Get a const map cell. */
   inline const NdtMapCells& GetMapCell(unsigned int row,

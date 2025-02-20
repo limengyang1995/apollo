@@ -41,6 +41,7 @@ class BaseMapMatrix {
   virtual void Reset() = 0;
   /**@brief get intensity image of node. */
   virtual bool GetIntensityImg(cv::Mat* intensity_img) const;
+  
   /**@brief get altitude image of node. */
   virtual bool GetAltitudeImg(cv::Mat* altitude_img) const;
 };
