@@ -304,6 +304,7 @@ int main(int argc, char** argv) {
               static_cast<unsigned char>(plane_pt.intensity);
           Eigen::Vector3d pt3d_global = velodyne_frame.pose * pt3d_local_double;
           map.SetValueLayer(pt3d_global, zone_id, intensity);
+          // std::cout << "Intensity!   " << static_cast<float> (intensity) << std::endl;
         }
       }
     }

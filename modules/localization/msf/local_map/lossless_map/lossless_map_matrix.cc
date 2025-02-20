@@ -368,7 +368,7 @@ unsigned int LosslessMapMatrix::GetBinarySize() const {
   return target_size;
 }
 
-void LosslessMapMatrix::GetIntensityImg(cv::Mat* intensity_img) const {
+/* void LosslessMapMatrix::GetIntensityImg(cv::Mat* intensity_img) const {
   *intensity_img = cv::Mat(cv::Size(cols_, rows_), CV_8UC1);
 
   for (uint32_t y = 0; y < rows_; ++y) {
@@ -376,6 +376,38 @@ void LosslessMapMatrix::GetIntensityImg(cv::Mat* intensity_img) const {
       intensity_img->at<unsigned char>(y, x) = GetMapCell(y, x).GetValue();
     }
   }
+} */
+
+void LosslessMapMatrix::GetIntensityImg(cv::Mat* intensity_img) const {
+    
+    // 创建单通道灰度图像
+    *intensity_img = cv::Mat(cv::Size(cols_, rows_), CV_8UC1);
+
+    // 填充强度值
+    for (uint32_t y = 0; y < rows_; ++y) {
+        for (uint32_t x = 0; x < cols_; ++x) {
+            intensity_img->at<unsigned char>(y, x) = GetMapCell(y, x).GetValue();
+        }
+    }
+    const std::string color_map = "JET";
+    // 如果不需要颜色映射，直接返回灰度图像
+    if (color_map == "GRAY") {
+        return;
+    }
+
+    // 将灰度图像转换为彩色图像
+    cv::Mat color_img;
+    if (color_map == "JET") {
+        cv::applyColorMap(*intensity_img, color_img, cv::COLORMAP_JET);
+    } else if (color_map == "HOT") {
+        cv::applyColorMap(*intensity_img, color_img, cv::COLORMAP_HOT);
+    } else {
+        // 默认灰度映射
+        cv::cvtColor(*intensity_img, color_img, cv::COLOR_GRAY2BGR);
+    }
+
+    // 返回彩色图像
+    *intensity_img = color_img;
 }
 
 }  // namespace msf

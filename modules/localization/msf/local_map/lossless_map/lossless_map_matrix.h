@@ -167,6 +167,7 @@ class LosslessMapMatrix : public BaseMapMatrix {
   virtual unsigned int GetBinarySize() const;
   /**@brief get intensity image of node. */
   virtual void GetIntensityImg(cv::Mat* intensity_img) const;
+  
 
   /**@brief Get a map cell. */
   inline const LosslessMapCell& GetMapCell(unsigned int row,

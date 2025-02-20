@@ -443,6 +443,25 @@ void LossyMapMatrix2D::GetIntensityImg(cv::Mat* intensity_img) const {
           (unsigned char)(map_cells_[id].intensity);
     }
   }
+  const std::string color_map = "JET";
+  // 如果不需要颜色映射，直接返回灰度图像
+  if (color_map == "GRAY") {
+      return;
+  }
+
+  // 将灰度图像转换为彩色图像
+  cv::Mat color_img;
+  if (color_map == "JET") {
+      cv::applyColorMap(*intensity_img, color_img, cv::COLORMAP_JET);
+  } else if (color_map == "HOT") {
+      cv::applyColorMap(*intensity_img, color_img, cv::COLORMAP_HOT);
+  } else {
+      // 默认灰度映射
+      cv::cvtColor(*intensity_img, color_img, cv::COLOR_GRAY2BGR);
+  }
+
+  // 返回彩色图像
+    *intensity_img = color_img;
 }
 
 }  // namespace msf
