@@ -2,176 +2,6 @@ syntax = "proto2";
 
 package apollo.canbus;
 
-message Vector__independent_sig_msg_0 {
-// Report Message
-  enum Eps1_lkastatusType {
-    EPS1_LKASTATUS_TEMPORARY_INHIBIT = 0;
-    EPS1_LKASTATUS_AVAILABLE_FOR_CONTROL = 1;
-    EPS1_LKASTATUS_ACTIVE = 2;
-    EPS1_LKASTATUS_PERMANENTLY_FAIL = 3;
-    EPS1_LKASTATUS_NOT_CONFIGURED = 4;
-    EPS1_LKASTATUS_RESERVED = 5;
-  }
-  enum Eps1_apaerrorstatusType {
-    EPS1_APAERRORSTATUS_NO_ERROR = 0;
-    EPS1_APAERRORSTATUS_ERROR = 1;
-  }
-  enum Eps1_aparequestfeedbackType {
-    EPS1_APAREQUESTFEEDBACK_DISABLE = 0;
-    EPS1_APAREQUESTFEEDBACK_ENABLE = 1;
-  }
-  enum Eps1_apaabortfeedbackType {
-    EPS1_APAABORTFEEDBACK_NO_DRIVING_INTERUPTION = 0;
-    EPS1_APAABORTFEEDBACK_RECOVERABLE_INTERRUPTION = 1;
-    EPS1_APAABORTFEEDBACK_VEHICLE_SPEED_INVALID_OR_TIMEOUT = 2;
-    EPS1_APAABORTFEEDBACK_STEERING_WHEEL_ANGLE_REQ_EXCEEDS_LIMITS = 3;
-    EPS1_APAABORTFEEDBACK_STEERING_WHEEL_ANGLE_SPEED_REQ_EXCEEDS_LIMITS = 4;
-    EPS1_APAABORTFEEDBACK_STEERING_WHEEL_ANGLE_INVALID_OR_TIMEOUT = 5;
-    EPS1_APAABORTFEEDBACK_HAD_CONTROL_SIGNAL_INVALID_OR_TIMEOUT = 6;
-    EPS1_APAABORTFEEDBACK_CAN_BUS_OFF = 7;
-    EPS1_APAABORTFEEDBACK_STEERING_WHEEL_ANGLE_SPEED_EXCEEDS_LIMITS_WHEN_IN_CONTROL = 8;
-    EPS1_APAABORTFEEDBACK_EPS_INTERNAL_FAILURE_WITH_LIMITED_STEERING_ASSISTANCE = 9;
-    EPS1_APAABORTFEEDBACK_GEAR_SIGNAL_INVALID_OR_TIMEOUT = 10;
-    EPS1_APAABORTFEEDBACK_EPS_CONTROL_REQ_RECEIVED_WHEN_IN_CONTOL = 11;
-    EPS1_APAABORTFEEDBACK_DIFFERENCE_OF_THE_TWO_NEIGHBORING_STEERING_WHEEL_ANGLE_REQ_SIGNALS_EXCEEDS_LIMITS = 12;
-    EPS1_APAABORTFEEDBACK_DIFFERENCE_OF_STEERING_WHEEL_ANGLE_REQ_AND_STEERING_WHEEL_ANGLE_EXCEEDS_LIMITS = 13;
-    EPS1_APAABORTFEEDBACK_VEHICLE_SPEED_EXCEEDS_LIMITS_WHEN_IN_CONTROL = 14;
-    EPS1_APAABORTFEEDBACK_EPS_SYSTEM_CRITICAL_FAILURE_NO_STEERING_ASSISTANCE = 15;
-    EPS1_APAABORTFEEDBACK_EPS_CONTROL_ACTIVE_RECEIVED_WITHOUT_HANDSHAKING = 16;
-    EPS1_APAABORTFEEDBACK_HANDSHAKING_TIMEOUT = 17;
-    EPS1_APAABORTFEEDBACK_DIFFERENCE_OF_THE_FIRST_STEERING_WHEEL_ANGLE_REQ_SIGNAL_AND_STEERING_WHEEL_ANGLE_EXCEEDS_LIMITS = 18;
-    EPS1_APAABORTFEEDBACK_RESERVED = 19;
-  }
-  // [] [0|0]
-  optional int32 epb1_checksum_copy_4 = 1;
-  // [] [0|255]
-  optional int32 acs3_data7 = 2;
-  // [] [0|255]
-  optional int32 acs3_data6 = 3;
-  // [] [0|255]
-  optional int32 acs3_data5 = 4;
-  // [] [0|255]
-  optional int32 acs3_data4 = 5;
-  // [] [0|255]
-  optional int32 acs3_data3 = 6;
-  // [] [0|255]
-  optional int32 acs3_data2 = 7;
-  // [] [0|255]
-  optional int32 acs3_data1 = 8;
-  // [] [0|255]
-  optional int32 acs3_data0 = 9;
-  // [] [-40|210]
-  optional int32 dcdc1_temperature = 10;
-  // [] [0|3]
-  optional int32 dcdc1_status = 11;
-  // [V] [0|25]
-  optional double dcdc1_outputvoltage = 12;
-  // [A] [0|1000]
-  optional int32 dcdc1_outputcurrent = 13;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 dcdc1_livecounter = 14;
-  // [V] [0|1000]
-  optional int32 dcdc1_inputvoltage = 15;
-  // [A] [0|25]
-  optional double dcdc1_inputcurrent = 16;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 dcdc1_checksum = 17;
-  // [Nm] [-500|500]
-  optional double mcu1_tmtorque = 18;
-  // [] [-40|210]
-  optional int32 mcu1_tmtemperature = 19;
-  // [rpm] [-30000|30000]
-  optional int32 mcu1_tmspeed = 20;
-  // [V] [0|500]
-  optional int32 mcu1_tmcapacitancevoltage = 21;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 mcu1_livecounter = 22;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 mcu1_checksum = 23;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 esc1_livecounter = 24;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 esc1_checksum = 25;
-  // This signal indicates the yaw rate data (real data; sign depends on mounting position).anticlockwise=positive, clockwise=negative [deg/s] [-100|100]
-  optional double esc1_yawrate = 26;
-  // The signal is LongitudinalAcceleration(exact value).Positive value represents  forward,  negative value represents backward. [m/s2] [-20|20]
-  optional double esc1_accelerationx = 27;
-  // The signal is Lateral Acceleration(exact value).Positive value represents right side of vehicle, negative value represents  left side of vehicle. [m/s2] [-20|20]
-  optional double esc1_accelerationy = 28;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 env1_livecounter = 29;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 env1_checksum = 30;
-  // Indicates the GPS year [Year] [2000|2063]
-  optional int32 env1_timeyear = 31;
-  // Indicates the GPS second  [Second] [0|59]
-  optional int32 env1_timesecond = 32;
-  // Indicates the GPS month [Month] [1|12]
-  optional int32 env1_timemonth = 33;
-  // Indicates the GPS minute   [Minute] [0|59]
-  optional int32 env1_timeminute = 34;
-  // Indicates the GPS hour [Hour] [0|23]
-  optional int32 env1_timehour = 35;
-  // Indicates the GPS day [Day] [1|31]
-  optional int32 env1_timeday = 36;
-  // This signal delivers information about rain intensity: from 0% (no rain) to 100% (very heavy rain). [%] [0|150]
-  optional double env1_rainintensity = 37;
-  // This signal  indicate the high precision light intensity expressed in 10 Bit. [LUX] [0|6138]
-  optional double env1_brightnessh = 38;
-  // The signal indicates the status of LKA function [] [0|7]
-  optional Eps1_lkastatusType eps1_lkastatus = 39;
-  // The signal indicates the load of the electric steering motor. If the load could not be measured or an error is detected on the motor, the invalid value of the signal is set [A] [0|120]
-  optional double eps1_electricload = 40;
-  // The signal indicates the status of APA function error [] [0|1]
-  optional Eps1_apaerrorstatusType eps1_apaerrorstatus = 41;
-  // EPS APA Request Feedback [] [0|1]
-  optional Eps1_aparequestfeedbackType eps1_aparequestfeedback = 42;
-  // EPS APA Abort Feedback [] [0|31]
-  optional Eps1_apaabortfeedbackType eps1_apaabortfeedback = 43;
-  // The signal indicates the actual applied overlay toque in EPS. [Nm] [-10|10]
-  optional double eps1_overlayinputtorque = 44;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 eps1_livecounter = 45;
-  // The signal indicates the torque measured by the torque sensor at the steering wheel [Nm] [-10|10]
-  optional double eps1_handsteeringtorque = 46;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 eps1_checksum = 47;
-  // [] [0|0]
-  optional int32 bdrr_winbuttonrr_st = 48;
-  // [] [0|0]
-  optional int32 bdrl_winbuttonrl_st = 49;
-  // [] [0|0]
-  optional int32 bdfr_winbuttonfr_st = 50;
-  // [] [0|0]
-  optional int32 a_test_data = 51;
-  // [] [0|0]
-  optional bool bdfl_mirrightbutton_st = 52;
-  // [] [0|0]
-  optional bool bdfl_mirleftbutton_st = 53;
-  // [] [0|0]
-  optional bool bdfl_mirbuttonup_st = 54;
-  // [] [0|0]
-  optional bool bdfl_mirbuttonright_st = 55;
-  // [] [0|0]
-  optional bool bdfl_mirbuttonleft_st = 56;
-  // [] [0|0]
-  optional bool bdfl_mirbuttondown_st = 57;
-  // [] [0|0]
-  optional bool bdfl_unlockbutton_st = 58;
-  // [] [0|0]
-  optional bool bdfl_lockbutton_st = 59;
-  // [] [0|0]
-  optional bool bdfl_bootbuttonfl_st = 60;
-  // [] [0|0]
-  optional int32 bdfl_winbuttonrr_st = 61;
-  // [] [0|0]
-  optional int32 bdfl_winbuttonrl_st = 62;
-  // [] [0|0]
-  optional int32 bdfl_winbuttonfr_st = 63;
-  // [] [0|0]
-  optional int32 bdfl_winbuttonfl_st = 64;
-}
-
 message Acu1_151 {
 // Control Message
   enum Acu1_steeringcontrolflagType {
@@ -238,25 +68,28 @@ message Acu3_153 {
   }
   enum Acu3_brakingcontrolflagType {
     ACU3_BRAKINGCONTROLFLAG_NO_REQUEST = 0;
-    ACU3_BRAKINGCONTROLFLAG_REQUEST = 1;
-    ACU3_BRAKINGCONTROLFLAG_RESERVED = 2;
+    ACU3_BRAKINGCONTROLFLAG_REQUEST_PRESURE = 1;
+    ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC = 2;
+    ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION = 3;
   }
+  // [%] [0|100]
+  optional double acu3_brakingtargetposition = 1;
   // This signal is the status of the braking control request [] [0|3]
-  optional Acu3_epbcontrolflagType acu3_epbcontrolflag = 1;
+  optional Acu3_epbcontrolflagType acu3_epbcontrolflag = 2;
   // This signal is gear request [] [0|7]
-  optional Acu3_geartargetType acu3_geartarget = 2;
+  optional Acu3_geartargetType acu3_geartarget = 3;
   // This signal is the status of the gear control request [] [0|1]
-  optional Acu3_gearcontrolflagType acu3_gearcontrolflag = 3;
+  optional Acu3_gearcontrolflagType acu3_gearcontrolflag = 4;
   // This signal is deceleration request for wheel brake [Mpa] [0|10]
-  optional double acu3_brakingtargetpressure = 4;
+  optional double acu3_brakingtargetpressure = 5;
   // This signal is deceleration request for wheel brake [m/s2] [-10|0]
-  optional double acu3_brakingtargetdeceleration = 5;
+  optional double acu3_brakingtargetdeceleration = 6;
   // This signal is the status of the braking control request [] [0|3]
-  optional Acu3_brakingcontrolflagType acu3_brakingcontrolflag = 6;
+  optional Acu3_brakingcontrolflagType acu3_brakingcontrolflag = 7;
   // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 acu3_livecounter = 7;
+  optional int32 acu3_livecounter = 8;
   // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 acu3_checksum = 8;
+  optional int32 acu3_checksum = 9;
 }
 
 message Acu4_154 {
@@ -271,19 +104,19 @@ message Acu4_154 {
     ACU4_HAZARDLAMPREQUEST_OFF = 0;
     ACU4_HAZARDLAMPREQUEST_ON = 1;
   }
-  // 1: KL15 ON  3KL15 OFF [] [0|3]
+  // 1power on 3power off [] [0|3]
   optional int32 acu4_powerrequest = 1;
-  // 1:fall  2:rise 3:stop [] [0|0]
+  // 1fall  2 rise 3 stop [] [0|0]
   optional int32 acu4_rrwindow_request = 2;
-  // 1:fall  2:rise 3:stop [] [0|0]
+  // 1fall  2 rise 3 stop [] [0|0]
   optional int32 acu4_rlwindow_request = 3;
-  // 1:lock  2:unlock [] [0|0]
+  // 1lock 2unlock [] [0|0]
   optional int32 acu4_lock_request = 4;
-  // 1:fall  2:rise 3:stop [] [0|0]
+  // 1fall  2 rise 3 stop [] [0|0]
   optional int32 acu4_frwindow_request = 5;
-  // 1:fall  2:rise 3:stop [] [0|0]
+  // 1fall  2 rise 3 stop [] [0|0]
   optional int32 acu4_flwindow_request = 6;
-  // 1:on  2:off 3:stop [] [0|0]
+  // 1on 2 off 3stop [] [0|0]
   optional int32 acu4_boot_request = 7;
   // [] [0|3]
   optional int32 acu4_rearwiperrequest = 8;
@@ -297,9 +130,9 @@ message Acu4_154 {
   optional bool acu4_led1request = 12;
   // This signal is the the horn lamp or request [] [0|1]
   optional bool acu4_lamphorn = 13;
-  // 0 stop 1 horn [] [0|3]
+  // 0off  1:on [] [0|3]
   optional int32 acu4_whistlerequest = 14;
-  // 0 stop 1:inject water 2slow 3fast [] [0|3]
+  // 0stop 1inject water 2slow 3fast [] [0|3]
   optional int32 acu4_frontwiperrequest = 15;
   // 0:OFF 1:LOW 2£ºHIGH [] [0|3]
   optional int32 acu4_beamlamprequest = 16;
@@ -311,14 +144,6 @@ message Acu4_154 {
   optional Acu4_steeringlamprequestType acu4_steeringlamprequest = 19;
   // This signal is hazard light request [] [0|1]
   optional Acu4_hazardlamprequestType acu4_hazardlamprequest = 20;
-}
-
-message Bcm2_200 {
-// Report Message
-  // [] [0|0]
-  optional bool key_unlock = 1;
-  // [] [0|0]
-  optional bool key_lock = 2;
 }
 
 message Acs1_20c {
@@ -522,6 +347,26 @@ message Acs2_20d {
   optional Acs2_button1Type acs2_button1 = 15;
 }
 
+message Acs3_20e {
+// Report Message
+  // [] [0|255]
+  optional int32 acs3_data7 = 1;
+  // [] [0|255]
+  optional int32 acs3_data6 = 2;
+  // [] [0|255]
+  optional int32 acs3_data5 = 3;
+  // [] [0|255]
+  optional int32 acs3_data4 = 4;
+  // [] [0|255]
+  optional int32 acs3_data3 = 5;
+  // [] [0|255]
+  optional int32 acs3_data2 = 6;
+  // [] [0|255]
+  optional int32 acs3_data1 = 7;
+  // [] [0|255]
+  optional int32 acs3_data0 = 8;
+}
+
 message Vcu1_210 {
 // Report Message
   // The signal indicates the actual applied overlay toque in EPS. [Nm] [-10|10]
@@ -691,308 +536,6 @@ message Vcu3_212 {
   optional Vcu3_actualgearType vcu3_actualgear = 17;
 }
 
-message Ws1_260 {
-// Report Message
-  // This signal is rear right wheel speed which sent by ABS without filtering. [km/h] [0|300]
-  optional double ws1_wheelspeed_rr = 1;
-  // This signal is rear left wheel speed which sent by ABS without filtering. [km/h] [0|300]
-  optional double ws1_wheelspeed_rl = 2;
-  // This signal is front right wheel speed which sent by ABS without filtering. [km/h] [0|300]
-  optional double ws1_wheelspeed_fr = 3;
-  // This signal is front left wheel speed which sent by ABS without filtering. [km/h] [0|300]
-  optional double ws1_wheelspeed_fl = 4;
-}
-
-message Ws2_261 {
-// Report Message
-  enum Ws2_wheelspeeddirection_rrType {
-    WS2_WHEELSPEEDDIRECTION_RR_STOP = 0;
-    WS2_WHEELSPEEDDIRECTION_RR_FORWARD = 1;
-    WS2_WHEELSPEEDDIRECTION_RR_BACKWARD = 2;
-    WS2_WHEELSPEEDDIRECTION_RR_INVALID_VALUE = 3;
-  }
-  enum Ws2_wheelspeeddirection_rlType {
-    WS2_WHEELSPEEDDIRECTION_RL_STOP = 0;
-    WS2_WHEELSPEEDDIRECTION_RL_FORWARD = 1;
-    WS2_WHEELSPEEDDIRECTION_RL_BACKWARD = 2;
-    WS2_WHEELSPEEDDIRECTION_RL_INVALID_VALUE = 3;
-  }
-  enum Ws2_wheelspeeddirection_frType {
-    WS2_WHEELSPEEDDIRECTION_FR_STOP = 0;
-    WS2_WHEELSPEEDDIRECTION_FR_FORWARD = 1;
-    WS2_WHEELSPEEDDIRECTION_FR_BACKWARD = 2;
-    WS2_WHEELSPEEDDIRECTION_FR_INVALID_VALUE = 3;
-  }
-  enum Ws2_wheelspeeddirection_flType {
-    WS2_WHEELSPEEDDIRECTION_FL_STOP = 0;
-    WS2_WHEELSPEEDDIRECTION_FL_FORWARD = 1;
-    WS2_WHEELSPEEDDIRECTION_FL_BACKWARD = 2;
-    WS2_WHEELSPEEDDIRECTION_FL_INVALID_VALUE = 3;
-  }
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 ws2_livecounter = 1;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 ws2_checksum = 2;
-  // This signal is the the rear right  wheel speed direction. [] [0|3]
-  optional Ws2_wheelspeeddirection_rrType ws2_wheelspeeddirection_rr = 3;
-  // This signal is the the rear left wheel speed direction. [] [0|3]
-  optional Ws2_wheelspeeddirection_rlType ws2_wheelspeeddirection_rl = 4;
-  // This signal is the the front right wheel speed direction. [] [0|3]
-  optional Ws2_wheelspeeddirection_frType ws2_wheelspeeddirection_fr = 5;
-  // This signal is the the front left wheel speed direction. [] [0|3]
-  optional Ws2_wheelspeeddirection_flType ws2_wheelspeeddirection_fl = 6;
-  // This signal is the rear right wheel speed pulse(raw data). [pulse] [0|254]
-  optional int32 ws2_wheelpulse_rr = 7;
-  // This signal is the rear left wheel speed pulse(raw data). [pulse] [0|254]
-  optional int32 ws2_wheelpulse_rl = 8;
-  // This signal is the front right wheel speed pulse(raw data). [pulse] [0|254]
-  optional int32 ws2_wheelpulse_fr = 9;
-  // This signal is the front left wheel speed pulse(raw data). [pulse] [0|254]
-  optional int32 ws2_wheelpulse_fl = 10;
-}
-
-message Gw1_268 {
-// Report Message
-  // [] [0|3]
-  optional int32 gw1_evready = 1;
-  // [] [0|3]
-  optional int32 gw1_hvready = 2;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 gw1_livecounter = 3;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 gw1_checksum = 4;
-  // This signal is drive distance since prime start [km] [0|3355443]
-  optional double gw1_odometervalue = 5;
-  // Indicates the time between last KL15 Off and this KL15 on [minute] [0|4093]
-  optional int32 gw1_ignitionofftime = 6;
-  // This signal indicates fuel value, used for powertrain diagnostic. [L] [0|254]
-  optional int32 gw1_fuelvalue = 7;
-}
-
-message Bms1_288 {
-// Report Message
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 bms1_livecounter = 1;
-  // [] [0|1]
-  optional bool bms1_heatingrequest = 2;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 bms1_checksum = 3;
-  // [V] [0|1000]
-  optional int32 bms1_batterypackvoltage = 4;
-  // [] [-40|210]
-  optional int32 bms1_batterypacktemperature = 5;
-  // [%] [0|100]
-  optional int32 bms1_batterypacksoh = 6;
-  // [%] [0|100]
-  optional double bms1_batterypacksoc = 7;
-  // [A] [-800|800]
-  optional double bms1_batterypackcurrent = 8;
-}
-
-message Chu1_28c {
-// Report Message
-  // [] [-40|210]
-  optional int32 chu1_temperature = 1;
-  // [] [0|3]
-  optional int32 chu1_status = 2;
-  // [] [0|1]
-  optional bool chu1_rechargerequest = 3;
-  // [V] [0|1000]
-  optional int32 chu1_outputvoltage = 4;
-  // [A] [0|100]
-  optional double chu1_outputcurrent = 5;
-  // [] [0|3]
-  optional int32 chu1_mode = 6;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 chu1_livecounter = 7;
-  // [] [0|1]
-  optional bool chu1_cpstatus = 8;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 chu1_checksum = 9;
-}
-
-message Chu2_28d {
-// Report Message
-  // [Min] [0|1000]
-  optional double chu2_remainingchargetime = 1;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 chu2_livecounter = 2;
-  // [] [0|3]
-  optional int32 chu2_insulationmonitorwarning = 3;
-  // [Kw] [-500|1500]
-  optional double chu2_instantpowerconsumption = 4;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 chu2_checksum = 5;
-  // [] [0|3]
-  optional int32 chu2_chargestationstatus = 6;
-  // [] [0|3]
-  optional int32 chu2_chargestationparameterconfi = 7;
-  // [V] [0|1000]
-  optional int32 chu2_chargestationoutputvoltage = 8;
-  // [A] [0|1000]
-  optional int32 chu2_chargestationoutputcurrent = 9;
-  // [] [0|3]
-  optional int32 chu2_chargestationhandshakestatu = 10;
-}
-
-message Bcm1_2a0 {
-// Report Message
-  enum Bcm1_passengersidebuckleType {
-    BCM1_PASSENGERSIDEBUCKLE_UNBUCKLED = 0;
-    BCM1_PASSENGERSIDEBUCKLE_BUCKLED = 1;
-    BCM1_PASSENGERSIDEBUCKLE_RESERVED = 2;
-  }
-  enum Bcm1_wiperspeedType {
-    BCM1_WIPERSPEED_NO_WIPE = 0;
-    BCM1_WIPERSPEED_42_TIMES_MIN = 1;
-    BCM1_WIPERSPEED_45_TIMES_MIN = 2;
-    BCM1_WIPERSPEED_48_TIMES_MIN = 3;
-    BCM1_WIPERSPEED_51_TIMES_MIN = 4;
-    BCM1_WIPERSPEED_54_TIMES_MIN = 5;
-    BCM1_WIPERSPEED_57_TIMES_MIN = 6;
-    BCM1_WIPERSPEED_60_TIMES_MIN = 7;
-  }
-  enum Bcm1_positionlightstType {
-    BCM1_POSITIONLIGHTST_OFF = 0;
-    BCM1_POSITIONLIGHTST_ON = 1;
-    BCM1_POSITIONLIGHTST_RESERVED = 2;
-  }
-  enum Bcm1_mirrorfoldst_frType {
-    BCM1_MIRRORFOLDST_FR_UNFOLD = 0;
-    BCM1_MIRRORFOLDST_FR_FOLD = 1;
-    BCM1_MIRRORFOLDST_FR_RESERVED = 2;
-  }
-  enum Bcm1_mirrorfoldst_flType {
-    BCM1_MIRRORFOLDST_FL_UNFOLD = 0;
-    BCM1_MIRRORFOLDST_FL_FOLD = 1;
-    BCM1_MIRRORFOLDST_FL_RESERVED = 2;
-  }
-  enum Bcm1_driversidebuckleType {
-    BCM1_DRIVERSIDEBUCKLE_UNBUCKLED = 0;
-    BCM1_DRIVERSIDEBUCKLE_BUCKLED = 1;
-    BCM1_DRIVERSIDEBUCKLE_RESERVED = 2;
-  }
-  enum Bcm1_wiperstatusType {
-    BCM1_WIPERSTATUS_OFF = 0;
-    BCM1_WIPERSTATUS_TIP = 1;
-    BCM1_WIPERSTATUS_INTERVAL_OR_AUTO_LEVER = 2;
-    BCM1_WIPERSTATUS_LOW_SPEED = 3;
-    BCM1_WIPERSTATUS_HIGH_SPEED = 4;
-    BCM1_WIPERSTATUS_RESERVED = 5;
-  }
-  enum Bcm1_luggagedoorstType {
-    BCM1_LUGGAGEDOORST_CLOSE = 0;
-    BCM1_LUGGAGEDOORST_OPEN = 1;
-  }
-  enum Bcm1_lowbeamstType {
-    BCM1_LOWBEAMST_OFF = 0;
-    BCM1_LOWBEAMST_ON = 1;
-    BCM1_LOWBEAMST_RESERVED = 2;
-  }
-  enum Bcm1_highbeamstType {
-    BCM1_HIGHBEAMST_OFF = 0;
-    BCM1_HIGHBEAMST_ON = 1;
-    BCM1_HIGHBEAMST_RESERVED = 2;
-  }
-  enum Bcm1_enghoodstType {
-    BCM1_ENGHOODST_CLOSE = 0;
-    BCM1_ENGHOODST_OPEN = 1;
-  }
-  enum Bcm1_rrdoorlockstType {
-    BCM1_RRDOORLOCKST_LOCK = 0;
-    BCM1_RRDOORLOCKST_UNLOCK = 1;
-    BCM1_RRDOORLOCKST_RESERVED = 2;
-  }
-  enum Bcm1_rrdoorstType {
-    BCM1_RRDOORST_CLOSE = 0;
-    BCM1_RRDOORST_OPEN = 1;
-  }
-  enum Bcm1_rldoorlockstType {
-    BCM1_RLDOORLOCKST_LOCK = 0;
-    BCM1_RLDOORLOCKST_UNLOCK = 1;
-    BCM1_RLDOORLOCKST_RESERVED = 2;
-  }
-  enum Bcm1_rldoorstType {
-    BCM1_RLDOORST_CLOSE = 0;
-    BCM1_RLDOORST_OPEN = 1;
-  }
-  enum Bcm1_passengerdoorlockstType {
-    BCM1_PASSENGERDOORLOCKST_LOCK = 0;
-    BCM1_PASSENGERDOORLOCKST_UNLOCK = 1;
-    BCM1_PASSENGERDOORLOCKST_RESERVED = 2;
-  }
-  enum Bcm1_passengerdoorstType {
-    BCM1_PASSENGERDOORST_CLOSE = 0;
-    BCM1_PASSENGERDOORST_OPEN = 1;
-  }
-  enum Bcm1_driverdoorlockstType {
-    BCM1_DRIVERDOORLOCKST_LOCK = 0;
-    BCM1_DRIVERDOORLOCKST_UNLOCK = 1;
-    BCM1_DRIVERDOORLOCKST_RESERVED = 2;
-  }
-  enum Bcm1_driverdoorstType {
-    BCM1_DRIVERDOORST_CLOSE = 0;
-    BCM1_DRIVERDOORST_OPEN = 1;
-  }
-  enum Bcm1_steeringlightstType {
-    BCM1_STEERINGLIGHTST_OFF = 0;
-    BCM1_STEERINGLIGHTST_LEFT_ON = 1;
-    BCM1_STEERINGLIGHTST_RIGHT_ON = 2;
-    BCM1_STEERINGLIGHTST_RESERVED = 3;
-  }
-  enum Bcm1_hazardlightstType {
-    BCM1_HAZARDLIGHTST_OFF = 0;
-    BCM1_HAZARDLIGHTST_ON = 1;
-    BCM1_HAZARDLIGHTST_RESERVED = 2;
-  }
-  // The signal is sent to indicate the Driver Seat Belt is buckled or Unbuckled. [] [0|3]
-  optional Bcm1_passengersidebuckleType bcm1_passengersidebuckle = 1;
-  // This signal informs about the wiper speed requested by the Sensor according to rain intensity or other factors [] [0|7]
-  optional Bcm1_wiperspeedType bcm1_wiperspeed = 2;
-  // The signal indicates the status of position light. [] [0|3]
-  optional Bcm1_positionlightstType bcm1_positionlightst = 3;
-  // Fold status of right mirror [] [0|3]
-  optional Bcm1_mirrorfoldst_frType bcm1_mirrorfoldst_fr = 4;
-  // Fold status of left mirror [] [0|3]
-  optional Bcm1_mirrorfoldst_flType bcm1_mirrorfoldst_fl = 5;
-  // The signal is sent to indicate the Driver Seat Belt is buckled or Unbuckled. [] [0|3]
-  optional Bcm1_driversidebuckleType bcm1_driversidebuckle = 6;
-  // The signal indicates front wiper status. [] [0|7]
-  optional Bcm1_wiperstatusType bcm1_wiperstatus = 7;
-  // This signal indicates luggage door status [] [0|1]
-  optional Bcm1_luggagedoorstType bcm1_luggagedoorst = 8;
-  // The signal  indicates the status of low beam indicator. [] [0|3]
-  optional Bcm1_lowbeamstType bcm1_lowbeamst = 9;
-  // The signal  indicates the status of high beam indicator. [] [0|3]
-  optional Bcm1_highbeamstType bcm1_highbeamst = 10;
-  // This signal shows engine hood status. [] [0|1]
-  optional Bcm1_enghoodstType bcm1_enghoodst = 11;
-  // This signal indicates the lock state of RR door. [] [0|3]
-  optional Bcm1_rrdoorlockstType bcm1_rrdoorlockst = 12;
-  // This signal indicates the state of RR door. [] [0|1]
-  optional Bcm1_rrdoorstType bcm1_rrdoorst = 13;
-  // This signal indicates the lock state of RL door. [] [0|3]
-  optional Bcm1_rldoorlockstType bcm1_rldoorlockst = 14;
-  // This signal indicates the state of RL door. [] [0|1]
-  optional Bcm1_rldoorstType bcm1_rldoorst = 15;
-  // This signal indicates the lock state of passenger door. [] [0|3]
-  optional Bcm1_passengerdoorlockstType bcm1_passengerdoorlockst = 16;
-  // This signal indicates the state of passenger door. [] [0|1]
-  optional Bcm1_passengerdoorstType bcm1_passengerdoorst = 17;
-  // This signal indicates the lock state of driver door. [] [0|3]
-  optional Bcm1_driverdoorlockstType bcm1_driverdoorlockst = 18;
-  // This signal indicates the state of driver door. [] [0|1]
-  optional Bcm1_driverdoorstType bcm1_driverdoorst = 19;
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 bcm1_livecounter = 20;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 bcm1_checksum = 21;
-  // The signal indicates the driving status of the turn light. [] [0|3]
-  optional Bcm1_steeringlightstType bcm1_steeringlightst = 22;
-  // The signal indicates Indicates the Hazard Warning is active or not [] [0|3]
-  optional Bcm1_hazardlightstType bcm1_hazardlightst = 23;
-}
-
 message Epb1_2a1 {
 // Report Message
   // The Livecounter is used to check the signal consistency of the messages [] [0|0]
@@ -1005,75 +548,16 @@ message Epb1_2a1 {
   optional int32 epb1_checksum = 4;
 }
 
-message Ur1_3b1 {
-// Report Message
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 ur1_livecounter = 1;
-  // This signal indicates the obstacle detection distance by front right radar [cm] [0|1023]
-  optional int32 ur1_distancevalue_fr = 2;
-  // This signal indicates the obstacle detection distance by front middle right radar [cm] [0|1023]
-  optional int32 ur1_distancevalue_fmr = 3;
-  // This signal indicates the obstacle detection distance by front middle left radar [cm] [0|1023]
-  optional int32 ur1_distancevalue_fml = 4;
-  // This signal indicates the obstacle detection distance by front left radar [cm] [0|1023]
-  optional int32 ur1_distancevalue_fl = 5;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 ur1_checksum = 6;
-}
-
-message Ur2_3b2 {
-// Report Message
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 ur2_livecounter = 1;
-  // This signal indicates the obstacle detection distance by rear right radar [cm] [0|1023]
-  optional int32 ur2_distancevalue_rr = 2;
-  // This signal indicates the obstacle detection distance by rear middle right radar [cm] [0|1023]
-  optional int32 ur2_distancevalue_rmr = 3;
-  // This signal indicates the obstacle detection distance by rear middle left radar [cm] [0|1023]
-  optional int32 ur2_distancevalue_rml = 4;
-  // This signal indicates the obstacle detection distance by rear left radar [cm] [0|1023]
-  optional int32 ur2_distancevalue_rl = 5;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 ur2_checksum = 6;
-}
-
-message Ur3_3b3 {
-// Report Message
-  // The Livecounter is used to check the signal consistency of the messages [count] [0|15]
-  optional int32 ur3_livecounter = 1;
-  // This signal indicates the obstacle detection distance by rear right side radar [cm] [0|1023]
-  optional int32 ur3_distancevalue_rrs = 2;
-  // This signal indicates the obstacle detection distance by rear left side radar [cm] [0|1023]
-  optional int32 ur3_distancevalue_rls = 3;
-  // This signal indicates the obstacle detection distance by front right side radar [cm] [0|1023]
-  optional int32 ur3_distancevalue_frs = 4;
-  // This signal indicates the obstacle detection distance by front left side radar [cm] [0|1023]
-  optional int32 ur3_distancevalue_fls = 5;
-  // The checksum is used to check whether the data transmission errors [check] [0|255]
-  optional int32 ur3_checksum = 6;
-}
-
 message Jt {
-  optional Vector__independent_sig_msg_0 vector__independent_sig_msg_0 = 1; // report message
-  optional Acu1_151 acu1_151 = 2; // control message
-  optional Acu2_152 acu2_152 = 3; // control message
-  optional Acu3_153 acu3_153 = 4; // control message
-  optional Acu4_154 acu4_154 = 5; // control message
-  optional Bcm2_200 bcm2_200 = 6; // report message
-  optional Acs1_20c acs1_20c = 7; // report message
-  optional Acs2_20d acs2_20d = 8; // report message
-  optional Vcu1_210 vcu1_210 = 9; // report message
-  optional Vcu2_211 vcu2_211 = 10; // report message
-  optional Vcu3_212 vcu3_212 = 11; // report message
-  optional Ws1_260 ws1_260 = 12; // report message
-  optional Ws2_261 ws2_261 = 13; // report message
-  optional Gw1_268 gw1_268 = 14; // report message
-  optional Bms1_288 bms1_288 = 15; // report message
-  optional Chu1_28c chu1_28c = 16; // report message
-  optional Chu2_28d chu2_28d = 17; // report message
-  optional Bcm1_2a0 bcm1_2a0 = 18; // report message
-  optional Epb1_2a1 epb1_2a1 = 19; // report message
-  optional Ur1_3b1 ur1_3b1 = 20; // report message
-  optional Ur2_3b2 ur2_3b2 = 21; // report message
-  optional Ur3_3b3 ur3_3b3 = 22; // report message
+  optional Acu1_151 acu1_151 = 1; // control message
+  optional Acu2_152 acu2_152 = 2; // control message
+  optional Acu3_153 acu3_153 = 3; // control message
+  optional Acu4_154 acu4_154 = 4; // control message
+  optional Acs1_20c acs1_20c = 5; // report message
+  optional Acs2_20d acs2_20d = 6; // report message
+  optional Acs3_20e acs3_20e = 7; // report message
+  optional Vcu1_210 vcu1_210 = 8; // report message
+  optional Vcu2_211 vcu2_211 = 9; // report message
+  optional Vcu3_212 vcu3_212 = 10; // report message
+  optional Epb1_2a1 epb1_2a1 = 11; // report message
 }

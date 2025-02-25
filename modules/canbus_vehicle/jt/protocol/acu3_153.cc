@@ -37,6 +37,7 @@ uint32_t Acu3153::GetPeriod() const {
 
 void Acu3153::Parse(const std::uint8_t* bytes, int32_t length,
                          Jt* chassis) const {
+  chassis->mutable_acu3_153()->set_acu3_brakingtargetposition(acu3_brakingtargetposition(bytes, length));
   chassis->mutable_acu3_153()->set_acu3_epbcontrolflag(acu3_epbcontrolflag(bytes, length));
   chassis->mutable_acu3_153()->set_acu3_geartarget(acu3_geartarget(bytes, length));
   chassis->mutable_acu3_153()->set_acu3_gearcontrolflag(acu3_gearcontrolflag(bytes, length));
@@ -52,6 +53,7 @@ void Acu3153::UpdateData_Heartbeat(uint8_t* data) {
 }
 
 void Acu3153::UpdateData(uint8_t* data) {
+  set_p_acu3_brakingtargetposition(data, acu3_brakingtargetposition_);
   set_p_acu3_epbcontrolflag(data, acu3_epbcontrolflag_);
   set_p_acu3_geartarget(data, acu3_geartarget_);
   set_p_acu3_gearcontrolflag(data, acu3_gearcontrolflag_);
@@ -64,6 +66,7 @@ void Acu3153::UpdateData(uint8_t* data) {
 
 void Acu3153::Reset() {
   // TODO(All) :  you should check this manually
+  acu3_brakingtargetposition_ = 0.0;
   acu3_epbcontrolflag_ = Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST;
   acu3_geartarget_ = Acu3_153::ACU3_GEARTARGET_P;
   acu3_gearcontrolflag_ = Acu3_153::ACU3_GEARCONTROLFLAG_NO_REQUEST;
@@ -73,6 +76,23 @@ void Acu3153::Reset() {
   acu3_livecounter_ = 0;
   acu3_checksum_ = 0;
 }
+
+Acu3153* Acu3153::set_acu3_brakingtargetposition(
+    double acu3_brakingtargetposition) {
+  acu3_brakingtargetposition_ = acu3_brakingtargetposition;
+  return this;
+ }
+
+// config detail: {'bit': 18, 'is_signed_var': False, 'len': 6, 'name': 'ACU3_BrakingTargetPosition', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|100]', 'physical_unit': '%', 'precision': 2.0, 'type': 'double'}
+void Acu3153::set_p_acu3_brakingtargetposition(uint8_t* data,
+    double acu3_brakingtargetposition) {
+  acu3_brakingtargetposition = ProtocolData::BoundedValue(0.0, 100.0, acu3_brakingtargetposition);
+  int x = acu3_brakingtargetposition / 2.000000;
+
+  Byte to_set(data + 2);
+  to_set.set_value(x, 2, 6);
+}
+
 
 Acu3153* Acu3153::set_acu3_epbcontrolflag(
     Acu3_153::Acu3_epbcontrolflagType acu3_epbcontrolflag) {
@@ -176,7 +196,7 @@ Acu3153* Acu3153::set_acu3_brakingcontrolflag(
   return this;
  }
 
-// config detail: {'bit': 40, 'description': 'This signal is the status of the braking control request', 'enum': {0: 'ACU3_BRAKINGCONTROLFLAG_NO_REQUEST', 1: 'ACU3_BRAKINGCONTROLFLAG_REQUEST', 2: 'ACU3_BRAKINGCONTROLFLAG_RESERVED', 3: 'ACU3_BRAKINGCONTROLFLAG_RESERVED'}, 'is_signed_var': False, 'len': 2, 'name': 'ACU3_BrakingControlFlag', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'enum'}
+// config detail: {'bit': 40, 'description': 'This signal is the status of the braking control request', 'enum': {0: 'ACU3_BRAKINGCONTROLFLAG_NO_REQUEST', 1: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_PRESURE', 2: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC', 3: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION'}, 'is_signed_var': False, 'len': 2, 'name': 'ACU3_BrakingControlFlag', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'enum'}
 void Acu3153::set_p_acu3_brakingcontrolflag(uint8_t* data,
     Acu3_153::Acu3_brakingcontrolflagType acu3_brakingcontrolflag) {
   int x = acu3_brakingcontrolflag;
@@ -219,6 +239,14 @@ void Acu3153::set_p_acu3_checksum(uint8_t* data,
   to_set.set_value(x, 0, 8);
 }
 
+
+double Acu3153::acu3_brakingtargetposition(const std::uint8_t* bytes, int32_t length) const {
+  Byte t0(bytes + 2);
+  int32_t x = t0.get_byte(2, 6);
+
+  double ret = x * 2.000000;
+  return ret;
+}
 
 Acu3_153::Acu3_epbcontrolflagType Acu3153::acu3_epbcontrolflag(const std::uint8_t* bytes, int32_t length) const {
   Byte t0(bytes + 6);

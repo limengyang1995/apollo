@@ -42,25 +42,25 @@ class Acu4154 : public ::apollo::drivers::canbus::ProtocolData<
 
   void Reset() override;
 
-  // config detail: {'bit': 32, 'description': '1: KL15 ON  3KL15 OFF', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_PowerRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 32, 'description': '1power on 3power off', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_PowerRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_powerrequest(int acu4_powerrequest);
 
-  // config detail: {'bit': 30, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 30, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_rrwindow_request(int acu4_rrwindow_request);
 
-  // config detail: {'bit': 28, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 28, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_rlwindow_request(int acu4_rlwindow_request);
 
-  // config detail: {'bit': 16, 'description': '1:lock  2:unlock', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Lock_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 16, 'description': '1lock 2unlock', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Lock_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_lock_request(int acu4_lock_request);
 
-  // config detail: {'bit': 26, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 26, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_frwindow_request(int acu4_frwindow_request);
 
-  // config detail: {'bit': 24, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 24, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_flwindow_request(int acu4_flwindow_request);
 
-  // config detail: {'bit': 18, 'description': '1:on  2:off 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Boot_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 18, 'description': '1on 2 off 3stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Boot_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_boot_request(int acu4_boot_request);
 
   // config detail: {'bit': 22, 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RearWiperRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
@@ -81,10 +81,10 @@ class Acu4154 : public ::apollo::drivers::canbus::ProtocolData<
   // config detail: {'bit': 11, 'description': 'This signal is the the horn lamp or request', 'is_signed_var': False, 'len': 1, 'name': 'ACU4_LampHorn', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|1]', 'physical_unit': '', 'precision': 1.0, 'type': 'bool'}
   Acu4154* set_acu4_lamphorn(bool acu4_lamphorn);
 
-  // config detail: {'bit': 14, 'description': '0 stop 1 horn', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_WhistleRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 14, 'description': '0off  1:on', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_WhistleRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_whistlerequest(int acu4_whistlerequest);
 
-  // config detail: {'bit': 20, 'description': '0 stop 1:inject water 2slow 3fast', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FrontWiperRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 20, 'description': '0stop 1inject water 2slow 3fast', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FrontWiperRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   Acu4154* set_acu4_frontwiperrequest(int acu4_frontwiperrequest);
 
   // config detail: {'bit': 12, 'description': '0:OFF 1:LOW 2£ºHIGH', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_BeamLampRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
@@ -104,25 +104,25 @@ class Acu4154 : public ::apollo::drivers::canbus::ProtocolData<
 
  private:
 
-  // config detail: {'bit': 32, 'description': '1: KL15 ON  3KL15 OFF', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_PowerRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 32, 'description': '1power on 3power off', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_PowerRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_powerrequest(uint8_t* data, int acu4_powerrequest);
 
-  // config detail: {'bit': 30, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 30, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_rrwindow_request(uint8_t* data, int acu4_rrwindow_request);
 
-  // config detail: {'bit': 28, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 28, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_rlwindow_request(uint8_t* data, int acu4_rlwindow_request);
 
-  // config detail: {'bit': 16, 'description': '1:lock  2:unlock', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Lock_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 16, 'description': '1lock 2unlock', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Lock_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_lock_request(uint8_t* data, int acu4_lock_request);
 
-  // config detail: {'bit': 26, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 26, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_frwindow_request(uint8_t* data, int acu4_frwindow_request);
 
-  // config detail: {'bit': 24, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 24, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_flwindow_request(uint8_t* data, int acu4_flwindow_request);
 
-  // config detail: {'bit': 18, 'description': '1:on  2:off 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Boot_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 18, 'description': '1on 2 off 3stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Boot_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_boot_request(uint8_t* data, int acu4_boot_request);
 
   // config detail: {'bit': 22, 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RearWiperRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
@@ -143,10 +143,10 @@ class Acu4154 : public ::apollo::drivers::canbus::ProtocolData<
   // config detail: {'bit': 11, 'description': 'This signal is the the horn lamp or request', 'is_signed_var': False, 'len': 1, 'name': 'ACU4_LampHorn', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|1]', 'physical_unit': '', 'precision': 1.0, 'type': 'bool'}
   void set_p_acu4_lamphorn(uint8_t* data, bool acu4_lamphorn);
 
-  // config detail: {'bit': 14, 'description': '0 stop 1 horn', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_WhistleRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 14, 'description': '0off  1:on', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_WhistleRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_whistlerequest(uint8_t* data, int acu4_whistlerequest);
 
-  // config detail: {'bit': 20, 'description': '0 stop 1:inject water 2slow 3fast', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FrontWiperRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+  // config detail: {'bit': 20, 'description': '0stop 1inject water 2slow 3fast', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FrontWiperRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
   void set_p_acu4_frontwiperrequest(uint8_t* data, int acu4_frontwiperrequest);
 
   // config detail: {'bit': 12, 'description': '0:OFF 1:LOW 2£ºHIGH', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_BeamLampRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}

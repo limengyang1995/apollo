@@ -22,22 +22,11 @@
 #include "modules/canbus_vehicle/jt/protocol/acu4_154.h"
 #include "modules/canbus_vehicle/jt/protocol/acs1_20c.h"
 #include "modules/canbus_vehicle/jt/protocol/acs2_20d.h"
-#include "modules/canbus_vehicle/jt/protocol/bcm1_2a0.h"
-#include "modules/canbus_vehicle/jt/protocol/bcm2_200.h"
-#include "modules/canbus_vehicle/jt/protocol/bms1_288.h"
-#include "modules/canbus_vehicle/jt/protocol/chu1_28c.h"
-#include "modules/canbus_vehicle/jt/protocol/chu2_28d.h"
+#include "modules/canbus_vehicle/jt/protocol/acs3_20e.h"
 #include "modules/canbus_vehicle/jt/protocol/epb1_2a1.h"
-#include "modules/canbus_vehicle/jt/protocol/gw1_268.h"
-#include "modules/canbus_vehicle/jt/protocol/ur1_3b1.h"
-#include "modules/canbus_vehicle/jt/protocol/ur2_3b2.h"
-#include "modules/canbus_vehicle/jt/protocol/ur3_3b3.h"
 #include "modules/canbus_vehicle/jt/protocol/vcu1_210.h"
 #include "modules/canbus_vehicle/jt/protocol/vcu2_211.h"
 #include "modules/canbus_vehicle/jt/protocol/vcu3_212.h"
-#include "modules/canbus_vehicle/jt/protocol/vector__independent_sig_msg_0.h"
-#include "modules/canbus_vehicle/jt/protocol/ws1_260.h"
-#include "modules/canbus_vehicle/jt/protocol/ws2_261.h"
 
 namespace apollo {
 namespace canbus {
@@ -53,22 +42,11 @@ JtMessageManager::JtMessageManager() {
   // Report Messages
   AddRecvProtocolData<Acs120c, true>();
   AddRecvProtocolData<Acs220d, true>();
-  AddRecvProtocolData<Bcm12a0, true>();
-  AddRecvProtocolData<Bcm2200, true>();
-  AddRecvProtocolData<Bms1288, true>();
-  AddRecvProtocolData<Chu128c, true>();
-  AddRecvProtocolData<Chu228d, true>();
+  AddRecvProtocolData<Acs320e, true>();
   AddRecvProtocolData<Epb12a1, true>();
-  AddRecvProtocolData<Gw1268, true>();
-  AddRecvProtocolData<Ur13b1, true>();
-  AddRecvProtocolData<Ur23b2, true>();
-  AddRecvProtocolData<Ur33b3, true>();
   AddRecvProtocolData<Vcu1210, true>();
   AddRecvProtocolData<Vcu2211, true>();
   AddRecvProtocolData<Vcu3212, true>();
-  AddRecvProtocolData<Vectorindependentsigmsg0, true>();
-  AddRecvProtocolData<Ws1260, true>();
-  AddRecvProtocolData<Ws2261, true>();
 }
 
 JtMessageManager::~JtMessageManager() {}
