@@ -42,6 +42,9 @@ class Acu3153 : public ::apollo::drivers::canbus::ProtocolData<
 
   void Reset() override;
 
+  // config detail: {'bit': 18, 'is_signed_var': False, 'len': 6, 'name': 'ACU3_BrakingTargetPosition', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|100]', 'physical_unit': '%', 'precision': 2.0, 'type': 'double'}
+  Acu3153* set_acu3_brakingtargetposition(double acu3_brakingtargetposition);
+
   // config detail: {'bit': 52, 'description': 'This signal is the status of the braking control request', 'enum': {0: 'ACU3_EPBCONTROLFLAG_NO_REQUEST', 1: 'ACU3_EPBCONTROLFLAG_RELEASE', 2: 'ACU3_EPBCONTROLFLAG_LOCK', 3: 'ACU3_EPBCONTROLFLAG_RESERVED'}, 'is_signed_var': False, 'len': 2, 'name': 'ACU3_EPBControlFlag', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'enum'}
   Acu3153* set_acu3_epbcontrolflag(Acu3_153::Acu3_epbcontrolflagType acu3_epbcontrolflag);
 
@@ -57,7 +60,7 @@ class Acu3153 : public ::apollo::drivers::canbus::ProtocolData<
   // config detail: {'bit': 8, 'description': 'This signal is deceleration request for wheel brake', 'is_signed_var': False, 'len': 10, 'name': 'ACU3_BrakingTargetDeceleration', 'offset': 0.0, 'order': 'intel', 'physical_range': '[-10|0]', 'physical_unit': 'm/s2', 'precision': -0.01, 'type': 'double'}
   Acu3153* set_acu3_brakingtargetdeceleration(double acu3_brakingtargetdeceleration);
 
-  // config detail: {'bit': 40, 'description': 'This signal is the status of the braking control request', 'enum': {0: 'ACU3_BRAKINGCONTROLFLAG_NO_REQUEST', 1: 'ACU3_BRAKINGCONTROLFLAG_REQUEST', 2: 'ACU3_BRAKINGCONTROLFLAG_RESERVED', 3: 'ACU3_BRAKINGCONTROLFLAG_RESERVED'}, 'is_signed_var': False, 'len': 2, 'name': 'ACU3_BrakingControlFlag', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'enum'}
+  // config detail: {'bit': 40, 'description': 'This signal is the status of the braking control request', 'enum': {0: 'ACU3_BRAKINGCONTROLFLAG_NO_REQUEST', 1: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_PRESURE', 2: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC', 3: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION'}, 'is_signed_var': False, 'len': 2, 'name': 'ACU3_BrakingControlFlag', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'enum'}
   Acu3153* set_acu3_brakingcontrolflag(Acu3_153::Acu3_brakingcontrolflagType acu3_brakingcontrolflag);
 
   // config detail: {'bit': 60, 'description': 'The Livecounter is used to check the signal consistency of the messages', 'is_signed_var': False, 'len': 4, 'name': 'ACU3_LiveCounter', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|15]', 'physical_unit': 'count', 'precision': 1.0, 'type': 'int'}
@@ -67,6 +70,9 @@ class Acu3153 : public ::apollo::drivers::canbus::ProtocolData<
   Acu3153* set_acu3_checksum(int acu3_checksum);
 
  private:
+
+  // config detail: {'bit': 18, 'is_signed_var': False, 'len': 6, 'name': 'ACU3_BrakingTargetPosition', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|100]', 'physical_unit': '%', 'precision': 2.0, 'type': 'double'}
+  void set_p_acu3_brakingtargetposition(uint8_t* data, double acu3_brakingtargetposition);
 
   // config detail: {'bit': 52, 'description': 'This signal is the status of the braking control request', 'enum': {0: 'ACU3_EPBCONTROLFLAG_NO_REQUEST', 1: 'ACU3_EPBCONTROLFLAG_RELEASE', 2: 'ACU3_EPBCONTROLFLAG_LOCK', 3: 'ACU3_EPBCONTROLFLAG_RESERVED'}, 'is_signed_var': False, 'len': 2, 'name': 'ACU3_EPBControlFlag', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'enum'}
   void set_p_acu3_epbcontrolflag(uint8_t* data, Acu3_153::Acu3_epbcontrolflagType acu3_epbcontrolflag);
@@ -83,7 +89,7 @@ class Acu3153 : public ::apollo::drivers::canbus::ProtocolData<
   // config detail: {'bit': 8, 'description': 'This signal is deceleration request for wheel brake', 'is_signed_var': False, 'len': 10, 'name': 'ACU3_BrakingTargetDeceleration', 'offset': 0.0, 'order': 'intel', 'physical_range': '[-10|0]', 'physical_unit': 'm/s2', 'precision': -0.01, 'type': 'double'}
   void set_p_acu3_brakingtargetdeceleration(uint8_t* data, double acu3_brakingtargetdeceleration);
 
-  // config detail: {'bit': 40, 'description': 'This signal is the status of the braking control request', 'enum': {0: 'ACU3_BRAKINGCONTROLFLAG_NO_REQUEST', 1: 'ACU3_BRAKINGCONTROLFLAG_REQUEST', 2: 'ACU3_BRAKINGCONTROLFLAG_RESERVED', 3: 'ACU3_BRAKINGCONTROLFLAG_RESERVED'}, 'is_signed_var': False, 'len': 2, 'name': 'ACU3_BrakingControlFlag', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'enum'}
+  // config detail: {'bit': 40, 'description': 'This signal is the status of the braking control request', 'enum': {0: 'ACU3_BRAKINGCONTROLFLAG_NO_REQUEST', 1: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_PRESURE', 2: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC', 3: 'ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION'}, 'is_signed_var': False, 'len': 2, 'name': 'ACU3_BrakingControlFlag', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'enum'}
   void set_p_acu3_brakingcontrolflag(uint8_t* data, Acu3_153::Acu3_brakingcontrolflagType acu3_brakingcontrolflag);
 
   // config detail: {'bit': 60, 'description': 'The Livecounter is used to check the signal consistency of the messages', 'is_signed_var': False, 'len': 4, 'name': 'ACU3_LiveCounter', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|15]', 'physical_unit': 'count', 'precision': 1.0, 'type': 'int'}
@@ -91,6 +97,8 @@ class Acu3153 : public ::apollo::drivers::canbus::ProtocolData<
 
   // config detail: {'bit': 0, 'description': 'The checksum is used to check whether the data transmission errors', 'is_signed_var': False, 'len': 8, 'name': 'ACU3_Checksum', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|255]', 'physical_unit': 'check', 'precision': 1.0, 'type': 'int'}
   void set_p_acu3_checksum(uint8_t* data, int acu3_checksum);
+
+  double acu3_brakingtargetposition(const std::uint8_t* bytes, const int32_t length) const;
 
   Acu3_153::Acu3_epbcontrolflagType acu3_epbcontrolflag(const std::uint8_t* bytes, const int32_t length) const;
 
@@ -109,6 +117,7 @@ class Acu3153 : public ::apollo::drivers::canbus::ProtocolData<
   int acu3_checksum(const std::uint8_t* bytes, const int32_t length) const;
 
  private:
+  double acu3_brakingtargetposition_;
   Acu3_153::Acu3_epbcontrolflagType acu3_epbcontrolflag_;
   Acu3_153::Acu3_geartargetType acu3_geartarget_;
   Acu3_153::Acu3_gearcontrolflagType acu3_gearcontrolflag_;

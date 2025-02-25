@@ -299,7 +299,8 @@ ErrorCode JtController::EnableAutoMode() {
   acu1_151_->set_acu1_steeringcontrolflag(Acu1_151::ACU1_STEERINGCONTROLFLAG_REQUEST);
   // acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
   acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
-  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST);
+  // acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
+  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
 
 
   can_sender_->Update();
@@ -327,7 +328,8 @@ ErrorCode JtController::EnableCloudMode() {
   acu1_151_->set_acu1_steeringcontrolflag(Acu1_151::ACU1_STEERINGCONTROLFLAG_REQUEST);
   acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
   // acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
-  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST);
+  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
+  // acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
 
 
   can_sender_->Update();
@@ -382,7 +384,8 @@ ErrorCode JtController::EnableSpeedOnlyMode() {
   // set enable
   // acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
   acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
-  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST);
+  // acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
+  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
 
   can_sender_->Update();
   if (!CheckResponse(CHECK_RESPONSE_SPEED_UNIT_FLAG, true)) {
@@ -455,9 +458,9 @@ void JtController::Brake(double pedal) {
 /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
   AINFO << "break COMMAND 1 IS "<< pedal;
-  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST);
+  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
   // wait for brake pedal or acceleration command
-  //acu3_153_->set_acu1_targetbrakingposition(std::abs(int(pedal)));
+  acu3_153_->set_acu3_brakingtargetposition(std::abs(int(pedal)));
   
 }
 
@@ -487,22 +490,24 @@ void JtController::Throttle(double pedal) {
 // unit:m/s^2
 void JtController::Acceleration(double acc) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
-      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
     AINFO << "The current drive mode does not need to set acceleration.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
   */
+  if (acc < 0){
+    acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
+    acu3_153_->set_acu3_brakingtargetdeceleration(acc);
+  }
 }
 
 // confirm the car is driven by speed command
 // speed:-xx.0~xx.0, unit:m/s
 void JtController::Speed(double speed) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
-      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY ) {
     AINFO << "The current drive mode does not need to set speed.";
     return;
   }

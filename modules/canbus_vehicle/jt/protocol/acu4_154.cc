@@ -116,7 +116,7 @@ Acu4154* Acu4154::set_acu4_powerrequest(
   return this;
  }
 
-// config detail: {'bit': 32, 'description': '1: KL15 ON  3KL15 OFF', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_PowerRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 32, 'description': '1power on 3power off', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_PowerRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_powerrequest(uint8_t* data,
     int acu4_powerrequest) {
   acu4_powerrequest = ProtocolData::BoundedValue(0, 3, acu4_powerrequest);
@@ -133,7 +133,7 @@ Acu4154* Acu4154::set_acu4_rrwindow_request(
   return this;
  }
 
-// config detail: {'bit': 30, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 30, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_rrwindow_request(uint8_t* data,
     int acu4_rrwindow_request) {
   acu4_rrwindow_request = ProtocolData::BoundedValue(0, 0, acu4_rrwindow_request);
@@ -150,7 +150,7 @@ Acu4154* Acu4154::set_acu4_rlwindow_request(
   return this;
  }
 
-// config detail: {'bit': 28, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 28, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_RLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_rlwindow_request(uint8_t* data,
     int acu4_rlwindow_request) {
   acu4_rlwindow_request = ProtocolData::BoundedValue(0, 0, acu4_rlwindow_request);
@@ -167,7 +167,7 @@ Acu4154* Acu4154::set_acu4_lock_request(
   return this;
  }
 
-// config detail: {'bit': 16, 'description': '1:lock  2:unlock', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Lock_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 16, 'description': '1lock 2unlock', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Lock_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_lock_request(uint8_t* data,
     int acu4_lock_request) {
   acu4_lock_request = ProtocolData::BoundedValue(0, 0, acu4_lock_request);
@@ -184,7 +184,7 @@ Acu4154* Acu4154::set_acu4_frwindow_request(
   return this;
  }
 
-// config detail: {'bit': 26, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 26, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FRWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_frwindow_request(uint8_t* data,
     int acu4_frwindow_request) {
   acu4_frwindow_request = ProtocolData::BoundedValue(0, 0, acu4_frwindow_request);
@@ -201,7 +201,7 @@ Acu4154* Acu4154::set_acu4_flwindow_request(
   return this;
  }
 
-// config detail: {'bit': 24, 'description': '1:fall  2:rise 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 24, 'description': '1fall  2 rise 3 stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FLWindow_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_flwindow_request(uint8_t* data,
     int acu4_flwindow_request) {
   acu4_flwindow_request = ProtocolData::BoundedValue(0, 0, acu4_flwindow_request);
@@ -218,7 +218,7 @@ Acu4154* Acu4154::set_acu4_boot_request(
   return this;
  }
 
-// config detail: {'bit': 18, 'description': '1:on  2:off 3:stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Boot_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 18, 'description': '1on 2 off 3stop', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_Boot_Request', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|0]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_boot_request(uint8_t* data,
     int acu4_boot_request) {
   acu4_boot_request = ProtocolData::BoundedValue(0, 0, acu4_boot_request);
@@ -332,7 +332,7 @@ Acu4154* Acu4154::set_acu4_whistlerequest(
   return this;
  }
 
-// config detail: {'bit': 14, 'description': '0 stop 1 horn', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_WhistleRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 14, 'description': '0off  1:on', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_WhistleRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_whistlerequest(uint8_t* data,
     int acu4_whistlerequest) {
   acu4_whistlerequest = ProtocolData::BoundedValue(0, 3, acu4_whistlerequest);
@@ -349,7 +349,7 @@ Acu4154* Acu4154::set_acu4_frontwiperrequest(
   return this;
  }
 
-// config detail: {'bit': 20, 'description': '0 stop 1:inject water 2slow 3fast', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FrontWiperRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
+// config detail: {'bit': 20, 'description': '0stop 1inject water 2slow 3fast', 'is_signed_var': False, 'len': 2, 'name': 'ACU4_FrontWiperRequest', 'offset': 0.0, 'order': 'intel', 'physical_range': '[0|3]', 'physical_unit': '', 'precision': 1.0, 'type': 'int'}
 void Acu4154::set_p_acu4_frontwiperrequest(uint8_t* data,
     int acu4_frontwiperrequest) {
   acu4_frontwiperrequest = ProtocolData::BoundedValue(0, 3, acu4_frontwiperrequest);
