@@ -18,7 +18,7 @@ vehicle_param {
   max_steer_angle_rate: 8.72
   steer_ratio: 20.0
   wheel_base: 2.92
-  wheel_rolling_radius: 0.621
+  wheel_rolling_radius: 0.31
   max_abs_speed_when_stopped: 0.2
   brake_deadzone: 6.0
   throttle_deadzone: 0.0
