@@ -83,9 +83,6 @@ bool JtVehicleFactory::Init(const CanbusConf *canbus_conf) {
   chassis_detail_writer_ =
       node_->CreateWriter<::apollo::canbus::Jt>(FLAGS_chassis_detail_topic);
 
-  chassis_detail_sender_writer_ = node_->CreateWriter<::apollo::canbus::Jt>(
-      FLAGS_chassis_detail_sender_topic);
-
   return true;
 }
 
@@ -154,46 +151,14 @@ Chassis JtVehicleFactory::publish_chassis() {
 }
 
 void JtVehicleFactory::PublishChassisDetail() {
-  Jt chassis_detail = vehicle_controller_->GetNewRecvChassisDetail();
-  ADEBUG << "latest chassis_detail is " << chassis_detail.ShortDebugString();
+  Jt chassis_detail;
+  message_manager_->GetSensorData(&chassis_detail);
+  ADEBUG << chassis_detail.ShortDebugString();
   chassis_detail_writer_->Write(chassis_detail);
-}
-
-void JtVehicleFactory::PublishChassisDetailSender() {
-  Jt sender_chassis_detail = vehicle_controller_->GetNewSenderChassisDetail();
-  ADEBUG << "latest sender_chassis_detail is "
-         << sender_chassis_detail.ShortDebugString();
-  chassis_detail_sender_writer_->Write(sender_chassis_detail);
 }
 
 void JtVehicleFactory::UpdateHeartbeat() {
     can_sender_.Update_Heartbeat();
-}
-
-bool JtVehicleFactory::CheckChassisCommunicationFault() {
-  if (vehicle_controller_->CheckChassisCommunicationError()) {
-    return true;
-  }
-  return false;
-}
-
-void JtVehicleFactory::AddSendProtocol() {
-  vehicle_controller_->AddSendMessage();
-}
-
-void JtVehicleFactory::ClearSendProtocol() {
-  can_sender_.ClearMessage();
-}
-
-bool JtVehicleFactory::IsSendProtocolClear() {
-  if (can_sender_.IsMessageClear()) {
-    return true;
-  }
-  return false;
-}
-
-Chassis::DrivingMode JtVehicleFactory::Driving_Mode() {
-  return vehicle_controller_->driving_mode();
 }
 
 std::unique_ptr<VehicleController<::apollo::canbus::Jt>>

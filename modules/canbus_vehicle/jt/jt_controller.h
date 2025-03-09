@@ -60,11 +60,6 @@ class JtController final : public VehicleController<::apollo::canbus::Jt> {
    */
   Chassis chassis() override;
 
-  /**
-   * @brief add the sender message.
-   */
-  void AddSendMessage() override;
-
  private:
   // main logical function for operation the car enter or exit the auto driving
   void Emergency() override;

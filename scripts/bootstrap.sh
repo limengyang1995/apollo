@@ -17,8 +17,8 @@
 ###############################################################################
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DREAMVIEW_URL="http://localhost:8899"
-DREAMVIEW_PLUS_URL="http://192.168.1.104:8888"
+DREAMVIEW_URL="http://192.168.8.159:8899"
+DREAMVIEW_PLUS_URL="http://192.168.8.159:8888"
 
 cd "${DIR}/.."
 
@@ -63,7 +63,8 @@ function start_plus() {
   ./scripts/monitor.sh start
   ./scripts/dreamview_plus.sh start
   if [ $? -eq 0 ]; then
-    sleep 6 # wait for some time before starting to check
+    sleep 8 # wait for some time before starting to check
+    echo "dv starting!"
     http_status="$(curl -o /dev/null -x '' -I -L -s -w '%{http_code}' ${DREAMVIEW_PLUS_URL})"
     if [ $http_status -eq 200 ]; then
       echo "Dreamview Plus is running at" $DREAMVIEW_PLUS_URL

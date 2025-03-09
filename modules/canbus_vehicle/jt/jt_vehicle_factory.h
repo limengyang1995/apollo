@@ -90,44 +90,14 @@ class JtVehicleFactory : public AbstractVehicleFactory {
   Chassis publish_chassis() override;
 
   /**
-   * @brief create cansender heartbeat
-   */
-  void UpdateHeartbeat() override;
-
-  /**
    * @brief publish chassis for vehicle messages
    */
   void PublishChassisDetail() override;
 
   /**
-   * @brief publish chassis for apollo sender messages
+   * @brief create cansender heartbeat
    */
-  void PublishChassisDetailSender() override;
-
-  /**
-   * @brief check chassis can receiver lost
-   */
-  bool CheckChassisCommunicationFault() override;
-
-  /**
-   * @brief add the can sender messages
-   */
-  void AddSendProtocol() override;
-
-  /**
-   * @brief clear the can sender messages
-   */
-  void ClearSendProtocol() override;
-
-  /**
-   * @brief check the sender message clear or not
-   */
-  bool IsSendProtocolClear() override;
-
-  /**
-   * @brief get the latest chassis driving mode
-   */
-  Chassis::DrivingMode Driving_Mode() override;
+  void UpdateHeartbeat();
 
  private:
   /**
@@ -152,8 +122,7 @@ class JtVehicleFactory : public AbstractVehicleFactory {
 
   std::shared_ptr<::apollo::cyber::Writer<::apollo::canbus::Jt>>
       chassis_detail_writer_;
-  std::shared_ptr<::apollo::cyber::Writer<::apollo::canbus::Jt>>
-      chassis_detail_sender_writer_;
+
 };
 
 CYBER_REGISTER_VEHICLEFACTORY(JtVehicleFactory)

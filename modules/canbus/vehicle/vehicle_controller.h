@@ -132,6 +132,8 @@ class VehicleController {
    * acc:-7.0~7.0, unit:m/s^2
    */
   virtual void Acceleration(double acc) = 0;
+  
+  virtual void Speed(double speed){}
 
   /*
    * @brief steering with old angle speed angle:-99.99~0.00~99.99, unit:%,

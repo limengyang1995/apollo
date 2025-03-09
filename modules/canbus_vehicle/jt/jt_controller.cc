@@ -42,13 +42,6 @@ const int32_t CHECK_RESPONSE_SPEED_UNIT_FLAG = 2;
 
 }  // namespace
 
-void JtController::AddSendMessage() {
-  can_sender_->AddMessage(Acu1151::ID, acu1_151_, false);
-  can_sender_->AddMessage(Acu2152::ID, acu2_152_, false);
-  can_sender_->AddMessage(Acu3153::ID, acu3_153_, false);
-  can_sender_->AddMessage(Acu4154::ID, acu4_154_, false);
-}
-
 ErrorCode JtController::Init(
 	const VehicleParameter& params,
 	CanSender<::apollo::canbus::Jt> *const can_sender,
@@ -107,7 +100,10 @@ ErrorCode JtController::Init(
      return ErrorCode::CANBUS_ERROR;
   }
 
-  AddSendMessage();
+  can_sender_->AddMessage(Acu1151::ID, acu1_151_, false);
+  can_sender_->AddMessage(Acu2152::ID, acu2_152_, false);
+  can_sender_->AddMessage(Acu3153::ID, acu3_153_, false);
+  can_sender_->AddMessage(Acu4154::ID, acu4_154_, false);
 
   AINFO << "JtController is initialized.";
 
@@ -143,8 +139,8 @@ void JtController::Stop() {
 
 Chassis JtController::chassis() {
   chassis_.Clear();
-  Jt chassis_detail = GetNewRecvChassisDetail();
-
+  Jt chassis_detail;
+  message_manager_->GetSensorData(&chassis_detail);
   // 21, 22, previously 1, 2
   if (driving_mode() == Chassis::EMERGENCY_MODE) {
   set_chassis_error_code(Chassis::NO_ERROR);
@@ -176,16 +172,6 @@ Chassis JtController::chassis() {
   }else{
     chassis_.mutable_engage_advice()->set_advice(
           apollo::common::EngageAdvice::READY_TO_ENGAGE);
-  }
-
-  // check the chassis detail lost
-  if (is_chassis_communication_error_) {
-    chassis_.mutable_engage_advice()->set_advice(
-        apollo::common::EngageAdvice::DISALLOW_ENGAGE);
-    chassis_.mutable_engage_advice()->set_reason(
-        "jt chassis detail is lost! Please check the communication error.");
-    set_chassis_error_code(Chassis::CHASSIS_CAN_LOST);
-    set_driving_mode(Chassis::EMERGENCY_MODE);
   }
 
   /* ADD YOUR OWN CAR CHASSIS OPERATION HERE */
@@ -666,11 +652,11 @@ void JtController::ResetProtocol() {
 }
 
 bool JtController::CheckChassisError() {
-  if (is_chassis_communication_error_) {
-    AERROR_EVERY(100) << "ChassisDetail has no jt vehicle info.";
-    return false;
+  Jt chassis_detail;
+  if (message_manager_->GetSensorData(&chassis_detail) != ErrorCode::OK) {
+    AERROR_EVERY(100) << "Get chassis detail failed.";
   }
-  Jt chassis_detail = GetNewRecvChassisDetail();
+
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // steer fault
   // drive fault
@@ -798,12 +784,6 @@ void JtController::SecurityDogThreadFunc() {
       can_sender_->Update();
     }
 
-    // recove error code
-    if (!emergency_mode && !is_chassis_communication_error_ &&
-        mode == Chassis::EMERGENCY_MODE) {
-      set_chassis_error_code(Chassis::NO_ERROR);
-    }
-
     end = ::apollo::cyber::Time::Now().ToMicrosecond();
     std::chrono::duration<double, std::micro> elapsed{end - start};
     if (elapsed < default_period) {
@@ -820,29 +800,28 @@ bool JtController::CheckResponse(const int32_t flags, bool need_wait) {
   bool is_eps_online = false;
   bool is_vcu_online = false;
   bool is_esp_online = false;
-  //Jt chassis_detail;
+  Jt chassis_detail;
 
   do {
-    /* if (message_manager_->GetSensorData(&chassis_detail) != ErrorCode::OK) {
+    if (message_manager_->GetSensorData(&chassis_detail) != ErrorCode::OK) {
       AERROR_EVERY(100) << "Get chassis detail failed.";
       return false;
-    } */
-    Jt chassis_detail = GetNewRecvChassisDetail();
+    }
     bool check_ok = true;
     if (flags & CHECK_RESPONSE_STEER_UNIT_FLAG) {
       is_eps_online = chassis_detail.has_acs1_20c() &&
                       chassis_detail.acs1_20c().has_acs1_steeringtakeoverst() &&
-                      chassis_detail.acs1_20c().acs1_steeringtakeoverst();
+                      !chassis_detail.acs1_20c().acs1_steeringtakeoverst();
       check_ok = check_ok && is_eps_online;
     }
 
     if (flags & CHECK_RESPONSE_SPEED_UNIT_FLAG) {
       is_vcu_online = chassis_detail.has_acs1_20c() &&
                       chassis_detail.acs1_20c().has_acs1_drivingtakeoverst() &&
-                      chassis_detail.acs1_20c().acs1_drivingtakeoverst();
+                      !chassis_detail.acs1_20c().acs1_drivingtakeoverst();
       is_esp_online = chassis_detail.has_acs1_20c() &&
                       chassis_detail.acs1_20c().has_acs1_brakingtakeoverst() &&
-                      chassis_detail.acs1_20c().acs1_brakingtakeoverst();
+                      !chassis_detail.acs1_20c().acs1_brakingtakeoverst();
       check_ok = check_ok && is_vcu_online && is_esp_online;
     }
     if (check_ok) {

@@ -155,6 +155,8 @@ private:
     char* image_yuyv_cuda_ = NULL;
     char* image_rgb_cuda_ = NULL;
 
+    
+
     std::shared_ptr<Config> config_;
     int pixel_format_;
     int fd_;
