@@ -358,7 +358,7 @@ ErrorCode VehicleController<SensorType>::Update(
     if (control_command.steering_rate() > steering_rate_threshold) {
       Steer(control_command.steering_target(), control_command.steering_rate());
     } else {
-      Steer(control_command.steering_target());
+      Steer(control_command.steering_target(), 50);
     }
   }
 

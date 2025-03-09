@@ -140,6 +140,9 @@ class JtController final : public VehicleController<::apollo::canbus::Jt> {
 
   std::mutex chassis_mask_mutex_;
   int32_t chassis_error_mask_ = 0;
+  Chassis::GearPosition former_gear_position;
+  int gear_count = 0;
+  bool former_parking_brake = false;
 };
 
 }  // namespace jt

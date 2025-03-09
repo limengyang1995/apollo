@@ -105,6 +105,7 @@ ErrorCode JtController::Init(
   can_sender_->AddMessage(Acu3153::ID, acu3_153_, false);
   can_sender_->AddMessage(Acu4154::ID, acu4_154_, false);
 
+  former_gear_position = Chassis::GEAR_NEUTRAL;
   AINFO << "JtController is initialized.";
 
   is_initialized_ = true;
@@ -398,12 +399,25 @@ void JtController::Gear(Chassis::GearPosition gear_position) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
-  //switch gear need a brake pedal 10%
-  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
-  // wait for brake pedal or acceleration command
-  acu3_153_->set_acu3_brakingtargetposition(20);
-
-
+  if (gear_position != former_gear_position ){
+    //switch gear need a brake pedal 10%
+    acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
+    // wait for brake pedal or acceleration command
+    acu3_153_->set_acu3_brakingtargetposition(20);
+    ++gear_count;
+  }else{
+    if (gear_count < 50 && gear_count > 0 ){
+      //switch gear need a brake pedal 10%
+      acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
+      // wait for brake pedal or acceleration command
+      acu3_153_->set_acu3_brakingtargetposition(20);
+      ++gear_count;
+    }else if(gear_count != 0){
+      acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_NO_REQUEST);  //brakepedal
+      gear_count = 0;
+    }
+  }
+  
  acu3_153_->set_acu3_gearcontrolflag(Acu3_153::ACU3_GEARCONTROLFLAG_REQUEST);
  switch (gear_position) {
   case Chassis::GEAR_NEUTRAL: {
@@ -436,6 +450,7 @@ void JtController::Gear(Chassis::GearPosition gear_position) {
     break;
   }
 }
+former_gear_position = gear_position;
 }
 
 // brake with pedal
@@ -558,10 +573,21 @@ void JtController::Steer(double angle, double angle_spd) {
 
 void JtController::SetEpbBreak(const ControlCommand& command) {
   if (command.parking_brake()) {
-    acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_LOCK);
+    if (former_parking_brake != command.parking_brake()){
+      acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_LOCK);
+    }else{
+      acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST);
+    }
   } else {
-    acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST);
+    if (former_parking_brake != command.parking_brake()){
+      acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_RELEASE);
+    }else{
+      acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST);
+    }
+    
   }
+  former_parking_brake = command.parking_brake();
+
 }
 
 void JtController::SetBeam(const VehicleSignal& vehicle_signal) {
