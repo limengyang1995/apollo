@@ -296,6 +296,7 @@ ErrorCode JtController::EnableAutoMode() {
     return ErrorCode::OK;
   }
   // set enable
+  acu3_153_->set_acu3_gearcontrolflag(Acu3_153::ACU3_GEARCONTROLFLAG_REQUEST);
   acu1_151_->set_acu1_steeringcontrolflag(Acu1_151::ACU1_STEERINGCONTROLFLAG_REQUEST);
   // acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
   acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
@@ -325,6 +326,7 @@ ErrorCode JtController::EnableCloudMode() {
     return ErrorCode::OK;
   }
   // set enable
+  acu3_153_->set_acu3_gearcontrolflag(Acu3_153::ACU3_GEARCONTROLFLAG_REQUEST);
   acu1_151_->set_acu1_steeringcontrolflag(Acu1_151::ACU1_STEERINGCONTROLFLAG_REQUEST);
   acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
   // acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
@@ -410,6 +412,12 @@ void JtController::Gear(Chassis::GearPosition gear_position) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  //switch gear need a brake pedal 10%
+  acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
+  // wait for brake pedal or acceleration command
+  acu3_153_->set_acu3_brakingtargetposition(20);
+
+
  acu3_153_->set_acu3_gearcontrolflag(Acu3_153::ACU3_GEARCONTROLFLAG_REQUEST);
  switch (gear_position) {
   case Chassis::GEAR_NEUTRAL: {
@@ -704,14 +712,16 @@ if (chassis_detail.has_acs1_20c()){
     return true;
   }
 
-  if (chassis_detail.acs1_20c().acs1_steeringfailurest()) {
+  if (chassis_detail.acs1_20c().has_acs1_steeringfailurest()) {
     if(chassis_detail.acs1_20c().acs1_steeringfailurest() != Acs1_20c::ACS1_STEERINGFAILUREST_NO_FAIL){ 
+      //std :: cout << "steer fail 1" << std :: endl;
       chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_STEER);
       return true;
     }else{
       chassis_.set_error_code(Chassis::NO_ERROR);
     }
   }else{
+    //std :: cout << "steer fail 2" << std :: endl;
     chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_STEER);
     return true;
   }
