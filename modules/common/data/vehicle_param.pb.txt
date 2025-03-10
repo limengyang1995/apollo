@@ -20,6 +20,6 @@ vehicle_param {
   wheel_base: 2.92
   wheel_rolling_radius: 0.31
   max_abs_speed_when_stopped: 0.2
-  brake_deadzone: 6.0
+  brake_deadzone: 0.0
   throttle_deadzone: 0.0
 }

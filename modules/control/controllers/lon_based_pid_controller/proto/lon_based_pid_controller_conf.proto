@@ -73,5 +73,5 @@ message LonBasedPidControllerConf{
 
   optional double speed_itfc_acc_thres = 44 [default = 0.0];
 
-  optional bool use_speed_itfc = 45 [default = false];
+  optional bool use_speed_itfc = 45 [default = true];
 }

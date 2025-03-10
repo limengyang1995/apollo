@@ -333,20 +333,22 @@ ErrorCode VehicleController<SensorType>::Update(
 
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_SPEED_ONLY) {
-    Gear(control_command.gear_location());
-    // Throttle(control_command.throttle());
+    
+    Throttle(control_command.throttle());
     Acceleration(control_command.acceleration());
-    Speed(control_command.speed());
-    // Brake(control_command.brake());
+    //Speed(control_command.speed());
+    //Brake(control_command.brake());
+    Gear(control_command.gear_location());
     SetEpbBreak(control_command);
     SetLimits();
   }
 
   if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
-    Gear(control_command.gear_location());
+    
     Throttle(control_command.throttle());
     //Acceleration(control_command.acceleration());
     Brake(control_command.brake());
+    Gear(control_command.gear_location());
     SetEpbBreak(control_command);
     SetLimits();
   }

@@ -285,9 +285,9 @@ ErrorCode JtController::EnableAutoMode() {
   // set enable
   acu3_153_->set_acu3_gearcontrolflag(Acu3_153::ACU3_GEARCONTROLFLAG_REQUEST);
   acu1_151_->set_acu1_steeringcontrolflag(Acu1_151::ACU1_STEERINGCONTROLFLAG_REQUEST);
-  // acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
-  acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
-  // acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
+  acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
+  //acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_RESERVEDSPEED);  //speed
+  //acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
   acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
 
 
@@ -406,7 +406,7 @@ void JtController::Gear(Chassis::GearPosition gear_position) {
     acu3_153_->set_acu3_brakingtargetposition(20);
     ++gear_count;
   }else{
-    if (gear_count < 50 && gear_count > 0 ){
+    if (gear_count < 100 && gear_count > 0 ){
       //switch gear need a brake pedal 10%
       acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
       // wait for brake pedal or acceleration command
@@ -506,9 +506,13 @@ void JtController::Acceleration(double acc) {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
   */
-  if (acc < 0){
+  AERROR << "acc is : " << acc;
+  if (acc < 0.05){
     acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
     acu3_153_->set_acu3_brakingtargetdeceleration(acc);
+  }else{
+    acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
+    acu3_153_->set_acu3_brakingtargetdeceleration(0.01);
   }
 }
 

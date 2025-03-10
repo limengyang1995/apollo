@@ -581,9 +581,21 @@ Status LonController::ComputeControlCommand(
           vehicle_param_.max_abs_speed_when_stopped() ||
       chassis->gear_location() == trajectory_message_->gear() ||
       chassis->gear_location() == canbus::Chassis::GEAR_NEUTRAL) {
+    if(chassis->gear_location() == canbus::Chassis::GEAR_NEUTRAL && 
+       trajectory_message_->gear() == canbus::Chassis::GEAR_DRIVE){
+         cmd->set_brake(20);
+         cmd->set_acceleration(-1.5);
+         cmd->set_throttle(0);
+       }
     cmd->set_gear_location(trajectory_message_->gear());
   } else {
     cmd->set_gear_location(chassis->gear_location());
+  }
+
+  if (chassis->parking_brake()) {
+
+    cmd->set_acceleration(0.0);
+    cmd->set_gear_location(canbus::Chassis::GEAR_NEUTRAL);
   }
 
   if (lon_based_pidcontroller_conf_.use_speed_itfc()) {
