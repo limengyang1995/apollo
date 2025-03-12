@@ -507,12 +507,12 @@ void JtController::Acceleration(double acc) {
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
   */
   AERROR << "acc is : " << acc;
-  if (acc < 0.05){
+  if (acc < 0.01){
     acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
     acu3_153_->set_acu3_brakingtargetdeceleration(acc);
   }else{
     acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_DEC);  //deceleration
-    acu3_153_->set_acu3_brakingtargetdeceleration(0.01);
+    acu3_153_->set_acu3_brakingtargetdeceleration(0.0);
   }
 }
 
@@ -577,14 +577,19 @@ void JtController::Steer(double angle, double angle_spd) {
 
 void JtController::SetEpbBreak(const ControlCommand& command) {
   if (command.parking_brake()) {
-    if (former_parking_brake != command.parking_brake()){
+    if (former_parking_brake != command.parking_brake() && epb_count < 3){
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_LOCK);
+      ++epb_count;
+      return;
     }else{
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST);
+      epb_count = 0;
     }
   } else {
     if (former_parking_brake != command.parking_brake()){
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_RELEASE);
+      ++epb_count;
+      return;
     }else{
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST);
     }

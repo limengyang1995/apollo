@@ -143,6 +143,7 @@ class JtController final : public VehicleController<::apollo::canbus::Jt> {
   Chassis::GearPosition former_gear_position;
   int gear_count = 0;
   bool former_parking_brake = false;
+  int epb_count = 0;
 };
 
 }  // namespace jt
