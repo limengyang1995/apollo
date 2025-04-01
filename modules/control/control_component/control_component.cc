@@ -471,9 +471,9 @@ bool ControlComponent::Proc() {
   ControlCommand control_command;
 
   Status status;
-  if (local_view_.chassis().driving_mode() ==
-      apollo::canbus::Chassis::COMPLETE_AUTO_DRIVE || local_view_.chassis().driving_mode() ==
-      apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE) {
+  if ((local_view_.chassis().driving_mode() == apollo::canbus::Chassis::COMPLETE_AUTO_DRIVE &&
+       planning_command_status_.status() != apollo::external_command::CommandStatusType::FINISHED) ||
+        local_view_.chassis().driving_mode() == apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE) {
     status = ProduceControlCommand(&control_command);
     ADEBUG << "Produce control command normal.";
   } else {
@@ -620,7 +620,9 @@ void ControlComponent::ResetAndProduceZeroControlCommand(
   control_command->set_steering_rate(0.0);
   control_command->set_speed(0.0);
   control_command->set_brake(0.0);
-  control_command->set_gear_location(Chassis::GEAR_DRIVE);
+  control_command->set_parking_brake(true);
+  control_command->set_driving_mode(Chassis::COMPLETE_MANUAL);
+  control_command->set_gear_location(Chassis::GEAR_NEUTRAL);
   control_task_agent_.Reset();
   latest_trajectory_.mutable_trajectory_point()->Clear();
   latest_trajectory_.mutable_path_point()->Clear();

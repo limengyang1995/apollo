@@ -68,7 +68,7 @@ void Acu3153::Reset() {
   // TODO(All) :  you should check this manually
   acu3_brakingtargetposition_ = 0.0;
   acu3_epbcontrolflag_ = Acu3_153::ACU3_EPBCONTROLFLAG_NO_REQUEST;
-  acu3_geartarget_ = Acu3_153::ACU3_GEARTARGET_P;
+  acu3_geartarget_ = Acu3_153::ACU3_GEARTARGET_N;
   acu3_gearcontrolflag_ = Acu3_153::ACU3_GEARCONTROLFLAG_NO_REQUEST;
   acu3_brakingtargetpressure_ = 0.0;
   acu3_brakingtargetdeceleration_ = 0.0;
