@@ -20,12 +20,12 @@ auto_white_balance: true
 white_balance: 4000
 bytes_per_pixel: 2
 trigger_internal: 0
-trigger_fps: 15
+trigger_fps: 10
 raw_channel_name: "/apollo/sensor/camera/front_6mm/raw/image"
 channel_name: "/apollo/sensor/camera/front_6mm/image"
 
-device_wait_ms: 20
-spin_rate: 100
+device_wait_ms: 10
+spin_rate: 15
 output_type: RGB
 
 compress_conf {

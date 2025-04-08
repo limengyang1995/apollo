@@ -271,7 +271,7 @@ bool UsbCam::poll(const CameraImagePtr& raw_image, const CameraImagePtr& sensor_
     FD_SET(fd_, &fds);
 
     /* Timeout. */
-    tv.tv_sec = 2;
+    tv.tv_sec = 3;
     tv.tv_usec = 0;
 
     r = select(fd_ + 1, &fds, nullptr, nullptr, &tv);
@@ -1246,6 +1246,7 @@ int UsbCam::convert_yuv_to_rgb_buffer_cuda(
 #endif
 
 void UsbCam::reconnect() {
+    sleep(1);
     stop_capturing();
     uninit_device();
     close_device();

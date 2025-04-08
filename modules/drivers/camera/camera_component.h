@@ -54,7 +54,7 @@ class CameraComponent : public Component<> {
   std::vector<std::shared_ptr<Image>> pb_image_buffer_;
   std::vector<std::shared_ptr<Image>> raw_image_buffer_;
   uint32_t spin_rate_ = 200;
-  uint32_t device_wait_ = 2000;
+  uint32_t device_wait_ = 100;
   int index_ = 0;
   int buffer_size_ = 16;
   const int32_t MAX_IMAGE_SIZE = 20 * 1024 * 1024;

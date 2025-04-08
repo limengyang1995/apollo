@@ -66,7 +66,7 @@ bool CameraComponent::Init() {
   }
 
   device_wait_ = camera_config_->device_wait_ms();
-  spin_rate_ = static_cast<uint32_t>((1.0 / camera_config_->spin_rate()) * 1e6);
+  spin_rate_ = static_cast<uint32_t>((1.0 / camera_config_->spin_rate()) * 1e3);
   AERROR << "spin_rate_:" << spin_rate_;
 
   if (camera_config_->output_type() == YUYV) {
@@ -119,7 +119,7 @@ bool CameraComponent::Init() {
   }
 
   writer_ = node_->CreateWriter<Image>(camera_config_->channel_name());
-  raw_writer_ = node_->CreateWriter<Image>(camera_config_->raw_channel_name());
+  // raw_writer_ = node_->CreateWriter<Image>(camera_config_->raw_channel_name());
   async_result_ = cyber::Async(&CameraComponent::run, this);
   return true;
 }
@@ -150,15 +150,15 @@ void CameraComponent::run() {
     pb_image->set_data(raw_image_->image, raw_image_->image_size);
     writer_->Write(pb_image);
 
-    auto raw_image_for_compress = raw_image_buffer_.at(index_++);
-    raw_image_for_compress->mutable_header()->set_timestamp_sec(
-        header_time);
-    raw_image_for_compress->set_measurement_time(measurement_time);
-    raw_image_for_compress->set_data(raw_image_for_compress_->image,
-                                      raw_image_for_compress_->image_size);
-    raw_writer_->Write(raw_image_for_compress);
+    // auto raw_image_for_compress = raw_image_buffer_.at(index_++);
+    // raw_image_for_compress->mutable_header()->set_timestamp_sec(
+    //     header_time);
+    // raw_image_for_compress->set_measurement_time(measurement_time);
+    // raw_image_for_compress->set_data(raw_image_for_compress_->image,
+    //                                   raw_image_for_compress_->image_size);
+    // // raw_writer_->Write(raw_image_for_compress);
 
-    cyber::SleepFor(std::chrono::microseconds(spin_rate_));
+    cyber::SleepFor(std::chrono::milliseconds(spin_rate_));
   }
 }
 

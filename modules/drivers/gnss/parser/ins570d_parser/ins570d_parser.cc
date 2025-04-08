@@ -306,7 +306,7 @@ void Ins570dParser::PrepareMessage(MessageInfoVec* messages) {
   // getGPSTIME(*tmp_);
   ins570d_data_=*tmp_;
   // debug
-  ins570d_data_.debugString();
+  // ins570d_data_.debugString();
   HandleGnssBestpos();
   HandleBestPos();
   HandleCorrImuData();

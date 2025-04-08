@@ -85,14 +85,14 @@ bool ExternalDriver::Init() {
 
                 std::lock_guard<std::mutex> lock(mutex_);
                 localization_.CopyFrom(*localization);
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                // std::this_thread::sleep_for(std::chrono::seconds(1));
             });
     canbus_reader_ = node_->CreateReader<apollo::canbus::Chassis>(
         FLAGS_chassis_topic, [this](const std::shared_ptr<apollo::canbus::Chassis>& chassis) {
 
             std::lock_guard<std::mutex> lock(mutex_);
             chassis_.CopyFrom(*chassis);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            // std::this_thread::sleep_for(std::chrono::seconds(1));
         });
 
     return true;
@@ -100,7 +100,7 @@ bool ExternalDriver::Init() {
 bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
     for (const auto& channel : config.channel().input_camera_channel_name()) {
         std::shared_ptr<cyber::Reader<apollo::drivers::Image>> reader_;
-        if (channel == "/apollo/sensor/camera/front_6mm/image") {
+        if (channel == "/apollo/sensor/camera/left_fisheye/image") {
             reader_ = node_->CreateReader<apollo::drivers::Image>(
                     channel, [&](const std::shared_ptr<apollo::drivers::Image>& image) { ProcessImage(image); });
         } else {
@@ -155,7 +155,7 @@ void ExternalDriver::SendDataToCloud() {
         // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
         rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.dump().c_str(), "0");
 
-        AINFO<<vehicle_data;
+        // AINFO<<vehicle_data;
     }
 
 }
@@ -182,11 +182,11 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         // AERROR << "is_start_publish :" << is_start_publish;
         cv::Mat img_front = img_[0];
         cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
-        cv::Mat img_left = img_[1];
+        cv::Mat img_left = img_[3];
         cv::cvtColor(img_left, img_left, cv::COLOR_RGB2BGR);
-        cv::Mat img_right = img_[0];
+        cv::Mat img_right = img_[1];
         cv::cvtColor(img_right, img_right, cv::COLOR_RGB2BGR);
-        cv::Mat img_back = img_[1];
+        cv::Mat img_back = img_[2];
         cv::cvtColor(img_back, img_back, cv::COLOR_RGB2BGR);
 
         cv::resize(img_front, img_front, cv::Size(), 0.35, 0.35);
@@ -258,10 +258,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
                 }
             
         }
-        // rtc_client_1_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_left.data()), buf_left.size());
-        // rtc_client_2_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_right.data()), buf_right.size());
-        // rtc_client_3_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_back.data()), buf_back.size());
-        // rtc_client_4_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_front.data()), buf.size());
+
         rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         // AERROR<<"start send image successfully!";
         
@@ -282,7 +279,7 @@ bool ExternalDriver::Proc() {
 
     std::string input_command_string;
     nlohmann::json command;
-    // AERROR << "recieve msg from remote control \n" << data;
+    AERROR << "recieve msg from remote control --: " << data;
     
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         
@@ -298,7 +295,7 @@ bool ExternalDriver::Proc() {
         }
         if (command.contains("is_start_publish")){
             if (command["is_start_publish"] == "true"){
-                // AERROR << "recieve msg from remote control \n" << command.dump();
+                AINFO << "start publish image request!"<<command.dump();
 
                 is_start_publish = true;
             }
@@ -489,7 +486,7 @@ void ExternalDriver::SendCloudControlCommand(
   command->set_brake(brake*100);
   command->set_steering_target(steering_target*100);
   //command->set_driving_mode(apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE);
-//   AERROR<< "Sending cloud control command: " << command->DebugString();
+  AERROR<< "Sending cloud control command: " << command->DebugString();
   cloud_control_cmd_writer_->Write(command);
 }
 
