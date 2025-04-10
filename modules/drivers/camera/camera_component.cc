@@ -144,7 +144,7 @@ void CameraComponent::run() {
     }
     auto pb_image = pb_image_buffer_.at(index_);
     auto header_time = cyber::Time::Now().ToSecond();
-    auto measurement_time = image_time.ToSecond();
+    auto measurement_time = image_time.ToSecond() - 21.6 ;  //for the constant difference between camera and computer
     pb_image->mutable_header()->set_timestamp_sec(header_time);
     pb_image->set_measurement_time(measurement_time);
     pb_image->set_data(raw_image_->image, raw_image_->image_size);

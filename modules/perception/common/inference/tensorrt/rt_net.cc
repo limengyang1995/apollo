@@ -803,7 +803,7 @@ RTNet::RTNet(const std::string &net_file, const std::string &model_file,
   loadWeights(model_file, &weight_map_);
   net_param_.reset(new NetParameter);
   loadNetParams(net_file, net_param_.get());
-  model_root_ = "/apollo/modules/perception/data";
+  model_root_ = model_root;
   BatchStream stream;
 
   calibrator_ =
@@ -831,7 +831,6 @@ bool RTNet::shape(const std::string &name, std::vector<int> *res) {
 }
 void RTNet::init_blob(std::vector<std::string> *names) {
   auto engine = &(context_->getEngine());
-
   for (auto name : *names) {
     int bindingIndex =
         engine->getBindingIndex(tensor_modify_map_[name].c_str());
@@ -901,7 +900,7 @@ bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
   builder_config_ = builder_->createBuilderConfig();
   builder_->setMaxBatchSize(max_batch_size_);
   builder_config_->setMaxWorkspaceSize(workspaceSize_);
-
+  int8_mode = false;
   if (int8_mode) {
     builder_config_->setFlag(nvinfer1::BuilderFlag::kINT8);
   } else {
@@ -911,7 +910,7 @@ bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
 
   // serialize trt engine the first time
   nvinfer1::ICudaEngine *engine = nullptr;
-  auto trt_cache_path = "/apollo/modules/perception/data/TRTengine.cache";
+  auto trt_cache_path = model_root_ + "/TRTengine.cache";
   AERROR << "trt_cache path : " << trt_cache_path;
   if (!LoadCache(trt_cache_path)) {
     engine = builder_->buildEngineWithConfig(*network_, *builder_config_);

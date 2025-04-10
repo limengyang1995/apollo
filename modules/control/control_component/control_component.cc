@@ -309,14 +309,18 @@ Status ControlComponent::ProduceControlCommand(
   }
 
   //  cloud control has priority over planning
+  AINFO << "Cloud Drive is enabled: " << FLAGS_enable_cloud_drive;
+  AINFO << "receive_cloud_cmd is " << receive_cloud_cmd_;
+  AINFO << "cloud_takeover is " << cloud_takeover_;
   //cloud_takeover_ = local_view_.cloud_control_cmd().cloud_takeover_request() ;
   if (FLAGS_enable_cloud_drive && receive_cloud_cmd_ && cloud_takeover_){
-    AERROR << "!!!!!!!!!!!!!!!!11Cloud takeover triggered!";
+    AINFO << "Cloud takeover triggered!";
     control_command->set_speed(local_view_.cloud_control_cmd().speed());
     control_command->set_throttle(local_view_.cloud_control_cmd().throttle());
     control_command->set_brake(local_view_.cloud_control_cmd().brake());
     control_command->set_gear_location(local_view_.cloud_control_cmd().gear_location());
     control_command->set_steering_target(local_view_.cloud_control_cmd().steering_target());
+    control_command->set_parking_brake(local_view_.cloud_control_cmd().parking_brake());
     control_command->set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
     control_command->set_cloud_takeover_request(true);
   }else{
@@ -340,6 +344,7 @@ Status ControlComponent::ProduceControlCommand(
     control_command->mutable_signal()->CopyFrom(
         local_view_.trajectory().decision().vehicle_signal());
   }
+  control_command->set_is_in_safe_mode(false);
   return status;
 }
 
@@ -349,7 +354,7 @@ bool ControlComponent::Proc() {
   chassis_reader_->Observe();
   const auto &chassis_msg = chassis_reader_->GetLatestObserved();
   if (chassis_msg == nullptr) {
-    AERROR << "Chassis msg is not ready!";
+    // AERROR << "Chassis msg is not ready!";
     injector_->set_control_process(false);
     return false;
   }
@@ -358,7 +363,7 @@ bool ControlComponent::Proc() {
   trajectory_reader_->Observe();
   const auto &trajectory_msg = trajectory_reader_->GetLatestObserved();
   if (trajectory_msg == nullptr) {
-    AERROR << "planning msg is not ready!";
+    // AERROR << "planning msg is not ready!";
   } else {
     // Check if new planning data received.
     if (latest_trajectory_.header().sequence_num() !=
@@ -623,6 +628,7 @@ void ControlComponent::ResetAndProduceZeroControlCommand(
   control_command->set_parking_brake(true);
   control_command->set_driving_mode(Chassis::COMPLETE_MANUAL);
   control_command->set_gear_location(Chassis::GEAR_NEUTRAL);
+  control_command->set_is_in_safe_mode(true);
   control_task_agent_.Reset();
   latest_trajectory_.mutable_trajectory_point()->Clear();
   latest_trajectory_.mutable_path_point()->Clear();

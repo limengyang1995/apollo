@@ -579,7 +579,7 @@ void JtController::Steer(double angle, double angle_spd) {
 
 void JtController::SetEpbBreak(const ControlCommand& command) {
   if (command.parking_brake()) {
-    if (former_parking_brake != command.parking_brake() && epb_count < 10){
+    if (former_parking_brake != command.parking_brake() && epb_count < 3){
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_LOCK);
       // AERROR <<" send parking_brake " << epb_count << " times";
       ++epb_count;
@@ -590,7 +590,7 @@ void JtController::SetEpbBreak(const ControlCommand& command) {
       // AERROR <<" parking_brake no request 1, former_parking_brake: "<< former_parking_brake ;
     }
   } else {
-    if (former_parking_brake != command.parking_brake() && epb_count < 10 ){
+    if (former_parking_brake != command.parking_brake() && epb_count < 3 ){
       acu3_153_->set_acu3_epbcontrolflag(Acu3_153::ACU3_EPBCONTROLFLAG_RELEASE);
       ++epb_count;
       return;
