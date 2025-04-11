@@ -7,11 +7,11 @@ header:
 child_frame_id: front_6mm
 transform:
   rotation:
-    w: 0.5
-    x: -0.5
-    y: 0.5
-    z: -0.5
+    x: -0.494353
+    y: 0.474570
+    z: -0.501576
+    w: 0.527875
   translation:
-    x: 0.19
-    y: 0.02
-    z: -0.23
+    x: 0.275580
+    y: -0.027664
+    z: -0.227282
