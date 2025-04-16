@@ -543,8 +543,8 @@ bool PathBoundsDeciderUtil::ExtendBoundaryByADC(
   for (size_t i = 0; i < path_bound->size(); ++i) {
     double road_left_width = std::fabs(left_bound_adc) + kEpsilon;
     double road_right_width = std::fabs(right_bound_adc) + kEpsilon;
-    reference_line_info.reference_line().GetRoadWidth(
-        (*path_bound)[i].s, &road_left_width, &road_right_width);
+    //reference_line_info.reference_line().GetRoadWidth(
+    //    (*path_bound)[i].s, &road_left_width, &road_right_width);
     double left_bound_road = road_left_width - adc_half_width;
     double right_bound_road = -road_right_width + adc_half_width;
 
