@@ -355,7 +355,7 @@ Status LonController::ComputeControlCommand(
   auto previous_full_stop =
       injector_->Get_previous_lon_debug_info()->is_full_stop();
   GetPathRemain(debug);
-  IsStopByDestination(debug);
+  bool stop_by_destination = IsStopByDestination(debug);
   IsPedestrianStopLongTerm(debug);
   if (lon_based_pidcontroller_conf_.use_preview_reference_check() &&
       (std::fabs(debug->preview_acceleration_reference()) <=
@@ -517,15 +517,9 @@ Status LonController::ComputeControlCommand(
   if (FLAGS_use_vehicle_epb) {
     ADEBUG << "Into use vehicle epb.";
     if (acceleration_lookup >= 0) {
-      if (debug->slope_offset_compensation() > 0) {
-        if (acceleration_lookup > debug->slope_offset_compensation()) {
-          parking_release_ = true;
-        }
-      } else {
-        parking_release_ = true;
-      }
-      if (chassis->parking_brake() && parking_release_) {
-        ADEBUG << "Into park brake release.";
+      if (chassis->parking_brake()) {
+        cmd->set_acceleration(-2.0);
+        AERROR << "Into park brake release.";
         cmd->set_parking_brake(false);
         SetParkingBrake(&lon_based_pidcontroller_conf_, cmd);
       }
@@ -593,9 +587,13 @@ Status LonController::ComputeControlCommand(
   }
 
   if (chassis->parking_brake()) {
-
-    cmd->set_acceleration(0.0);
-    cmd->set_gear_location(canbus::Chassis::GEAR_NEUTRAL);
+    if (stop_by_destination){
+      cmd->set_acceleration(0.0);
+      cmd->set_gear_location(canbus::Chassis::GEAR_NEUTRAL);
+    }else{
+      cmd->set_acceleration(-2.0);
+    }
+    
   }
 
   if (lon_based_pidcontroller_conf_.use_speed_itfc()) {
