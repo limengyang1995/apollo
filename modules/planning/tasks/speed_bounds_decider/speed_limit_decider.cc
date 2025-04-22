@@ -68,7 +68,7 @@ Status SpeedLimitDecider::GetSpeedLimits(
     // (2) speed limit from path curvature
     //  -- 2.1: limit by centripetal force (acceleration)
     const double speed_limit_from_centripetal_acc =
-        0.8 * std::sqrt(speed_bounds_config_.max_centric_acceleration_limit() /
+        0.95 * std::sqrt(speed_bounds_config_.max_centric_acceleration_limit() /
                   std::fmax(std::fabs(discretized_path.at(i).kappa()),
                             speed_bounds_config_.minimal_kappa()));
     print_curve.AddPoint("speed_limit_from_centripetal_acc", path_s,

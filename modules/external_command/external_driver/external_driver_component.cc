@@ -279,7 +279,7 @@ bool ExternalDriver::Proc() {
 
     std::string input_command_string;
     nlohmann::json command;
-    AERROR << "recieve msg from remote control --: " << data;
+    AINFO << "recieve msg from remote control --: " << data;
     
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         
