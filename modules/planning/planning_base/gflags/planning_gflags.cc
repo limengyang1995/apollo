@@ -145,7 +145,7 @@ DEFINE_double(min_stop_distance_obstacle, 6.0,
               "min stop distance from in-lane obstacle (meters)");
 DEFINE_double(follow_min_distance, 3.0,
               "min follow distance for vehicles/bicycles/moving objects");
-DEFINE_double(yield_distance, 5.0,
+DEFINE_double(yield_distance, 2.5,
               "min yield distance for vehicles/moving objects "
               "other than pedestrians/bicycles");
 DEFINE_double(follow_time_buffer, 2.5,
