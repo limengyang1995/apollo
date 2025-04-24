@@ -7,7 +7,7 @@ cer_path: "/apollo_workspace/modules/external_command/external_driver/rtc/lib/a.
 app_id: "appqemmzy5zk1im"
 lib_path: "/apollo_workspace/modules/external_command/external_driver/rtc/lib/libbaidurtc.so"
 car_id: "x888"
-video_maxkbps: 500
+video_maxkbps: 1500
 image_width: 1920
 image_height: 1080
 fps: 10
@@ -16,9 +16,9 @@ image_topic: "/apollo/sensor/image"
 destination_path: "/apollo_workspace/modules/external_command/external_driver/conf/destination.json"
 channel{
     input_camera_channel_name: "/apollo/sensor/camera/front_fisheye/image"
-    input_camera_channel_name: "apollo/sensor/camera/left_fisheye/image"
-    input_camera_channel_name: "apollo/sensor/camera/rear_fisheye/image"
-    input_camera_channel_name: "apollo/sensor/camera/right_fisheye/image"
+    input_camera_channel_name: "/apollo/sensor/camera/right_fisheye/image"
+    input_camera_channel_name: "/apollo/sensor/camera/rear_fisheye/image"
+    input_camera_channel_name: "/apollo/sensor/camera/left_fisheye/image"
 
 }
 enable_rtc_log:false
