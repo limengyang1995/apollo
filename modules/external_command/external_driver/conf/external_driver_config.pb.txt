@@ -15,7 +15,10 @@ image_topic: "/apollo/sensor/image"
 
 destination_path: "/apollo_workspace/modules/external_command/external_driver/conf/destination.json"
 channel{
-    input_camera_channel_name: "/apollo/sensor/camera/front_6mm/image"
-    input_camera_channel_name: "/apollo/sensor/camera/front_12mm/image"
+    input_camera_channel_name: "/apollo/sensor/camera/front_fisheye/image"
+    input_camera_channel_name: "apollo/sensor/camera/left_fisheye/image"
+    input_camera_channel_name: "apollo/sensor/camera/rear_fisheye/image"
+    input_camera_channel_name: "apollo/sensor/camera/right_fisheye/image"
+
 }
 enable_rtc_log:false

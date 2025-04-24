@@ -57,8 +57,8 @@ bool CameraComponent::Init() {
     if (raw_image_for_compress_->image_size == 0) {
         raw_image_for_compress_->image = nullptr;
     } else {
-        raw_image_for_compress_->image
-                = reinterpret_cast<char*>(calloc(raw_image_for_compress_->image_size, sizeof(char)));
+        // raw_image_for_compress_->image
+        //         = reinterpret_cast<char*>(calloc(raw_image_for_compress_->image_size, sizeof(char)));
     }
 
     device_wait_ = camera_config_->device_wait_ms();
