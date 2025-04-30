@@ -125,7 +125,7 @@ void CameraComponent::run() {
 
         if (!camera_device_->poll(raw_image_, raw_image_for_compress_)) {
             // cyber::SleepFor(std::chrono::milliseconds(device_wait_));
-            AERROR << "camera device poll failed";
+            // AERROR << "camera device poll failed";
             continue;
         }
 

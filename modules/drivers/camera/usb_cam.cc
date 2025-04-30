@@ -773,7 +773,7 @@ bool UsbCam::read_frame(CameraImagePtr raw_image, CameraImagePtr sensor_raw_imag
             last_nsec_ = camera_timestamp;
         } else {
             double diff = static_cast<double>(camera_timestamp - last_nsec_) / 1e9;
-            AERROR << "drop image:" << diff << "s" << frame_drop_interval_;
+            // AERROR << "drop image:" << diff << "s" << frame_drop_interval_;
             // drop image by frame_rate
             if (diff < frame_drop_interval_) {
                 // AERROR << "drop image:" << diff << "s" << frame_drop_interval_;
