@@ -103,6 +103,7 @@ class MlfMotionRefiner {
   double claping_speed_threshold_ = 1.0;
   double cyc_refine_speed_ = 1.2;
   const double EPSION_TIME = 1e-3;
+  const double EPSION_SPEED = 0.1;
 };  // class MlfMotionRefiner
 
 }  // namespace lidar

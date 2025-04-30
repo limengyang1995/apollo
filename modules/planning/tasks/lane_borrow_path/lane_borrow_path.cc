@@ -365,23 +365,29 @@ bool LaneBorrowPath::IsNecessaryToBorrowLane() {
           << mutable_path_decider_status->front_static_obstacle_id() << "]";
     // ADC requirements check for lane-borrowing:
     if (!HasSingleReferenceLine(*frame_)) {
+      AINFO << "IsNecessaryToBorrowLane false 1";
       return false;
     }
     if (!IsWithinSidePassingSpeedADC(*frame_)) {
+      AINFO << "IsNecessaryToBorrowLane false 2";
       return false;
     }
 
     // Obstacle condition check for lane-borrowing:
     if (!IsBlockingObstacleFarFromIntersection(*reference_line_info_)) {
+      AINFO << "IsNecessaryToBorrowLane false 3";
       return false;
     }
     if (!IsLongTermBlockingObstacle()) {
+      AINFO << "IsNecessaryToBorrowLane false 4";
       return false;
     }
     if (!IsBlockingObstacleWithinDestination(*reference_line_info_)) {
+      AINFO << "IsNecessaryToBorrowLane false 5";
       return false;
     }
     if (!IsSidePassableObstacle(*reference_line_info_)) {
+      AINFO << "IsNecessaryToBorrowLane false 6";
       return false;
     }
 
@@ -395,6 +401,7 @@ bool LaneBorrowPath::IsNecessaryToBorrowLane() {
       if (!left_borrowable && !right_borrowable) {
         mutable_path_decider_status->set_is_in_path_lane_borrow_scenario(false);
         AINFO << "LEFT AND RIGHT LANE CAN NOT BORROW";
+        AINFO << "IsNecessaryToBorrowLane false 7";
         return false;
       } else {
         mutable_path_decider_status->set_is_in_path_lane_borrow_scenario(true);
@@ -423,15 +430,19 @@ bool LaneBorrowPath::IsWithinSidePassingSpeedADC(const Frame& frame) {
 }
 
 bool LaneBorrowPath::IsLongTermBlockingObstacle() {
+  AINFO << "front_static_obstacle_cycle_counter: "<<injector_->planning_context()
+          ->planning_status()
+          .path_decider()
+          .front_static_obstacle_cycle_counter();
   if (injector_->planning_context()
           ->planning_status()
           .path_decider()
           .front_static_obstacle_cycle_counter() >=
       config_.long_term_blocking_obstacle_cycle_threshold()) {
-    ADEBUG << "The blocking obstacle is long-term existing.";
+    AINFO << "The blocking obstacle is long-term existing.";
     return true;
   } else {
-    ADEBUG << "The blocking obstacle is not long-term existing.";
+    AINFO << "The blocking obstacle is not long-term existing.";
     return false;
   }
 }
@@ -527,14 +538,14 @@ bool LaneBorrowPath::IsSidePassableObstacle(
   const std::string blocking_obstacle_id =
       path_decider_status.front_static_obstacle_id();
   if (blocking_obstacle_id.empty()) {
-    ADEBUG << "There is no blocking obstacle.";
+    AINFO << "There is no blocking obstacle.";
     return false;
   }
   const Obstacle* blocking_obstacle =
       reference_line_info.path_decision().obstacles().Find(
           blocking_obstacle_id);
   if (blocking_obstacle == nullptr) {
-    ADEBUG << "Blocking obstacle is no longer there.";
+    AINFO << "Blocking obstacle is no longer there.";
     return false;
   }
 
