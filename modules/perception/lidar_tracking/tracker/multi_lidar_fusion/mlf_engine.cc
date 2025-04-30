@@ -133,8 +133,8 @@ bool MlfEngine::Track(const MultiTargetTrackerOptions& options,
     if (algorithm::IsObjectInRoi(roi, obj)) {
       continue;
     }
-    obj->velocity = Eigen::Vector3f::Zero();
-    obj->acceleration = Eigen::Vector3f::Zero();
+    // obj->velocity = Eigen::Vector3f::Zero();
+    // obj->acceleration = Eigen::Vector3f::Zero();
     sstr << obj->track_id << ", ";
   }
   AINFO << sstr.str();

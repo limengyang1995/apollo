@@ -404,7 +404,8 @@ bool SpeedDecider::CreateStopDecision(const Obstacle& obstacle,
 bool SpeedDecider::CreateFollowDecision(
     const Obstacle& obstacle, ObjectDecisionType* const follow_decision) const {
   const double follow_speed = init_point_.v();
-  const double follow_distance_s = -EstimateProperFollowGap(follow_speed);
+  const double obs_speed = obstacle.speed();
+  const double follow_distance_s = -EstimateProperFollowGap(follow_speed, obs_speed);
 
   const auto& boundary = obstacle.path_st_boundary();
   const double reference_s =
@@ -448,7 +449,7 @@ bool SpeedDecider::CreateYieldDecision(
   const double main_stop_s =
       reference_line_info_->path_decision()->stop_reference_line_s();
   if (main_stop_s < reference_line_fence_s) {
-    ADEBUG << "Yield reference_s is further away, ignore.";
+    AINFO << "Yield reference_s is further away, ignore.";
     return false;
   }
 
@@ -462,7 +463,7 @@ bool SpeedDecider::CreateYieldDecision(
   yield->mutable_fence_point()->set_z(0.0);
   yield->set_fence_heading(ref_point.heading());
 
-  ADEBUG << "YIELD: obstacle_id[" << obstacle.Id() << "] obstacle_type["
+  AINFO << "YIELD: obstacle_id[" << obstacle.Id() << "] obstacle_type["
          << PerceptionObstacle_Type_Name(obstacle_type) << "]";
 
   return true;
@@ -511,24 +512,31 @@ bool SpeedDecider::CheckIsFollow(const Obstacle& obstacle,
   const double obstacle_l_distance =
       std::min(std::fabs(obstacle.PerceptionSLBoundary().start_l()),
                std::fabs(obstacle.PerceptionSLBoundary().end_l()));
+  const double ego_speed = init_point_.v();
+  const double obs_speed = obstacle.speed();
+
   if (obstacle_l_distance > config_.follow_min_obs_lateral_distance()) {
+    AINFO << "checkisfollow false 1 :" << obstacle.Id() << " obstacle_l_distance : "<< obstacle_l_distance;
     return false;
   }
 
   // move towards adc
   if (boundary.bottom_left_point().s() > boundary.bottom_right_point().s()) {
+    AINFO << "checkisfollow false 2 "<< obstacle.Id() ;
     return false;
   }
 
   static constexpr double kFollowTimeEpsilon = 1e-3;
-  static constexpr double kFollowCutOffTime = 0.5;
+  static constexpr double kFollowCutOffTime = 0.8;
   if (boundary.min_t() > kFollowCutOffTime ||
       boundary.max_t() < kFollowTimeEpsilon) {
+    AINFO << "checkisfollow false 3 "<< obstacle.Id() << " MIN_T: " << boundary.min_t() << " MAX_T: " << boundary.max_t() ;
     return false;
   }
 
   // cross lane but be moving to different direction
   if (boundary.max_t() - boundary.min_t() < config_.follow_min_time_sec()) {
+    AINFO << "checkisfollow false 4 "<< obstacle.Id() << " : " << boundary.max_t() - boundary.min_t();
     return false;
   }
 
@@ -608,8 +616,12 @@ double SpeedDecider::EstimateProperOvertakingGap(const double target_obs_speed,
   return overtake_distance_s;
 }
 
-double SpeedDecider::EstimateProperFollowGap(const double& adc_speed) const {
+double SpeedDecider::EstimateProperFollowGap(const double& adc_speed, const double& obs_speed) const {
   double follow_distance = config_.stop_follow_distance();
+  if (obs_speed > adc_speed + 0.5){
+    return follow_distance;
+  }
+
   for (int i = 1; i < follow_distance_function_.size(); i++) {
     if (adc_speed <= follow_distance_function_[i].first) {
       follow_distance += follow_distance_function_[i - 1].second *

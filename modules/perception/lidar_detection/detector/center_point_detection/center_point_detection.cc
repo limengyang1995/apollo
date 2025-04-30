@@ -315,8 +315,9 @@ bool CenterPointDetection::Detect(const LidarDetectorOptions &options,
   input_data_blob->Reshape(points_shape);
   float *data_ptr = input_data_blob->mutable_cpu_data();
   memcpy(data_ptr, points_data.data(), points_data.size() * sizeof(float));
-
+  AINFO << "Enter infer";
   inference_->Infer();
+  AINFO << "Exit infer";
 
   inference_time_ = timer.toc(true);
 

@@ -289,8 +289,8 @@ bool TransformWrapper::QueryTrans(double timestamp, StampedTransform* trans,
     if (!cyber::common::GlobalData::Instance()->IsRealityMode()) {
       query_time = cyber::Time(0);
     } else if (!FLAGS_hardware_trigger &&
-               (timestamp - latest_buffer_time < 0.015) &&
-               (timestamp - latest_buffer_time > 0)) {
+               (timestamp - latest_buffer_time < 0.02) &&
+               (timestamp - latest_buffer_time > -0.02)) {
       // soft trigger and the latency is within the tolerance range
       query_time = apollo::cyber::Time(0);
     } else {
