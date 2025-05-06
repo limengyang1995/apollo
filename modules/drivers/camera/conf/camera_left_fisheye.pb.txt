@@ -30,4 +30,4 @@ compress_conf {
     output_channel: "/apollo/sensor/camera/left_fisheye/image/compressed"
     image_pool_size: 100
 }
-arm_gpu_acceleration: true
+arm_gpu_acceleration: false

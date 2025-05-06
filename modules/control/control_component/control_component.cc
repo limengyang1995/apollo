@@ -619,7 +619,7 @@ Status ControlComponent::CheckTimestamp(const LocalView &local_view) {
 
 void ControlComponent::ResetAndProduceZeroControlCommand(
     ControlCommand *control_command) {
-  AERROR << "Reset and produce zero control command.!!!!!!!!!";
+  AINFO << "Reset and produce zero control command.!!!!!!!!!";
   control_command->set_throttle(0.0);
   control_command->set_steering_target(0.0);
   control_command->set_steering_rate(0.0);

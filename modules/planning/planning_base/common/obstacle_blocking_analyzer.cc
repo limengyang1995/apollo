@@ -32,8 +32,8 @@ namespace planning {
 using apollo::common::VehicleConfigHelper;
 using apollo::hdmap::HDMapUtil;
 
-constexpr double kAdcDistanceThreshold = 35.0;  // unit: m
-constexpr double kObstaclesDistanceThreshold = 15.0;
+constexpr double kAdcDistanceThreshold = 45.0;  // unit: m
+constexpr double kObstaclesDistanceThreshold = 25.0;
 
 bool IsNonmovableObstacle(const ReferenceLineInfo& reference_line_info,
                           const Obstacle& obstacle) {
@@ -41,13 +41,14 @@ bool IsNonmovableObstacle(const ReferenceLineInfo& reference_line_info,
   const SLBoundary& adc_sl_boundary = reference_line_info.AdcSlBoundary();
   if (obstacle.PerceptionSLBoundary().start_s() >
       adc_sl_boundary.end_s() + kAdcDistanceThreshold) {
-    ADEBUG << " - It is too far ahead and we are not so sure of its status.";
+    AINFO << " - It is too far ahead and we are not so sure of its status." << "obstacle: " << obstacle.PerceptionSLBoundary().start_s()
+          << " adc: " << adc_sl_boundary.end_s() ;
     return false;
   }
 
   // Obstacle is parked obstacle.
   if (IsParkedVehicle(reference_line_info.reference_line(), &obstacle)) {
-    ADEBUG << "It is Parked and NON-MOVABLE.";
+    AINFO << "It is Parked and NON-MOVABLE.";
     return true;
   }
 
@@ -72,6 +73,7 @@ bool IsNonmovableObstacle(const ReferenceLineInfo& reference_line_info,
       continue;
     }
     double delta_s = other_boundary.start_s() - this_boundary.end_s();
+    AINFO << "Delta_s: " << delta_s << " Obstacle: " << obstacle.Id();
     if (delta_s < 0.0 || delta_s > kObstaclesDistanceThreshold) {
       continue;
     }
@@ -213,6 +215,7 @@ bool IsParkedVehicle(const ReferenceLine& reference_line,
   bool is_at_road_edge = std::abs(obstacle->PerceptionSLBoundary().start_l()) >
                          max_road_right_width - 0.1;
 
+  AINFO << "road edge:" << max_road_right_width << "  obs boundary l :"<< std::abs(obstacle->PerceptionSLBoundary().start_l());
   std::vector<std::shared_ptr<const hdmap::LaneInfo>> lanes;
   auto obstacle_box = obstacle->PerceptionBoundingBox();
   HDMapUtil::BaseMapPtr()->GetLanes(
@@ -226,6 +229,7 @@ bool IsParkedVehicle(const ReferenceLine& reference_line,
   }
 
   bool is_parked = is_on_parking_lane || is_at_road_edge;
+  AINFO << "Obstacle " << obstacle->Id() << " is parked? " << is_parked << "is on parking lane? " << is_on_parking_lane << " is at road edge? " << is_at_road_edge;
   return is_parked && obstacle->IsStatic();
 }
 

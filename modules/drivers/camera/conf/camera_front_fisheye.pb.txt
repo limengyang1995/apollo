@@ -23,11 +23,11 @@ trigger_internal: 0
 trigger_fps: 15
 channel_name: "/apollo/sensor/camera/front_fisheye/image"
 device_wait_ms: 100
-spin_rate: 15
+spin_rate: 100
 output_type: RGB
 
 compress_conf {
     output_channel: "/apollo/sensor/camera/front_fisheye/image/compressed"
     image_pool_size: 100
 }
-arm_gpu_acceleration: true
+arm_gpu_acceleration: false

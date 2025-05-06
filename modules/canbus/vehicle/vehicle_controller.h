@@ -305,6 +305,7 @@ ErrorCode VehicleController<SensorType>::Update(
       Chassis::DrivingMode mode = Chassis::COMPLETE_MANUAL;
       switch (control_command.pad_msg().action()) {
         case control::DrivingAction::START: {
+          AINFO << "Get start auto mode.";
           mode = Chassis::COMPLETE_AUTO_DRIVE;
           break;
         }
@@ -360,7 +361,7 @@ ErrorCode VehicleController<SensorType>::Update(
     if (control_command.steering_rate() > steering_rate_threshold) {
       Steer(control_command.steering_target(), control_command.steering_rate());
     } else {
-      Steer(control_command.steering_target(), 50);
+      Steer(control_command.steering_target(), 90);
     }
   }
 

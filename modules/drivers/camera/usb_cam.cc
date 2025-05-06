@@ -913,12 +913,12 @@ bool UsbCam::read_frame(CameraImagePtr raw_image, CameraImagePtr sensor_raw_imag
         } else {
             if (config_->arm_gpu_acceleration()) {
                 process_image_cuda(buffers_[buf.index].start, len, raw_image);
-                AERROR << "cuda process image: buf size: " << buffers_[buf.index].length;
+                // AERROR << "cuda process image: buf size: " << buffers_[buf.index].length;
                 
             } 
             else {
                 // process_image(buffers_[buf.index].start, len, raw_image);
-                AERROR << "process image cpu";
+                // AERROR << "process image cpu";
                 if(sensor_raw_image->image != nullptr) {
                     memcpy(sensor_raw_image->image, buffers_[buf.index].start, len);
                 }

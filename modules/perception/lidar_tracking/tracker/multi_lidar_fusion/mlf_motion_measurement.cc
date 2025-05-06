@@ -100,6 +100,7 @@ void MlfMotionMeasurement::MeasurementSelection(
     new_object->selected_measured_velocity =
         new_object->measured_center_velocity;
   }
+  AINFO << "after measurement selection, velocity: " << new_object->selected_measured_velocity;
 }
 
 void MlfMotionMeasurement::MeasurementQualityEstimation(
@@ -118,6 +119,7 @@ void MlfMotionMeasurement::MeasurementQualityEstimation(
       pow(1.0 - new_object->association_score, 2.0);
   new_object->update_quality = std::min(quality_based_on_association_score,
                                         quality_based_on_point_diff_ratio);
+  AINFO << "update_quality: " << new_object->update_quality;
 }
 
 void MlfMotionMeasurement::MeasurementRefine(
@@ -137,7 +139,7 @@ void MlfMotionMeasurement::MeasurementRefine(
 
     float velocity_threshold = 2.0;
     velocity_threshold =
-        latest_object->type == base::ObjectType::VEHICLE ? 3.0 : 2.0;
+        latest_object->type == base::ObjectType::VEHICLE ? 20.0 : 8.0;
     // Condition 1: size < 3 and latest is static and new velocity is big
     if (history_objects.size() < get_history_size) {
         if (latest_object->output_velocity.head<2>().norm() < STATIC_VELOCITY
@@ -146,6 +148,7 @@ void MlfMotionMeasurement::MeasurementRefine(
             //   latest_object->selected_measured_velocity;
             new_object->selected_measured_velocity =
                 latest_object->output_velocity;
+            AINFO << "MeasurementRefine selected measured velocity is: " << new_object->selected_measured_velocity;
             AINFO << "[Velocity-Measurement] track_id: "
                   << track_data->track_id_
                   << " history small and current BIG. Keep Lastest Output";

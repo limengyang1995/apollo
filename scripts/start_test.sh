@@ -4,8 +4,8 @@ gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-cpl
 sleep 1s
 
 #_______________________________________________camera_trigger___________________________________________________#
-gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-cpld-test -d /dev/ttyTHS1 -t 4 -c 8 -f 30 -w 1000 -o 0;exec bash" '
-sleep 5s
+# gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-cpld-test -d /dev/ttyTHS1 -t 4 -c 8 -f 30 -w 1000 -o 0;exec bash" '
+# sleep 5s
 
 #_______________________________________________sync_check_______________________________________________________#
 gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S service chrony restart;exec bash" '
@@ -14,38 +14,38 @@ gnome-terminal --window -e 'bash -c "watch chronyc sources -v;exec bash" '
 sleep 1s
 
 #_______________________________________________camera_show 0&1__________________________________________________#
-#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video0 1920 1080;exec bash" '
+#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video0 1920 1080;exec bash" ' #front left  60
 #sleep 1s
-#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video1 1920 1080;exec bash" '
+#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video1 1920 1080;exec bash" ' #front right 120
 #sleep 1s
-#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video4 1920 1080;exec bash" '
+#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video6 1920 1080;exec bash" ' #front fisheye 90
 #sleep 1s
-#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video5 1920 1080;exec bash" '
+#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video7 1920 1080;exec bash" ' #rear fisheye 90
 #sleep 1s
-#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video6 1920 1080;exec bash" '
+#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video4 1920 1080;exec bash" ' #left fisheye 90
 #sleep 1s
-#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video7 1920 1080;exec bash" '
+#gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video5 1920 1080;exec bash" ' #right fisheye 90
 #sleep 1s
 #gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-camera-show-cuda /dev/video2 3840 2160;exec bash" '
 #sleep 1s
 
-#_______________________________________________sync_lidar_______________________________________________________#
-gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S ptp4l -m -S -E -2 -i eth0;exec bash" '
-sleep 10s
+
 
 #_______________________________________________can0_init________________________________________________________#
-gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S ip link set can0 type can bitrate 500000;exec bash" '
+# gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S ip link set can0 type can bitrate 500000;exec bash" '
+bash -c "echo nvidia | sudo -S ip link set can0 type can bitrate 500000"
 sleep 1s
-gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S ip link set up can0;exec bash" '
+
+bash -c "echo nvidia | sudo -S ip link set up can0"
 sleep 1s
 
 #_______________________________________________can0 rx message show_____________________________________________#
-gnome-terminal --window -e 'bash -c "candump can0;exec bash" '
+# gnome-terminal --window -e 'bash -c "candump can0;exec bash" '
 sleep 1s
 
 #_______________________________________________RS232 init_______________________________________________________#
 gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S chmod 777 /dev/ttysWK1;exec bash" '
-sleep 1s
+sleep 5s
 
 # #_______________________________________________ros start imu____________________________________________________#
 # gnome-terminal --window -e 'bash -c "roslaunch ins demo.launch;exec bash" '
@@ -64,3 +64,14 @@ sleep 1s
 # sleep 5s
 # gnome-terminal --window -e 'bash -c "rostopic echo /lidar/main/header;exec bash" '
 # sleep 5s
+
+
+#_______________________________________________camera_trigger___________________________________________________#
+gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S tztek-jetson-tool-cpld-test -d /dev/ttyTHS1 -t 4 -c 8 -f 30 -w 1000 -o 0;exec bash" '
+sleep 5s
+
+
+#_______________________________________________sync_lidar_______________________________________________________#
+# gnome-terminal --window -e 'bash -c "echo nvidia | sudo -S ptp4l -m -S -E -2 -i eth0;exec bash" '
+bash -c "echo nvidia | sudo -S ptp4l -m -S -E -2 -i eth0"
+sleep 5s

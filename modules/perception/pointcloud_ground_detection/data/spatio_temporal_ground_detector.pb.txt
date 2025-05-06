@@ -1,5 +1,5 @@
 grid_size: 16
-ground_thres: 0.25
+ground_thres: 0.4
 roi_rad_x: 120.0
 roi_rad_y: 120.0
 roi_rad_z: 120.0
