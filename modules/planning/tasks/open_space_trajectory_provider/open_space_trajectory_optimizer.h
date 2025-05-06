@@ -56,7 +56,7 @@ class OpenSpaceTrajectoryOptimizer {
       double rotate_angle, const common::math::Vec2d& translate_origin,
       const Eigen::MatrixXi& obstacles_edges_num,
       const Eigen::MatrixXd& obstacles_A, const Eigen::MatrixXd& obstacles_b,
-      const std::vector<std::vector<common::math::Vec2d>>&
+      std::vector<std::vector<common::math::Vec2d>>&
           obstacles_vertices_vec,
       double* time_latency);
 

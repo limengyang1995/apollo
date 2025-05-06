@@ -57,7 +57,7 @@ Status OpenSpaceTrajectoryOptimizer::Plan(
     double rotate_angle, const Vec2d& translate_origin,
     const Eigen::MatrixXi& obstacles_edges_num,
     const Eigen::MatrixXd& obstacles_A, const Eigen::MatrixXd& obstacles_b,
-    const std::vector<std::vector<Vec2d>>& obstacles_vertices_vec,
+    std::vector<std::vector<Vec2d>>& obstacles_vertices_vec,
     double* time_latency) {
   if (XYbounds.empty() || end_pose.empty() || obstacles_edges_num.cols() == 0 ||
       obstacles_A.cols() == 0 || obstacles_b.cols() == 0) {
@@ -106,7 +106,19 @@ Status OpenSpaceTrajectoryOptimizer::Plan(
   // Result container for warm start (initial velocity is assumed to be 0 for
   // now)
   HybridAStartResult result;
-
+  ADEBUG << "Warmstart init_x" << init_x << ",init_y" << init_y << ",init_phi" << init_phi << ",end_pose: " 
+  << end_pose[0] << "," << end_pose[1] << "," << end_pose[2] ;
+  /* for(auto i:XYbounds){
+    ADEBUG << "Warmstart XYbounds: " << i;
+  } */
+  /* int obstacles_num = 0 ;
+  for( auto & i:obstacles_vertices_vec){
+    obstacles_num ++;
+    for(auto j = i.begin(); j != i.end(); ++j){
+      AERROR << "Warmstart obstacles_vertices_vec: " << obstacles_num << " :" << j->x() << "," << j->y();
+    }
+    // obstacles_vertices_vec.pop_back();
+  } */
   if (warm_start_->Plan(init_x, init_y, init_phi, end_pose[0], end_pose[1],
                         end_pose[2], XYbounds, obstacles_vertices_vec,
                         &result)) {

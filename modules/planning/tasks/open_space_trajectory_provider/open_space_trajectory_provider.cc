@@ -202,10 +202,10 @@ Status OpenSpaceTrajectoryProvider::Process() {
             open_space_info.origin_heading(), open_space_info.origin_point())) {
       GenerateStopTrajectory(trajectory_data);
       // is_generation_thread_stop_.store(true);
-      AINFO << "Vehicle is near to destination";
+      ADEBUG << "Vehicle is near to destination";
       return Status(ErrorCode::OK, "Vehicle is near to destination");
     }
-
+    ADEBUG << "trajectory_updated_: " << trajectory_updated_;
     // Check if trajectory updated
     if (trajectory_updated_) {
       std::lock_guard<std::mutex> lock(open_space_mutex_);
@@ -219,14 +219,14 @@ Status OpenSpaceTrajectoryProvider::Process() {
         // sync debug instance
         frame_->mutable_open_space_info()->sync_debug_instance();
       }
-      AINFO << "Trajectory Update" << trajectory_data->size();
+      ADEBUG << "Trajectory Update" << trajectory_data->size();
       data_ready_.store(false);
       trajectory_updated_.store(false);
       return Status::OK();
     }
 
     if (trajectory_error_) {
-      AINFO << "error";
+      ADEBUG << "trajectory_error_";
       ++optimizer_thread_counter;
       std::lock_guard<std::mutex> lock(open_space_mutex_);
       trajectory_error_.store(false);
@@ -272,7 +272,7 @@ Status OpenSpaceTrajectoryProvider::Process() {
     const auto& obstacles_edges_num = open_space_info.obstacles_edges_num();
     const auto& obstacles_A = open_space_info.obstacles_A();
     const auto& obstacles_b = open_space_info.obstacles_b();
-    const auto& obstacles_vertices_vec =
+    std::vector<std::vector<common::math::Vec2d>> obstacles_vertices_vec =
         open_space_info.obstacles_vertices_vec();
     const auto& XYbounds = open_space_info.ROI_xy_boundary();
 
@@ -453,7 +453,6 @@ void OpenSpaceTrajectoryProvider::LoadResult(
         optimizer_trajectory_ptr->at(i).path_point().s() +
         stitching_point_relative_s);
   }
-
   if (frame_->open_space_info().target_parking_spot_id() != "") {
     double distance = straight_trajectory_length_;
     double v = 0.3;
