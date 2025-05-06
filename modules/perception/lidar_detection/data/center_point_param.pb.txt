@@ -38,7 +38,7 @@ preprocess {
   enable_shuffle_points: false
   max_num_points: 2147483647
   reproduce_result_mode: false
-  enable_roi_outside_removal: true
+  enable_roi_outside_removal: false
 }
 
 postprocess {
