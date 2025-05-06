@@ -10,3 +10,4 @@ perception_obstacle_filtering_distance: 1000.0
 perception_obstacle_buffer: 0.0
 curb_heading_tangent_change_upper_limit: 0.4
 use_road_boundary_from_map: false
+use_road_boundary: false

@@ -78,6 +78,7 @@ bool ParkAndGoScenario::IsTransferable(const Scenario* const other_scenario,
   // check ego vehicle distance to destination
   const auto routing_end = frame.local_view().end_lane_way_point;
   if (nullptr == routing_end) {
+    AERROR << "P&&G  routing_end is nullptr";
     return false;
   }
   common::SLPoint dest_sl;
@@ -90,7 +91,14 @@ bool ParkAndGoScenario::IsTransferable(const Scenario* const other_scenario,
   bool is_lane_type_city_driving = false;
   HDMapUtil::BaseMap().GetNearestLaneWithHeading(
       adc_point, 5.0, vehicle_state.heading(), M_PI / 3.0, &lane, &s, &l);
-  if (lane != nullptr && lane->IsOnLane({adc_point.x(), adc_point.y()})) {
+  
+  const double half_width = 0.5 * 
+          common::VehicleConfigHelper::Instance()
+          ->GetConfig().vehicle_param().width();
+  const double right_offset_x = half_width * std::sin(vehicle_state.heading());
+  const double right_offset_y = -half_width * std::cos(vehicle_state.heading());  
+  if (lane != nullptr && lane->IsOnLane({adc_point.x() + right_offset_x, 
+  adc_point.y() + right_offset_y})) {
     is_ego_on_lane = true;
     if (lane->lane().type() == hdmap::Lane::CITY_DRIVING) {
       is_lane_type_city_driving = true;
@@ -101,14 +109,14 @@ bool ParkAndGoScenario::IsTransferable(const Scenario* const other_scenario,
   ADEBUG << "adc_distance_to_dest:" << adc_distance_to_dest;
   bool is_vehicle_static = (std::fabs(adc_speed) < max_abs_speed_when_stopped);
   bool is_distance_far_enough =
-      (adc_distance_to_dest > scenario_config.min_dist_to_dest());
+      (std::abs(adc_distance_to_dest) > scenario_config.min_dist_to_dest());
   AINFO << "PARK_AND_GO: " << is_vehicle_static << ","
          << is_distance_far_enough << "," << is_ego_on_lane
          << "," << is_lane_type_city_driving;
   // if vehicle is static, far enough to destination and (off-lane or not on
   // city_driving lane)
   if (std::fabs(adc_speed) < max_abs_speed_when_stopped &&
-      adc_distance_to_dest > scenario_config.min_dist_to_dest() &&
+      std::abs(adc_distance_to_dest) > scenario_config.min_dist_to_dest() &&
       (!is_ego_on_lane || !is_lane_type_city_driving)) {
     park_and_go = true;
   }

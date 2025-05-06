@@ -8,8 +8,8 @@ open_space_trajectory_optimizer_config {
         traj_forward_penalty: 1.0
         traj_back_penalty: 1.0
         traj_gear_switch_penalty: 10.0
-        traj_steer_penalty: 0.0
-        traj_steer_change_penalty: 0.0
+        traj_steer_penalty: 2.0
+        traj_steer_change_penalty: 5.0
         grid_a_star_xy_resolution: 0.25
         node_radius: 0.5
     }
