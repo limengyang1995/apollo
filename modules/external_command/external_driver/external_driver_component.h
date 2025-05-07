@@ -66,7 +66,7 @@ private:
     apollo::external_command::ExternalDriverConfig config_;
     std::vector<std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
     nlohmann::json point;
-    bool is_start_publish = true;
+    bool is_start_publish = false;
     std::shared_ptr<cyber::Reader<localization::LocalizationEstimate>> localization_reader_pose;
     std::shared_ptr<cyber::Reader<apollo::canbus::Chassis>> canbus_reader_;
     std::mutex mutex_;

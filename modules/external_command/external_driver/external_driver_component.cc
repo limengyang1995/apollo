@@ -72,11 +72,11 @@ bool ExternalDriver::Init() {
     cyber::SleepFor(std::chrono::seconds(1));
     rtc_client_4_.CreateClient(config_, "left");
 
-    std::ifstream f(config_.destination_path());
-    if (f.fail()) {
-        AERROR << "failed to load destination file";
-    }
-    point = nlohmann::json::parse(f);
+    // std::ifstream f(config_.destination_path());
+    // if (f.fail()) {
+    //     AERROR << "failed to load destination file";
+    // }
+    // point = nlohmann::json::parse(f);
     data_to_cloud_future = cyber::Async(&ExternalDriver::SendDataToCloud, this);
     InitListener(config_);
     localization_reader_pose = node_->CreateReader<apollo::localization::LocalizationEstimate>(

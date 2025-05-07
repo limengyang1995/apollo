@@ -10,9 +10,9 @@ void RtcClient::SetListener(baidurtc::BaiduRtcRoomClient* client, MyListener& li
     client->registerRtcMessageListener(&listener);
 }
 
-bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string camera_name) {
+bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string camera_name) {
     void* handle = dlopen(
-            "/apollo_workspace/modules/external_command/external_driver/rtc/lib/libbaidurtc.so",
+            "/opt/apollo/neo/src/modules/external_command/external_driver/rtc/lib/libbaidurtc.so",
             RTLD_LAZY | RTLD_DEEPBIND);
     if (handle == nullptr) {
         AERROR << "dlopen libbaidurtc.so failed";
@@ -21,8 +21,8 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string came
 
     f_createBaiduRtcRoomClient* Client
             = (f_createBaiduRtcRoomClient*)dlsym(handle, "_ZN8baidurtc24createBaiduRtcRoomClientEv");
-    f_enable *enableLog = (f_enable*)dlsym(handle, "enableBaiduRtcLog");
-    if (enableLog){
+    f_enable* enableLog = (f_enable*)dlsym(handle, "enableBaiduRtcLog");
+    if (enableLog) {
         enableLog(0);
     };
     g_BrtcClient = Client();
@@ -47,12 +47,10 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string came
     app_id = config.app_id();
     car_id = getenv("CARID");
     std::string car_id_str(car_id);
-    std::string display_name = car_id_str+"_"+camera_name;
+    std::string display_name = car_id_str + "_" + camera_name;
     // AERROR << "car_id:" << car_id;
-    
-        
+
     car_id_str = car_id_str.substr(2);
-  
 
     g_BrtcClient->setParamSettings(&s, s.RTC_PARAM_SETTINGS_ALL);
     g_BrtcClient->setAppID(app_id.c_str());
@@ -62,16 +60,16 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string came
 
     std::string uid;
     std::ostringstream os;
-    os << car_id_str + std::to_string(00) + std::to_string(rand()/100);
+    os << car_id_str + std::to_string(00) + std::to_string(rand() / 100);
     uid = os.str();
-    
-    if(!g_BrtcClient->loginRoom("2131",uid.c_str(), display_name.c_str(), "token")) {
+
+    if (!g_BrtcClient->loginRoom("2131", uid.c_str(), display_name.c_str(), "token")) {
         AERROR << "loginRoom failed";
         return false;
     }
     // g_BrtcClient->startPublish();
     if (camera_name == "all") {
-        AERROR<<"listener set for all camera";
+        AERROR << "listener set for all camera";
         SetListener(g_BrtcClient, g_mylistener);
     }
     // SetListener(g_BrtcClient, g_mylistener);
@@ -79,11 +77,11 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config,std::string came
 }
 void MyListener::OnRtcMessage(RtcMessage& msg) {
     msg_type = msg.msgType;
-    if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE){
+    if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE) {
         recieve_msg = msg.extra_info;
         re_mark = true;
         feed_id = msg.data.feedId;
-    }else{
+    } else {
         recieve_msg = "";
     }
 }
