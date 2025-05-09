@@ -121,17 +121,18 @@ bool CameraComponent::Init() {
   writer_ = node_->CreateWriter<Image>(camera_config_->channel_name());
   // raw_writer_ = node_->CreateWriter<Image>(camera_config_->raw_channel_name());
   async_result_ = cyber::Async(&CameraComponent::run, this);
+  
   return true;
 }
 
 void CameraComponent::run() {
   running_.exchange(true);
   while (!cyber::IsShutdown()) {
-    if (!camera_device_->wait_for_device()) {
-      // sleep for next check
-      cyber::SleepFor(std::chrono::milliseconds(device_wait_));
-      continue;
-    }
+    // if (!camera_device_->wait_for_device()) {
+    //   // sleep for next check
+    //   // cyber::SleepFor(std::chrono::milliseconds(device_wait_));
+    //   continue;
+    // }
 
     if (!camera_device_->poll(raw_image_, raw_image_for_compress_)) {
       AERROR << "camera device poll failed";
@@ -159,7 +160,7 @@ void CameraComponent::run() {
     //                                   raw_image_for_compress_->image_size);
     // // raw_writer_->Write(raw_image_for_compress);
 
-    cyber::SleepFor(std::chrono::milliseconds(spin_rate_));
+    // cyber::SleepFor(std::chrono::milliseconds(spin_rate_));
   }
 }
 

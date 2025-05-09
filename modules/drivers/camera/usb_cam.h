@@ -136,6 +136,8 @@ private:
       int convert_yuv_to_rgb_pixel_cuda(int y, int u, int v);
       int convert_yuv_to_rgb_buffer_cuda(unsigned char* yuv, unsigned char* rgb,
                                     unsigned int width, unsigned int height);
+      int convert_yuv_to_rgb_buffer_cuda_opt(unsigned char* yuv, unsigned char* rgb,
+                                    unsigned int width, unsigned int height);
     #endif
 
     bool init_read(unsigned int buffer_size);

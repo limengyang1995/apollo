@@ -66,7 +66,6 @@ Status OpenSpaceRoiDecider::Process(Frame *frame) {
     AERROR << msg;
     return Status(ErrorCode::PLANNING_ERROR, msg);
   }
-
   vehicle_state_ = frame->vehicle_state();
   obstacles_by_frame_ = frame->GetObstacleList();
 
@@ -92,6 +91,7 @@ Status OpenSpaceRoiDecider::Process(Frame *frame) {
     SetOrigin(parking_info, frame);
 
     SetParkingSpotEndPose(parking_info, frame);
+    
 
     if (!GetParkingBoundary(parking_info, *nearby_path_, frame,
                             &roi_boundary)) {
@@ -117,12 +117,15 @@ Status OpenSpaceRoiDecider::Process(Frame *frame) {
       return Status(ErrorCode::PLANNING_ERROR, msg);
     }
   } else if (roi_type == OpenSpaceRoiDeciderConfig::PARK_AND_GO) {
-    ADEBUG << "in Park_and_Go";
+    if (frame->reference_line_info().front().reference_line().Length() == 0){
+      const std::string msg = "No valid reference line found in park&go";
+      AERROR << msg;
+      return Status(ErrorCode::PLANNING_ERROR, msg);
+    }
     nearby_path =
         frame->reference_line_info().front().reference_line().GetMapPath();
 
     ADEBUG << "nearby_path: " << nearby_path.DebugString();
-    ADEBUG << "found nearby_path";
     if (!injector_->planning_context()
              ->planning_status()
              .park_and_go()
@@ -131,6 +134,7 @@ Status OpenSpaceRoiDecider::Process(Frame *frame) {
       AERROR << msg;
       return Status(ErrorCode::PLANNING_ERROR, msg);
     }
+
     SetOriginFromADC(frame, nearby_path);
     ADEBUG << "SetOrigin";
 
@@ -150,26 +154,30 @@ Status OpenSpaceRoiDecider::Process(Frame *frame) {
                            &lane, &s, &l) == -1;
     }
     if (is_parking_out) {
-      AINFO << "GetParkingOutBoundary!!";
+      AINFO << "111GetParkingOutBoundary!!";
       if (!GetParkingOutBoundary(nearby_path, frame, &roi_boundary)) {
-        const std::string msg = "Fail to get park and go boundary from map";
+        const std::string msg = "111Fail to get park and go boundary from map";
         AERROR << msg;
         return Status(ErrorCode::PLANNING_ERROR, msg);
       }
     } else {
-      AINFO << "GetParkAndGoBoundary!!!";
+      AINFO << "222GetParkAndGoBoundary!!!";
       if (!GetParkAndGoBoundary(frame, nearby_path, &roi_boundary)) {
-        const std::string msg = "Fail to get park and go boundary from map";
+        const std::string msg = "222Fail to get park and go boundary from map";
         AERROR << msg;
         return Status(ErrorCode::PLANNING_ERROR, msg);
       }
     }
-
     SetParkAndGoEndPose(frame);
     ADEBUG << "SetEndPose";
   } else {
     const std::string msg =
         "chosen open space roi secenario type not implemented";
+    AERROR << msg;
+    return Status(ErrorCode::PLANNING_ERROR, msg);
+  }
+  if(roi_boundary.empty() ){
+    const std::string msg = "roi_boundary.empty()";
     AERROR << msg;
     return Status(ErrorCode::PLANNING_ERROR, msg);
   }

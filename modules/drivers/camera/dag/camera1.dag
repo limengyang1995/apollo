@@ -5,10 +5,9 @@ module_config {
     components {
       class_name : "CameraComponent"
       config {
-        name : "camera_front"
-        config_file_path : "/apollo/modules/drivers/camera/conf/camera_front_6mm.pb.txt"
+        name : "camera_front_12mm"
+        config_file_path : "/apollo/modules/drivers/camera/conf/camera_front_12mm.pb.txt"
       }
     }
-    
 }
 
