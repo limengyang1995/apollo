@@ -257,12 +257,12 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         }
 
         rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
-        AERROR << "start send image successfully!";
+        AINFO << "start send image successfully!";
 
         // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         return true;
     } else {
-        return false;
+        AINFO << "not recieve start publish request!" return false;
     }
 }
 bool ExternalDriver::Proc() {
@@ -272,7 +272,7 @@ bool ExternalDriver::Proc() {
 
     std::string input_command_string;
     nlohmann::json command;
-    AERROR << "recieve msg from remote control --: " << data;
+    AINFO << "recieve msg from remote control --: " << data;
 
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         try {
@@ -436,7 +436,7 @@ bool ExternalDriver::Proc() {
 
         SendFreespaceCommand(way_points, end_pose);
     } else {
-        AINFO << "command not found!";
+        // AINFO << "command not found!";
     }
     rtc_client_.g_mylistener.re_mark = false;
     return true;

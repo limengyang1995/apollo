@@ -147,7 +147,7 @@ void CameraComponent::run() {
         // raw_image_for_compress->set_data(raw_image_for_compress_->image, raw_image_for_compress_->image_size);
         // raw_writer_->Write(raw_image_for_compress);
 
-        cyber::SleepFor(std::chrono::microseconds(spin_rate_));
+        // cyber::SleepFor(std::chrono::microseconds(spin_rate_));
     }
 }
 

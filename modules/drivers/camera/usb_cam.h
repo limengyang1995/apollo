@@ -45,7 +45,7 @@
 #include <immintrin.h>
 #include <x86intrin.h>
 #endif
-
+#include <arm_neon.h>
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavutil/mem.h>
@@ -136,6 +136,7 @@ private:
 #ifdef __aarch64__
     int convert_yuv_to_rgb_pixel(int y, int u, int v);
     int convert_yuv_to_rgb_buffer(unsigned char* yuv, unsigned char* rgb, unsigned int width, unsigned int height);
+    int convert_yuv_to_rgb_buffer_(unsigned char* yuv, unsigned char* rgb, unsigned int width, unsigned int height);
 #endif
 
     bool init_read(unsigned int buffer_size);

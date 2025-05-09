@@ -1,5 +1,5 @@
 <package format="2">
-    <name>external-command-demo</name>
+    <name>external-command-driver</name>
     <version>local</version>
     <description> The package contains temp component for converting routing message to external command. </description>
     <maintainer email="apollo-support@baidu.com">Apollo</maintainer>
