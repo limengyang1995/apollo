@@ -39,10 +39,11 @@ StageResult ParkAndGoStageCruise::Process(
 
   const ReferenceLineInfo& reference_line_info =
       frame->reference_line_info().front();
+  const int reference_line_size = frame->mutable_reference_line_info()->size();
   // check ADC status:
   // 1. At routing beginning: stage finished
   ParkAndGoStatus status =
-      CheckADCParkAndGoCruiseCompleted(reference_line_info);
+      CheckADCParkAndGoCruiseCompleted(reference_line_info, reference_line_size);
 
   if (status == CRUISE_COMPLETE) {
     return FinishStage();
@@ -54,7 +55,7 @@ StageResult ParkAndGoStageCruise::FinishStage() { return FinishScenario(); }
 
 ParkAndGoStageCruise::ParkAndGoStatus
 ParkAndGoStageCruise::CheckADCParkAndGoCruiseCompleted(
-    const ReferenceLineInfo& reference_line_info) {
+    const ReferenceLineInfo& reference_line_info, const int reference_line_size) {
   const auto& reference_line = reference_line_info.reference_line();
 
   // check l delta
@@ -63,9 +64,9 @@ ParkAndGoStageCruise::CheckADCParkAndGoCruiseCompleted(
   common::SLPoint adc_position_sl;
   reference_line.XYToSL(adc_position, &adc_position_sl);
 
-  const double kLBuffer = 0.5;
+  const double kLBuffer = 0.5 + reference_line_size * 3.5;
   if (std::fabs(adc_position_sl.l()) < kLBuffer) {
-    ADEBUG << "cruise completed";
+    AINFO << " P&&G cruise completed";
     return CRUISE_COMPLETE;
   }
 
