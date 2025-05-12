@@ -41,7 +41,7 @@ class ParkAndGoStageCruise : public Stage {
   StageResult FinishStage();
 
   ParkAndGoStatus CheckADCParkAndGoCruiseCompleted(
-      const ReferenceLineInfo& reference_line_info);
+      const ReferenceLineInfo& reference_line_info, const int reference_line_size);
 };
 
 CYBER_PLUGIN_MANAGER_REGISTER_PLUGIN(apollo::planning::ParkAndGoStageCruise,

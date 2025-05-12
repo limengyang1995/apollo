@@ -210,9 +210,9 @@ void OpenSpaceRoiDecider::SetOriginFromADC(Frame *const frame,
   std::vector<common::math::Vec2d> adc_corners;
   adc_box.GetAllCorners(&adc_corners);
   for (size_t i = 0; i < adc_corners.size(); ++i) {
-    AINFO << "ADC [" << i << "]x: " << std::setprecision(9)
+    ADEBUG << "ADC [" << i << "]x: " << std::setprecision(9)
           << adc_corners[i].x();
-    AINFO << "ADC [" << i << "]y: " << std::setprecision(9)
+    ADEBUG << "ADC [" << i << "]y: " << std::setprecision(9)
           << adc_corners[i].y();
   }
   auto left_top = adc_corners[1];
@@ -1193,6 +1193,7 @@ bool OpenSpaceRoiDecider::GetParkAndGoBoundary(
 
   // Fuse line segments into convex contraints
   if (!FuseLineSegments(roi_parking_boundary)) {
+    AERROR << "fail to fuse line segments";
     return false;
   }
 
@@ -1214,13 +1215,14 @@ bool OpenSpaceRoiDecider::GetParkAndGoBoundary(
   Vec2d vehicle_xy = Vec2d(vehicle_state_.x(), vehicle_state_.y());
   vehicle_xy -= origin_point;
   vehicle_xy.SelfRotate(-origin_heading);
+  const int reference_line_size = frame->mutable_reference_line_info()->size();
   if (vehicle_xy.x() < ROI_xy_boundary[0] ||
       vehicle_xy.x() > ROI_xy_boundary[1] ||
-      vehicle_xy.y() < ROI_xy_boundary[2] - 0.5 ||
+      vehicle_xy.y() < ROI_xy_boundary[2] - (reference_line_size - 1)* 3.5 - 0.5 ||
       vehicle_xy.y() > ROI_xy_boundary[3]) {
-    ADEBUG << "vehicle outside of xy boundary of parking ROI";
-    ADEBUG << vehicle_xy.x() << " " <<vehicle_xy.y();
-    ADEBUG << "ROI_xy_boundary: [" << ROI_xy_boundary[0] << ", "  << ROI_xy_boundary[1] << ", " << ROI_xy_boundary[2] << ", "  << ROI_xy_boundary[3] << "]";
+    AINFO << "vehicle outside of xy boundary of parking ROI";
+    AINFO << vehicle_xy.x() << " " <<vehicle_xy.y();
+    AINFO << "ROI_xy_boundary: [" << ROI_xy_boundary[0] << ", "  << ROI_xy_boundary[1] << ", " << ROI_xy_boundary[2] << ", "  << ROI_xy_boundary[3] << "]";
     return false;
   }
   return true;
