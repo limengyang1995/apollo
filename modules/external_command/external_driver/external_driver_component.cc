@@ -111,15 +111,6 @@ bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
 }
 
 void ExternalDriver::SendDataToCloud() {
-    // nlohmann::json vehicle_data;
-    // vehicle_data["x"] = localization_.pose().position().x();
-    // vehicle_data["y"] = localization_.pose().position().y();
-    // vehicle_data["z"] = localization_.pose().position().z();
-
-    // std::string vehicle_data_str = vehicle_data.dump();
-    // const char* vehicle_data_char = vehicle_data.dump().c_str();
-    // rtc_client_.g_BrtcClient->sendData(vehicle_data_char, vehicle_data_str.size());
-    // AERROR<<"start send data successfully!";
     std::string car_id(getenv("CARID"));
     while (true) {
         cyber::SleepFor(std::chrono::milliseconds(100));
@@ -131,7 +122,8 @@ void ExternalDriver::SendDataToCloud() {
         std::string throttle = std::to_string(chassis_.throttle_percentage());
         std::string brake = std::to_string(chassis_.brake_percentage());
         std::string driving_mode = std::to_string(chassis_.driving_mode());
-        std::string speed = std::to_string(chassis_.speed_mps());
+        // std::string speed = std::to_string(chassis_.speed_mps());
+        std::string speed = std::to_string(20);
         std::string epb = std::to_string(chassis_.parking_brake());
 
         nlohmann::json vehicle_data
@@ -147,18 +139,39 @@ void ExternalDriver::SendDataToCloud() {
                    {"speed", speed},
                    {"epb", epb}};
         // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
-        rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.dump().c_str(), "0");
+        std::string id = std::to_string(rtc_client_.g_mylistener.feed_id);
+        // AERROR << "id : " << id;
+        if (id != "0") {
+            if (std::find(id_list.begin(), id_list.end(), id) == id_list.end()) {
+                id_list.push_back(id);
+            }
+            if (id_list.size() > 3) {
+                id_list.erase(id_list.begin());
+            }
+            // auto it = std::find(id_list.begin(), id_list.end(), rtc_client_.g_mylistener.leaving_user_id);
+            // if (it != id_list.end()) {
+            //     id_list.erase(it);
+            // }
+
+            for (const auto& id : id_list) {
+                // AINFO << "id : " << id << "id size: " << id_list.size();
+                rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.dump().c_str(), id.c_str());
+            }
+        }
 
         // AINFO<<vehicle_data;
     }
 }
 
+bool ExternalDriver::is_all_user_leaving() const {
+    return rtc_client_.g_mylistener.user_leaving_mark && id_list.empty();
+}
 bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image) {
     if (image == nullptr) {
         return false;
     }
     std::vector<cv::Mat> img_;
-
+    auto t1 = cyber::Time::Now().ToSecond();
     for (u_int16_t i = 0; i < readers_.size(); ++i) {
         readers_[i]->Observe();
         const auto camera_msg = readers_[i]->GetLatestObserved();
@@ -169,49 +182,47 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
         img_.emplace_back(img);
     }
-    // img_.size()
 
-    if (is_start_publish) {
+    if (is_start_publish && !id_list.empty()) {
         // AERROR << "is_start_publish :" << is_start_publish;
+
         cv::Mat img_front = img_[0];
-        cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
+        cv::Mat img_right;
+        cv::Mat img_back;
+        cv::Mat img_left;
+        cv::Mat img_left_front;
+        cv::Mat img_right_front;
 
-        cv::Mat img_right = img_[1];
-        cv::cvtColor(img_right, img_right, cv::COLOR_RGB2BGR);
-        cv::Mat img_back = img_[2];
-        cv::cvtColor(img_back, img_back, cv::COLOR_RGB2BGR);
-        cv::Mat img_left = img_[3];
-        cv::cvtColor(img_left, img_left, cv::COLOR_RGB2BGR);
+        cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << 1920, 0, 960, 0, 1920, 540, 0, 0, 1);
+        cv::Mat distCoeffs = (cv::Mat_<double>(5, 1) << -0.326, 0.147, 0, 0, 0);
+        const float width = 3.0;
 
-        cv::resize(img_front, img_front, cv::Size(), 0.35, 0.35);
-        cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
-        cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
-        cv::resize(img_back, img_back, cv::Size(), 0.35, 0.35);
+        const float length = 20.0;
+        const float height = 2.0;
+        std::vector<cv::Point3f> obj_points
+                = {cv::Point3f(-width / 2, 0, height),
+                   cv::Point3f(-width / 2, length, height),
+                   cv::Point3f(width / 2, length, height),
+                   cv::Point3f(width / 2, 0, height)};
 
-        // cv::Mat img_right = img_[2];
-        // const cv::Mat *img_back = &img_[3];
-        // cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
-        // cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
+        cv::Mat rvec = (cv::Mat_<double>(3, 1) << 0.1, 0, 0);
+        cv::Mat tvec = (cv::Mat_<double>(3, 1) << 0, 0.5, 5.0);
+        std::vector<cv::Point2f> img_points;
+        cv::projectPoints(obj_points, rvec, tvec, cameraMatrix, distCoeffs, img_points);
+        const int thickness = 2;
+        const cv::Scalar color = cv::Scalar(0, 0, 255);
+        for (int i = 0; i < 4; ++i) {
+            cv::line(img_front, img_points[i], img_points[(i + 1) % 4], color, thickness);
+        }
 
-        // std::string rear_image_text = "Rear Image";
-        // std::string left_image_text = "Left Image";
-        // std::string right_image_text = "Right Image";
+        cv::resize(img_[0], img_front, cv::Size(), 0.5, 0.6, cv::INTER_LINEAR);
+        cv::resize(img_[1], img_right, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
+        cv::resize(img_[3], img_left, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
+        cv::resize(img_[2], img_back, cv::Size(), 0.18, 0.1, cv::INTER_LINEAR);
+        cv::resize(img_[3], img_left_front, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
+        cv::resize(img_[1], img_right_front, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
 
-        // cv::Scalar color(255, 0, 0);
-        // cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1,
-        // cv::LINE_AA); cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1,
-        // color, 1, cv::LINE_AA);
-
-        // cv::Rect roi_left(0, 0, img_left.cols, img_left.rows);
-        // cv::Rect roi_right(img_front.cols - img_right.cols, 0, img_right.cols, img_right.rows);
-
-        // cv::Mat roi_left_rect = img_front(roi_left);
-        // cv::Mat roi_right_rect = img_front(roi_right);
-
-        // img_left.copyTo(roi_left_rect);
-        // img_right.copyTo(roi_right_rect);
-        // cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
-        std::vector<unsigned char> buf_front;
+                std::vector<unsigned char> buf_front;
         std::vector<unsigned char> buf_left;
         std::vector<unsigned char> buf_right;
         std::vector<unsigned char> buf_back;
@@ -223,17 +234,21 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::imencode(".jpg", img_right, buf_right);
         cv::imencode(".jpg", img_back, buf_back);
 
-        cv::resize(img_back, img_back, cv::Size(), 0.35, 0.35);
         // 定义矩形区域的左上角坐标（x, y）和矩形的宽度（width）与高度（height）
         cv::Rect roi_back((img_front.cols - img_back.cols) / 2, 0, img_back.cols, img_back.rows);
         cv::Mat roi_back_rect = img_front(roi_back);
         img_back.copyTo(roi_back_rect);
 
-        std::vector<cv::Mat> images_to_concat = {img_left, img_front, img_right};
-        cv::Mat images_stitch;
-        cv::hconcat(images_to_concat, images_stitch);
+        cv::Mat img_left_stitch;
+        cv::Mat img_right_stitch;
+        cv::Mat img_stitch;
+        cv::vconcat(img_left_front, img_left, img_left_stitch);
+        cv::vconcat(img_right_front, img_right, img_right_stitch);
+        std::vector<cv::Mat> images_to_concat = {img_left_stitch, img_front, img_right_stitch};
+        cv::hconcat(images_to_concat, img_stitch);
+
         // cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
-        cv::imencode(".jpg", images_stitch, buf_stitch);
+        cv::imencode(".jpg", img_stitch, buf_stitch);
 
         for (std::string cam : request_camera) {
             // AERROR << "camera name :" << cam;
@@ -258,12 +273,16 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
 
         rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         AINFO << "start send image successfully!";
+        auto t2 = cyber::Time::Now().ToSecond();
+        AERROR << "time cost : " << (t2 - t1);
 
         // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         return true;
     } else {
-        AINFO << "not recieve start publish request!" return false;
+        AINFO << "not recieve start publish request!";
+        // return false;
     }
+    return true;
 }
 bool ExternalDriver::Proc() {
     std::string data = rtc_client_.g_mylistener.recieve_msg;
@@ -272,7 +291,6 @@ bool ExternalDriver::Proc() {
 
     std::string input_command_string;
     nlohmann::json command;
-    AINFO << "recieve msg from remote control --: " << data;
 
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
         try {
@@ -290,9 +308,9 @@ bool ExternalDriver::Proc() {
 
                 is_start_publish = true;
             }
-            // else{
-            //     is_start_publish = false;
-            // }
+            if (command["is_start_publish"] == "false") {
+                is_start_publish = false;
+            }
         }
         if (command.contains("active_cameras")) {
             request_camera = command["active_cameras"].get<std::vector<std::string>>();

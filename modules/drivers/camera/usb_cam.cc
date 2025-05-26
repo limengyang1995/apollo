@@ -796,7 +796,7 @@ bool UsbCam::read_frame(CameraImagePtr raw_image, CameraImagePtr sensor_raw_imag
             std::string warning_str;
             warning_stream << "camera time diff exception,diff:" << diff << ";dev:" << config_->camera_dev();
             warning_stream >> warning_str;
-            AWARN << warning_str;
+            // AWARN << warning_str;
         }
     }
     if (len < raw_image->width * raw_image->height) {
@@ -840,11 +840,11 @@ bool UsbCam::process_image(void* src, int len, CameraImagePtr dest) {
             AERROR << "yuyv2rgb_avx not support in aarch64";
             yuyv2rgb_avx((unsigned char*)src, (unsigned char*)dest->image, dest->width * dest->height);
 #else
-            auto t1 = cyber::Time::Now();
-            convert_yuv_to_rgb_buffer((unsigned char*)src, (unsigned char*)dest->image, dest->width, dest->height);
-            auto t2 = cyber::Time::Now();
-            auto cost = t2 - t1;
-            AERROR << "convert_yuv_to_rgb_buffer cost:" << cost.ToSecond();
+            // auto t1 = cyber::Time::Now();
+            convert_yuv_to_rgb_buffer_((unsigned char*)src, (unsigned char*)dest->image, dest->width, dest->height);
+            // auto t2 = cyber::Time::Now();
+            // auto cost = t2 - t1;
+            // AERROR << "convert_yuv_to_rgb_buffer cost:" << cost.ToSecond();
 #endif
         } else {
             AERROR << "unsupported output format:" << config_->output_type();
@@ -995,10 +995,10 @@ int UsbCam::convert_yuv_to_rgb_buffer_(
     unsigned char* rgb_ptr = rgb;
 
     // 精确系数转换（扩大1024倍）
-    const int c1371 = static_cast<int>(1.370705 * 1024 + 0.5);  // 实际值1404
-    const int c698 = static_cast<int>(0.698001 * 1024 + 0.5);   // 实际值715
-    const int c338 = static_cast<int>(0.337633 * 1024 + 0.5);   // 实际值346
-    const int c1732 = static_cast<int>(1.732446 * 1024 + 0.5);  // 实际值1774
+    const int c1371 = static_cast<int>(1.370705 * 1024 + 0.5);
+    const int c698 = static_cast<int>(0.698001 * 1024 + 0.5);
+    const int c338 = static_cast<int>(0.337633 * 1024 + 0.5);
+    const int c1732 = static_cast<int>(1.732446 * 1024 + 0.5);
 
     // 主循环处理每个YUV422像素对
     for (; yuv <= yuv_end - 4; yuv += 4, rgb_ptr += 6) {
@@ -1015,21 +1015,21 @@ int UsbCam::convert_yuv_to_rgb_buffer_(
         // 无分支钳位函数（精确模拟原始条件判断）
         auto clamp = [](int val) { return static_cast<unsigned char>(std::max(0, std::min(255, val))); };
 
-        // 转换第一个像素（y0, u, v）
+        // 转换bgr
         int r = y0 + ((c1371 * v_offset) >> 10);  // 精确位运算
         int g = y0 - ((c698 * v_offset + c338 * u_offset) >> 10);
         int b = y0 + ((c1732 * u_offset) >> 10);
-        rgb_ptr[0] = clamp(r);
+        rgb_ptr[0] = clamp(b);
         rgb_ptr[1] = clamp(g);
-        rgb_ptr[2] = clamp(b);
+        rgb_ptr[2] = clamp(r);
 
         // 转换第二个像素（y1, u, v）
         r = y1 + ((c1371 * v_offset) >> 10);
         g = y1 - ((c698 * v_offset + c338 * u_offset) >> 10);
         b = y1 + ((c1732 * u_offset) >> 10);
-        rgb_ptr[3] = clamp(r);
+        rgb_ptr[3] = clamp(b);
         rgb_ptr[4] = clamp(g);
-        rgb_ptr[5] = clamp(b);
+        rgb_ptr[5] = clamp(r);
     }
     return 0;
 }

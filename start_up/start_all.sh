@@ -11,7 +11,4 @@ source /apollo_workspace/start_up/carid.sh
 # echo $LD_LIBRARY_PATH
 echo "start launch"
 bash /apollo_workspace/kill_all.sh
-# export PATH=/opt/apollo/neo/bin:$PATH
-set -x
-
 cyber_launch start /apollo_workspace/start_up/start.launch

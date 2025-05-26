@@ -60,7 +60,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
 
     std::string uid;
     std::ostringstream os;
-    os << car_id_str + std::to_string(00) + std::to_string(rand() / 100);
+    os << car_id_str + std::to_string(10) + std::to_string(rand() / 1000);
     uid = os.str();
 
     if (!g_BrtcClient->loginRoom("2131", uid.c_str(), display_name.c_str(), "token")) {
@@ -77,12 +77,17 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
 }
 void MyListener::OnRtcMessage(RtcMessage& msg) {
     msg_type = msg.msgType;
+    AERROR << msg.data.feedId;
+    AERROR << msg.extra_info;
     if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE) {
         recieve_msg = msg.extra_info;
         re_mark = true;
         feed_id = msg.data.feedId;
-    } else {
-        recieve_msg = "";
+    }
+    if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_LEAVING_ROOM) {
+        user_leaving_mark = true;
+        leaving_user_id = msg.data.feedId;
+        AINFO << msg.data.feedId;
     }
 }
 

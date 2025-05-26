@@ -838,7 +838,19 @@ apollo_enter_container() {
   xhost +local:root 1> /dev/null 2>&1
 
   # TODO: support custom shell
-  
+  # sync time with host
+  while true; do
+      sync_status=$(timedatectl status | grep "synchronized" | awk '{print $4}')
+      local_year=$(date +%Y)
+      if [ "$sync_status" = "yes" ] || [ "$local_year" -ge 2025 ]; then
+          echo "time is synchronized"
+          break
+      else
+          echo "time is not synchronized"
+          # sudo ntpd -qg
+          sleep 3
+      fi
+  done
   if [ "${DEBUG}" = "true" ];then
     CONTAINER_CMD="/bin/bash"
   else

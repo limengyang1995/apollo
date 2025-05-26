@@ -361,15 +361,6 @@ bool ControlComponent::Proc() {
 
   trajectory_reader_->Observe();
   const auto &trajectory_msg = trajectory_reader_->GetLatestObserved();
-  if (trajectory_msg == nullptr) {
-    AERROR << "planning msg is not ready!";
-  } else {
-    // Check if new planning data received.
-    if (latest_trajectory_.header().sequence_num() !=
-        trajectory_msg->header().sequence_num()) {
-      OnPlanning(trajectory_msg);
-    }
-  }
 
   planning_command_status_reader_->Observe();
   const auto &planning_status_msg =
@@ -383,12 +374,6 @@ bool ControlComponent::Proc() {
 
   localization_reader_->Observe();
   const auto &localization_msg = localization_reader_->GetLatestObserved();
-  if (localization_msg == nullptr) {
-    AERROR << "localization msg is not ready!";
-    injector_->set_control_process(false);
-    return false;
-  }
-  OnLocalization(localization_msg);
 
   cloud_control_command_reader_->Observe();
   const auto &cloud_control_command_msg = cloud_control_command_reader_->GetLatestObserved();
@@ -603,15 +588,6 @@ Status ControlComponent::CheckTimestamp(const LocalView &local_view) {
     return Status::OK();
   }
   double current_timestamp = Clock::NowInSeconds();
-  double localization_diff =
-      current_timestamp - local_view.localization().header().timestamp_sec();
-  if (localization_diff >
-      (FLAGS_max_localization_miss_num * FLAGS_localization_period)) {
-    AERROR << "Localization msg lost for " << std::setprecision(6)
-           << localization_diff << "s";
-    monitor_logger_buffer_.ERROR("Localization msg lost");
-    return Status(ErrorCode::CONTROL_COMPUTE_ERROR, "Localization msg timeout");
-  }
 
   double chassis_diff =
       current_timestamp - local_view.chassis().header().timestamp_sec();
@@ -622,15 +598,6 @@ Status ControlComponent::CheckTimestamp(const LocalView &local_view) {
     return Status(ErrorCode::CONTROL_COMPUTE_ERROR, "Chassis msg timeout");
   }
 
-  double trajectory_diff =
-      current_timestamp - local_view.trajectory().header().timestamp_sec();
-  if (trajectory_diff >
-      (FLAGS_max_planning_miss_num * FLAGS_trajectory_period)) {
-    AERROR << "Trajectory msg lost for " << std::setprecision(6)
-           << trajectory_diff << "s";
-    monitor_logger_buffer_.ERROR("Trajectory msg lost");
-    return Status(ErrorCode::CONTROL_COMPUTE_ERROR, "Trajectory msg timeout");
-  }
   return Status::OK();
 }
 

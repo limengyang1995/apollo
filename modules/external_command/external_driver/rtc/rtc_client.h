@@ -23,9 +23,11 @@ public:
     MyListener() = default;
     ~MyListener() = default;
     int msg_type;
-    std::string recieve_msg = "";
+    std::string recieve_msg;
     bool re_mark = false;
     int64_t feed_id;
+    bool user_leaving_mark = false;
+    int64_t leaving_user_id;
 
 public:
     void OnRtcMessage(RtcMessage& msg) override;
@@ -53,5 +55,5 @@ private:
     // RemoteConfig config;
 };
 
-}  
-}// namespace apollo
+}  // namespace external_command
+}  // namespace apollo
