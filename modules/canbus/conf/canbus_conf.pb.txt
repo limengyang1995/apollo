@@ -4,10 +4,9 @@ vehicle_parameter {
 }
 
 can_card_parameter {
-  brand: HERMES_CAN
+  brand: SOCKET_CAN_RAW
   type: PCI_CARD
   channel_id: CHANNEL_ID_ZERO
-  num_ports: 8
   interface: NATIVE
 }
 

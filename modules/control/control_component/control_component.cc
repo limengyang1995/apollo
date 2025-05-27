@@ -468,7 +468,7 @@ bool ControlComponent::Proc() {
   Status status;
   if (local_view_.chassis().driving_mode() ==
       apollo::canbus::Chassis::COMPLETE_AUTO_DRIVE || local_view_.chassis().driving_mode() ==
-      apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE) {
+      apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE || (receive_cloud_cmd_ && cloud_takeover_)) {
     status = ProduceControlCommand(&control_command);
     ADEBUG << "Produce control command normal.";
   } else {
@@ -557,24 +557,6 @@ Status ControlComponent::CheckInput(LocalView *local_view) {
   ADEBUG << "Received localization:"
          << local_view->localization().ShortDebugString();
   ADEBUG << "Received chassis:" << local_view->chassis().ShortDebugString();
-
-  if (!local_view->trajectory().estop().is_estop() &&
-      local_view->trajectory().trajectory_point().empty()) {
-    AWARN_EVERY(100) << "planning has no trajectory point. ";
-    const std::string msg =
-        absl::StrCat("planning has no trajectory point. planning_seq_num:",
-                     local_view->trajectory().header().sequence_num());
-    return Status(ErrorCode::CONTROL_COMPUTE_ERROR, msg);
-  }
-
-  for (auto &trajectory_point :
-       *local_view->mutable_trajectory()->mutable_trajectory_point()) {
-    if (std::abs(trajectory_point.v()) < FLAGS_minimum_speed_resolution &&
-        std::abs(trajectory_point.a()) < FLAGS_max_acceleration_when_stopped) {
-      trajectory_point.set_v(0.0);
-      trajectory_point.set_a(0.0);
-    }
-  }
 
   injector_->vehicle_state()->Update(local_view->localization(),
                                      local_view->chassis());

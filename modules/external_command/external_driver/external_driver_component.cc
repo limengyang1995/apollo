@@ -222,7 +222,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::resize(img_[3], img_left_front, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
         cv::resize(img_[1], img_right_front, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
 
-                std::vector<unsigned char> buf_front;
+        std::vector<unsigned char> buf_front;
         std::vector<unsigned char> buf_left;
         std::vector<unsigned char> buf_right;
         std::vector<unsigned char> buf_back;
@@ -288,7 +288,6 @@ bool ExternalDriver::Proc() {
     std::string data = rtc_client_.g_mylistener.recieve_msg;
     // int msgtype = rtc_client_.g_mylistener.msg_type;
     // int64_t id = rtc_client_.g_mylistener.feed_id;
-
     std::string input_command_string;
     nlohmann::json command;
 
@@ -342,119 +341,14 @@ bool ExternalDriver::Proc() {
             default:
                 cloud_gear_position = apollo::canbus::Chassis::GEAR_INVALID;
             }
+
+            SendCloudControlCommand(
+                    std::stoi(cloud_takeover),
+                    cloud_gear_position,
+                    std::stof(cloud_throttle),
+                    std::stof(cloud_brake),
+                    -std::stof(cloud_steer));
         }
-    }
-
-    if (input_command_string == "cloud") {
-        SendCloudControlCommand(
-                std::stoi(cloud_takeover),
-                cloud_gear_position,
-                std::stof(cloud_throttle),
-                std::stof(cloud_brake),
-                -std::stof(cloud_steer));
-        SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_CLOUD);
-    } else if (input_command_string == "pull_over") {
-        SendActionCommand(apollo::external_command::ActionCommandType::PULL_OVER);
-    } else if (input_command_string == "stop") {
-        // Stop planning.
-        SendActionCommand(apollo::external_command::ActionCommandType::STOP);
-    } else if (input_command_string == "start") {
-        // Start planning.
-        SendActionCommand(apollo::external_command::ActionCommandType::START);
-    } else if (input_command_string == "clear") {
-        // Start planning.
-        SendActionCommand(apollo::external_command::ActionCommandType::CLEAR_PLANNING);
-    } else if (input_command_string == "manual") {
-        // Switch manual mode.
-        SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_MANUAL);
-    } else if (input_command_string == "auto") {
-        // Switch auto mode.
-        SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_AUTO);
-    } else if (input_command_string == "vin") {
-        // Send vin validation.
-        SendActionCommand(apollo::external_command::ActionCommandType::VIN_REQ);
-    } else if (input_command_string == "enter_mission") {
-        // Enter mission model.
-        SendActionCommand(apollo::external_command::ActionCommandType::ENTER_MISSION);
-    } else if (input_command_string == "exit_mission") {
-        // Exit mission model.
-        SendActionCommand(apollo::external_command::ActionCommandType::EXIT_MISSION);
-    } else if (input_command_string == "chassis") {
-        SendVehicleSignalCommand();
-    } else if (input_command_string == "custom_chassis") {
-        SendCustomChassisCommand();
-    } else if (input_command_string.find("set_speed") != std::string::npos) {
-        auto index = input_command_string.find("set_speed");
-        std::string speed_value_string
-                = input_command_string.substr(index + std::string("set_speed").length(), input_command_string.length());
-        if (!speed_value_string.empty()) {
-            double speed_value = std::atof(speed_value_string.c_str());
-            SendSpeedCommand(speed_value);
-        } else {
-            AWARN << "Input format is invalid, please input format like: "
-                     "set_speed 1.5";
-        }
-    } else if (input_command_string == "increase_speed") {
-        double speed_factor = 1.2;
-        SendSpeedFactorCommand(speed_factor);
-    } else if (input_command_string == "decrease_speed") {
-        double speed_factor = 0.8;
-        SendSpeedFactorCommand(speed_factor);
-    } else if (input_command_string == "restore_speed") {
-        RestoreSpeed();
-    } else if (input_command_string == "lane") {
-        // Modify way point as needed.
-        apollo::external_command::Pose way_point;
-        // way_point.set_x(config_.point1_x());
-        // way_point.set_y(config_.point1_y());
-        // way_point.set_heading(0.0);
-        std::vector<apollo::external_command::Pose> way_points;
-        way_points.emplace_back(way_point);
-        apollo::external_command::Pose end_pose;
-
-        end_pose.set_x(command["order_des"]["x"]);
-        end_pose.set_y(command["order_des"]["y"]);
-        end_pose.set_heading(command["order_des"]["heading"]);
-        SendLaneFollowCommand(way_points, end_pose, config_.target_speed());
-    } else if (input_command_string == "path_loc") {
-        SendPathFollowCommandWithLocationRecord(config_.file_of_path_follow_with_localization_record());
-    } else if (input_command_string == "path_path") {
-        SendPathFollowCommandWithPathRecord(config_.file_of_path_follow_with_planning_record());
-    } else if (input_command_string == "valet_parking") {
-        std::string parking_spot_id = "ParkingSpace_1";
-        SendValetParkingCommand(parking_spot_id, config_.target_speed());
-    } else if (input_command_string.find("command_status") != std::string::npos) {
-        // Input command with format: command_status=XX, where XX is the
-        // command_id
-        const size_t start_pos = std::string("command_status=").length();
-        const size_t end_pos = input_command_string.length();
-        if (end_pos <= start_pos) {
-            AINFO << "Please check command status with format: command_status=XX!";
-        }
-        std::string command_id_string = input_command_string.substr(start_pos, end_pos);
-        command_id_string.erase(
-                std::remove_if(command_id_string.begin(), command_id_string.end(), ::isspace), command_id_string.end());
-        uint64_t id = std::atoi(command_id_string.c_str());
-        CheckCommandStatus(id);
-    } else if (input_command_string == "free") {
-        apollo::external_command::Pose end_pose;
-        end_pose.set_x(point["end_pose"]["x"]);
-        end_pose.set_y(point["end_pose"]["y"]);
-        end_pose.set_heading(point["end_pose"]["heading"]);
-        std::vector<apollo::external_command::Point> way_points;
-        apollo::external_command::Point point1;
-        apollo::external_command::Point point2;
-        point1.set_x(point["point1"]["x"]);
-        point1.set_y(point["point1"]["y"]);
-        point2.set_x(point["point2"]["x"]);
-        point2.set_y(point["point2"]["y"]);
-
-        way_points.emplace_back(point1);
-        way_points.emplace_back(point2);
-
-        SendFreespaceCommand(way_points, end_pose);
-    } else {
-        // AINFO << "command not found!";
     }
     rtc_client_.g_mylistener.re_mark = false;
     return true;

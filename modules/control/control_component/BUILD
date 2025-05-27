@@ -53,17 +53,17 @@ filegroup(
     ]),
 )
 
-# apollo_cc_test(
-#     name = "control_component_test",
-#     size = "small",
-#     srcs = ["control_component_test.cc"],
-#     data = ["//modules/control/control_component:test_data"],
-#     linkstatic = True,
-#     deps = [
-#         ":DO_NOT_IMPORT_control_component",
-#         "@com_google_googletest//:gtest_main",
-#     ],
-# )
+apollo_cc_test(
+    name = "control_component_test",
+    size = "small",
+    srcs = ["control_component_test.cc"],
+    data = ["//modules/control/control_component:test_data"],
+    linkstatic = True,
+    deps = [
+        ":DO_NOT_IMPORT_control_component",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
 
 # TODO(storypku): split test_data
 filegroup(
