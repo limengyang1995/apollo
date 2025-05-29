@@ -80,6 +80,7 @@ private:
     bool is_all_user_leaving() const;
     bool is_stop = false;
     bool is_start_publish = false;
+    bool is_start_send_cloud = false;
 
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
@@ -90,79 +91,13 @@ private:
     void SendDataToCloud();
 
 private:
-    template <typename T>
-    void FillCommandHeader(const std::shared_ptr<T>& command);
-
-    void SendActionCommand(apollo::external_command::ActionCommandType action_command_type);
-
-    void SendSpeedCommand(double speed);
-
-    void SendSpeedFactorCommand(double speed_factor);
-
-    void RestoreSpeed();
-
-    void SendLaneFollowCommand(
-            const std::vector<apollo::external_command::Pose>& way_points,
-            const apollo::external_command::Pose& end,
-            double target_speed);
-
-    void SendValetParkingCommand(const std::string& parking_spot_id, double target_speed);
-
+    // template <typename T>
     void SendCloudControlCommand(
             const bool& cloud_takeover_request,
             const apollo::canbus::Chassis::GearPosition& gear_position,
             const float& throttle,
             const float& brake,
             const float& steering_target);
-
-    void SendVehicleSignalCommand();
-
-    void SendCustomChassisCommand();
-
-    void SendPathFollowCommandWithPathRecord(const std::string& record_path);
-
-    void SendPathFollowCommandWithLocationRecord(const std::string& record_dir);
-
-    void CheckCommandStatus(const uint64_t command_id);
-
-    void SendFreespaceCommand(
-            const std::vector<apollo::external_command::Point>& way_points,
-            const apollo::external_command::Pose& end);
-
-    static void ReadPathFromPathRecord(
-            const std::string& record_file,
-            google::protobuf::RepeatedPtrField<apollo::external_command::Point>* waypoints);
-
-    void ReadPathFromLocationRecord(
-            const std::string& record_file,
-            google::protobuf::RepeatedPtrField<apollo::external_command::Point>* waypoints) const;
-
-    std::shared_ptr<
-            apollo::cyber::Client<apollo::external_command::ActionCommand, apollo::external_command::CommandStatus>>
-            action_command_client_;
-    std::shared_ptr<
-            apollo::cyber::Client<apollo::external_command::ChassisCommand, apollo::external_command::CommandStatus>>
-            chassis_command_client_;
-    std::shared_ptr<
-            apollo::cyber::Client<apollo::external_command::FreeSpaceCommand, apollo::external_command::CommandStatus>>
-            free_space_command_client_;
-    std::shared_ptr<
-            apollo::cyber::Client<apollo::external_command::LaneFollowCommand, apollo::external_command::CommandStatus>>
-            lane_follow_command_client_;
-    std::shared_ptr<
-            apollo::cyber::Client<apollo::external_command::PathFollowCommand, apollo::external_command::CommandStatus>>
-            path_follow_command_client_;
-    std::shared_ptr<
-            apollo::cyber::Client<apollo::external_command::SpeedCommand, apollo::external_command::CommandStatus>>
-            speed_command_client_;
-    std::shared_ptr<apollo::cyber::Client<
-            apollo::external_command::ValetParkingCommand,
-            apollo::external_command::CommandStatus>>
-            valet_parking_command_client_;
-    std::shared_ptr<apollo::cyber::Client<
-            apollo::external_command::CommandStatusRequest,
-            apollo::external_command::CommandStatus>>
-            status_client_;
     std::shared_ptr<apollo::cyber::Writer<apollo::control::ControlCommand>> cloud_control_cmd_writer_;
     uint64_t command_id_;
     const std::string module_name_;
@@ -171,11 +106,6 @@ private:
     apollo::canbus::Chassis::GearPosition cloud_gear_position;
 };
 
-template <typename T>
-void ExternalDriver::FillCommandHeader(const std::shared_ptr<T>& command) {
-    apollo::common::util::FillHeader(module_name_, command.get());
-    command->set_command_id(++command_id_);
-}
 CYBER_REGISTER_COMPONENT(ExternalDriver);
 }  // namespace external_command
 }  // namespace apollo

@@ -1,1 +1,7 @@
-.workspace.json.x86_64
+{
+    "repositories" : [
+        {"name": "apollo-tools-arm", "version": "10.0.1"},
+        {"name": "apollo-core-focal-arm", "version": "10.0.1"},
+        {"name": "apollo-core-arm", "version": "10.0.1"}
+    ]
+}
