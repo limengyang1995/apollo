@@ -1,0 +1,17 @@
+config_base {
+  scan_channel: "/apollo/sensor/robin/left/Scan"
+  point_cloud_channel: "/apollo/sensor/robin/left/PointCloud2"
+  frame_id: "robin_left"
+
+  # sample ONLINE_LIDAR, RAW_PACKET
+  source_type: ONLINE_LIDAR
+}
+
+device_ip: "172.168.1.14"
+port: 8010
+udp_port: 8010
+reflectance_mode: true
+multiple_return: 1
+coordinate_mode: 3
+max_range: 2000.0
+min_range: 0.4

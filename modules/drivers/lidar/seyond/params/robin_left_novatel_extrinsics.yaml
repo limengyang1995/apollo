@@ -1,0 +1,17 @@
+child_frame_id: robin_left
+transform:
+  rotation:
+    x: 0.0107773
+    y: 0.003825
+    z: 0.708051
+    w: 0.706069
+  translation:
+    x: 0.0131209
+    y: 0.39316
+    z: 1.06021
+header:
+  seq: 0
+  stamp:
+    secs: 1502870042
+    nsecs: 0
+  frame_id: novatel

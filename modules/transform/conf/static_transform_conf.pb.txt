@@ -1,9 +1,38 @@
 extrinsic_file {
     frame_id: "novatel"
-    child_frame_id: "hesai40"
-    file_path: "/apollo/modules/drivers/lidar/hesai/params/hesai40_novatel_extrinsics.yaml"
+    child_frame_id: "seyond_front"
+    file_path: "/apollo/modules/drivers/lidar/seyond/params/seyond_front_novatel_extrinsics.yaml"
     enable: true
 }
+
+extrinsic_file {
+    frame_id: "novatel"
+    child_frame_id: "robin_left"
+    file_path: "/apollo/modules/drivers/lidar/seyond/params/robin_left_novatel_extrinsics.yaml"
+    enable: true
+}
+
+extrinsic_file {
+    frame_id: "novatel"
+    child_frame_id: "robin_right"
+    file_path: "/apollo/modules/drivers/lidar/seyond/params/robin_right_novatel_extrinsics.yaml"
+    enable: true
+}
+
+extrinsic_file {
+    frame_id: "novatel"
+    child_frame_id: "robin_front"
+    file_path: "/apollo/modules/drivers/lidar/seyond/params/robin_front_novatel_extrinsics.yaml"
+    enable: true
+}
+
+extrinsic_file {
+    frame_id: "novatel"
+    child_frame_id: "robin_rear"
+    file_path: "/apollo/modules/drivers/lidar/seyond/params/robin_rear_novatel_extrinsics.yaml"
+    enable: true
+}
+
 
 extrinsic_file {
     frame_id: "localization"
@@ -20,14 +49,14 @@ extrinsic_file {
 }
 
 extrinsic_file {
-    frame_id: "hesai40"
+    frame_id: "seyond_front"
     child_frame_id: "front_6mm"
     file_path: "/apollo/modules/perception/data/params/front_6mm_extrinsics.yaml"
     enable: true
 }
 
 extrinsic_file {
-    frame_id: "hesai40"
+    frame_id: "seyond_front"
     child_frame_id: "front_12mm"
     file_path: "/apollo/modules/perception/data/params/front_12mm_extrinsics.yaml"
     enable: true
