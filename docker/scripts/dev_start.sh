@@ -62,17 +62,9 @@ CROSS_PLATFORM_FLAG=0
 
 # Map
 DEFAULT_MAPS=(
-  sunnyvale
-  sunnyvale_big_loop
-  sunnyvale_loop
-  sunnyvale_with_two_offices
-  san_mateo
-  apollo_virutal_map
 )
 
 DEFAULT_TEST_MAPS=(
-  sunnyvale_big_loop
-  sunnyvale_loop
 )
 
 function show_usage() {

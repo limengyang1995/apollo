@@ -255,8 +255,9 @@ void DataParser::PublishOdometry(const MessagePtr message) {
   Ins *ins = As<Ins>(message);
   auto gps = std::make_shared<Gps>();
 
-  // double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
-  gps->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
+  double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
+  gps->mutable_header()->set_timestamp_sec(unix_sec);
+  // gps->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
   auto *gps_msg = gps->mutable_localization();
 
   // 1. pose xyz
@@ -266,7 +267,6 @@ void DataParser::PublishOdometry(const MessagePtr message) {
   y *= DEG_TO_RAD_LOCAL;
 
   pj_transform(wgs84pj_source_, utm_target_, 1, 1, &x, &y, NULL);
-
   gps_msg->mutable_position()->set_x(x);
   gps_msg->mutable_position()->set_y(y);
   gps_msg->mutable_position()->set_z(ins->position().height());
@@ -298,8 +298,9 @@ void DataParser::PublishOdometry(const MessagePtr message) {
 void DataParser::PublishCorrimu(const MessagePtr message) {
   Ins *ins = As<Ins>(message);
   auto imu = std::make_shared<CorrectedImu>();
-  //double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
-  imu->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());;
+  double unix_sec = apollo::drivers::util::gps2unix(ins->measurement_time());
+  imu->mutable_header()->set_timestamp_sec(unix_sec);
+  // imu->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
 
   auto *imu_msg = imu->mutable_imu();
   imu_msg->mutable_linear_acceleration()->set_x(

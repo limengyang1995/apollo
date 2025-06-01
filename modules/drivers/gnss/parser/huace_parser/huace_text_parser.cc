@@ -40,6 +40,8 @@ struct HuaCeProtocol {
   size_t GPCHCX_SIZE = 46;
 };
 
+#define ACC_UNIT 9.806
+
 class HuaCeTextParser : public HuaCeBaseParser {
  public:
   explicit HuaCeTextParser(const config::Config &config)
@@ -123,12 +125,12 @@ void HuaCeTextParser::PrepareMessageGPCHC(
   decode_message_.Heading = std::stod(fields[3]);
   decode_message_.Pitch = std::stod(fields[4]);
   decode_message_.Roll = std::stod(fields[5]);
-  decode_message_.GyroX = std::stod(fields[6]);
-  decode_message_.GyroY = std::stod(fields[7]);
-  decode_message_.GyroZ = std::stod(fields[8]);
-  decode_message_.AccX = std::stod(fields[9]);
-  decode_message_.AccY = std::stod(fields[10]);
-  decode_message_.AccZ = std::stod(fields[11]);
+  decode_message_.GyroX = std::stod(fields[6]) * DEG_TO_RAD;
+  decode_message_.GyroY = std::stod(fields[7]) * DEG_TO_RAD;
+  decode_message_.GyroZ = std::stod(fields[8]) * DEG_TO_RAD;
+  decode_message_.AccX = std::stod(fields[9]) * ACC_UNIT;
+  decode_message_.AccY = std::stod(fields[10]) * ACC_UNIT;
+  decode_message_.AccZ = std::stod(fields[11]) * ACC_UNIT;
   decode_message_.Latitude = std::stod(fields[12].empty() ? "0" : fields[12]);
   decode_message_.Longitude = std::stod(fields[13].empty() ? "0" : fields[13]);
   decode_message_.Altitude = std::stod(fields[14].empty() ? "0" : fields[14]);

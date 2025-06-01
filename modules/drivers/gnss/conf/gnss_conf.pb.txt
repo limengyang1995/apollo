@@ -1,11 +1,11 @@
 data {
     # format optional: NOVATEL_BINARY, HUACE_TEXT, ASENSING_BINARY, INS570D_BINARY, BROADGNSS_TEXT
-    format: INS570D_BINARY
+    format: HUACE_TEXT
 
     # protocol optional: serial, tcp, udp, ntrip, can_card_parameter
     serial {
-        device: "/dev/ttysWK1"
-        baud_rate: 230400
+        device: "/dev/ttyTHS0"
+        baud_rate: 115200
     }
 
     # tcp, udp: e.g.
@@ -54,7 +54,7 @@ data {
 
 rtk_solution_type: RTK_RECEIVER_SOLUTION
 imu_type: ADIS16488
-proj4_text: "+proj=utm +zone=51 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+proj4_text: "+proj=utm +zone=49 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
 tf {
     frame_id: "world"
