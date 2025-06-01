@@ -1,0 +1,47 @@
+module_config {
+    module_library : "modules/drivers/lidar/seyond/libseyond_component.so"
+    
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Seyond_left_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/seyond_left.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Seyond_front_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/seyond_front.pb.txt"
+        }
+    }
+}
+
+#module_config {
+#    module_library : "modules/drivers/lidar/velodyne/fusion/libvelodyne_fusion_component.so"
+
+#    components {
+#      class_name : "PriSecFusionComponent"
+#      config {
+#        name : "velodyne_fusion"
+#        config_file_path : "modules/drivers/lidar/velodyne/conf/velodyne_fusion_conf.pb.txt"
+#        readers {channel: "/apollo/sensor/lidar16/front/center/PointCloud2"}
+#      }
+#    }
+#}
+
+
+#module_config {
+#    module_library : "modules/drivers/lidar/compensator/libcompensator_component.so"
+
+#    components {
+#        class_name : "CompensatorComponent"
+#        config {
+#          name : "compensator"
+#          config_file_path : "modules/drivers/lidar/compensator/conf/compensator.pb.txt"
+#          readers {channel: "/apollo/sensor/seyond/fusion/PointCloud2"}
+#        }
+#    }
+#}
