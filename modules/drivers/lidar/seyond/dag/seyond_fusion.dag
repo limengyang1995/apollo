@@ -6,9 +6,9 @@ module_config {
     components {
       class_name : "PriSecFusionComponent"
       config {
-        name : "velodyne_fusion"
-        config_file_path : "modules/drivers/lidar/velodyne/conf/velodyne_fusion_conf.pb.txt"
-        readers {channel: "/apollo/sensor/lidar16/front/center/PointCloud2"}
+        name : "seyond_fusion"
+        config_file_path : "modules/drivers/lidar/seyond/conf/seyond_fusion_conf.pb.txt"
+        readers {channel: "/apollo/sensor/seyond/front/PointCloud2"}
       }
     }
 }

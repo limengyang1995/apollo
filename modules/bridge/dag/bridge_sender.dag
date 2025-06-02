@@ -1,16 +1,16 @@
 module_config {
     module_library: "modules/bridge/libudp_bridge_sender_component.so"
-    components {
+    #components {
 
-        class_name: "UDPBridgeSenderComponent<planning::ADCTrajectory>"
-        config {
-            name: "bridge_sender_ADCTrajectory"
-            config_file_path: "/apollo/modules/bridge/conf/udp_bridge_sender_adctrajectory.pb.txt"
-            readers {
-              channel: "/apollo/planning"
-            }
-      }
-   }
+    #    class_name: "UDPBridgeSenderComponent<planning::ADCTrajectory>"
+    #    config {
+    #        name: "bridge_sender_ADCTrajectory"
+    #        config_file_path: "/apollo/modules/bridge/conf/udp_bridge_sender_adctrajectory.pb.txt"
+    #        readers {
+    #          channel: "/apollo/planning"
+    #        }
+    #  }
+   #}
 
     components {
 

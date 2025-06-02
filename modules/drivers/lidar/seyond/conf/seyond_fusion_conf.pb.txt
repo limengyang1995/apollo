@@ -1,0 +1,12 @@
+max_interval_ms: 50
+drop_expired_data : true
+fusion_channel: "/apollo/sensor/seyond/fusion/PointCloud2"
+input_channel: [
+    "/apollo/sensor/robin/front/PointCloud2",
+    "/apollo/sensor/robin/left/PointCloud2",
+    "/apollo/sensor/robin/right/PointCloud2",
+    "/apollo/sensor/robin/rear/PointCloud2"
+]
+
+# wait time after main channel receive msg, unit second
+wait_time_s: 0.02
