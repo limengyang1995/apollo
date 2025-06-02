@@ -9,4 +9,13 @@ module_config {
             config_file_path: "/apollo/modules/bridge/conf/udp_bridge_receiver_chassis.pb.txt"
       }
    }
+
+   components {
+
+        class_name: "UDPBridgeReceiverComponent<localization::LocalizationEstimate>"
+        config {
+            name: "bridge_receiver_LocalizationEstimate"
+            config_file_path: "/apollo/modules/bridge/conf/udp_bridge_receiver_localization.pb.txt"
+      }
+   }
 }

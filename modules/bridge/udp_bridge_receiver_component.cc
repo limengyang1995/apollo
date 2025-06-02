@@ -229,5 +229,6 @@ bool UDPBridgeReceiverComponent<T>::RemoveInvalidBuf(uint32_t msg_id) {
 }
 
 BRIDGE_RECV_IMPL(canbus::Chassis);
+BRIDGE_RECV_IMPL(localization::LocalizationEstimate);
 }  // namespace bridge
 }  // namespace apollo
