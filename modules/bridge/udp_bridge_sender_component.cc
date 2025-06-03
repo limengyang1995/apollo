@@ -87,6 +87,7 @@ bool UDPBridgeSenderComponent<T>::Proc(const std::shared_ptr<T> &pb_msg) {
 
 BRIDGE_IMPL(LocalizationEstimate);
 BRIDGE_IMPL(planning::ADCTrajectory);
-
+BRIDGE_IMPL(perception::PerceptionObstacles);
+BRIDGE_IMPL(perception::TrafficLightDetection);
 }  // namespace bridge
 }  // namespace apollo

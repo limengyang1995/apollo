@@ -499,7 +499,9 @@ function main() {
     --hostname "${DEV_INSIDE}" \
     --shm-size "${SHM_SIZE}" \
     --pid=host \
+    -p 8900:8900 \
     -p 8901:8901 \
+    -p 8902:8902 \
     -v /dev/null:/dev/raw1394 \
     "${start_img}" \
     /bin/bash
