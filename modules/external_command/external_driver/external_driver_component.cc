@@ -26,10 +26,13 @@
 #include "cyber/record/record_reader.h"
 #include "cyber/common/log.h"
 #include <string>
+#include "thread"
 
 #include "opencv2/opencv.hpp"
+#include "opencv2/core.hpp"
 // #include "nlohmann/json.hpp"
 #include <fstream>
+#include <sys/wait.h>
 
 namespace apollo {
 namespace external_command {
@@ -45,16 +48,16 @@ bool ExternalDriver::Init() {
             "/apollo/modules/external_command/external_driver/conf/"
             "external_driver_config.pb.txt",
             &config_);
-
-    rtc_client_.CreateClient(config_, "all");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_1_.CreateClient(config_, "front");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_2_.CreateClient(config_, "right");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_3_.CreateClient(config_, "rear");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_4_.CreateClient(config_, "left");
+    CreateRtcClient(config_);
+    // rtc_client_.CreateClient(config_, "all");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_1_.CreateClient(config_, "front");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_2_.CreateClient(config_, "right");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_3_.CreateClient(config_, "rear");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_4_.CreateClient(config_, "left");
 
     // std::ifstream f(config_.destination_path());
     // if (f.fail()) {
@@ -76,8 +79,20 @@ bool ExternalDriver::Init() {
                 chassis_.CopyFrom(*chassis);
                 // std::this_thread::sleep_for(std::chrono::seconds(1));
             });
-
+    // AERROR << "nenon suppot" << cv::checkHardwareSupport(100);
     return true;
+}
+
+void ExternalDriver::CreateRtcClient(const ExternalDriverConfig& config) {
+    rtc_client_.CreateClient(config_, "all");
+    cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_1_.CreateClient(config_, "front");
+    cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_2_.CreateClient(config_, "right");
+    cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_3_.CreateClient(config_, "rear");
+    cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_4_.CreateClient(config_, "left");
 }
 bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
     for (const auto& channel : config.channel().input_camera_channel_name()) {
@@ -96,10 +111,26 @@ bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
 
 void ExternalDriver::SendDataToCloud() {
     std::string car_id(getenv("CARID"));
+    bool network_down = false;
+    int fail_count = 0;
 
     while (true) {
+        int result = WEXITSTATUS(system("ping -c 5 -W 1 8.8.8.8 > /dev/null 2>&1"));
+        AERROR << "result :" << result;
+        if (result != 0) {
+            fail_count++;
+            AERROR << "fail count : " << fail_count;
+            if (fail_count > 2) {
+                network_down = true;
+            }
+        } else if (network_down) {
+            AERROR << "restart all process!";
+            fail_count = 0;
+            network_down = false;
+            CreateRtcClient(config_);
+        }
+
         if (is_start_send_cloud) {
-            AINFO << "start send data to cloud";
             cyber::SleepFor(std::chrono::milliseconds(150));
             std::string x = std::to_string(localization_.pose().position().x());
             std::string y = std::to_string(localization_.pose().position().y());
@@ -109,8 +140,8 @@ void ExternalDriver::SendDataToCloud() {
             std::string throttle = std::to_string(std::round(chassis_.throttle_percentage()));
             std::string brake = std::to_string(std::round(chassis_.brake_percentage()));
             std::string driving_mode = std::to_string(chassis_.driving_mode());
-            std::string speed = std::to_string(chassis_.speed_mps());
-
+            std::string speed = std::to_string(std::round(chassis_.speed_mps()));
+            // std::string speed = std::to_string(10);
             std::string epb = std::to_string(chassis_.parking_brake());
 
             nlohmann::json vehicle_data
@@ -165,8 +196,6 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
     img_.reserve(4);
     img_.clear();
 
-    auto t1 = cyber::Time::Now().ToSecond();
-
     for (u_int16_t i = 0; i < readers_.size(); ++i) {
         readers_[i]->Observe();
         const auto camera_msg = readers_[i]->GetLatestObserved();
@@ -179,7 +208,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
     }
 
     if (is_start_publish && !id_list.empty()) {
-        // AERROR << "is_start_publish :" << is_start_publish;
+        // auto time1 = cyber::Time::Now().ToSecond();
 
         cv::Mat img_front;
         cv::Mat img_right;
@@ -213,12 +242,25 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         // //     cv::line(img_front, img_points[i], img_points[(i + 1) % 4], color, thickness);
         // // }
 
-        cv::resize(img_[0], img_front, cv::Size(), 0.5, 0.6, cv::INTER_LINEAR);
-        cv::resize(img_[2], img_right, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
-        cv::resize(img_[4], img_left, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
-        cv::resize(img_[3], img_back, cv::Size(), 0.18, 0.1, cv::INTER_LINEAR);
-        cv::resize(img_[5], img_left_front, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
-        cv::resize(img_[1], img_right_front, cv::Size(), 0.25, 0.3, cv::INTER_LINEAR);
+        cv::Size front_size(img_[0].cols * 0.5, img_[0].rows * 0.6);
+        cv::Size back_size(img_[3].cols * 0.18, img_[3].rows * 0.1);
+        cv::Size right_size(img_[2].cols * 0.25, img_[2].rows * 0.3);
+        cv::Size left_size(img_[4].cols * 0.25, img_[4].rows * 0.3);
+        cv::Size left_front_size(img_[5].cols * 0.25, img_[5].rows * 0.3);
+        cv::Size right_front_size(img_[1].cols * 0.25, img_[1].rows * 0.3);
+
+        std::thread t1([&]() { resize(img_[0], img_front, front_size, 0, 0, cv::INTER_NEAREST); });
+        std::thread t2([&]() { resize(img_[3], img_back, back_size, 0, 0, cv::INTER_NEAREST); });
+        std::thread t3([&]() { resize(img_[2], img_right, right_size, 0, 0, cv::INTER_NEAREST); });
+        std::thread t4([&]() { resize(img_[4], img_left, left_size, 0, 0, cv::INTER_NEAREST); });
+        std::thread t5([&]() { resize(img_[5], img_left_front, left_front_size, 0, 0, cv::INTER_NEAREST); });
+        std::thread t6([&]() { resize(img_[1], img_right_front, right_front_size, 0, 0, cv::INTER_NEAREST); });
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+        t5.join();
+        t6.join();
 
         std::vector<unsigned char> buf_front;
         std::vector<unsigned char> buf_left;
@@ -227,6 +269,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         std::vector<unsigned char> buf_stitch;
 
         // 定义矩形区域的左上角坐标（x, y）和矩形的宽度（width）与高度（height）
+
         cv::Rect roi_back((img_front.cols - img_back.cols) / 2, 0, img_back.cols, img_back.rows);
         cv::Mat&& roi_back_rect = img_front(roi_back);
         img_back.copyTo(roi_back_rect);
@@ -242,6 +285,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
 
         // cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
         cv::imencode(".jpg", img_stitch, buf_stitch);
+        // auto time2 = cyber::Time::Now().ToSecond();
 
         for (const auto& cam : request_camera) {
             // AERROR << "camera name :" << cam;
@@ -270,7 +314,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
 
         rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         AINFO << "start send image successfully!";
-        // auto t2 = cyber::Time::Now().ToSecond();
+        // AERROR << "send image cost time :" << time2 - time1;
 
         // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         return true;
@@ -373,8 +417,6 @@ void ExternalDriver::SendCloudControlCommand(
     // AERROR<< "Sending cloud control command: " << command->DebugString();
     cloud_control_cmd_writer_->Write(command);
 }
-
-
 
 }  // namespace external_command
 }  // namespace apollo

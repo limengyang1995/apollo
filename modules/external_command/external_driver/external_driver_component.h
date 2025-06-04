@@ -89,6 +89,7 @@ private:
     apollo::localization::LocalizationEstimate localization_;
     apollo::canbus::Chassis chassis_;
     void SendDataToCloud();
+    void CreateRtcClient(const ExternalDriverConfig& config);
 
 private:
     // template <typename T>

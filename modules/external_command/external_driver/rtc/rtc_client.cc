@@ -28,17 +28,19 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
     g_BrtcClient = Client();
     s.HasData = true;
     s.HasVideo = true;
-    s.HasAudio = true;
+    s.HasAudio = false;
     s.AudioINChannel = 1;
     s.AudioINFrequency = 16000;
     s.ImageINType = RTC_IMAGE_TYPE_JPEG;
     s.ImageOUTType = RTC_IMAGE_TYPE_H264;
+    s.ConnectionTimeoutMs = 100;
+    s.ReadTimeoutMs = 100;
 
     s.AsPublisher = true;
     s.AsListener = false;
     s.AutoPublish = true;
 
-    s.VideoFps = 10;
+    s.VideoFps = 15;
 
     s.VideoMaxkbps = config.video_maxkbps();
     s.VideoWidth = config.image_width();
@@ -67,6 +69,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
         AERROR << "loginRoom failed";
         return false;
     }
+
     // g_BrtcClient->startPublish();
     if (camera_name == "all") {
         AERROR << "listener set for all camera";
@@ -77,17 +80,27 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
 }
 void MyListener::OnRtcMessage(RtcMessage& msg) {
     msg_type = msg.msgType;
-    AERROR << msg.data.feedId;
-    AERROR << msg.extra_info;
-    if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE) {
+
+    // std::lock_guard<std::mutex> lock(msg_mutex);
+    switch (msg.msgType) {
+    case RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE:
+        AERROR << "user message";
         recieve_msg = msg.extra_info;
         re_mark = true;
         feed_id = msg.data.feedId;
-    }
-    if (msg.msgType == RtcMessageType::RTC_ROOM_EVENT_ON_USER_LEAVING_ROOM) {
+        break;
+    case RtcMessageType::RTC_ROOM_EVENT_ON_USER_LEAVING_ROOM:
         user_leaving_mark = true;
         leaving_user_id = msg.data.feedId;
         AINFO << msg.data.feedId;
+
+    case RtcMessageType::RTC_MESSAGE_ROOM_EVENT_CONNECTION_LOST:
+
+        connection_lost = true;
+        AERROR << "connection lost";
+
+    default:
+        break;
     }
 }
 

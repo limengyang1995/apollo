@@ -2,7 +2,7 @@ left_path_width: 2.0
 right_path_width: 2.0
 target_speed: 20
 cer_path: "/apollo/modules/external_command/external_driver/conf/a.cer"
-app_id: "appre6q0f8ecft5"
+app_id: "appretxpzeedsn6"
 lib_path: "/apollo_workspace/modules/external_command/external_driver/rtc/lib/libbaidurtc.so"
 video_maxkbps: 2000
 image_width: 1920

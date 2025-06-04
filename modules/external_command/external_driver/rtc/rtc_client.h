@@ -25,9 +25,11 @@ public:
     int msg_type;
     std::string recieve_msg;
     bool re_mark = false;
+    bool connection_lost = false;
     int64_t feed_id;
     bool user_leaving_mark = false;
     int64_t leaving_user_id;
+    // std::mutex msg_mutex_;
 
 public:
     void OnRtcMessage(RtcMessage& msg) override;
