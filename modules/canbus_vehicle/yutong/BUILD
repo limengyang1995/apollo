@@ -1,0 +1,116 @@
+load("//tools:apollo_package.bzl", "apollo_cc_binary", "apollo_cc_library", "apollo_cc_test", "apollo_component", "apollo_package")
+load("//tools:cpplint.bzl", "cpplint")
+
+package(default_visibility = ["//visibility:public"])
+
+CANBUS_COPTS = ["-DMODULE_NAME=\\\"canbus\\\""]
+
+apollo_cc_library(
+    name = "apollo_canbus_vehicle_yutong",
+    srcs = [
+        "yutong_controller.cc",
+        "yutong_message_manager.cc",
+        "yutong_vehicle_factory.cc",
+        "protocol/eps_01_cff272d.cc",
+        "protocol/vcu_01_cffd12a.cc",
+        "protocol/vcu_02_18ffda2a.cc",
+        "protocol/vcu_03_18fefa2d.cc",
+        "protocol/vcu_04_18fdcd2a.cc",
+        "protocol/vcu_05_18ff422a.cc",
+        "protocol/vcu_06_18fe412a.cc",
+        "protocol/vcu_07_df205f6.cc",
+        "protocol/vcu_08_18ff452a.cc",
+        "protocol/gw_01_18ffdc24.cc",
+        "protocol/gw_02_19ffcb24.cc",
+        "protocol/gw_03_19ffca24.cc",
+        "protocol/gw_04_18ff0824.cc",
+        "protocol/gw_05_18ff1924.cc",
+        "protocol/gw_06_18ff1724.cc",
+        "protocol/gw_07_18ff0f24.cc",
+        "protocol/gw_08_18ff1424.cc",
+        "protocol/gw_09_cff5182.cc",
+        "protocol/gw_10_cff5183.cc",
+        "protocol/gw_11_18ff2df3.cc",
+        "protocol/gw_12_18ff30f4.cc",
+        "protocol/gw_13_18ff32f4.cc",
+        "protocol/gw_14_18fead0b.cc",
+        "protocol/gw_15_18febf0b.cc",
+        "protocol/gw_16_8fe6e0b.cc",
+        "protocol/gw_17_18f0090b.cc",
+        "protocol/gw_18_19fff103.cc",
+        "protocol/gw_19_18ffcc17.cc",
+        "protocol/gw_20_18fec117.cc",
+        "protocol/gw_21_19ff5417.cc",
+        "protocol/gw_22_18ffe117.cc",
+        "protocol/gw_23_18ffc017.cc",
+        "protocol/gw_24_18a70017.cc",
+        "protocol/gw_25_cff12fa.cc",
+    ],
+    hdrs = [
+        "yutong_controller.h",
+        "yutong_message_manager.h",
+        "yutong_vehicle_factory.h",
+        "protocol/eps_01_cff272d.h",
+        "protocol/vcu_01_cffd12a.h",
+        "protocol/vcu_02_18ffda2a.h",
+        "protocol/vcu_03_18fefa2d.h",
+        "protocol/vcu_04_18fdcd2a.h",
+        "protocol/vcu_05_18ff422a.h",
+        "protocol/vcu_06_18fe412a.h",
+        "protocol/vcu_07_df205f6.h",
+        "protocol/vcu_08_18ff452a.h",
+        "protocol/gw_01_18ffdc24.h",
+        "protocol/gw_02_19ffcb24.h",
+        "protocol/gw_03_19ffca24.h",
+        "protocol/gw_04_18ff0824.h",
+        "protocol/gw_05_18ff1924.h",
+        "protocol/gw_06_18ff1724.h",
+        "protocol/gw_07_18ff0f24.h",
+        "protocol/gw_08_18ff1424.h",
+        "protocol/gw_09_cff5182.h",
+        "protocol/gw_10_cff5183.h",
+        "protocol/gw_11_18ff2df3.h",
+        "protocol/gw_12_18ff30f4.h",
+        "protocol/gw_13_18ff32f4.h",
+        "protocol/gw_14_18fead0b.h",
+        "protocol/gw_15_18febf0b.h",
+        "protocol/gw_16_8fe6e0b.h",
+        "protocol/gw_17_18f0090b.h",
+        "protocol/gw_18_19fff103.h",
+        "protocol/gw_19_18ffcc17.h",
+        "protocol/gw_20_18fec117.h",
+        "protocol/gw_21_19ff5417.h",
+        "protocol/gw_22_18ffe117.h",
+        "protocol/gw_23_18ffc017.h",
+        "protocol/gw_24_18a70017.h",
+        "protocol/gw_25_cff12fa.h",
+    ],
+    copts = CANBUS_COPTS,
+    deps = [
+        "//modules/canbus:apollo_canbus",
+        "//modules/canbus/proto:canbus_conf_cc_proto",
+        "//modules/canbus/proto:vehicle_parameter_cc_proto",
+        "//modules/canbus_vehicle/yutong/proto:yutong_proto",
+        "//modules/common/adapters:adapter_gflags",
+        "//modules/common/status",
+        "//modules/common_msgs/basic_msgs:error_code_cc_proto",
+        "//modules/common_msgs/chassis_msgs:chassis_cc_proto",
+        "//modules/common_msgs/control_msgs:control_cmd_cc_proto",
+        "//modules/drivers/canbus:apollo_drivers_canbus",
+    ],
+)
+
+apollo_component(
+    name = "libyutong_vehicle_factory_lib.so",
+    deps = [":apollo_canbus_vehicle_yutong"],
+)
+
+filegroup(
+    name = "runtime_data",
+    srcs = glob([
+        "testdata/**",
+    ]),
+)
+
+apollo_package()
+cpplint()
