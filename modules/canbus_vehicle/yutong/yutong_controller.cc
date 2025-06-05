@@ -289,14 +289,14 @@ Chassis YutongController::chassis() {
           gw_16_8fe6e0b.fl_wheelspeed());
     }
   }
-  /*// 10 steering pct   wheel voltage feedback   need to revise to steering wheel
+  /*// 10 steering pct   wheel voltage feedback   need to revise to steering wheel*/
   if (chassis_detail.has_gw_25_cff12fa() && 
       chassis_detail.gw_25_cff12fa().has_wheel_steering_angle()) {
     chassis_.set_steering_percentage(
-      - chassis_detail.gw_25_cff12fa().wheel_steering_angle() * 100 / (vehicle_params_.max_steer_angle() / M_PI * 180) );
+      - (chassis_detail.gw_25_cff12fa().wheel_steering_angle() * 0.1 - 240) * 100 / (vehicle_params_.max_steer_angle() / M_PI * 180) );
   } else {
     chassis_.set_steering_percentage(0);
-  } */
+  } 
   
 
   return chassis_;
@@ -314,7 +314,9 @@ ErrorCode YutongController::EnableAutoMode() {
     return ErrorCode::OK;
   }
   // set enable
-  /* ADD YOUR OWN CAR CHASSIS OPERATION
+  /* ADD YOUR OWN CAR CHASSIS OPERATION*/
+  vcu_02_18ffda2a_->set_adcontrolmode(Vcu_02_18ffda2a::ADCONTROLMODE_AUTO);
+  vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
 
   can_sender_->Update();
   const int32_t flag =
@@ -329,7 +331,7 @@ ErrorCode YutongController::EnableAutoMode() {
   set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
   AINFO << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
   return ErrorCode::OK;
-  */
+  
   return ErrorCode::OK;
 }
 
