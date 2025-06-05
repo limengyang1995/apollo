@@ -57,12 +57,12 @@ apollo::common::Status LaneBorrowPath::Process(
     Frame* frame, ReferenceLineInfo* reference_line_info) {
   if (!config_.is_allow_lane_borrowing() ||
       reference_line_info->path_reusable()) {
-    ADEBUG << "path reusable" << reference_line_info->path_reusable()
+    AINFO << "path reusable" << reference_line_info->path_reusable()
            << ",skip";
     return Status::OK();
   }
   if (!IsNecessaryToBorrowLane()) {
-    ADEBUG << "No need to borrow lane";
+    AINFO << "No need to borrow lane";
     return Status::OK();
   }
   std::vector<PathBoundary> candidate_path_boundaries;
@@ -77,7 +77,7 @@ apollo::common::Status LaneBorrowPath::Process(
   }
   if (AssessPath(&candidate_path_data,
                  reference_line_info->mutable_path_data())) {
-    ADEBUG << "lane borrow path success";
+    AINFO << "lane borrow path success";
   }
 
   return Status::OK();
@@ -127,7 +127,7 @@ bool LaneBorrowPath::DecidePathBounds(std::vector<PathBoundary>* boundary) {
       path_bound.push_back(temp_path_bound[path_bound.size()]);
       counter++;
     }
-    ADEBUG << "Completed generating path boundaries.";
+    AINFO << "Completed generating path boundaries.";
     std::string label;
     if (decided_side_pass_direction_[i] == SidePassDirection::LEFT_BORROW) {
       label = "regular/left" + borrow_lane_type;
@@ -271,32 +271,32 @@ bool LaneBorrowPath::GetBoundaryFromNeighborLane(
         if (reference_line_info_->GetNeighborLaneInfo(
                 ReferenceLineInfo::LaneType::LeftForward, curr_s,
                 &neighbor_lane_id, &curr_neighbor_lane_width)) {
-          ADEBUG << "Borrow left forward neighbor lane."
+          AINFO << "Borrow left forward neighbor lane."
                 << neighbor_lane_id.id();
         } else if (reference_line_info_->GetNeighborLaneInfo(
                        ReferenceLineInfo::LaneType::LeftReverse, curr_s,
                        &neighbor_lane_id, &curr_neighbor_lane_width)) {
           borrowing_reverse_lane = true;
-          ADEBUG << "Borrow left reverse neighbor lane."
+          AINFO << "Borrow left reverse neighbor lane."
                 << neighbor_lane_id.id();
         } else {
-          ADEBUG << "There is no left neighbor lane.";
+          AINFO << "There is no left neighbor lane.";
         }
       } else if (pass_direction == SidePassDirection::RIGHT_BORROW) {
         // Borrowing right neighbor lane.
         if (reference_line_info_->GetNeighborLaneInfo(
                 ReferenceLineInfo::LaneType::RightForward, curr_s,
                 &neighbor_lane_id, &curr_neighbor_lane_width)) {
-          ADEBUG << "Borrow right forward neighbor lane."
+          AINFO << "Borrow right forward neighbor lane."
                 << neighbor_lane_id.id();
         } else if (reference_line_info_->GetNeighborLaneInfo(
                        ReferenceLineInfo::LaneType::RightReverse, curr_s,
                        &neighbor_lane_id, &curr_neighbor_lane_width)) {
           borrowing_reverse_lane = true;
-          ADEBUG << "Borrow right reverse neighbor lane."
+          AINFO << "Borrow right reverse neighbor lane."
                 << neighbor_lane_id.id();
         } else {
-          ADEBUG << "There is no right neighbor lane.";
+          AINFO << "There is no right neighbor lane.";
         }
       }
     }
@@ -426,6 +426,7 @@ bool LaneBorrowPath::HasSingleReferenceLine(const Frame& frame) {
 }
 
 bool LaneBorrowPath::IsWithinSidePassingSpeedADC(const Frame& frame) {
+  AINFO << "ego_v: "<< frame.PlanningStartPoint().v();
   return frame.PlanningStartPoint().v() < config_.lane_borrow_max_speed();
 }
 
@@ -454,23 +455,23 @@ bool LaneBorrowPath::IsBlockingObstacleWithinDestination(
   const std::string blocking_obstacle_id =
       path_decider_status.front_static_obstacle_id();
   if (blocking_obstacle_id.empty()) {
-    ADEBUG << "There is no blocking obstacle.";
+    AINFO << "There is no blocking obstacle.";
     return true;
   }
   const Obstacle* blocking_obstacle =
       reference_line_info.path_decision().obstacles().Find(
           blocking_obstacle_id);
   if (blocking_obstacle == nullptr) {
-    ADEBUG << "Blocking obstacle is no longer there.";
+    AINFO << "Blocking obstacle is no longer there.";
     return true;
   }
 
   double blocking_obstacle_s =
       blocking_obstacle->PerceptionSLBoundary().start_s();
   double adc_end_s = reference_line_info.AdcSlBoundary().end_s();
-  ADEBUG << "Blocking obstacle is at s = " << blocking_obstacle_s;
-  ADEBUG << "ADC is at s = " << adc_end_s;
-  ADEBUG << "Destination is at s = "
+  AINFO << "Blocking obstacle is at s = " << blocking_obstacle_s;
+  AINFO << "ADC is at s = " << adc_end_s;
+  AINFO << "Destination is at s = "
          << reference_line_info.SDistanceToDestination() + adc_end_s;
   if (blocking_obstacle_s - adc_end_s >
       reference_line_info.SDistanceToDestination()) {
@@ -486,26 +487,26 @@ bool LaneBorrowPath::IsBlockingObstacleFarFromIntersection(
   const std::string blocking_obstacle_id =
       path_decider_status.front_static_obstacle_id();
   if (blocking_obstacle_id.empty()) {
-    ADEBUG << "There is no blocking obstacle.";
+    AINFO << "There is no blocking obstacle.";
     return true;
   }
   const Obstacle* blocking_obstacle =
       reference_line_info.path_decision().obstacles().Find(
           blocking_obstacle_id);
   if (blocking_obstacle == nullptr) {
-    ADEBUG << "Blocking obstacle is no longer there.";
+    AINFO << "Blocking obstacle is no longer there.";
     return true;
   }
 
   // Get blocking obstacle's s.
   double blocking_obstacle_s =
       blocking_obstacle->PerceptionSLBoundary().end_s();
-  ADEBUG << "Blocking obstacle is at s = " << blocking_obstacle_s;
+  AINFO << "Blocking obstacle is at s = " << blocking_obstacle_s;
   // Get intersection's s and compare with threshold.
   const auto& first_encountered_overlaps =
       reference_line_info.FirstEncounteredOverlaps();
   for (const auto& overlap : first_encountered_overlaps) {
-    ADEBUG << overlap.first << ", " << overlap.second.DebugString();
+    AINFO << overlap.first << ", " << overlap.second.DebugString();
     if (overlap.first != ReferenceLineInfo::SIGNAL &&
         overlap.first != ReferenceLineInfo::STOP_SIGN) {
       continue;
@@ -515,13 +516,13 @@ bool LaneBorrowPath::IsBlockingObstacleFarFromIntersection(
     if (overlap.first == ReferenceLineInfo::SIGNAL ||
         overlap.first == ReferenceLineInfo::STOP_SIGN) {
       if (distance < kIntersectionClearanceDist) {
-        ADEBUG << "Too close to signal intersection (" << distance
+        AINFO << "Too close to signal intersection (" << distance
                << "m); don't SIDE_PASS.";
         return false;
       }
     } else {
       if (distance < kJunctionClearanceDist) {
-        ADEBUG << "Too close to overlap_type[" << overlap.first << "] ("
+        AINFO << "Too close to overlap_type[" << overlap.first << "] ("
                << distance << "m); don't SIDE_PASS";
         return false;
       }
@@ -591,7 +592,7 @@ void LaneBorrowPath::CheckLaneBorrow(
           lane_boundary_type == hdmap::LaneBoundaryType::SOLID_WHITE) {
         *left_neighbor_lane_borrowable = false;
       }
-      ADEBUG << "s[" << check_s << "] left_lane_boundary_type["
+      AINFO << "s[" << check_s << "] left_lane_boundary_type["
              << LaneBoundaryType_Type_Name(lane_boundary_type) << "]";
     }
     if (*right_neighbor_lane_borrowable) {
@@ -600,7 +601,7 @@ void LaneBorrowPath::CheckLaneBorrow(
           lane_boundary_type == hdmap::LaneBoundaryType::SOLID_WHITE) {
         *right_neighbor_lane_borrowable = false;
       }
-      ADEBUG << "s[" << check_s << "] right_neighbor_lane_borrowable["
+      AINFO << "s[" << check_s << "] right_neighbor_lane_borrowable["
              << LaneBoundaryType_Type_Name(lane_boundary_type) << "]";
     }
     check_s += 2.0;
@@ -641,7 +642,7 @@ void LaneBorrowPath::SetPathInfo(PathData* const path_data) {
   SLBoundary ego_sl_boundary;
   for (size_t i = 0; i < discrete_path.size(); ++i) {
     if (!GetSLBoundary(*path_data, i, reference_line_info_, &ego_sl_boundary)) {
-      ADEBUG << "Unable to get SL-boundary of ego-vehicle.";
+      AINFO << "Unable to get SL-boundary of ego-vehicle.";
       continue;
     }
     double lane_left_width = 0.0;
@@ -700,7 +701,7 @@ void LaneBorrowPath::SetPathInfo(PathData* const path_data) {
 
 bool ComparePathData(const PathData& lhs, const PathData& rhs,
                      const Obstacle* blocking_obstacle) {
-  ADEBUG << "Comparing " << lhs.path_label() << " and " << rhs.path_label();
+  AINFO << "Comparing " << lhs.path_label() << " and " << rhs.path_label();
   static constexpr double kNeighborPathLengthComparisonTolerance = 25.0;
   double lhs_path_length = lhs.frenet_frame_path().back().s();
   double rhs_path_length = rhs.frenet_frame_path().back().s();
@@ -728,7 +729,7 @@ bool ComparePathData(const PathData& lhs, const PathData& rhs,
         (blocking_obstacle->PerceptionSLBoundary().start_l() +
          blocking_obstacle->PerceptionSLBoundary().end_l()) /
         2;
-    ADEBUG << "obstacle[" << blocking_obstacle->Id() << "] l[" << obstacle_l
+    AINFO << "obstacle[" << blocking_obstacle->Id() << "] l[" << obstacle_l
            << "]";
     return (obstacle_l > 0.0
                 ? (lhs.path_label().find("right") != std::string::npos)

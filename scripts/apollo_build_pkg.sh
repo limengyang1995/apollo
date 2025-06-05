@@ -253,7 +253,7 @@ function run_bazel_build() {
   fi
   info "${TAB}Disabled:          ${YELLOW}${disabled_targets}${NO_COLOR}"
 
-  local job_args="-j=$(nproc) -m=0.7"
+  local job_args="-j=$(nproc) -m=0.6"
 
   # keep the bazel-extend-tools used in core and park consistent
   if [[ ! -e /opt/apollo/neo/src/tools ]]; then
@@ -263,7 +263,7 @@ function run_bazel_build() {
   rm -rf /opt/apollo/neo/packages/bazel-extend-tools/latest/src
   ln -snf /apollo/tools /opt/apollo/neo/packages/bazel-extend-tools/latest/src 
 
-  buildtool build ${CMDLINE_OPTIONS} ${job_args} -p ${build_targets}
+  buildtool build ${CMDLINE_OPTIONS} ${} -p ${build_targets}
 
   [[ $? -ne 0 ]] && error "Build failed!" && exit -1
 }

@@ -138,7 +138,8 @@ bool PathBoundsDeciderUtil::UpdateLeftPathBoundaryWithBuffer(
 bool PathBoundsDeciderUtil::UpdateRightPathBoundaryWithBuffer(
     double right_bound, BoundType right_type, std::string right_id,
     PathBoundPoint* const bound_point) {
-  right_bound = right_bound + GetBufferBetweenADCCenterAndEdge();
+  double buffer = 0.0;
+  right_bound = right_bound + GetBufferBetweenADCCenterAndEdge() + buffer;
   PathBoundPoint new_point = *bound_point;
   if (new_point.l_lower.l < right_bound) {
     new_point.l_lower.l = right_bound;
@@ -148,7 +149,7 @@ bool PathBoundsDeciderUtil::UpdateRightPathBoundaryWithBuffer(
   // Check if ADC is blocked.
   // If blocked, don't update anything, return false.
   if (new_point.l_lower.l > new_point.l_upper.l) {
-    ADEBUG << "Path is blocked at";
+    AINFO << "Path is blocked at";
     return false;
   }
   // Otherwise, update path_boundaries and center_line; then return true.
@@ -358,6 +359,7 @@ std::vector<ObstacleEdge> PathBoundsDeciderUtil::SortObstaclesForSweepLine(
     // Decompose each obstacle's rectangle into two edges: one at
     // start_s; the other at end_s.
     const auto obstacle_sl = obstacle->PerceptionSLBoundary();
+    AINFO << "id[" << obstacle->Id() << "]";
     sorted_obstacles.emplace_back(
         1, obstacle_sl.start_s() - FLAGS_obstacle_lon_start_buffer,
         obstacle_sl.start_l() - FLAGS_obstacle_lat_buffer,
