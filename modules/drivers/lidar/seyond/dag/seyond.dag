@@ -55,16 +55,15 @@ module_config {
     }
 }
 
-
 module_config {
-    module_library : "modules/drivers/lidar/compensator/libcompensator_component.so"
-
+    module_library : "modules/drivers/lidar/velodyne/compensator/libvelodyne_compensator_component.so"
     components {
-        class_name : "CompensatorComponent"
-        config {
-          name : "compensator"
-          config_file_path : "modules/drivers/lidar/seyond/conf/seyond_compensator.pb.txt"
-          readers {channel: "/apollo/sensor/seyond/fusion/PointCloud2"}
-        }
+      class_name : "CompensatorComponent"
+      config {
+        name : "seyond_compensator"
+        config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/seyond_compensator.pb.txt"
+        readers {channel: "/apollo/sensor/seyond/fusion/PointCloud2"}
+      }
     }
 }
+
