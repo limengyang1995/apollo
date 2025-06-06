@@ -84,21 +84,16 @@ void MyListener::OnRtcMessage(RtcMessage& msg) {
     // std::lock_guard<std::mutex> lock(msg_mutex);
     switch (msg.msgType) {
     case RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE:
-        AERROR << "user message";
+
         recieve_msg = msg.extra_info;
         re_mark = true;
         feed_id = msg.data.feedId;
-        break;
+        AERROR << "user message: " << recieve_msg;
+
     case RtcMessageType::RTC_ROOM_EVENT_ON_USER_LEAVING_ROOM:
         user_leaving_mark = true;
         leaving_user_id = msg.data.feedId;
         AINFO << msg.data.feedId;
-
-    case RtcMessageType::RTC_MESSAGE_ROOM_EVENT_CONNECTION_LOST:
-
-        connection_lost = true;
-        AERROR << "connection lost";
-
     default:
         break;
     }

@@ -206,7 +206,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
         img_.emplace_back(img);
     }
-
+    AERROR << "is start publish : " << is_start_publish;
     if (is_start_publish && !id_list.empty()) {
         // auto time1 = cyber::Time::Now().ToSecond();
 
@@ -363,14 +363,21 @@ bool ExternalDriver::Proc() {
         }
 
         if (input_command_string == "cloud") {
-            cloud_takeover = command["takeover"];
-            if (!is_start_publish) {
-                cloud_takeover = "0";
+            try {
+                cloud_takeover = command["takeover"];
+                if (!is_start_publish) {
+                    cloud_takeover = "0";
+                }
+                if (command.contains("gear") && !command["gear"].is_null()) {
+                    cloud_gear = command["gear"];
+                    cloud_throttle = command["throttle"];
+                    cloud_brake = command["brake"];
+                    cloud_steer = command["steer"];
+                }
+            } catch (const std::exception& e) {
+                AERROR << "json parse error" << e.what();
             }
-            cloud_gear = command["gear"];
-            cloud_throttle = command["throttle"];
-            cloud_brake = command["brake"];
-            cloud_steer = command["steer"];
+
             switch (std::stoi(cloud_gear)) {
             case 0:
                 cloud_gear_position = apollo::canbus::Chassis::GEAR_NEUTRAL;
