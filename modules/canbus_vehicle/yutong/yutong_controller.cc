@@ -514,6 +514,7 @@ void YutongController::Steer(double angle) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  //AERROR << "steer: " << angle << "  wheel angle" << - vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0 / vehicle_params_.steer_ratio();
   eps_01_cff272d_->set_epsctrlreq(Eps_01_cff272d::EPSCTRLREQ_VALID);
   eps_01_cff272d_->set_epssteerangreq(- vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0 / vehicle_params_.steer_ratio());
 }
@@ -530,6 +531,7 @@ void YutongController::Steer(double angle, double angle_spd) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  //AERROR << "steer speed: " << angle << "  wheel angle" << - vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0 / vehicle_params_.steer_ratio();
   eps_01_cff272d_->set_epsctrlreq(Eps_01_cff272d::EPSCTRLREQ_VALID);
   eps_01_cff272d_->set_epssteerangreq(- vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0 / vehicle_params_.steer_ratio());
 }
@@ -805,9 +807,7 @@ void YutongController::SecurityDogThreadFunc() {
 
 bool YutongController::CheckResponse(const int32_t flags, bool need_wait) {
   int32_t retry_num = 20;
-  bool is_eps_online = false;
   bool is_vcu_online = false;
-  bool is_esp_online = false;
   Yutong chassis_detail;
 
   do {
@@ -817,20 +817,10 @@ bool YutongController::CheckResponse(const int32_t flags, bool need_wait) {
     }
     bool check_ok = true;
     if (flags & CHECK_RESPONSE_STEER_UNIT_FLAG) {
-      is_eps_online = chassis_.has_check_response() &&
-                      chassis_.check_response().has_is_eps_online() &&
-                      chassis_.check_response().is_eps_online();
-      check_ok = check_ok && is_eps_online;
-    }
-
-    if (flags & CHECK_RESPONSE_SPEED_UNIT_FLAG) {
-      is_vcu_online = chassis_.has_check_response() &&
-                      chassis_.check_response().has_is_vcu_online() &&
-                      chassis_.check_response().is_vcu_online();
-      is_esp_online = chassis_.has_check_response() &&
-                      chassis_.check_response().has_is_esp_online() &&
-                      chassis_.check_response().is_esp_online();
-      check_ok = check_ok && is_vcu_online && is_esp_online;
+      is_vcu_online = chassis_detail.has_gw_01_18ffdc24() &&
+                      chassis_detail.gw_01_18ffdc24().has_autopilot_exit_reasons() &&
+                      chassis_detail.gw_01_18ffdc24().autopilot_exit_reasons() == Gw_01_18ffdc24::AUTOPILOT_EXIT_REASONS_NOEXIT;
+      check_ok = check_ok && is_vcu_online;
     }
     if (check_ok) {
       return true;
@@ -844,9 +834,8 @@ bool YutongController::CheckResponse(const int32_t flags, bool need_wait) {
     }
   } while (need_wait && retry_num);
 
-  AERROR << "check_response fail: is_eps_online:" << is_eps_online
-         << ", is_vcu_online:" << is_vcu_online
-         << ", is_esp_online:" << is_esp_online;
+  AERROR << "check_response fail: is_vcu_online:" << is_vcu_online << " exit reason: " 
+  << chassis_detail.gw_01_18ffdc24().autopilot_exit_reasons();
 
   return false;
 }

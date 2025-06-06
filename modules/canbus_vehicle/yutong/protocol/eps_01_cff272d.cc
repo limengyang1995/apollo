@@ -65,7 +65,9 @@ Eps01cff272d* Eps01cff272d::set_epssteerangreq(
 // config detail: {'bit': 0, 'is_signed_var': False, 'len': 16, 'name': 'EPSSteerAngReq', 'offset': -40.0, 'order': 'intel', 'physical_range': '[0|65535]', 'physical_unit': 'deg', 'precision': 0.1, 'type': 'double'}
 void Eps01cff272d::set_p_epssteerangreq(uint8_t* data,
     double epssteerangreq) {
-  epssteerangreq = ProtocolData::BoundedValue(0.0, 65535.0, epssteerangreq);
+  //AERROR << "set angle: " << epssteerangreq;
+  epssteerangreq = ProtocolData::BoundedValue(-40.0, 40.0, epssteerangreq);
+  //AERROR << "set angle: " << epssteerangreq;
   int x = (epssteerangreq - -40.000000) / 0.100000;
   uint8_t t = 0;
 

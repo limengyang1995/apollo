@@ -54,8 +54,8 @@ void Vcu0318fefa2d::UpdateData(uint8_t* data) {
 
 void Vcu0318fefa2d::Reset() {
   // TODO(All) :  you should check this manually
-  epbreq_ = Vcu_03_18fefa2d::EPBREQ_;
-  autoholdreq_ = Vcu_03_18fefa2d::AUTOHOLDREQ_;
+  epbreq_ = Vcu_03_18fefa2d::EPBREQ_EPB_RELEASE;
+  autoholdreq_ = Vcu_03_18fefa2d::AUTOHOLDREQ_AUTO_HOLD_RELEASE;
   loadmass_ = 0.0;
 }
 
