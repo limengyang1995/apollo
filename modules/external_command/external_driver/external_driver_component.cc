@@ -352,6 +352,8 @@ bool ExternalDriver::Proc() {
             if (command["is_start_publish"] == "false") {
                 is_start_publish = false;
                 is_start_send_cloud = false;
+                cloud_gear_position = apollo::canbus::Chassis::GEAR_NEUTRAL;
+                SendCloudControlCommand(0, cloud_gear_position, 0.0, 0.0, 0.0);
             }
         }
         if (command.contains("active_cameras")) {
@@ -365,9 +367,6 @@ bool ExternalDriver::Proc() {
         if (input_command_string == "cloud") {
             try {
                 cloud_takeover = command["takeover"];
-                if (!is_start_publish) {
-                    cloud_takeover = "0";
-                }
                 if (command.contains("gear") && !command["gear"].is_null()) {
                     cloud_gear = command["gear"];
                     cloud_throttle = command["throttle"];
@@ -377,6 +376,7 @@ bool ExternalDriver::Proc() {
             } catch (const std::exception& e) {
                 AERROR << "json parse error" << e.what();
             }
+            AERROR << "cloud takeover: " << cloud_takeover;
 
             switch (std::stoi(cloud_gear)) {
             case 0:
