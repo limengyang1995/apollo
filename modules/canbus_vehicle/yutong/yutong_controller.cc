@@ -296,7 +296,7 @@ Chassis YutongController::chassis() {
       - (chassis_detail.gw_25_cff12fa().wheel_steering_angle() * 0.1 - 240) * 100 / (vehicle_params_.max_steer_angle() / M_PI * 180) );
   } else {
     chassis_.set_steering_percentage(0);
-  } 
+  }
   
 
   return chassis_;
@@ -316,7 +316,7 @@ ErrorCode YutongController::EnableAutoMode() {
   // set enable
   /* ADD YOUR OWN CAR CHASSIS OPERATION*/
   vcu_02_18ffda2a_->set_adcontrolmode(Vcu_02_18ffda2a::ADCONTROLMODE_AUTO);
-  vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
+  // vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
 
   can_sender_->Update();
   const int32_t flag =
@@ -340,10 +340,8 @@ ErrorCode YutongController::EnableCloudMode() {
     AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
     return ErrorCode::OK;
   }
-  /*
-  acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_REQUEST);
-  acu1_529_->set_acu1_gearautocontrol(Acu1_529::ACU1_GEARAUTOCONTROL_REQUEST);
-  acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);*/
+  vcu_02_18ffda2a_->set_adcontrolmode(Vcu_02_18ffda2a::ADCONTROLMODE_AUTO);
+  // vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
 
   can_sender_->Update();
   set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
@@ -413,12 +411,31 @@ ErrorCode YutongController::EnableSpeedOnlyMode() {
 // NEUTRAL, REVERSE, DRIVE
 void YutongController::Gear(Chassis::GearPosition gear_position) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "This drive mode no need to set gear.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  switch (gear_position) {
+    case Chassis::GEAR_NEUTRAL: {
+      vcu_01_cffd12a_->set_gearreq(Vcu_01_cffd12a::GEARREQ_N);
+      break;
+    }
+    case Chassis::GEAR_REVERSE: {
+      vcu_01_cffd12a_->set_gearreq(Vcu_01_cffd12a::GEARREQ_R);
+      break;
+    }
+    case Chassis::GEAR_DRIVE: {
+      vcu_01_cffd12a_->set_gearreq(Vcu_01_cffd12a::GEARREQ_D);
+      break;
+    }
+    default: {
+      vcu_01_cffd12a_->set_gearreq(Vcu_01_cffd12a::GEARREQ_N);
+      break;
+    }
+  }
 }
 
 // brake with pedal
@@ -427,24 +444,39 @@ void YutongController::Brake(double pedal) {
   // double real_value = vehicle_params_.max_acceleration() * acceleration / 100;
   // TODO(All) :  Update brake value based on mode
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "The current drive mode does not need to set brake pedal.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_OFF);
+  vcu_01_cffd12a_->set_brakeactivereq(Vcu_01_cffd12a::BRAKEACTIVEREQ_ON);
+  vcu_01_cffd12a_->set_decelerationreq(pedal * (- 0.025) );
+  
 }
 
 // drive with pedal
 // pedal:0.0~99.9 unit:percentage
 void YutongController::Throttle(double pedal) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "The current drive mode does not need to set throttle pedal.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+ if(pedal > 0 ){
+    vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
+    vcu_01_cffd12a_->set_accpedalposreq(pedal);
+    vcu_01_cffd12a_->set_brakeactivereq(Vcu_01_cffd12a::BRAKEACTIVEREQ_OFF);
+    vcu_01_cffd12a_->set_decelerationreq(0);
+ }else{
+    vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_OFF);
+ }
+  
 }
 
 // confirm the car is driven by acceleration command instead of
@@ -452,13 +484,21 @@ void YutongController::Throttle(double pedal) {
 // unit:m/s^2
 void YutongController::Acceleration(double acc) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_SPEED_ONLY) {
+      driving_mode() != Chassis::AUTO_SPEED_ONLY ) {
     AINFO << "The current drive mode does not need to set acceleration.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
   */
+  if (acc < 0.01){
+    vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_OFF);
+    vcu_01_cffd12a_->set_brakeactivereq(Vcu_01_cffd12a::BRAKEACTIVEREQ_ON);
+    vcu_01_cffd12a_->set_decelerationreq(acc);
+  }else{
+    vcu_01_cffd12a_->set_brakeactivereq(Vcu_01_cffd12a::BRAKEACTIVEREQ_OFF);
+    vcu_01_cffd12a_->set_decelerationreq(0);
+  }
 }
 
 // yutong default, +470 ~ -470 or other, left:+, right:-
@@ -467,12 +507,15 @@ void YutongController::Acceleration(double acc) {
 // angle:99.99~0.00~-99.99, unit:deg, left:+, right:-
 void YutongController::Steer(double angle) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_STEER_ONLY) {
+      driving_mode() != Chassis::AUTO_STEER_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "The current driving mode does not need to set steer.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  eps_01_cff272d_->set_epsctrlreq(Eps_01_cff272d::EPSCTRLREQ_VALID);
+  eps_01_cff272d_->set_epssteerangreq(- vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0 / vehicle_params_.steer_ratio());
 }
 
 // yutong default, steering with new angle speed
@@ -480,21 +523,26 @@ void YutongController::Steer(double angle) {
 // angle_spd:0.00~99.99, unit:deg/s
 void YutongController::Steer(double angle, double angle_spd) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
-      driving_mode() != Chassis::AUTO_STEER_ONLY) {
+      driving_mode() != Chassis::AUTO_STEER_ONLY &&
+      driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
     AINFO << "The current driving mode does not need to set steer.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
+  eps_01_cff272d_->set_epsctrlreq(Eps_01_cff272d::EPSCTRLREQ_VALID);
+  eps_01_cff272d_->set_epssteerangreq(- vehicle_params_.max_steer_angle() /M_PI * 180.0 * angle / 100.0 / vehicle_params_.steer_ratio());
 }
 
 void YutongController::SetEpbBreak(const ControlCommand& command) {
   if (command.parking_brake()) {
     /* ADD YOUR OWN CAR CHASSIS OPERATION
     */
+    vcu_03_18fefa2d_->set_epbreq(Vcu_03_18fefa2d::EPBREQ_EPB_PULL);
   } else {
     /* ADD YOUR OWN CAR CHASSIS OPERATION
     */
+    vcu_03_18fefa2d_->set_epbreq(Vcu_03_18fefa2d::EPBREQ_EPB_RELEASE);
   }
 }
 
@@ -523,16 +571,17 @@ void YutongController::SetHorn(const VehicleSignal& vehicle_signal) {
 
 void YutongController::SetTurningSignal(const VehicleSignal& vehicle_signal) {
   // Set Turn Signal
-  /* ADD YOUR OWN CAR CHASSIS OPERATION
+  /* ADD YOUR OWN CAR CHASSIS OPERATION*/
   auto signal = vehicle_signal.turn_signal();
   if (signal == common::VehicleSignal::TURN_LEFT) {
-
+    vcu_06_18fe412a_->set_left_turn_signal(Vcu_06_18fe412a::LEFT_TURN_SIGNAL_ON);
   } else if (signal == common::VehicleSignal::TURN_RIGHT) {
-
+    vcu_06_18fe412a_->set_right_turn_indicator_light(Vcu_06_18fe412a::RIGHT_TURN_INDICATOR_LIGHT_ON);
   } else {
-
+    vcu_06_18fe412a_->set_left_turn_signal(Vcu_06_18fe412a::LEFT_TURN_SIGNAL_OFF);
+    vcu_06_18fe412a_->set_right_turn_indicator_light(Vcu_06_18fe412a::RIGHT_TURN_INDICATOR_LIGHT_OFF);
   }
-  */
+  
 }
 
 ErrorCode YutongController::HandleCustomOperation(
@@ -595,17 +644,84 @@ bool YutongController::CheckChassisError() {
   if (message_manager_->GetSensorData(&chassis_detail) != ErrorCode::OK) {
     AERROR_EVERY(100) << "Get chassis detail failed.";
   }
-  if (!chassis_.has_check_response()) {
-    AERROR_EVERY(100) << "ChassisDetail has no yutong vehicle info.";
-    chassis_.mutable_engage_advice()->set_advice(
-        apollo::common::EngageAdvice::DISALLOW_ENGAGE);
-    chassis_.mutable_engage_advice()->set_reason(
-        "ChassisDetail has no yutong vehicle info.");
-    return false;
-  } else {
-    chassis_.clear_engage_advice();
+  if (chassis_detail.has_gw_03_19ffca24()){
+  if (chassis_detail.gw_03_19ffca24().has_drive_system_fault()) {
+    if(chassis_detail.gw_03_19ffca24().drive_system_fault() != Gw_03_19ffca24::DRIVE_SYSTEM_FAULT_NONE){ 
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_THROTTLE);
+      return true;
+    }else{
+      chassis_.set_error_code(Chassis::NO_ERROR);
+    }
+  }else{
+    chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_THROTTLE);
+    return true;
+  }
+  if (chassis_detail.gw_03_19ffca24().has_brake_system_failure()) {
+    if(chassis_detail.gw_03_19ffca24().brake_system_failure() != Gw_03_19ffca24::BRAKE_SYSTEM_FAILURE_NONE){ 
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_BRAKE);
+      return true;
+    }else{
+      chassis_.set_error_code(Chassis::NO_ERROR);
+    }
+  }else{
+    chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_BRAKE);
+    return true;
   }
 
+  if (chassis_detail.gw_03_19ffca24().has_gearbox_system_failure()) {
+    if(chassis_detail.gw_03_19ffca24().gearbox_system_failure() != Gw_03_19ffca24::GEARBOX_SYSTEM_FAILURE_NONE){ 
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_GEAR);
+      return true;
+    }else{
+      chassis_.set_error_code(Chassis::NO_ERROR);
+    }
+  }else{
+    chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_GEAR);
+    return true;
+  }
+
+  if (chassis_detail.gw_03_19ffca24().has_steering_system_failure()) {
+    if(chassis_detail.gw_03_19ffca24().steering_system_failure() != Gw_03_19ffca24::STEERING_SYSTEM_FAILURE_NONE){ 
+      //std :: cout << "steer fail 1" << std :: endl;
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_STEER);
+      return true;
+    }else{
+      chassis_.set_error_code(Chassis::NO_ERROR);
+    }
+  }else{
+    //std :: cout << "steer fail 2" << std :: endl;
+    chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_STEER);
+    return true;
+  }
+
+  if (chassis_detail.gw_03_19ffca24().has_epb_system_failure()) {
+    if(chassis_detail.gw_03_19ffca24().epb_system_failure() != Gw_03_19ffca24::EPB_SYSTEM_FAILURE_NONE){ 
+      //std :: cout << "steer fail 1" << std :: endl;
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_EPB);
+      return true;
+    }else{
+      chassis_.set_error_code(Chassis::NO_ERROR);
+    }
+  }else{
+    //std :: cout << "steer fail 2" << std :: endl;
+    chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_EPB);
+    return true;
+  }
+
+  if (chassis_detail.gw_03_19ffca24().has_high_voltage_system_fault()) {
+    if(chassis_detail.gw_03_19ffca24().high_voltage_system_fault() != Gw_03_19ffca24::HIGH_VOLTAGE_SYSTEM_FAULT_NONE){ 
+      //std :: cout << "steer fail 1" << std :: endl;
+      chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_HIGH_VOLTAGE);
+      return true;
+    }else{
+      chassis_.set_error_code(Chassis::NO_ERROR);
+    }
+  }else{
+    //std :: cout << "steer fail 2" << std :: endl;
+    chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_HIGH_VOLTAGE);
+    return true;
+  }
+}
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // steer fault
   // drive fault
@@ -637,7 +753,8 @@ void YutongController::SecurityDogThreadFunc() {
 
     // 1. horizontal control check
     if ((mode == Chassis::COMPLETE_AUTO_DRIVE ||
-         mode == Chassis::AUTO_STEER_ONLY) &&
+         mode == Chassis::AUTO_STEER_ONLY || 
+         mode == Chassis::REMOTE_CLOUD_DRIVE) &&
         !CheckResponse(CHECK_RESPONSE_STEER_UNIT_FLAG, false)) {
       ++horizontal_ctrl_fail;
       if (horizontal_ctrl_fail >= kMaxFailAttempt) {
@@ -651,7 +768,8 @@ void YutongController::SecurityDogThreadFunc() {
 
     // 2. vertical control check
     if ((mode == Chassis::COMPLETE_AUTO_DRIVE ||
-         mode == Chassis::AUTO_SPEED_ONLY) &&
+         mode == Chassis::AUTO_SPEED_ONLY || 
+         mode == Chassis::REMOTE_CLOUD_DRIVE) &&
         !CheckResponse(CHECK_RESPONSE_SPEED_UNIT_FLAG, false)) {
       ++vertical_ctrl_fail;
       if (vertical_ctrl_fail >= kMaxFailAttempt) {
@@ -690,8 +808,13 @@ bool YutongController::CheckResponse(const int32_t flags, bool need_wait) {
   bool is_eps_online = false;
   bool is_vcu_online = false;
   bool is_esp_online = false;
+  Yutong chassis_detail;
 
   do {
+    if (message_manager_->GetSensorData(&chassis_detail) != ErrorCode::OK) {
+      AERROR_EVERY(100) << "Get chassis detail failed.";
+      return false;
+    }
     bool check_ok = true;
     if (flags & CHECK_RESPONSE_STEER_UNIT_FLAG) {
       is_eps_online = chassis_.has_check_response() &&

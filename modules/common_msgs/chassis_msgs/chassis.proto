@@ -36,6 +36,8 @@ message Chassis {
     CHASSIS_ERROR_ON_BRAKE = 7;
     CHASSIS_ERROR_ON_THROTTLE = 8;
     CHASSIS_ERROR_ON_GEAR = 9;
+    CHASSIS_ERROR_ON_EPB = 10;
+    CHASSIS_ERROR_ON_HIGH_VOLTAGE = 11;
 
     MANUAL_INTERVENTION = 3;  // human manual intervention
 
