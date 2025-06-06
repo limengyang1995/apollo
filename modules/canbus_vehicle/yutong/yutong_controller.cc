@@ -316,6 +316,7 @@ ErrorCode YutongController::EnableAutoMode() {
   // set enable
   /* ADD YOUR OWN CAR CHASSIS OPERATION*/
   vcu_02_18ffda2a_->set_adcontrolmode(Vcu_02_18ffda2a::ADCONTROLMODE_AUTO);
+  vcu_03_18fefa2d_->set_epbreq(Vcu_03_18fefa2d::EPBREQ_EPB_RELEASE);
   // vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
 
   can_sender_->Update();
@@ -341,6 +342,7 @@ ErrorCode YutongController::EnableCloudMode() {
     return ErrorCode::OK;
   }
   vcu_02_18ffda2a_->set_adcontrolmode(Vcu_02_18ffda2a::ADCONTROLMODE_AUTO);
+  vcu_03_18fefa2d_->set_epbreq(Vcu_03_18fefa2d::EPBREQ_EPB_RELEASE);
   // vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
 
   can_sender_->Update();
@@ -451,9 +453,15 @@ void YutongController::Brake(double pedal) {
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
-  vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_OFF);
-  vcu_01_cffd12a_->set_brakeactivereq(Vcu_01_cffd12a::BRAKEACTIVEREQ_ON);
-  vcu_01_cffd12a_->set_decelerationreq(pedal * (- 0.025) );
+  if (pedal > 0 ){
+    vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_OFF);
+    vcu_01_cffd12a_->set_brakeactivereq(Vcu_01_cffd12a::BRAKEACTIVEREQ_ON);
+    vcu_01_cffd12a_->set_decelerationreq(pedal * (- 0.025) );
+  }else{
+    vcu_01_cffd12a_->set_brakeactivereq(Vcu_01_cffd12a::BRAKEACTIVEREQ_OFF);
+    vcu_01_cffd12a_->set_decelerationreq(0);
+  }
+  
   
 }
 
@@ -491,7 +499,7 @@ void YutongController::Acceleration(double acc) {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
   */
-  if (acc < 0.01){
+  if (acc < -0.01){
     vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_OFF);
     vcu_01_cffd12a_->set_brakeactivereq(Vcu_01_cffd12a::BRAKEACTIVEREQ_ON);
     vcu_01_cffd12a_->set_decelerationreq(acc);
