@@ -30,6 +30,7 @@
 #include "seyond/sdk_common/inno_lidar_other_api.h"
 #include "seyond/sdk_common/inno_lidar_packet.h"
 #include "seyond/sdk_common/inno_lidar_packet_utils.h"
+#include "cyber/cyber.h"
 
 namespace apollo {
 namespace drivers {
@@ -162,6 +163,7 @@ class SeyondDriver {
   int64_t current_frame_id_{-1};
   double current_ts_start_;
   uint64_t frame_points_width_;
+  uint64_t lidar_timestamp_;
   std::vector<uint8_t> convert_buffer_;
 };
 

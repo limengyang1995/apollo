@@ -26,12 +26,12 @@ OUT_MAP_FOLDER=$4
 LIDAR_TYPE=${5:-hesai64}
 
 PARSED_DATA_FOLDER="$OUT_MAP_FOLDER/parsed_data"
-CLOUD_TOPIC="/apollo/sensor/$LIDAR_TYPE/compensator/PointCloud2"
+CLOUD_TOPIC="/apollo/sensor/seyond/front/PointCloud2"
 
 function data_exporter() {
   local BAG_FILE=$1
   local OUT_FOLDER=$2
-  /apollo_workspace/bazel-bin/modules/localization/msf/cyber_record_parser \
+  /apollo/bazel-bin/modules/localization/msf/cyber_record_parser \
     --bag_file $BAG_FILE \
     --out_folder $OUT_FOLDER \
     --cloud_topic $CLOUD_TOPIC \

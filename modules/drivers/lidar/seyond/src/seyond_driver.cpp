@@ -242,7 +242,7 @@ int32_t SeyondDriver::data_callback_(const InnoDataPacket *pkt) {
   }
 
   packet_publish_cb_(pkt, is_next_frame);
-
+  lidar_timestamp_ = static_cast<uint64_t>(pkt->common.ts_start_us) * 1000;
   if (is_next_frame) {
     point_cloud_ptr_->mutable_header()->set_lidar_timestamp(
         (static_cast<uint64_t>(pkt->common.ts_start_us)) * 1000);
@@ -358,9 +358,21 @@ void SeyondDriver::process_xyz_point_data_(bool is_en_data, bool is_use_refl,
     } else if constexpr (std::is_same<PointType, const InnoXyzPoint *>::value) {
       point->set_intensity(static_cast<uint>(point_ptr->refl));
     }
-
-    point->set_timestamp(static_cast<uint64_t>(
+    
+    if ( lidar_timestamp_ ){
+      point->set_timestamp(lidar_timestamp_);
+    }else{
+      point->set_timestamp(static_cast<uint64_t>(
         point_ptr->ts_10us / ten_us_in_second_c + current_ts_start_));
+    }
+    
+    
+    
+    // point->set_timestamp(static_cast<uint64_t>(
+    //   cyber::Time().Now().ToNanosecond()));
+
+
+       
     coordinate_transfer(point, param_.coordinate_mode, point_ptr->x,
                         point_ptr->y, point_ptr->z);
 

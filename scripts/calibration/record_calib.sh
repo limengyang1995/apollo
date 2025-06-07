@@ -1,1 +1,1 @@
-cyber_recorder record -i 500000 -m 500000 -a -k /apollo/sensor/hesai40/compensator/PointCloud2 -k /apollo/sensor/hesai40/Scan -k /apollo/sensor/gnss/raw_data 
+cyber_recorder record -i 500000 -m 500000 -a -k /apollo/sensor/robin/front/Scan -k /apollo/sensor/robin/left/Scan -k /apollo/sensor/robin/rear/Scan -k /apollo/sensor/robin/right/Scan -k /apollo/sensor/seyond/front/Scan -k /apollo/sensor/gnss/raw_data 

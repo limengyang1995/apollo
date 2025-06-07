@@ -18,11 +18,15 @@
         <dag_conf>/apollo/modules/transform/dag/static_transform.dag</dag_conf>
         <process_name></process_name>
     </module>
-
+    <module>
+        <name>camera</name>
+        <dag_conf>/apollo/modules/drivers/camera/dag/camera_signal.dag</dag_conf>
+        <process_name>usb_cam</process_name>
+    </module>
     
     <desc>Apollo lidar 3d object detection</desc>
     <version>1.0.0</version>
-    <!--
+    
     <module>
         <name>lidar</name>
         <dag_conf>/apollo/modules/perception/msg_adapter/dag/msg_adapter.dag</dag_conf>
@@ -34,9 +38,8 @@
         <dag_conf>/apollo/modules/perception/lidar_tracking/dag/lidar_tracking.dag</dag_conf>
         <process_name>lidar</process_name>
         <version>1.0.0</version>
-    </module>-->
-    <!--
-    <module>
+    </module>
+    <!--<module>
         <name>camera</name>
         <dag_conf>/apollo/modules/drivers/camera/dag/camera.dag</dag_conf>
         <process_name>usb_cam</process_name>
