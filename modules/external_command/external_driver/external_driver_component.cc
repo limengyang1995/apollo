@@ -143,6 +143,10 @@ void ExternalDriver::SendDataToCloud() {
             std::string speed = std::to_string(std::round(chassis_.speed_mps()));
             // std::string speed = std::to_string(10);
             std::string epb = std::to_string(chassis_.parking_brake());
+            std::string left_turn = std::to_string(chassis_.left_turn_signal());
+            std::string right_turn = std::to_string(chassis_.right_turn_signal());
+            std::string low_beam = std::to_string(chassis_.low_beam_signal());
+            std::string soc = std::to_string(chassis_.battery_soc_percentage());
 
             nlohmann::json vehicle_data
                     = {{"car_id", car_id},
@@ -155,7 +159,11 @@ void ExternalDriver::SendDataToCloud() {
                        {"brake", brake},
                        {"driving_mode", driving_mode},
                        {"speed", speed},
-                       {"epb", epb}};
+                       {"epb", epb},
+                       {"left_turn", left_turn},
+                       {"right_turn", right_turn},
+                       {"low_beam", low_beam},
+                       {"soc", soc}};
             // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
             std::string id = std::to_string(rtc_client_.g_mylistener.feed_id);
             // AERROR << "id : " << id;
@@ -206,7 +214,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
         img_.emplace_back(img);
     }
-    AERROR << "is start publish : " << is_start_publish;
+    // AERROR << "is start publish : " << is_start_publish;
     if (is_start_publish && !id_list.empty()) {
         // auto time1 = cyber::Time::Now().ToSecond();
 
@@ -372,6 +380,9 @@ bool ExternalDriver::Proc() {
                     cloud_throttle = command["throttle"];
                     cloud_brake = command["brake"];
                     cloud_steer = command["steer"];
+                    cloud_turn_light = command["turn_light"];
+                    cloud_low_light = command["low_light"];
+                    cloud_epb = command["epb"];
                 }
             } catch (const std::exception& e) {
                 AERROR << "json parse error" << e.what();
@@ -400,7 +411,8 @@ bool ExternalDriver::Proc() {
                     cloud_gear_position,
                     std::stof(cloud_throttle),
                     std::stof(cloud_brake),
-                    -std::stof(cloud_steer));
+                    -std::stof(cloud_steer)),
+                    std::stoi(cloud_turn_light), std::stoi(cloud_low_light), std::stoi(cloud_epb);
         }
     }
     rtc_client_.g_mylistener.re_mark = false;

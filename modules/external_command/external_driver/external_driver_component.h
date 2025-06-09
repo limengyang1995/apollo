@@ -103,7 +103,8 @@ private:
     uint64_t command_id_;
     const std::string module_name_;
     //     std::string input_command_string = "";
-    std::string cloud_takeover{"0"}, cloud_gear{"0"}, cloud_throttle{"0"}, cloud_brake{"0"}, cloud_steer{"0"};
+    std::string cloud_takeover{"0"}, cloud_gear{"0"}, cloud_throttle{"0"}, cloud_brake{"0"}, cloud_turn_light{"0"},
+            cloud_low_light{"0"}, cloud_epb{"0"}, cloud_steer{"0"};
     apollo::canbus::Chassis::GearPosition cloud_gear_position;
 };
 
