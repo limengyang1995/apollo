@@ -164,6 +164,22 @@ void ExternalDriver::SendDataToCloud() {
                        {"right_turn", right_turn},
                        {"low_beam", low_beam},
                        {"soc", soc}};
+            /* nlohmann::json vehicle_data
+                    = {{"car_id", car_id},
+                       {"x", x},
+                       {"y", y},
+                       {"z", z},
+                       {"gear", gear},
+                       {"steer", steer},
+                       {"throttle", throttle},
+                       {"brake", brake},
+                       {"driving_mode", driving_mode},
+                       {"speed", speed},
+                       {"epb", epb},
+                       {"left_turn", "1"},
+                       {"right_turn", "1"},
+                       {"low_beam", "1"},
+                       {"soc", "78"}}; */
             // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
             std::string id = std::to_string(rtc_client_.g_mylistener.feed_id);
             // AERROR << "id : " << id;
@@ -361,7 +377,7 @@ bool ExternalDriver::Proc() {
                 is_start_publish = false;
                 is_start_send_cloud = false;
                 cloud_gear_position = apollo::canbus::Chassis::GEAR_NEUTRAL;
-                SendCloudControlCommand(0, cloud_gear_position, 0.0, 0.0, 0.0);
+                SendCloudControlCommand(0, cloud_gear_position, 0.0, 0.0, 0.0, 0, 0, 0);
             }
         }
         if (command.contains("active_cameras")) {
@@ -411,8 +427,10 @@ bool ExternalDriver::Proc() {
                     cloud_gear_position,
                     std::stof(cloud_throttle),
                     std::stof(cloud_brake),
-                    -std::stof(cloud_steer)),
-                    std::stoi(cloud_turn_light), std::stoi(cloud_low_light), std::stoi(cloud_epb);
+                    -std::stof(cloud_steer),
+                    std::stoi(cloud_turn_light),
+                    std::stoi(cloud_low_light),
+                    std::stoi(cloud_epb));
         }
     }
     rtc_client_.g_mylistener.re_mark = false;
@@ -424,7 +442,10 @@ void ExternalDriver::SendCloudControlCommand(
         const apollo::canbus::Chassis::GearPosition& gear_position,
         const float& throttle,
         const float& brake,
-        const float& steering_target) {
+        const float& steering_target,
+        const int& turn_light,
+        const int& low_light,
+        const int& epb) {
     AERROR << "get cloud control command: " << cloud_takeover_request;
     auto command = std::make_shared<apollo::control::ControlCommand>();
     command->set_cloud_takeover_request(cloud_takeover_request);
@@ -432,6 +453,18 @@ void ExternalDriver::SendCloudControlCommand(
     command->set_throttle(throttle * 100);
     command->set_brake(brake * 100);
     command->set_steering_target(steering_target * 100);
+    command->set_low_beam(low_light);
+    if (turn_light == 1) {
+        command->set_left_turn(1);
+        command->set_right_turn(0);
+    } else if (turn_light == 2) {
+        command->set_right_turn(1);
+        command->set_left_turn(0);
+    } else {
+        command->set_left_turn(0);
+        command->set_right_turn(0);
+    }
+    command->set_parking_brake(epb);
     // command->set_driving_mode(apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE);
     // AERROR<< "Sending cloud control command: " << command->DebugString();
     cloud_control_cmd_writer_->Write(command);

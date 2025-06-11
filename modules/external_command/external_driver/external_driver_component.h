@@ -98,7 +98,10 @@ private:
             const apollo::canbus::Chassis::GearPosition& gear_position,
             const float& throttle,
             const float& brake,
-            const float& steering_target);
+            const float& steering_target,
+            const int& turn_light,
+            const int& low_light,
+            const int& epb);
     std::shared_ptr<apollo::cyber::Writer<apollo::control::ControlCommand>> cloud_control_cmd_writer_;
     uint64_t command_id_;
     const std::string module_name_;
