@@ -61,3 +61,4 @@
 
 --map_dir=/apollo/modules/map/data/new0312
 --map_dir=/apollo/modules/map/data/kuangka0607
+--map_dir=/apollo/modules/map/data/kuangka061402
