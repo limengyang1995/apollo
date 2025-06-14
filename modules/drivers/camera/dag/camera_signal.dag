@@ -9,5 +9,14 @@ module_config {
         config_file_path : "/apollo/modules/drivers/camera/conf/camera_front_6mm.pb.txt"
       }
     }
+    components {
+      class_name : "CameraComponent"
+      config {
+        name : "camera_front_left_head"
+        config_file_path : "/apollo/modules/drivers/camera/conf/camera_front_A3_infrared.pb.txt"
+      }
+    }
+
+    
 }
 

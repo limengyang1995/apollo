@@ -12,11 +12,14 @@
         <dag_conf>/apollo/modules/drivers/lidar/seyond/dag/seyond_front.dag</dag_conf>
         <process_name>seyond</process_name>
     </module>
-
+    <module>
+        <name>camera</name>
+        <dag_conf>/apollo/modules/drivers/camera/dag/camera_signal.dag</dag_conf>
+        <process_name>usb_cam</process_name>
+    </module>
     <module>
         <name>static_transform</name>
         <dag_conf>/apollo/modules/transform/dag/static_transform.dag</dag_conf>
         <process_name></process_name>
     </module>
-
 </cyber>

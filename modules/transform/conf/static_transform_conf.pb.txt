@@ -62,4 +62,10 @@ extrinsic_file {
     enable: true
 }
 
+extrinsic_file {
+    frame_id: "robin_front"
+    child_frame_id: "camera_a3_ir"
+    file_path: "/apollo/modules/perception/data/params/camera_a3_ir_extrinsics.yaml"
+    enable: true
+}
 

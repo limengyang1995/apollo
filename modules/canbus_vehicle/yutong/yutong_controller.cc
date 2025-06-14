@@ -704,7 +704,7 @@ bool YutongController::CheckChassisError() {
     return true;
   }
 
-  if (chassis_detail.gw_03_19ffca24().has_epb_system_failure()) {
+  /* if (chassis_detail.gw_03_19ffca24().has_epb_system_failure()) {
     if(chassis_detail.gw_03_19ffca24().epb_system_failure() != Gw_03_19ffca24::EPB_SYSTEM_FAILURE_NONE){ 
       //std :: cout << "steer fail 1" << std :: endl;
       chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_EPB);
@@ -716,7 +716,7 @@ bool YutongController::CheckChassisError() {
     //std :: cout << "steer fail 2" << std :: endl;
     chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_EPB);
     return true;
-  }
+  } */
 
   if (chassis_detail.gw_03_19ffca24().has_high_voltage_system_fault()) {
     if(chassis_detail.gw_03_19ffca24().high_voltage_system_fault() != Gw_03_19ffca24::HIGH_VOLTAGE_SYSTEM_FAULT_NONE){ 

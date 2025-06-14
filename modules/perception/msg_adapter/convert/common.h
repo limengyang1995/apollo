@@ -61,11 +61,11 @@ bool ConvertObjectToPb(const base::ObjectPtr &object_ptr,
     p->set_z(pt.z);
   }
 
-  for (auto &point : object_ptr->lidar_supplement.cloud.points()) {
+  /* for (auto &point : object_ptr->lidar_supplement.cloud.points()) {
     pb_msg->add_point_cloud(point.x);
     pb_msg->add_point_cloud(point.y);
     pb_msg->add_point_cloud(point.z);
-  }
+  } */
 
   apollo::common::Point3D *obj_anchor_point = pb_msg->mutable_anchor_point();
   obj_anchor_point->set_x(object_ptr->anchor_point(0));
