@@ -1,0 +1,44 @@
+module_config {
+    module_library : "modules/drivers/lidar/seyond/libseyond_component.so"
+    
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Robin_left_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/robin_left.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Robin_right_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/robin_right.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Robin_front_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/robin_front.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Robin_rear_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/robin_rear.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Seyond_front_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/seyond_front.pb.txt"
+        }
+    }
+}

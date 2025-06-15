@@ -1,24 +1,32 @@
+
 sensor_meta {
-    name: "velodyne128"
-    type: VELODYNE_128
-    orientation: PANORAMIC
+    name: "robin_front"
+    type: VELODYNE_64
+    orientation: FRONT
+    is_main_sensor: true
 }
+
 sensor_meta {
     name: "seyond_front"
     type: VELODYNE_64
     orientation: PANORAMIC
-    is_main_sensor: true
-}
-sensor_meta {
-    name: "velodyne16"
-    type: VELODYNE_16
-    orientation: FRONT
 }
 
 sensor_meta {
-    name: "radar_front"
-    type: LONG_RANGE_RADAR
-    orientation: FRONT
+    name: "robin_left"
+    type: VELODYNE_64
+    orientation: LEFT
+}
+sensor_meta {
+    name: "robin_rear"
+    type: VELODYNE_64
+    orientation: REAR
+}
+
+sensor_meta {
+    name: "robin_right"
+    type: VELODYNE_64
+    orientation: RIGHT
 }
 
 sensor_meta {

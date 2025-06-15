@@ -49,7 +49,7 @@ extrinsic_file {
 }
 
 extrinsic_file {
-    frame_id: "seyond_front"
+    frame_id: "robin_front"
     child_frame_id: "front_6mm"
     file_path: "/apollo/modules/perception/data/params/front_6mm_extrinsics.yaml"
     enable: true

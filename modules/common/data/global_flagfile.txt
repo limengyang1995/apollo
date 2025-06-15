@@ -17,7 +17,7 @@
 
 --use_cyber_time=true
 
- --map_dir=/apollo/modules/map/data/youzhengluxian2
+ --map_dir=/apollo/modules/map/data/kuangka061302
 
 
 
@@ -61,3 +61,44 @@
 
 --map_dir=/apollo/modules/map/data/new0312
 --map_dir=/apollo/modules/map/data/kuangka0607
+
+--map_dir=/apollo/modules/map/data/kuangka0612v1
+
+--map_dir=/apollo/modules/map/data/kuangka0613
+
+--map_dir=/apollo/modules/map/data/kuangka061302
+
+--map_dir=/apollo/modules/map/data/kuangka0613
+
+--map_dir=/apollo/modules/map/data/kuangka061302
+
+--map_dir=/apollo/modules/map/data/kuangka0614
+
+--map_dir=/apollo/modules/map/data/kuangka0613
+--map_dir=/apollo/modules/map/data/kuangka061401
+
+--map_dir=/apollo/modules/map/data/kuangka061402
+
+--map_dir=/apollo/modules/map/data/kuangka061402
+
+--map_dir=/apollo/modules/map/data/kuangka061502
+
+--map_dir=/apollo/modules/map/data/kuangka061503
+
+--map_dir=/apollo/modules/map/data/kuangka061504
+
+--map_dir=/apollo/modules/map/data/kuangka061505
+
+--map_dir=/apollo/modules/map/data/kuangka061506
+
+--map_dir=/apollo/modules/map/data/kuangka061507
+
+--map_dir=/apollo/modules/map/data/kuangka061508
+
+--map_dir=/apollo/modules/map/data/kuangka061509
+
+--map_dir=/apollo/modules/map/data/kuangka061510
+
+--map_dir=/apollo/modules/map/data/kuangka061509
+
+--map_dir=/apollo/modules/map/data/kuangka061511

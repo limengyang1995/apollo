@@ -1,0 +1,69 @@
+module_config {
+    module_library : "modules/drivers/lidar/seyond/libseyond_component.so"
+    
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Robin_left_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/robin_left.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Robin_right_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/robin_right.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Robin_front_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/robin_front.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Robin_rear_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/robin_rear.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "SeyondComponent"
+        config {
+          name : "Seyond_front_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/seyond_front.pb.txt"
+        }
+    }
+}
+
+module_config {
+    module_library : "modules/drivers/lidar/velodyne/fusion/libvelodyne_fusion_component.so"
+    components {
+      class_name : "PriSecFusionComponent"
+      config {
+        name : "seyond_fusion"
+        config_file_path : "modules/drivers/lidar/seyond/conf/seyond_fusion_conf_5.pb.txt"
+        readers {channel: "/apollo/sensor/robin/front/PointCloud2"}
+      }
+    }
+}
+
+module_config {
+    module_library : "modules/drivers/lidar/velodyne/compensator/libvelodyne_compensator_component.so"
+    components {
+      class_name : "CompensatorComponent"
+      config {
+        name : "seyond_compensator"
+        config_file_path : "/apollo/modules/drivers/lidar/seyond/conf/seyond_compensator.pb.txt"
+        readers {channel: "/apollo/sensor/seyond/fusion/PointCloud2"}
+      }
+    }
+}
+

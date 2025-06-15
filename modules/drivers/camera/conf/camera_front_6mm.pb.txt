@@ -25,7 +25,7 @@ raw_channel_name: "/apollo/sensor/camera/front_6mm/raw/image"
 channel_name: "/apollo/sensor/camera/front_6mm/image"
 
 device_wait_ms: 2000
-spin_rate: 50
+spin_rate: 500
 output_type: RGB
 
 compress_conf {
@@ -40,4 +40,4 @@ time_compensator_conf {
     compensator_fnode: "/sys/devices/system/clocksource/clocksource0/offset_ns"
 }
 
-arm_gpu_acceleration: false
+arm_gpu_acceleration: true
