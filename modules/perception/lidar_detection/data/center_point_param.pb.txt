@@ -25,7 +25,7 @@ preprocess {
   normalizing_factor: 1
   num_point_feature: 4
   enable_ground_removal: true
-  ground_removal_height: -1.5
+  ground_removal_height: -1.4
   enable_downsample_beams: false
   downsample_beams_factor: 1
   enable_downsample_pointcloud: true
@@ -36,13 +36,13 @@ preprocess {
   num_fuse_frames: 5
   fuse_time_interval: 0.5
   enable_shuffle_points: false
-  max_num_points: 2147483647
+  max_num_points: 200000
   reproduce_result_mode: false
   enable_roi_outside_removal: false
 }
 
 postprocess {
-  score_threshold: 0.25
+  score_threshold: 0.3
   num_output_box_feature: 7
   bottom_enlarge_height: 0.25
   top_enlarge_height: 0.25
@@ -51,7 +51,7 @@ postprocess {
 }
 
 paddle_settings {
-  use_trt: false
+  use_trt: true
   trt_precision: 1
   trt_use_static: true
   use_calibration: true

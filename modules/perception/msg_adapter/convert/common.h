@@ -79,14 +79,14 @@ bool ConvertObjectToPb(const base::ObjectPtr &object_ptr,
   obj_bbox2d->set_xmax(box.xmax);
   obj_bbox2d->set_ymax(box.ymax);
 
-  for (size_t i = 0; i < 3; i++) {
+  /* for (size_t i = 0; i < 3; i++) {
     for (size_t j = 0; j < 3; j++) {
       pb_msg->add_position_covariance(object_ptr->center_uncertainty(i, j));
       pb_msg->add_velocity_covariance(object_ptr->velocity_uncertainty(i, j));
       pb_msg->add_acceleration_covariance(
           object_ptr->acceleration_uncertainty(i, j));
     }
-  }
+  } */
 
   pb_msg->set_tracking_time(object_ptr->tracking_time);
   pb_msg->set_type(static_cast<PerceptionObstacle::Type>(object_ptr->type));
@@ -104,7 +104,7 @@ bool ConvertObjectToPb(const base::ObjectPtr &object_ptr,
     pb_msg->set_height_above_ground(std::numeric_limits<double>::quiet_NaN());
   }
 
-  if (object_ptr->type == base::ObjectType::VEHICLE) {
+  /* if (object_ptr->type == base::ObjectType::VEHICLE) {
     LightStatus *light_status = pb_msg->mutable_light_status();
     const base::CarLight &car_light = object_ptr->car_light;
     light_status->set_brake_visible(car_light.brake_visible);
@@ -115,7 +115,7 @@ bool ConvertObjectToPb(const base::ObjectPtr &object_ptr,
 
     light_status->set_right_turn_visible(car_light.right_turn_visible);
     light_status->set_right_turn_switch_on(car_light.right_turn_switch_on);
-  }
+  } */
 
   if (object_ptr->fusion_supplement.on_use) {
     for (const auto &measurement : object_ptr->fusion_supplement.measurements) {

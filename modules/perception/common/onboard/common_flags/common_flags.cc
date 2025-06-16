@@ -28,7 +28,7 @@ DEFINE_bool(obs_benchmark_mode, false,
             "whether open benchmark mode, default false");
 DEFINE_bool(obs_save_fusion_supplement, false,
             "whether save fusion supplement data, default false");
-DEFINE_bool(start_visualizer, false, "Whether to start visualizer");
+DEFINE_bool(start_visualizer, true, "Whether to start visualizer");
 
 }  // namespace onboard
 }  // namespace perception

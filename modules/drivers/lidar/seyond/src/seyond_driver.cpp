@@ -125,14 +125,14 @@ bool SeyondDriver::setup_lidar() {
   ret = inno_lidar_set_return_mode(
       handle_, static_cast<InnoMultipleReturnMode>(param_.multiple_return));
   if (ret != 0) {
-    inno_log_error("Lidar %s cannot set return mode", lidar_name_.c_str());
+    // inno_log_error("Lidar %s cannot set return mode", lidar_name_.c_str());
   }
 
   // set lidar callback
   ret = inno_lidar_set_callbacks(handle_, message_callback_s_, data_callback_s_,
                                  status_callback_s_, nullptr, this);
   if (ret != 0) {
-    inno_log_error("Lidar %s  set callbacks error", lidar_name_.c_str());
+    // inno_log_error("Lidar %s  set callbacks error", lidar_name_.c_str());
     return false;
   }
 
@@ -149,7 +149,7 @@ bool SeyondDriver::init(SeyondParam& param) {
 bool SeyondDriver::start() {
   if (handle_ <= 0) {
     if (param_.raw_packets_mode) {
-      inno_log_info("waiting for record to replay...");
+      // inno_log_info("waiting for record to replay...");
       return true;
     }
     if (!setup_lidar()) {
@@ -199,7 +199,7 @@ void SeyondDriver::message_callback_(uint32_t from_remote,
 int32_t SeyondDriver::status_callback_(const InnoStatusPacket *pkt) {
   // sanity check
   if (!inno_lidar_check_status_packet(pkt, 0)) {
-    inno_log_error("corrupted pkt->idx = %" PRI_SIZEU, pkt->idx);
+    // inno_log_error("corrupted pkt->idx = %" PRI_SIZEU, pkt->idx);
     return -1;
   }
 
@@ -209,11 +209,11 @@ int32_t SeyondDriver::status_callback_(const InnoStatusPacket *pkt) {
     char buf[buf_size]{0};
 
     int32_t ret = inno_lidar_printf_status_packet(pkt, buf, buf_size);
-    if ((ret > 0)) {
-      inno_log_info("Received status packet %u: %s", cnt, buf);
-    } else if ((ret < 0)) {
-      inno_log_warning("Received status packet %u: errorno: %d", cnt, ret);
-    }
+    // if ((ret > 0)) {
+    //   inno_log_info("Received status packet %u: %s", cnt, buf);
+    // } else if ((ret < 0)) {
+    //   inno_log_warning("Received status packet %u: errorno: %d", cnt, ret);
+    // }
   }
   return 0;
 }

@@ -8,9 +8,9 @@
     </module>
 
     <module>
-        <name>hesai40</name>
-        <dag_conf>/apollo/modules/drivers/lidar/hesai/dag/hesai40.dag</dag_conf>
-        <process_name>hesai</process_name>
+        <name>seyond</name>
+        <dag_conf>/apollo/modules/drivers/lidar/seyond/dag/seyond_4robin.dag</dag_conf>
+        <process_name>seyond</process_name>
     </module>
 
     <module>
@@ -18,10 +18,15 @@
         <dag_conf>/apollo/modules/transform/dag/static_transform.dag</dag_conf>
         <process_name></process_name>
     </module>
-
+    <module>
+        <name>camera</name>
+        <dag_conf>/apollo/modules/drivers/camera/dag/camera_signal.dag</dag_conf>
+        <process_name>usb_cam</process_name>
+    </module>
     
     <desc>Apollo lidar 3d object detection</desc>
     <version>1.0.0</version>
+    
     <module>
         <name>lidar</name>
         <dag_conf>/apollo/modules/perception/msg_adapter/dag/msg_adapter.dag</dag_conf>
@@ -34,30 +39,31 @@
         <process_name>lidar</process_name>
         <version>1.0.0</version>
     </module>
-    <module>
+    <!--<module>
         <name>camera</name>
         <dag_conf>/apollo/modules/drivers/camera/dag/camera.dag</dag_conf>
         <process_name>usb_cam</process_name>
-    </module>
+    </module> -->
 
     <desc>Apollo localization</desc>
     <version>1.0.0</version>
-    <!-- <module>
-        <name>localization</name>
-        <dag_conf>/apollo/modules/localization/dag/dag_streaming_ndt_localization.dag</dag_conf>
-        <process_name>localization</process_name>
-    </module> -->
-
     <module>
         <name>localization</name>
         <dag_conf>/apollo/modules/localization/dag/dag_streaming_rtk_localization.dag</dag_conf>
         <process_name>localization</process_name>
     </module>
-    <!-- <module>
-        <name>localization_visualizer</name>
-        <dag_conf>/apollo/modules/localization/dag/dag_streaming_msf_visualizer.dag</dag_conf>
-        <process_name>localization_visualizer</process_name>
-    </module> -->
+
+    <desc>Apollo trafficlight detection</desc>
+    
+    <module>
+        <name>trafficlight</name>
+        <dag_conf>/apollo/modules/perception/traffic_light_region_proposal/dag/traffic_light_region_proposal.dag</dag_conf>
+        <dag_conf>/apollo/modules/perception/traffic_light_detection/dag/traffic_light_detection.dag</dag_conf>
+        <dag_conf>/apollo/modules/perception/traffic_light_recognition/dag/traffic_light_recognition.dag</dag_conf>
+        <dag_conf>/apollo/modules/perception/traffic_light_tracking/dag/traffic_light_tracking.dag</dag_conf>
+        <process_name>trafficlight</process_name>
+    </module>
+
     <module>
         <name>prediction</name>
         <dag_conf>/apollo/modules/prediction/dag/prediction.dag</dag_conf>
@@ -88,27 +94,6 @@
         <name>old_routing_adapter</name>
         <dag_conf>/apollo/modules/external_command/old_routing_adapter/dag/old_routing_adapter.dag</dag_conf>
         <process_name>old_routing_adapter</process_name>
-    </module>
-    
-    <module>
-        <name>external_command_process</name>
-        <dag_conf>/apollo/modules/external_command/process_component/dag/external_command_process.dag</dag_conf>
-        <process_name>external_command_process</process_name>
-    </module>
-    <module>
-        <name>external_driver</name>
-        <dag_conf>/apollo/modules/external_command/external_driver/dag/external_driver.dag</dag_conf>
-        <process_name>external_driver</process_name>
-    </module>
-    <desc>Apollo trafficlight detection</desc>
-
-    <module>
-        <name>trafficlight</name>
-        <dag_conf>/apollo/modules/perception/traffic_light_region_proposal/dag/traffic_light_region_proposal.dag</dag_conf>
-        <dag_conf>/apollo/modules/perception/traffic_light_detection/dag/traffic_light_detection.dag</dag_conf>
-        <dag_conf>/apollo/modules/perception/traffic_light_recognition/dag/traffic_light_recognition.dag</dag_conf>
-        <dag_conf>/apollo/modules/perception/traffic_light_tracking/dag/traffic_light_tracking.dag</dag_conf>
-        <process_name>trafficlight</process_name>
     </module>
 </cyber>
 

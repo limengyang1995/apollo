@@ -45,7 +45,7 @@ bool SeyondComponent::Init() {
     driver_param.raw_packets_mode = true;
   }
 
-  // driver_ptr_->register_log_callback(&SeyondComponent::SeyondLogCallback);
+  driver_ptr_->register_log_callback(&SeyondComponent::SeyondLogCallback);
 
   driver_ptr_->register_publish_packet_callback(
         std::bind(&SeyondComponent::SeyondPacketCallback, this,

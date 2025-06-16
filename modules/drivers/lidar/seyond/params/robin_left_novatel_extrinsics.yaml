@@ -6,9 +6,9 @@ transform:
     z: 0.99898211
     w: -0.04361665
   translation:
-    x: -1.67509
-    y: 1.2041
-    z: -1.38603
+    x: -1.7809
+    y: 1.5201
+    z: -1.05603
 header:
   seq: 0
   stamp:

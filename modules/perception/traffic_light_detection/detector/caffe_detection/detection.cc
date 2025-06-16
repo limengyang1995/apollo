@@ -324,7 +324,8 @@ bool TrafficLightDetection::SelectOutputBoxes(
         std::max_element(std::begin(score), std::end(score));
     tmp->region.detect_class_id =
         base::TLDetectionClass(std::distance(std::begin(score), biggest) - 1);
-
+    AINFO << "detect class: " << static_cast<int>(tmp->region.detect_class_id);
+    tmp->region.detect_class_id = base::TLDetectionClass(0);
     if (static_cast<int>(tmp->region.detect_class_id) >= 0) {
       tmp->region.detection_roi.x = static_cast<int>(x1 * inflate_col);
       tmp->region.detection_roi.y = static_cast<int>(y1 * inflate_row);

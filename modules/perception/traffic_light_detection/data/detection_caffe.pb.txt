@@ -15,8 +15,8 @@ info {
   inputs {
     name: "img"
     shape: 1
-    shape: 270
-    shape: 270
+    shape: 170
+    shape: 170
     shape: 3
   }
   inputs {
@@ -30,7 +30,7 @@ info {
     name: "bboxes"
   }
 }
-min_crop_size: 270
+min_crop_size: 170
 crop_method: 0
 mean_r: 122.7717
 mean_g: 115.9465
