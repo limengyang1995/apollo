@@ -99,9 +99,9 @@ class VenusController final : public VehicleController<::apollo::canbus::Venus> 
 
   // set Electrical Park Brake
   void SetEpbBreak(const control::ControlCommand& command) override;
-  void SetBeam(const common::VehicleSignal& vehicle_signal) override;
+  void SetBeam(const control::ControlCommand& command) override;
   void SetHorn(const common::VehicleSignal& vehicle_signal) override;
-  void SetTurningSignal(const common::VehicleSignal& vehicle_signal) override;
+  void SetTurningSignal(const control::ControlCommand& command) override;
 
   // set Chassis Command
   common::ErrorCode HandleCustomOperation(
