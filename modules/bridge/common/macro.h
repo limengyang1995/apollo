@@ -33,6 +33,6 @@ namespace bridge {
   }                     \
   p = nullptr
 
-constexpr uint32_t FRAME_SIZE = 1024;
+constexpr uint32_t FRAME_SIZE = 8192;
 }  // namespace bridge
 }  // namespace apollo
