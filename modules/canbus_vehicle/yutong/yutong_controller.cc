@@ -316,7 +316,6 @@ ErrorCode YutongController::EnableAutoMode() {
   // set enable
   /* ADD YOUR OWN CAR CHASSIS OPERATION*/
   vcu_02_18ffda2a_->set_adcontrolmode(Vcu_02_18ffda2a::ADCONTROLMODE_AUTO);
-  vcu_03_18fefa2d_->set_epbreq(Vcu_03_18fefa2d::EPBREQ_EPB_RELEASE);
   // vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
 
   can_sender_->Update();

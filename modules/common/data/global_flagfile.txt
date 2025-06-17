@@ -101,4 +101,16 @@
 
 --map_dir=/apollo/modules/map/data/kuangka061509
 
---map_dir=/apollo/modules/map/data/kuangka061511
+--map_dir=/apollo/modules/map/data/kuangka061512
+
+--map_dir=/apollo/modules/map/data/kuangka061602
+
+--map_dir=/apollo/modules/map/data/kuangka061603
+
+--map_dir=/apollo/modules/map/data/kuangka061604
+
+--map_dir=/apollo/modules/map/data/kuangka061605
+
+--map_dir=/apollo/modules/map/data/kuangka061606
+
+--map_dir=/apollo/modules/map/data/kuangka061607
