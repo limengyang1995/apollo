@@ -324,6 +324,7 @@ ErrorCode YutongController::EnableAutoMode() {
   if (!CheckResponse(flag, true)) {
     AERROR << "Failed to switch to COMPLETE_AUTO_DRIVE mode. Please check the "
               "emergency button or chassis.";
+    AERROR <<"enter emergency ";
     Emergency();
     set_chassis_error_code(Chassis::CHASSIS_ERROR);
     return ErrorCode::CANBUS_ERROR;
@@ -665,7 +666,7 @@ bool YutongController::CheckChassisError() {
     chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_THROTTLE);
     return true;
   }
-  if (chassis_detail.gw_03_19ffca24().has_brake_system_failure()) {
+  /* if (chassis_detail.gw_03_19ffca24().has_brake_system_failure()) {
     if(chassis_detail.gw_03_19ffca24().brake_system_failure() != Gw_03_19ffca24::BRAKE_SYSTEM_FAILURE_NONE){ 
       chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_BRAKE);
       return true;
@@ -675,7 +676,7 @@ bool YutongController::CheckChassisError() {
   }else{
     chassis_.set_error_code(Chassis::CHASSIS_ERROR_ON_BRAKE);
     return true;
-  }
+  } */
 
   if (chassis_detail.gw_03_19ffca24().has_gearbox_system_failure()) {
     if(chassis_detail.gw_03_19ffca24().gearbox_system_failure() != Gw_03_19ffca24::GEARBOX_SYSTEM_FAILURE_NONE){ 
@@ -765,6 +766,7 @@ void YutongController::SecurityDogThreadFunc() {
          mode == Chassis::AUTO_STEER_ONLY || 
          mode == Chassis::REMOTE_CLOUD_DRIVE) &&
         !CheckResponse(CHECK_RESPONSE_STEER_UNIT_FLAG, false)) {
+      
       ++horizontal_ctrl_fail;
       if (horizontal_ctrl_fail >= kMaxFailAttempt) {
         emergency_mode = true;
@@ -793,11 +795,13 @@ void YutongController::SecurityDogThreadFunc() {
     // 3. chassis fault check
     if (CheckChassisError()) {
       set_chassis_error_code(Chassis::CHASSIS_ERROR);
+      AERROR << "check chassis error failed";
       emergency_mode = true;
     }
 
     if (emergency_mode && mode != Chassis::EMERGENCY_MODE) {
       set_driving_mode(Chassis::EMERGENCY_MODE);
+      AERROR << "enter emergency mode ";
       message_manager_->ResetSendMessages();
       can_sender_->Update();
     }
@@ -829,6 +833,8 @@ bool YutongController::CheckResponse(const int32_t flags, bool need_wait) {
                       chassis_detail.gw_01_18ffdc24().autopilot_exit_reasons() == Gw_01_18ffdc24::AUTOPILOT_EXIT_REASONS_NOEXIT;
       check_ok = check_ok && is_vcu_online;
     }
+    AERROR << "inside check_response fail: is_vcu_online:" << is_vcu_online << " exit reason: " 
+      << chassis_detail.gw_01_18ffdc24().autopilot_exit_reasons();
     if (check_ok) {
       return true;
     } else {

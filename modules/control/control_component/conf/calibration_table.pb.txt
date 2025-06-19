@@ -47,17 +47,17 @@ calibration {
 calibration {
   speed: 0.0
   acceleration: 0.39
-  command: 15.0
+  command: 20.0
 }
 calibration {
   speed: 0.0
   acceleration: 0.41
-  command: -13.0
+  command: 23.0
 }
 calibration {
   speed: 0.0
   acceleration: 0.72
-  command: 20.0
+  command: 25.0
 }
 calibration {
   speed: 0.0

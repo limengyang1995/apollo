@@ -482,7 +482,7 @@ bool ControlComponent::Proc() {
     status = ProduceControlCommand(&control_command);
     ADEBUG << "Produce control command normal.";
   } else {
-    ADEBUG << "Into reset control command.";
+    AERROR << "Into reset control command.";
     ResetAndProduceZeroControlCommand(&control_command);
   }
 
@@ -621,11 +621,12 @@ void ControlComponent::ResetAndProduceZeroControlCommand(
     ControlCommand *control_command) {
   AINFO << "Reset and produce zero control command.!!!!!!!!!";
   control_command->set_throttle(0.0);
+  control_command->set_acceleration(-1.0);
   control_command->set_steering_target(0.0);
   control_command->set_steering_rate(0.0);
   control_command->set_speed(0.0);
   control_command->set_brake(0.0);
-  control_command->set_parking_brake(true);
+  control_command->set_parking_brake(false);
   control_command->set_driving_mode(Chassis::COMPLETE_MANUAL);
   control_command->set_gear_location(Chassis::GEAR_NEUTRAL);
   control_command->set_is_in_safe_mode(true);
