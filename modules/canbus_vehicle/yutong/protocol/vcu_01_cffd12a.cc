@@ -145,7 +145,7 @@ Vcu01cffd12a* Vcu01cffd12a::set_decelerationreq(
 // config detail: {'bit': 24, 'is_signed_var': False, 'len': 16, 'name': 'DecelerationReq', 'offset': -15.687, 'order': 'intel', 'physical_range': '[0|65535]', 'physical_unit': 'm/s2', 'precision': 0.000488281, 'type': 'double'}
 void Vcu01cffd12a::set_p_decelerationreq(uint8_t* data,
     double decelerationreq) {
-  decelerationreq = ProtocolData::BoundedValue(0.0, 65535.0, decelerationreq);
+  decelerationreq = ProtocolData::BoundedValue(-10.0, 0.1, decelerationreq);
   int x = (decelerationreq - -15.687000) / 0.000488;
   uint8_t t = 0;
 

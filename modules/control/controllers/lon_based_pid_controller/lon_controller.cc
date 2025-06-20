@@ -514,26 +514,7 @@ Status LonController::ComputeControlCommand(
     }
   }
 
-  if (FLAGS_use_vehicle_epb) {
-    ADEBUG << "Into use vehicle epb.";
-    if (acceleration_lookup >= 0) {
-      if (chassis->parking_brake()) {
-        cmd->set_acceleration(-2.0);
-        AERROR << "Into park brake release.";
-        cmd->set_parking_brake(false);
-        SetParkingBrake(&lon_based_pidcontroller_conf_, cmd);
-      }
-    } else {
-      cmd->set_parking_brake(false);
-      if (debug->is_full_stop() && IsFullStopLongTerm(debug)) {
-        ADEBUG << "Into park brake trigger.";
-        cmd->set_parking_brake(true);
-        if (chassis->parking_brake()) {
-          brake_cmd = 0.0;
-        }
-      }
-    }
-  }
+  
 
   debug->set_station_error_limited(station_error_limited);
   debug->set_speed_offset(speed_offset);
@@ -578,12 +559,35 @@ Status LonController::ComputeControlCommand(
     if(chassis->gear_location() == canbus::Chassis::GEAR_NEUTRAL && 
        trajectory_message_->gear() == canbus::Chassis::GEAR_DRIVE){
          cmd->set_brake(20);
-         cmd->set_acceleration(-1.5);
+         cmd->set_acceleration(-2.0);
          cmd->set_throttle(0);
        }
     cmd->set_gear_location(trajectory_message_->gear());
   } else {
     cmd->set_gear_location(chassis->gear_location());
+  }
+  
+  if (FLAGS_use_vehicle_epb) {
+    ADEBUG << "Into use vehicle epb.";
+    if (acceleration_lookup >= 0) {
+      if (chassis->parking_brake()) {
+        cmd->set_acceleration(-0.5);
+        AINFO << "Into park brake release.";
+        cmd->set_parking_brake(false);
+        SetParkingBrake(&lon_based_pidcontroller_conf_, cmd);
+      }
+    } else {
+      cmd->set_parking_brake(false);
+      
+      if (debug->is_full_stop() && IsFullStopLongTerm(debug)) {
+        AINFO << "Into park brake trigger.";
+        cmd->set_acceleration(-0.5);
+        if (chassis->parking_brake()) {
+          brake_cmd = 0.0;
+          cmd->set_acceleration(0);
+        }
+      }
+    }
   }
 
   if (chassis->parking_brake()) {

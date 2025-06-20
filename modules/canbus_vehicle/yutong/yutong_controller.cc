@@ -315,7 +315,16 @@ ErrorCode YutongController::EnableAutoMode() {
   }
   // set enable
   /* ADD YOUR OWN CAR CHASSIS OPERATION*/
-  vcu_02_18ffda2a_->set_adcontrolmode(Vcu_02_18ffda2a::ADCONTROLMODE_AUTO);
+  Yutong chassis_detail;
+  message_manager_->GetSensorData(&chassis_detail);
+  if (chassis_detail.has_gw_08_18ff1424() &&
+      chassis_detail.gw_08_18ff1424().has_electronic_parking_state() &&
+       chassis_detail.gw_08_18ff1424().electronic_parking_state() != 0){
+    vcu_03_18fefa2d_->set_epbreq(Vcu_03_18fefa2d::EPBREQ_EPB_RELEASE);
+  }else {
+    vcu_02_18ffda2a_->set_adcontrolmode(Vcu_02_18ffda2a::ADCONTROLMODE_AUTO);
+  }
+  
   // vcu_01_cffd12a_->set_accactivests(Vcu_01_cffd12a::ACCACTIVESTS_ON);
 
   can_sender_->Update();
@@ -331,8 +340,6 @@ ErrorCode YutongController::EnableAutoMode() {
   }
   set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
   AINFO << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
-  return ErrorCode::OK;
-  
   return ErrorCode::OK;
 }
 
