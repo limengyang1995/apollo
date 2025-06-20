@@ -65,6 +65,7 @@ bool ExternalDriver::Init() {
     // }
     // point = nlohmann::json::parse(f);
     data_to_cloud_future = cyber::Async(&ExternalDriver::SendDataToCloud, this);
+    is_network_down_future = cyber::Async(&ExternalDriver::IsNetworkDown, this);
     InitListener(config_);
     localization_reader_pose = node_->CreateReader<apollo::localization::LocalizationEstimate>(
             FLAGS_localization_topic,
@@ -109,12 +110,9 @@ bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
     return true;
 }
 
-void ExternalDriver::SendDataToCloud() {
-    std::string car_id(getenv("CARID"));
-    bool network_down = false;
+void ExternalDriver::IsNetworkDown() {
     int fail_count = 0;
-
-    while (true) {
+    while (!cyber::IsShutdown()) {
         int result = WEXITSTATUS(system("ping -c 5 -W 1 8.8.8.8 > /dev/null 2>&1"));
         AERROR << "result :" << result;
         if (result != 0) {
@@ -129,7 +127,13 @@ void ExternalDriver::SendDataToCloud() {
             network_down = false;
             CreateRtcClient(config_);
         }
+        cyber::SleepFor(std::chrono::seconds(2));
+    }
+}
+void ExternalDriver::SendDataToCloud() {
+    std::string car_id(getenv("CARID"));
 
+    while (!cyber::IsShutdown()) {
         if (is_start_send_cloud) {
             cyber::SleepFor(std::chrono::milliseconds(150));
             std::string x = std::to_string(localization_.pose().position().x());
@@ -164,25 +168,8 @@ void ExternalDriver::SendDataToCloud() {
                        {"right_turn", right_turn},
                        {"low_beam", low_beam},
                        {"soc", soc}};
-            /* nlohmann::json vehicle_data
-                    = {{"car_id", car_id},
-                       {"x", x},
-                       {"y", y},
-                       {"z", z},
-                       {"gear", gear},
-                       {"steer", steer},
-                       {"throttle", throttle},
-                       {"brake", brake},
-                       {"driving_mode", driving_mode},
-                       {"speed", speed},
-                       {"epb", epb},
-                       {"left_turn", "1"},
-                       {"right_turn", "1"},
-                       {"low_beam", "1"},
-                       {"soc", "78"}}; */
-            // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
             std::string id = std::to_string(rtc_client_.g_mylistener.feed_id);
-            // AERROR << "id : " << id;
+            AINFO << "vehicle data: " << vehicle_data.dump();
             if (id != "0") {
                 if (std::find(id_list.begin(), id_list.end(), id) == id_list.end()) {
                     id_list.push_back(id);
@@ -190,21 +177,20 @@ void ExternalDriver::SendDataToCloud() {
                 if (id_list.size() > 3) {
                     id_list.erase(id_list.begin());
                 }
-                // auto it = std::find(id_list.begin(), id_list.end(), rtc_client_.g_mylistener.leaving_user_id);
-                // if (it != id_list.end()) {
-                //     id_list.erase(it);
-                // }
 
                 for (const auto& id : id_list) {
                     // AINFO << "id : " << id << "id size: " << id_list.size();
                     rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.dump().c_str(), id.c_str());
                 }
+
+            } else {
+                cyber::SleepFor(std::chrono::milliseconds(100));
             }
-        } else {
-            cyber::SleepFor(std::chrono::milliseconds(1000));
+
+            // AINFO<<vehicle_data;
         }
 
-        // AINFO<<vehicle_data;
+        cyber::SleepFor(std::chrono::milliseconds(100));
     }
 }
 
@@ -377,7 +363,7 @@ bool ExternalDriver::Proc() {
                 is_start_publish = false;
                 is_start_send_cloud = false;
                 cloud_gear_position = apollo::canbus::Chassis::GEAR_NEUTRAL;
-                SendCloudControlCommand(0, cloud_gear_position, 0.0, 0.0, 0.0, 0, 0, 0);
+                SendCloudControlCommand(0, cloud_gear_position, 0.0, 0.0, 0.0, 0, 0, 0, 0);
             }
         }
         if (command.contains("active_cameras")) {
@@ -399,6 +385,7 @@ bool ExternalDriver::Proc() {
                     cloud_turn_light = command["turn_light"];
                     cloud_low_light = command["low_light"];
                     cloud_epb = command["epb"];
+                    cloud_emergency_stop = command["emergency_stop"];
                 }
             } catch (const std::exception& e) {
                 AERROR << "json parse error" << e.what();
@@ -430,7 +417,8 @@ bool ExternalDriver::Proc() {
                     -std::stof(cloud_steer),
                     std::stoi(cloud_turn_light),
                     std::stoi(cloud_low_light),
-                    std::stoi(cloud_epb));
+                    std::stoi(cloud_epb),
+                    std::stoi(cloud_emergency_stop));
         }
     }
     rtc_client_.g_mylistener.re_mark = false;
@@ -445,7 +433,8 @@ void ExternalDriver::SendCloudControlCommand(
         const float& steering_target,
         const int& turn_light,
         const int& low_light,
-        const int& epb) {
+        const int& epb,
+        const int& emergency_stop) {
     AERROR << "get cloud control command: " << cloud_takeover_request;
     auto command = std::make_shared<apollo::control::ControlCommand>();
     command->set_cloud_takeover_request(cloud_takeover_request);
@@ -465,6 +454,7 @@ void ExternalDriver::SendCloudControlCommand(
         command->set_right_turn(0);
     }
     command->set_parking_brake(epb);
+    command->set_emergency_stop(emergency_stop);
     // command->set_driving_mode(apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE);
     // AERROR<< "Sending cloud control command: " << command->DebugString();
     cloud_control_cmd_writer_->Write(command);

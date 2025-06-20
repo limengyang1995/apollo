@@ -72,6 +72,7 @@ private:
     std::mutex mutex_;
     const nlohmann::json data_to_cloud;
     std::future<void> data_to_cloud_future;
+    std::future<void> is_network_down_future;
     int connect_detect_num = 0;
     std::vector<std::string> request_camera;
     std::vector<std::string> id_list;
@@ -81,6 +82,7 @@ private:
     bool is_stop = false;
     bool is_start_publish = false;
     bool is_start_send_cloud = false;
+    bool network_down = false;
 
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
@@ -90,6 +92,7 @@ private:
     apollo::canbus::Chassis chassis_;
     void SendDataToCloud();
     void CreateRtcClient(const ExternalDriverConfig& config);
+    void IsNetworkDown();
 
 private:
     // template <typename T>
@@ -101,13 +104,14 @@ private:
             const float& steering_target,
             const int& turn_light,
             const int& low_light,
-            const int& epb);
+            const int& epb,
+            const int& emergency_stop);
     std::shared_ptr<apollo::cyber::Writer<apollo::control::ControlCommand>> cloud_control_cmd_writer_;
     uint64_t command_id_;
     const std::string module_name_;
     //     std::string input_command_string = "";
     std::string cloud_takeover{"0"}, cloud_gear{"0"}, cloud_throttle{"0"}, cloud_brake{"0"}, cloud_turn_light{"0"},
-            cloud_low_light{"0"}, cloud_epb{"0"}, cloud_steer{"0"};
+            cloud_low_light{"0"}, cloud_epb{"0"}, cloud_steer{"0"}, cloud_emergency_stop{"0"};
     apollo::canbus::Chassis::GearPosition cloud_gear_position;
 };
 

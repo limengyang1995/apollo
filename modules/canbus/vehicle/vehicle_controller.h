@@ -181,9 +181,7 @@ private:
     /*
      * @brief Handle Apollo chassis actions
      */
-    virtual void HandleVehicleSignal(const common::VehicleSignal &signal) {
-        
-    }
+    virtual void HandleVehicleSignal(const common::VehicleSignal &signal) {}
 
     virtual void SetBeam(const control::ControlCommand &command) = 0;
     virtual void SetHorn(const common::VehicleSignal &signal) = 0;
@@ -427,7 +425,11 @@ ErrorCode VehicleController<SensorType>::Update(const ControlCommand &control_co
         Gear(control_command.gear_location());
         Throttle(control_command.throttle());
         // Acceleration(control_command.acceleration());
-        Brake(control_command.brake());
+        if (control_command.has_emergency_stop() && control_command.emergency_stop()) {
+            Brake(100.0);
+        } else {
+            Brake(control_command.brake());
+        }
         SetEpbBreak(control_command);
         SetBeam(control_command);
         SetTurningSignal(control_command);

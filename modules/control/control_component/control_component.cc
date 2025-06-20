@@ -287,6 +287,7 @@ Status ControlComponent::ProduceControlCommand(ControlCommand *control_command) 
         control_command->set_left_turn(local_view_.cloud_control_cmd().left_turn());
         control_command->set_right_turn(local_view_.cloud_control_cmd().right_turn());
         control_command->set_parking_brake(local_view_.cloud_control_cmd().parking_brake());
+        control_command->set_emergency_stop(local_view_.cloud_control_cmd().emergency_stop());
     } else {
         // if planning set estop, then no control process triggered
         if (estop_) {
@@ -317,7 +318,7 @@ bool ControlComponent::Proc() {
     chassis_reader_->Observe();
     const auto &chassis_msg = chassis_reader_->GetLatestObserved();
     if (chassis_msg == nullptr) {
-        AERROR << "Chassis msg is not ready!";
+        // AERROR << "Chassis msg is not ready!";
         injector_->set_control_process(false);
         return false;
     }
@@ -532,6 +533,7 @@ void ControlComponent::ResetAndProduceZeroControlCommand(ControlCommand *control
     control_command->set_right_turn(0);
     control_command->set_left_turn(0);
     control_command->set_parking_brake(0);
+    control_command->set_emergency_stop(0);
     control_task_agent_.Reset();
     latest_trajectory_.mutable_trajectory_point()->Clear();
     latest_trajectory_.mutable_path_point()->Clear();
