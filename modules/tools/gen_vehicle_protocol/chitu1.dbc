@@ -1,0 +1,208 @@
+VERSION "WangHu V1.0"
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: VCU ADAS
+
+
+BO_ 304 VCU_SW_State: 8 VCU
+ SG_ VCU_Mode : 0|1@0+ (1,0) [0|1] "" Vector__XXX
+
+BO_ 256 VCU_diversion_angle: 8 VCU
+ SG_ Actual_steering_radian : 7|16@0- (0.002,0) [-37.2|30.7] "degrees" Vector__XXX
+ SG_ Ac_steering_speed : 23|16@0+ (0.001,0) [-14.4|14.4] "degrees/s" Vector__XXX
+
+BO_ 272 VCU_speed_message: 8 VCU
+ SG_ Actual_speed : 7|16@0- (0.001,0) [-6.9|6.9] "m/s" Vector__XXX
+ SG_ Accelerated_Speed : 23|16@0- (0.0001,0) [-2|2] "m/s2" Vector__XXX
+
+BO_ 273 VCU_mileage_info: 8 VCU
+ SG_ Relative_mileage : 7|40@0+ (1E-005,100000) [0|200000] "m" Vector__XXX
+ SG_ Absolute_mileage : 47|24@0+ (0.1,0) [0|999999.9] "km" Vector__XXX
+
+BO_ 513 VCU_Voltage_State: 8 VCU
+ SG_ _12V_State : 0|1@0+ (1,0) [0|1] "" Vector__XXX
+ SG_ _24V_State : 8|1@0+ (1,0) [0|1] "" Vector__XXX
+ SG_ _12VBatt_State : 17|2@0+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 512 VCU_Braking_State: 8 VCU
+ SG_ Brake_State : 2|3@0+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 1184 VCU_ADAS_SOC: 8 VCU
+ SG_ BattVolt : 7|16@0+ (0.1,0) [0|1000] "V" Vector__XXX
+ SG_ BattCurr : 23|16@0+ (0.1,-400) [-400|1000] "A" Vector__XXX
+ SG_ SOC : 39|8@0+ (1,0) [0|100] "%" Vector__XXX
+ SG_ DischgTime : 47|16@0+ (1,0) [0|65535] "h" Vector__XXX
+
+BO_ 1185 VCU_MAX_temp: 8 VCU
+ SG_ MAX_cell_temp : 7|8@0+ (1,-50) [-50|250] "" Vector__XXX
+ SG_ AvrgCellTemp : 15|8@0+ (1,-50) [-50|250] "" Vector__XXX
+
+BO_ 1186 VCU_Charge_discharge: 8 VCU
+ SG_ BMS_Status : 1|2@0+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 1187 VCU_Remote_Date1: 8 Vector__XXX
+ SG_ Date1 : 7|56@0+ (1,0) [0|7.20575940379279E+016] "" Vector__XXX
+ SG_ Checksum : 63|8@0+ (1,0) [0|255] "" Vector__XXX
+
+BO_ 1188 VCU_Remote_Date2: 8 Vector__XXX
+ SG_ Date2 : 7|56@0+ (1,0) [0|7.20575940379279E+016] "" Vector__XXX
+ SG_ Checksum : 63|8@0+ (1,0) [0|255] "" Vector__XXX
+
+BO_ 1189 VCU_Remote_Date3: 8 Vector__XXX
+ SG_ Date3 : 7|56@0+ (1,0) [0|7.20575940379279E+016] "" Vector__XXX
+ SG_ Checksum : 63|8@0+ (1,0) [0|255] "" Vector__XXX
+
+BO_ 1190 VCU_Remote_Date4: 8 Vector__XXX
+ SG_ Date4 : 7|56@0+ (1,0) [0|7.20575940379279E+016] "" Vector__XXX
+ SG_ Checksum : 63|8@0+ (1,0) [0|255] "" Vector__XXX
+
+BO_ 274 ADAS_angle_CMD: 8 ADAS
+ SG_ steering_angle : 7|16@0- (0.002,0) [-37.2|30.7] "degrees" Vector__XXX
+ SG_ Ac_steering_speed : 23|16@0- (0.001,0) [-14.4|14.4] "degrees/s" Vector__XXX
+
+BO_ 275 ADAS_speed_CMD: 8 ADAS
+ SG_ Vehicle_Speed : 7|16@0- (0.001,0) [-6.9|6.9] "m/s" Vector__XXX
+ SG_ Accelerated_Speed : 23|16@0- (0.0001,0) [-2|2] "m/s2" Vector__XXX
+
+BO_ 672 ADAS_Emergency_spot: 8 ADAS
+ SG_ Scram_Signal : 0|1@0+ (1,0) [0|1] "/" Vector__XXX
+
+
+
+BA_DEF_ EV_  "GenEnvIsGeneratedDsp" ENUM  "No","Yes";
+BA_DEF_ EV_  "GenEnvAutoGenCtrl" ENUM  "No","Yes";
+BA_DEF_ EV_  "GenEnvMsgOffset" INT 0 2147483647;
+BA_DEF_ EV_  "GenEnvMsgName" STRING ;
+BA_DEF_ EV_  "GenEnvIsGeneratedSnd" ENUM  "No","Yes";
+BA_DEF_ SG_  "GenSigStartValue" FLOAT 0 1215752192;
+BA_DEF_ SG_  "GenSigTimeoutValue" FLOAT 0 1215752192;
+BA_DEF_ SG_  "GenSigInactiveValue" FLOAT 0 1215752192;
+BA_DEF_ SG_  "GenSigMinValue" INT 0 2147483647;
+BA_DEF_ SG_  "GenSigMaxValue" INT 0 2147483647;
+BA_DEF_ SG_  "GenSigSendType" ENUM  "Cycle";
+BA_DEF_ SG_  "GenSigEnvVarType" ENUM  "int","float","undef";
+BA_DEF_ BO_  "GenMsgDelayTime" INT 0 0;
+BA_DEF_ BO_  "GenMsgNrOfRepetition" INT 0 0;
+BA_DEF_ BO_  "GenMsgCycleTimeFast" INT 0 0;
+BA_DEF_ BO_  "NmMessage" ENUM  "No","Yes";
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 65535;
+BA_DEF_ BO_  "VFrameFormat" ENUM  "StandardCAN","ExtendedCAN","reserved","J1939PG","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","StandardCAN_FD","ExtendedCAN_FD";
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "Cycle";
+BA_DEF_ BU_  "NmStationAddress" HEX 0 127;
+BA_DEF_ BU_  "CANoeStartDelay" INT 0 0;
+BA_DEF_ BU_  "CANoeDrift" INT 0 0;
+BA_DEF_ BU_  "CANoeJitterMin" INT 0 0;
+BA_DEF_ BU_  "CANoeJitterMax" INT 0 0;
+BA_DEF_ BU_  "ECU" STRING ;
+BA_DEF_ BU_  "NodeLayerModules" STRING ;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_  "GenEnvVarPrefix" STRING ;
+BA_DEF_  "GenEnvVarEndingSnd" STRING ;
+BA_DEF_  "GenEnvVarEndingDsp" STRING ;
+BA_DEF_  "DBName" STRING ;
+BA_DEF_ BO_  "_Cdb_Sc_CTm_FAW_v3_0" INT 0 0;
+BA_DEF_ BO_  "_Cdb_Sc_CTm_FAW_v2_3" INT 0 0;
+BA_DEF_ BO_  "_Cdb_Sc_CTm_FAW_v3_1" INT 0 0;
+BA_DEF_ BO_  "_Cdb_Sc_CTm_FAW_v2_2" INT 0 0;
+BA_DEF_ BO_  "_Cdb_Sc_CTm_FAW_v2_1" INT 0 0;
+BA_DEF_DEF_  "GenEnvIsGeneratedDsp" "No";
+BA_DEF_DEF_  "GenEnvAutoGenCtrl" "No";
+BA_DEF_DEF_  "GenEnvMsgOffset" 0;
+BA_DEF_DEF_  "GenEnvMsgName" "";
+BA_DEF_DEF_  "GenEnvIsGeneratedSnd" "No";
+BA_DEF_DEF_  "GenSigStartValue" 0;
+BA_DEF_DEF_  "GenSigTimeoutValue" 0;
+BA_DEF_DEF_  "GenSigInactiveValue" 0;
+BA_DEF_DEF_  "GenSigMinValue" 0;
+BA_DEF_DEF_  "GenSigMaxValue" 0;
+BA_DEF_DEF_  "GenSigSendType" "Cycle";
+BA_DEF_DEF_  "GenSigEnvVarType" "undef";
+BA_DEF_DEF_  "GenMsgDelayTime" 0;
+BA_DEF_DEF_  "GenMsgNrOfRepetition" 0;
+BA_DEF_DEF_  "GenMsgCycleTimeFast" 0;
+BA_DEF_DEF_  "NmMessage" "No";
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "VFrameFormat" "StandardCAN";
+BA_DEF_DEF_  "GenMsgSendType" "Cycle";
+BA_DEF_DEF_  "NmStationAddress" 0;
+BA_DEF_DEF_  "CANoeStartDelay" 0;
+BA_DEF_DEF_  "CANoeDrift" 0;
+BA_DEF_DEF_  "CANoeJitterMin" 0;
+BA_DEF_DEF_  "CANoeJitterMax" 0;
+BA_DEF_DEF_  "ECU" "";
+BA_DEF_DEF_  "NodeLayerModules" "";
+BA_DEF_DEF_  "BusType" "CAN";
+BA_DEF_DEF_  "GenEnvVarPrefix" "PE";
+BA_DEF_DEF_  "GenEnvVarEndingSnd" "_Ps";
+BA_DEF_DEF_  "GenEnvVarEndingDsp" "_Pd";
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "_Cdb_Sc_CTm_FAW_v3_0" 0;
+BA_DEF_DEF_  "_Cdb_Sc_CTm_FAW_v2_3" 0;
+BA_DEF_DEF_  "_Cdb_Sc_CTm_FAW_v3_1" 0;
+BA_DEF_DEF_  "_Cdb_Sc_CTm_FAW_v2_2" 0;
+BA_DEF_DEF_  "_Cdb_Sc_CTm_FAW_v2_1" 0;
+BA_ "DBName" "CanMatrix";
+BA_ "GenSigMaxValue" SG_ 304 VCU_Mode 1;
+BA_ "GenSigMaxValue" SG_ 256 Actual_steering_radian 65535;
+BA_ "GenSigMaxValue" SG_ 256 Ac_steering_speed 65535;
+BA_ "GenSigMaxValue" SG_ 272 Actual_speed 65535;
+BA_ "GenSigMaxValue" SG_ 272 Accelerated_Speed 65535;
+BA_ "GenSigMaxValue" SG_ 273 Relative_mileage -1;
+BA_ "GenSigMaxValue" SG_ 273 Absolute_mileage 16777215;
+BA_ "GenSigMaxValue" SG_ 513 _12V_State 1;
+BA_ "GenSigTimeoutValue" SG_ 513 _12V_State 6900;
+BA_ "GenSigMaxValue" SG_ 513 _24V_State 1;
+BA_ "GenSigMaxValue" SG_ 513 _12VBatt_State 3;
+BA_ "GenSigMaxValue" SG_ 512 Brake_State 7;
+BA_ "GenSigMaxValue" SG_ 1184 BattVolt 10000;
+BA_ "GenSigMaxValue" SG_ 1184 BattCurr 14000;
+BA_ "GenSigMaxValue" SG_ 1184 SOC 100;
+BA_ "GenSigMaxValue" SG_ 1184 DischgTime 65535;
+BA_ "GenSigMaxValue" SG_ 1185 MAX_cell_temp 250;
+BA_ "GenSigMaxValue" SG_ 1185 AvrgCellTemp 250;
+BA_ "GenSigMaxValue" SG_ 1186 BMS_Status 3;
+BA_ "GenSigMaxValue" SG_ 274 steering_angle 65535;
+BA_ "GenSigMaxValue" SG_ 274 Ac_steering_speed 65535;
+BA_ "GenSigMaxValue" SG_ 275 Vehicle_Speed 65535;
+BA_ "GenSigMaxValue" SG_ 275 Accelerated_Speed 65535;
+BA_ "GenSigMaxValue" SG_ 672 Scram_Signal 1;
+VAL_ 304 VCU_Mode 0 "automode" 1 "remote mode" ;
+VAL_ 513 _12V_State 0 "ON" 1 "OFF" ;
+VAL_ 513 _24V_State 0 "ON" 1 "OFF" ;
+VAL_ 513 _12VBatt_State 0 "normal" 1 "under voltage" 3 "over voltage" ;
+VAL_ 512 Brake_State 0 "reserved" 1 "Collision braking" 2 "Hardware emergency braking" 3 "Low liquid level braking" 4 "software emergency braking" 5 "hardware/software emergency braking" ;
+VAL_ 1186 BMS_Status 0 "nochargeing/no dischargeing " 1 "dischargeing" 2 "chargeing" ;
+VAL_ 672 Scram_Signal 0 " invalid" 1 " valid" ;
+

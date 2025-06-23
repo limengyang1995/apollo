@@ -1,0 +1,172 @@
+syntax = "proto2";
+
+package apollo.canbus;
+
+message Vcu_diversion_angle_100 {
+// Report Message
+  // [degrees] [-37.2|30.7]
+  optional double actual_steering_radian = 1;
+  // [degrees/s] [-14.4|14.4]
+  optional double ac_steering_speed = 2;
+}
+
+message Vcu_speed_message_110 {
+// Report Message
+  // [m/s] [-6.9|6.9]
+  optional double actual_speed = 1;
+  // [m/s2] [-2|2]
+  optional double accelerated_speed = 2;
+}
+
+message Vcu_mileage_info_111 {
+// Report Message
+  // [km] [0|999999.9]
+  optional double absolute_mileage = 1;
+}
+
+message Adas_angle_cmd_112 {
+// Control Message
+  // [degrees] [-37.2|30.7]
+  optional double steering_angle = 1;
+  // [degrees/s] [-14.4|14.4]
+  optional double ac_steering_speed = 2;
+}
+
+message Adas_speed_cmd_113 {
+// Control Message
+  // [m/s] [-6.9|6.9]
+  optional double vehicle_speed = 1;
+  // [m/s2] [-2|2]
+  optional double accelerated_speed = 2;
+}
+
+message Vcu_sw_state_130 {
+// Report Message
+  enum Vcu_modeType {
+    VCU_MODE_AUTOMODE = 0;
+    VCU_MODE_REMOTE_MODE = 1;
+  }
+  // [] [0|1]
+  optional Vcu_modeType vcu_mode = 1;
+}
+
+message Vcu_braking_state_200 {
+// Report Message
+  enum Brake_stateType {
+    BRAKE_STATE_RESERVED = 0;
+    BRAKE_STATE_COLLISION_BRAKING = 1;
+    BRAKE_STATE_HARDWARE_EMERGENCY_BRAKING = 2;
+    BRAKE_STATE_LOW_LIQUID_LEVEL_BRAKING = 3;
+    BRAKE_STATE_SOFTWARE_EMERGENCY_BRAKING = 4;
+    BRAKE_STATE_HARDWARE_SOFTWARE_EMERGENCY_BRAKING = 5;
+  }
+  // [] [0|3]
+  optional Brake_stateType brake_state = 1;
+}
+
+message Vcu_voltage_state_201 {
+// Report Message
+  enum _12v_stateType {
+    _12V_STATE_ON = 0;
+    _12V_STATE_OFF = 1;
+  }
+  enum _24v_stateType {
+    _24V_STATE_ON = 0;
+    _24V_STATE_OFF = 1;
+  }
+  enum _12vbatt_stateType {
+    _12VBATT_STATE_NORMAL = 0;
+    _12VBATT_STATE_UNDER_VOLTAGE = 1;
+    _12VBATT_STATE_OVER_VOLTAGE = 3;
+  }
+  // [] [0|1]
+  optional _12v_stateType _12v_state = 1;
+  // [] [0|1]
+  optional _24v_stateType _24v_state = 2;
+  // [] [0|3]
+  optional _12vbatt_stateType _12vbatt_state = 3;
+}
+
+message Adas_emergency_spot_2a0 {
+// Control Message
+  enum Scram_signalType {
+    SCRAM_SIGNAL_INVALID = 0;
+    SCRAM_SIGNAL_VALID = 1;
+  }
+  // [/] [0|1]
+  optional Scram_signalType scram_signal = 1;
+}
+
+message Vcu_adas_soc_4a0 {
+// Report Message
+  // [V] [0|1000]
+  optional double battvolt = 1;
+  // [A] [-400|1000]
+  optional double battcurr = 2;
+  // [%] [0|100]
+  optional int32 soc = 3;
+  // [h] [0|65535]
+  optional int32 dischgtime = 4;
+}
+
+message Vcu_max_temp_4a1 {
+// Report Message
+  // [] [-50|250]
+  optional int32 max_cell_temp = 1;
+  // [] [-50|250]
+  optional int32 avrgcelltemp = 2;
+}
+
+message Vcu_charge_discharge_4a2 {
+// Report Message
+  enum Bms_statusType {
+    BMS_STATUS_NOCHARGEING_NO_DISCHARGEING = 0;
+    BMS_STATUS_DISCHARGEING = 1;
+    BMS_STATUS_CHARGEING = 2;
+  }
+  // [] [0|3]
+  optional Bms_statusType bms_status = 1;
+}
+
+message Vcu_remote_date1_4a3 {
+// Report Message
+  // [] [0|255]
+  optional int32 checksum = 1;
+}
+
+message Vcu_remote_date2_4a4 {
+// Report Message
+  // [] [0|255]
+  optional int32 checksum = 1;
+}
+
+message Vcu_remote_date3_4a5 {
+// Report Message
+  // [] [0|255]
+  optional int32 checksum = 1;
+}
+
+message Vcu_remote_date4_4a6 {
+// Report Message
+  // [] [0|255]
+  optional int32 checksum = 1;
+}
+
+message Chitu {
+  optional Vcu_diversion_angle_100 vcu_diversion_angle_100 = 1; // report message
+  optional Vcu_speed_message_110 vcu_speed_message_110 = 2; // report message
+  optional Vcu_mileage_info_111 vcu_mileage_info_111 = 3; // report message
+  optional Adas_angle_cmd_112 adas_angle_cmd_112 = 4; // control message
+  optional Adas_speed_cmd_113 adas_speed_cmd_113 = 5; // control message
+  optional Vcu_sw_state_130 vcu_sw_state_130 = 6; // report message
+  optional Vcu_braking_state_200 vcu_braking_state_200 = 7; // report message
+  optional Vcu_voltage_state_201 vcu_voltage_state_201 = 8; // report message
+  optional Adas_emergency_spot_2a0 adas_emergency_spot_2a0 = 9; // control message
+  optional Vcu_adas_soc_4a0 vcu_adas_soc_4a0 = 10; // report message
+  optional Vcu_max_temp_4a1 vcu_max_temp_4a1 = 11; // report message
+  optional Vcu_charge_discharge_4a2 vcu_charge_discharge_4a2 = 12; // report message
+  optional Vcu_remote_date1_4a3 vcu_remote_date1_4a3 = 13; // report message
+  optional Vcu_remote_date2_4a4 vcu_remote_date2_4a4 = 14; // report message
+  optional Vcu_remote_date3_4a5 vcu_remote_date3_4a5 = 15; // report message
+  optional Vcu_remote_date4_4a6 vcu_remote_date4_4a6 = 16; // report message
+}

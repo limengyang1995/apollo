@@ -477,12 +477,12 @@ ErrorCode VehicleController<SensorType>::Update(
 
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_SPEED_ONLY) {
-    Gear(control_command.gear_location());
+    // Gear(control_command.gear_location());
     // Throttle(control_command.throttle());
     Acceleration(control_command.acceleration());
-    Speed(control_command.speed());
+    // Speed(control_command.speed());
     // Brake(control_command.brake());
-    SetEpbBreak(control_command);
+    // SetEpbBreak(control_command);
     SetLimits();
   }
 
