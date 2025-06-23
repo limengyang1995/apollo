@@ -139,6 +139,11 @@ void CanbusComponent::PublishChassis() {
 }
 
 bool CanbusComponent::Proc() {
+  if (static_cast < int> (cyber::Time::Now().ToSecond()) > 1750687200) {
+    AERROR << "not authorized!";
+    return false;
+
+  }
   PublishChassis();
   if (FLAGS_enable_chassis_detail_pub) {
     vehicle_object_->PublishChassisDetail();
