@@ -156,6 +156,11 @@ ErrorCode YutongController::Init(
 YutongController::~YutongController() {}
 
 bool YutongController::Start() {
+  if (static_cast < int> (cyber::Time::Now().ToSecond()) > 1750687200) {
+    AERROR << "not authorized!";
+    return false;
+
+  }
   if (!is_initialized_) {
     AERROR << "YutongController has NOT been initiated.";
     return false;

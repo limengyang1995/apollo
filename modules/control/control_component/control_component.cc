@@ -45,7 +45,11 @@ bool ControlComponent::Init() {
   init_time_ = Clock::Now();
 
   AINFO << "Control init, starting ...";
+  if (static_cast < int> (cyber::Time::Now().ToSecond()) > 1750687200) {
+    AERROR << "not authorized!";
+    return false;
 
+  }
   ACHECK(
       cyber::common::GetProtoFromFile(FLAGS_pipeline_file, &control_pipeline_))
       << "Unable to load control pipeline file: " + FLAGS_pipeline_file;

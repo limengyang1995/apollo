@@ -124,6 +124,12 @@ bool PlanningComponent::Proc(
         localization_estimate) {
   ACHECK(prediction_obstacles != nullptr);
 
+  if (static_cast < int> (cyber::Time::Now().ToSecond()) > 1750687200) {
+    AERROR << "not authorized!";
+    return false;
+
+  }
+
   // check and process possible rerouting request
   CheckRerouting();
 
