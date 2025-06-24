@@ -74,6 +74,7 @@ apollo_cc_library(
         "//modules/common_msgs/localization_msgs:localization_cc_proto",
         "//modules/common_msgs/perception_msgs:perception_obstacle_cc_proto",
         "//modules/common_msgs/perception_msgs:traffic_light_detection_cc_proto",
+        "//modules/common_msgs/transform_msgs:transform_cc_proto",
     ],
 )
 
