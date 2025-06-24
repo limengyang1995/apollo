@@ -69,6 +69,7 @@ BRIDGE_COMPONENT_REGISTER(planning::ADCTrajectory)
 BRIDGE_COMPONENT_REGISTER(localization::LocalizationEstimate)
 BRIDGE_COMPONENT_REGISTER(perception::PerceptionObstacles)
 BRIDGE_COMPONENT_REGISTER(perception::TrafficLightDetection)
+BRIDGE_COMPONENT_REGISTER(transform::TransformStampeds)
 
 }  // namespace bridge
 }  // namespace apollo

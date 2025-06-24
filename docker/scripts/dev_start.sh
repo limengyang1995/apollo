@@ -502,6 +502,7 @@ function main() {
     -p 8900:8900 \
     -p 8901:8901 \
     -p 8902:8902 \
+    -p 8903:8903 \
     -v /dev/null:/dev/raw1394 \
     "${start_img}" \
     /bin/bash

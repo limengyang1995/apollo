@@ -232,5 +232,8 @@ BRIDGE_RECV_IMPL(canbus::Chassis);
 BRIDGE_RECV_IMPL(localization::LocalizationEstimate);
 BRIDGE_RECV_IMPL(perception::PerceptionObstacles);
 BRIDGE_RECV_IMPL(perception::TrafficLightDetection);
+BRIDGE_RECV_IMPL(transform::TransformStampeds);
+
+
 }  // namespace bridge
 }  // namespace apollo

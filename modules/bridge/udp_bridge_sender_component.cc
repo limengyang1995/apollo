@@ -89,5 +89,7 @@ BRIDGE_IMPL(LocalizationEstimate);
 BRIDGE_IMPL(planning::ADCTrajectory);
 BRIDGE_IMPL(perception::PerceptionObstacles);
 BRIDGE_IMPL(perception::TrafficLightDetection);
+BRIDGE_IMPL(transform::TransformStampeds);
+
 }  // namespace bridge
 }  // namespace apollo

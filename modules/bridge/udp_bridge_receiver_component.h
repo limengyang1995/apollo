@@ -86,6 +86,9 @@ RECEIVER_BRIDGE_COMPONENT_REGISTER(canbus::Chassis)
 RECEIVER_BRIDGE_COMPONENT_REGISTER(localization::LocalizationEstimate)
 RECEIVER_BRIDGE_COMPONENT_REGISTER(perception::PerceptionObstacles)
 RECEIVER_BRIDGE_COMPONENT_REGISTER(perception::TrafficLightDetection)
+RECEIVER_BRIDGE_COMPONENT_REGISTER(transform::TransformStampeds)
+
+
 
 }  // namespace bridge
 }  // namespace apollo
