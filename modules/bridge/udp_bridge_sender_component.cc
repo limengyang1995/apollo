@@ -52,6 +52,12 @@ bool UDPBridgeSenderComponent<T>::Proc(const std::shared_ptr<T> &pb_msg) {
     AERROR << "remote info is invalid!";
     return false;
   }
+  if (cyber::Time::Now().ToSecond() - last_valid_time < 0.015){
+    AERROR << "Frame too quick dispose: " << cyber::Time::Now().ToSecond() - last_valid_time 
+     << " " << cyber::Time::Now().ToSecond()  << " " <<last_valid_time ;
+    return false;
+  }
+  last_valid_time = cyber::Time::Now().ToSecond();
 
   if (pb_msg == nullptr) {
     AERROR << "proto msg is not ready!";

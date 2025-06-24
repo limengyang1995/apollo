@@ -35,6 +35,7 @@
 #include "cyber/component/component.h"
 #include "cyber/cyber.h"
 #include "cyber/init.h"
+#include "cyber/time/time.h"
 #include "cyber/scheduler/scheduler_factory.h"
 #include "modules/bridge/common/bridge_gflags.h"
 #include "modules/bridge/common/bridge_header.h"
@@ -76,6 +77,7 @@ class UDPBridgeReceiverComponent final : public cyber::Component<> {
   bool enable_timeout_ = true;
   std::shared_ptr<cyber::Writer<T>> writer_;
   std::mutex mutex_;
+  double last_valid_time = cyber::Time::Now().ToSecond();
 
   std::shared_ptr<UDPListener<UDPBridgeReceiverComponent<T>>> listener_ =
       std::make_shared<UDPListener<UDPBridgeReceiverComponent<T>>>();

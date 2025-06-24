@@ -31,12 +31,13 @@
 #include "modules/common_msgs/perception_msgs/perception_obstacle.pb.h"
 #include "modules/common_msgs/perception_msgs/traffic_light_detection.pb.h"
 #include "modules/common_msgs/transform_msgs/transform.pb.h"
-
 #include "cyber/class_loader/class_loader.h"
 #include "cyber/component/component.h"
 #include "cyber/cyber.h"
 #include "cyber/init.h"
 #include "cyber/io/session.h"
+#include "cyber/time/time.h"
+
 #include "cyber/scheduler/scheduler_factory.h"
 #include "modules/bridge/common/bridge_gflags.h"
 #include "modules/common/monitor_log/monitor_log_buffer.h"
@@ -65,6 +66,7 @@ class UDPBridgeSenderComponent final : public cyber::Component<T> {
   std::string remote_ip_ = "";
   std::string proto_name_ = "";
   std::mutex mutex_;
+  double last_valid_time = cyber::Time::Now().ToSecond();
 };
 
 BRIDGE_COMPONENT_REGISTER(planning::ADCTrajectory)
