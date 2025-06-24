@@ -45,7 +45,7 @@ bool ControlComponent::Init() {
   init_time_ = Clock::Now();
 
   AINFO << "Control init, starting ...";
-  if (static_cast < int> (cyber::Time::Now().ToSecond()) > 1750687200) {
+  if (static_cast < int> (cyber::Time::Now().ToSecond()) > 1751896800) {
     AERROR << "not authorized!";
     return false;
 
