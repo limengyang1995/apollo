@@ -30,6 +30,8 @@
 #include "modules/common_msgs/localization_msgs/localization.pb.h"
 #include "modules/common_msgs/perception_msgs/perception_obstacle.pb.h"
 #include "modules/common_msgs/perception_msgs/traffic_light_detection.pb.h"
+#include "modules/common_msgs/transform_msgs/transform.pb.h"
+
 #include "cyber/class_loader/class_loader.h"
 #include "cyber/component/component.h"
 #include "cyber/cyber.h"
