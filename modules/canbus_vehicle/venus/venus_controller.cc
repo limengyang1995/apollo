@@ -207,6 +207,9 @@ Chassis VenusController::chassis() {
                     chassis_detail.vcu6_56c().vcu6_remotesteeringmode() == Vcu6_56c::VCU6_REMOTESTEERINGMODE_OPPOSITE) {
                 chassis_.set_right_turn_signal(1);
                 chassis_.set_left_turn_signal(0);
+            } else if (chassis_detail.vcu6_56c().vcu6_remotesteeringmode() == Vcu6_56c::VCU6_REMOTESTEERINGMODE_SAME) {
+                chassis_.set_right_turn_signal(1);
+                chassis_.set_left_turn_signal(1);
             } else {
                 chassis_.set_left_turn_signal(0);
                 chassis_.set_right_turn_signal(0);
@@ -579,13 +582,12 @@ void VenusController::SetTurningSignal(const ControlCommand& command) {
     if (command.left_turn()) {
         acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_LEFT);
         return;
-    } 
+    }
     if (command.right_turn()) {
         acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_RIGHT);
         return;
-    } 
+    }
     acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_NOREQUEST);
-    
 }
 
 ErrorCode VenusController::HandleCustomOperation(const external_command::ChassisCommand& command) {

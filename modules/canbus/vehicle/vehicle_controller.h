@@ -425,7 +425,7 @@ ErrorCode VehicleController<SensorType>::Update(const ControlCommand &control_co
         Gear(control_command.gear_location());
         Throttle(control_command.throttle());
         // Acceleration(control_command.acceleration());
-        if (control_command.has_emergency_stop() && control_command.emergency_stop()) {
+        if (control_command.has_emergency_stop() && control_command.emergency_stop() != 0) {
             Brake(100.0);
         } else {
             Brake(control_command.brake());
