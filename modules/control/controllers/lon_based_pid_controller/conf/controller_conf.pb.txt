@@ -42,8 +42,8 @@ low_speed_pid_conf {
 high_speed_pid_conf {
   integrator_enable: true
   integrator_saturation_level: 0.3
-  kp: 0.5
-  ki: 0.2
+  kp: 0.8
+  ki: 0.3
   kd: 0.0
 }
 switch_speed: 3.0
