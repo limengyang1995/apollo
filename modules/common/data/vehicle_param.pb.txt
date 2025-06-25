@@ -11,7 +11,7 @@ vehicle_param {
   length: 9.845
   width: 4.23
   height: 4.25
-  min_turn_radius: 8
+  min_turn_radius: 13
   max_acceleration: 1.6
   max_deceleration: -2.5
   max_steer_angle: 4.2
