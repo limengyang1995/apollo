@@ -77,6 +77,7 @@ template <typename T>
 BridgeProtoDiserializedBuf<T>
     *UDPBridgeReceiverComponent<T>::CreateBridgeProtoBuf(
         const BridgeHeader &header) {
+  
   if (IsTimeout(header.GetTimeStamp())) {
     typename std::vector<BridgeProtoDiserializedBuf<T> *>::iterator itor =
         proto_list_.begin();
@@ -145,6 +146,12 @@ bool UDPBridgeReceiverComponent<T>::MsgHandle(int fd) {
   if (bytes <= 0 || bytes > total_recv) {
     return false;
   }
+  /* if (cyber::Time::Now().ToSecond() - last_valid_time < 0.015){
+    AERROR << "Frame too quick dispose: " << cyber::Time::Now().ToSecond() - last_valid_time 
+     << " " << cyber::Time::Now().ToSecond()  << " " <<last_valid_time ;
+    return false;
+  }
+  last_valid_time = cyber::Time::Now().ToSecond(); */
   char header_flag[sizeof(BRIDGE_HEADER_FLAG) + 1] = {0};
   size_t offset = 0;
   memcpy(header_flag, total_buf, HEADER_FLAG_SIZE);

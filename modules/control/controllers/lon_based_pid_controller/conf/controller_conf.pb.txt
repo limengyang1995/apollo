@@ -35,14 +35,14 @@ station_pid_conf {
 low_speed_pid_conf {
   integrator_enable: true
   integrator_saturation_level: 0.3
-  kp: 2.0
+  kp: 2.2
   ki: 0.3
   kd: 0.0
 }
 high_speed_pid_conf {
   integrator_enable: true
   integrator_saturation_level: 0.3
-  kp: 1.0
+  kp: 0.8
   ki: 0.3
   kd: 0.0
 }

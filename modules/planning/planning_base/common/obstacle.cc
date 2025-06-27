@@ -295,7 +295,7 @@ double Obstacle::MinRadiusStopDistance(
   if (min_radius_stop_distance_ > 0) {
     return min_radius_stop_distance_;
   }
-  static constexpr double stop_distance_buffer = 0.5;
+  static constexpr double stop_distance_buffer = 3.0;
   const double min_turn_radius = VehicleConfigHelper::MinSafeTurnRadius();
   double lateral_diff =
       vehicle_param.width() / 2.0 + std::max(std::fabs(sl_boundary_.start_l()),

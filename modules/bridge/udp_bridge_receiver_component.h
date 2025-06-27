@@ -29,12 +29,17 @@
 #include "modules/common_msgs/localization_msgs/localization.pb.h"
 #include "modules/common_msgs/perception_msgs/perception_obstacle.pb.h"
 #include "modules/common_msgs/perception_msgs/traffic_light_detection.pb.h"
+<<<<<<< HEAD
 #include "modules/common_msgs/transform_msgs/transfor.pb.h"
+=======
+#include "modules/common_msgs/transform_msgs/transform.pb.h"
+>>>>>>> 67f0a995e719a8691539c605b3b0c76435a698b8
 
 #include "cyber/class_loader/class_loader.h"
 #include "cyber/component/component.h"
 #include "cyber/cyber.h"
 #include "cyber/init.h"
+#include "cyber/time/time.h"
 #include "cyber/scheduler/scheduler_factory.h"
 #include "modules/bridge/common/bridge_gflags.h"
 #include "modules/bridge/common/bridge_header.h"
@@ -76,6 +81,7 @@ class UDPBridgeReceiverComponent final : public cyber::Component<> {
   bool enable_timeout_ = true;
   std::shared_ptr<cyber::Writer<T>> writer_;
   std::mutex mutex_;
+  double last_valid_time = cyber::Time::Now().ToSecond();
 
   std::shared_ptr<UDPListener<UDPBridgeReceiverComponent<T>>> listener_ =
       std::make_shared<UDPListener<UDPBridgeReceiverComponent<T>>>();

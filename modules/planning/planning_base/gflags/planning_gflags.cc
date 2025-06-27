@@ -139,11 +139,11 @@ DEFINE_double(nonstatic_obstacle_nudge_l_buffer, 0.4,
 DEFINE_double(lateral_ignore_buffer, 3.0,
               "If an obstacle's lateral distance is further away than this "
               "distance, ignore it");
-DEFINE_double(max_stop_distance_obstacle, 10.0,
+DEFINE_double(max_stop_distance_obstacle, 12.0,
               "max stop distance from in-lane obstacle (meters)");
-DEFINE_double(min_stop_distance_obstacle, 6.0,
+DEFINE_double(min_stop_distance_obstacle, 8.0,
               "min stop distance from in-lane obstacle (meters)");
-DEFINE_double(follow_min_distance, 2.0,
+DEFINE_double(follow_min_distance, 6.0,
               "min follow distance for vehicles/bicycles/moving objects");
 DEFINE_double(yield_distance, 1.0,
               "min yield distance for vehicles/moving objects "
@@ -199,7 +199,7 @@ DEFINE_int32(trajectory_point_num_for_debug, 10,
              "number of output trajectory points for debugging");
 
 // QpSt optimizer
-DEFINE_double(slowdown_profile_deceleration, -4.0,
+DEFINE_double(slowdown_profile_deceleration, -1.0,
               "The deceleration to generate slowdown profile. unit: m/s^2.");
 
 DEFINE_double(speed_fallback_distance, 3.0,
