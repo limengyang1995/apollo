@@ -199,7 +199,7 @@ DEFINE_int32(trajectory_point_num_for_debug, 10,
              "number of output trajectory points for debugging");
 
 // QpSt optimizer
-DEFINE_double(slowdown_profile_deceleration, -4.0,
+DEFINE_double(slowdown_profile_deceleration, -1.0,
               "The deceleration to generate slowdown profile. unit: m/s^2.");
 
 DEFINE_double(speed_fallback_distance, 3.0,
