@@ -4,7 +4,7 @@ throttle_minimum_action: 0.0
 speed_controller_input_limit: 1.5
 station_error_limit: 2.0
 preview_window: 20.0
-standstill_acceleration: -0.5
+standstill_acceleration: -1.0
 enable_reverse_leadlag_compensation: false
 use_preview_reference_check: false
 steer_cmd_interval: 20.0

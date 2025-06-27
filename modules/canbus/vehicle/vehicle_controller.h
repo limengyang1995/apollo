@@ -29,6 +29,7 @@
 #include "modules/common_msgs/external_command_msgs/chassis_command.pb.h"
 #include "modules/common_msgs/control_msgs/control_cmd.pb.h"
 #include "cyber/common/log.h"
+#include "cyber/time/time.h"
 #include "modules/common/configs/vehicle_config_helper.h"
 #include "modules/drivers/canbus/can_comm/can_sender.h"
 #include "modules/drivers/canbus/can_comm/message_manager.h"
@@ -345,12 +346,19 @@ ErrorCode VehicleController<SensorType>::Update(
   }
 
   if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
-    
+    AERROR << "REMOTE DRIVE TRIGGERED!!!!";
     Throttle(control_command.throttle());
     //Acceleration(control_command.acceleration());
-    Brake(control_command.brake());
+    if (control_command.has_emergency_stop() && control_command.emergency_stop()!= 0) {
+      Acceleration(-4.0);
+  } else {
+      Acceleration(control_command.acceleration());
+  }
+    //Brake(control_command.brake());
     Gear(control_command.gear_location());
     SetEpbBreak(control_command);
+    SetBeam(control_command);
+    SetTurningSignal(control_command);
     SetLimits();
   }
 
