@@ -349,12 +349,13 @@ ErrorCode VehicleController<SensorType>::Update(
     AERROR << "REMOTE DRIVE TRIGGERED!!!!";
     Throttle(control_command.throttle());
     //Acceleration(control_command.acceleration());
-    if (control_command.has_emergency_stop() && control_command.emergency_stop()!= 0) {
+    /* if (control_command.has_emergency_stop() && control_command.emergency_stop()!= 0) {
       Acceleration(-4.0);
   } else {
       Acceleration(control_command.acceleration());
-  }
-    //Brake(control_command.brake());
+  } */
+    Acceleration(control_command.acceleration());
+    Brake(control_command.brake());
     Gear(control_command.gear_location());
     SetEpbBreak(control_command);
     SetBeam(control_command);

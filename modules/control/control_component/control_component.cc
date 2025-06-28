@@ -331,7 +331,7 @@ Status ControlComponent::ProduceControlCommand(
     control_command->set_low_beam(local_view_.cloud_control_cmd().low_beam());
     control_command->set_left_turn(local_view_.cloud_control_cmd().left_turn());
     control_command->set_right_turn(local_view_.cloud_control_cmd().right_turn());
-    control_command->set_emergency_stop(local_view_.cloud_control_cmd().emergency_stop());
+    // control_command->set_emergency_stop(local_view_.cloud_control_cmd().emergency_stop());
   }else{
     // if planning set estop, then no control process triggered
     if (estop_) {
