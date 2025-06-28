@@ -115,6 +115,10 @@ bool HuaCeTextParser::PrepareMessage() {
 
 void HuaCeTextParser::PrepareMessageGPCHC(
     const std::vector<std::string> &fields) {
+  if (fields.size() < 24) {  // 假设 GPCHC 协议有 24 个字段
+    AERROR << "Invalid GPCHC message: field count=" << fields.size();
+    return;  
+  }
   decode_message_.messageID = fields[0];
   decode_message_.GPSWeek = std::stoi(fields[1]);
   decode_message_.GPSTime = std::stod(fields[2]);
