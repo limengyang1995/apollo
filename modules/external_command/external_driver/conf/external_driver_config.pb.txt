@@ -1,25 +1,20 @@
 left_path_width: 2.0
 right_path_width: 2.0
 target_speed: 20
-file_of_path_follow_with_localization_record: "/apollo/data/bag/demo_loc/"
-file_of_path_follow_with_planning_record: "/apollo/data/bag/demo_path.record"
-cer_path: "/apollo/modules/external_command/external_driver/rtc/lib/a.cer"
-app_id: "appqemmzy5zk1im"
+cer_path: "/apollo/modules/external_command/external_driver/conf/a.cer"
+app_id: "appretxpzeedsn6"
 lib_path: "/apollo/modules/external_command/external_driver/rtc/lib/libbaidurtc.so"
-car_id: "x888"
-video_maxkbps: 1500
+video_maxkbps: 2000
 image_width: 1920
 image_height: 1080
-fps: 10
+fps: 15
 image_topic: "/apollo/sensor/image"
+lateral_collision_distance: 3
+longitudinal_collision_distance: 10
 
 destination_path: "/apollo/modules/external_command/external_driver/conf/destination.json"
 channel{
-    input_camera_channel_name: "/apollo/sensor/camera/front_fisheye/image"
-    input_camera_channel_name: "/apollo/sensor/camera/right_fisheye/image"
-    input_camera_channel_name: "/apollo/sensor/camera/rear_fisheye/image"
-    input_camera_channel_name: "/apollo/sensor/camera/left_fisheye/image"
-    
-  
+    input_camera_channel_name: "/apollo/sensor/camera/camera_a3_ir/image"
+
 }
 enable_rtc_log:false

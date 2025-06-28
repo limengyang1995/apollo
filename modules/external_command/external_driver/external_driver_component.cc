@@ -26,10 +26,13 @@
 #include "cyber/record/record_reader.h"
 #include "cyber/common/log.h"
 #include <string>
+#include "thread"
 
 #include "opencv2/opencv.hpp"
+#include "opencv2/core.hpp"
 // #include "nlohmann/json.hpp"
 #include <fstream>
+#include <sys/wait.h>
 
 namespace apollo {
 namespace external_command {
@@ -38,69 +41,64 @@ using apollo::external_command::CommandStatus;
 // ExternalDriver::ExternalDriver() : command_id_(0), module_name_("demo") {}
 
 bool ExternalDriver::Init() {
-    action_command_client_ = node_->CreateClient<apollo::external_command::ActionCommand, CommandStatus>(
-            "/apollo/external_command/action");
-    chassis_command_client_ = node_->CreateClient<apollo::external_command::ChassisCommand, CommandStatus>(
-            "/apollo/external_command/chassis");
-    free_space_command_client_ = node_->CreateClient<apollo::external_command::FreeSpaceCommand, CommandStatus>(
-            "/apollo/external_command/free_space");
-    lane_follow_command_client_ = node_->CreateClient<apollo::external_command::LaneFollowCommand, CommandStatus>(
-            "/apollo/external_command/lane_follow");
-    path_follow_command_client_ = node_->CreateClient<apollo::external_command::PathFollowCommand, CommandStatus>(
-            "/apollo/external_command/path_follow");
-    speed_command_client_ = node_->CreateClient<apollo::external_command::SpeedCommand, CommandStatus>(
-            "/apollo/external_command/speed");
-    valet_parking_command_client_ = node_->CreateClient<apollo::external_command::ValetParkingCommand, CommandStatus>(
-            "/apollo/external_command/valet_parking");
-    status_client_ = node_->CreateClient<apollo::external_command::CommandStatusRequest, CommandStatus>(
-            "/apollo/external_command/command_status");
-    cloud_control_cmd_writer_ =
-        node_->CreateWriter<apollo::control::ControlCommand>(FLAGS_cloud_control_command_topic);
+    cloud_control_cmd_writer_ = node_->CreateWriter<apollo::control::ControlCommand>(FLAGS_cloud_control_command_topic);
     ACHECK(cloud_control_cmd_writer_ != nullptr);
 
     apollo::cyber::common::GetProtoFromFile(
             "/apollo/modules/external_command/external_driver/conf/"
             "external_driver_config.pb.txt",
             &config_);
-    
-    rtc_client_.CreateClient(config_,"all");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_1_.CreateClient(config_,"front");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_2_.CreateClient(config_,"right");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_3_.CreateClient(config_,"back");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_4_.CreateClient(config_,"left");
+    //CreateRtcClient(config_);
+    rtc_client_.CreateClient(config_, "all");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    //rtc_client_1_.CreateClient(config_, "front");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_2_.CreateClient(config_, "right");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_3_.CreateClient(config_, "rear");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_4_.CreateClient(config_, "left");
 
-    std::ifstream f(config_.destination_path());
-    if (f.fail()) {
-        AERROR << "failed to load destination file";
-    }
-    point = nlohmann::json::parse(f);
+    // std::ifstream f(config_.destination_path());
+    // if (f.fail()) {
+    //     AERROR << "failed to load destination file";
+    // }
+    // point = nlohmann::json::parse(f);
     data_to_cloud_future = cyber::Async(&ExternalDriver::SendDataToCloud, this);
+    is_network_down_future = cyber::Async(&ExternalDriver::IsNetworkDown, this);
     InitListener(config_);
     localization_reader_pose = node_->CreateReader<apollo::localization::LocalizationEstimate>(
-            FLAGS_localization_topic, [this](const std::shared_ptr<apollo::localization::LocalizationEstimate>& localization) {
-
+            FLAGS_localization_topic,
+            [this](const std::shared_ptr<apollo::localization::LocalizationEstimate>& localization) {
                 std::lock_guard<std::mutex> lock(mutex_);
                 localization_.CopyFrom(*localization);
                 // std::this_thread::sleep_for(std::chrono::seconds(1));
             });
     canbus_reader_ = node_->CreateReader<apollo::canbus::Chassis>(
-        FLAGS_chassis_topic, [this](const std::shared_ptr<apollo::canbus::Chassis>& chassis) {
-
-            std::lock_guard<std::mutex> lock(mutex_);
-            chassis_.CopyFrom(*chassis);
-            // std::this_thread::sleep_for(std::chrono::seconds(1));
-        });
-
+            FLAGS_chassis_topic, [this](const std::shared_ptr<apollo::canbus::Chassis>& chassis) {
+                std::lock_guard<std::mutex> lock(mutex_);
+                chassis_.CopyFrom(*chassis);
+                // std::this_thread::sleep_for(std::chrono::seconds(1));
+            });
+    // AERROR << "nenon suppot" << cv::checkHardwareSupport(100);
     return true;
+}
+
+void ExternalDriver::CreateRtcClient(const ExternalDriverConfig& config) {
+    // rtc_client_.CreateClient(config_, "all");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    rtc_client_.CreateClient(config_, "front");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_2_.CreateClient(config_, "right");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_3_.CreateClient(config_, "rear");
+    // cyber::SleepFor(std::chrono::seconds(1));
+    // rtc_client_4_.CreateClient(config_, "left");
 }
 bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
     for (const auto& channel : config.channel().input_camera_channel_name()) {
         std::shared_ptr<cyber::Reader<apollo::drivers::Image>> reader_;
-        if (channel == "/apollo/sensor/camera/left_fisheye/image") {
+        if (channel == "/apollo/sensor/camera/camera_a3_ir/image") {
             reader_ = node_->CreateReader<apollo::drivers::Image>(
                     channel, [&](const std::shared_ptr<apollo::drivers::Image>& image) { ProcessImage(image); });
         } else {
@@ -109,63 +107,110 @@ bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
         readers_.emplace_back(reader_);
     }
 
-
     return true;
 }
 
-void ExternalDriver::SendDataToCloud() {
-   
-    // nlohmann::json vehicle_data;
-    // vehicle_data["x"] = localization_.pose().position().x();
-    // vehicle_data["y"] = localization_.pose().position().y();
-    // vehicle_data["z"] = localization_.pose().position().z();
-    
-    // std::string vehicle_data_str = vehicle_data.dump();
-    // const char* vehicle_data_char = vehicle_data.dump().c_str();
-    // rtc_client_.g_BrtcClient->sendData(vehicle_data_char, vehicle_data_str.size());
-    // AERROR<<"start send data successfully!";
-    std::string car_id(getenv("CARID"));
-    while (true) {
-        cyber::SleepFor(std::chrono::milliseconds(100));
-        std::string x = std::to_string(localization_.pose().position().x());
-        std::string y = std::to_string(localization_.pose().position().y());
-        std::string z = std::to_string(localization_.pose().position().z());
-        std::string gear = std::to_string(chassis_.gear_location());
-        std::string steer = std::to_string(chassis_.steering_percentage());
-        std::string throttle = std::to_string(chassis_.throttle_percentage());
-        std::string brake = std::to_string(chassis_.brake_percentage());
-        std::string driving_mode = std::to_string(chassis_.driving_mode());
-        std::string speed = std::to_string(chassis_.speed_mps());
-        std::string epb = std::to_string(chassis_.parking_brake());
-
-        
-        nlohmann::json vehicle_data = {
-            {"car_id", car_id},
-            {"x", x},
-            {"y", y},
-            {"z", z},
-            {"gear", gear},
-            {"steer", steer},
-            {"throttle", throttle},
-            {"brake", brake},
-            {"driving_mode", driving_mode},
-            {"speed", speed},
-            {"epb", epb}
-        };
-        // rtc_client_.g_BrtcClient->sendData(vehicle_data.c_str(), vehicle_data.size());
-        rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.dump().c_str(), "0");
-
-        // AINFO<<vehicle_data;
+void ExternalDriver::IsNetworkDown() {
+    int fail_count = 0;
+    while (!cyber::IsShutdown()) {
+        int result = WEXITSTATUS(system("ping -c 5 -W 1 8.8.8.8 > /dev/null 2>&1"));
+        AERROR << "result :" << result;
+        if (result != 0) {
+            fail_count++;
+            AERROR << "fail count : " << fail_count;
+            if (fail_count > 2) {
+                network_down = true;
+            }
+        } else if (network_down) {
+            AERROR << "restart all process!";
+            fail_count = 0;
+            network_down = false;
+            CreateRtcClient(config_);
+        }
+        cyber::SleepFor(std::chrono::seconds(2));
     }
+}
+void ExternalDriver::SendDataToCloud() {
+    std::string car_id(getenv("CARID"));
+    AERROR << "carid is : "<< car_id;
+    while (!cyber::IsShutdown()) {
+        AERROR << "is_start_send_cloud: " << is_start_send_cloud;
+        //if (is_start_send_cloud) {
+        if (is_start_send_cloud) {
+            AERROR << "enter start publish";
+            cyber::SleepFor(std::chrono::milliseconds(150));
+            std::string x = std::to_string(localization_.pose().position().x());
+            std::string y = std::to_string(localization_.pose().position().y());
+            std::string z = std::to_string(localization_.pose().position().z());
+            std::string gear = std::to_string(chassis_.gear_location());
+            std::string steer = std::to_string(std::round(chassis_.steering_percentage()));
+            std::string throttle = std::to_string(std::round(chassis_.throttle_percentage()));
+            std::string brake = std::to_string(std::round(chassis_.brake_percentage()));
+            std::string driving_mode = std::to_string(chassis_.driving_mode());
+            std::string speed = std::to_string(std::round(chassis_.speed_mps()));
+            // std::string speed = std::to_string(10);
+            std::string epb = std::to_string(chassis_.parking_brake());
+            std::string left_turn = std::to_string(chassis_.left_turn_signal());
+            std::string right_turn = std::to_string(chassis_.right_turn_signal());
+            std::string low_beam = std::to_string(chassis_.low_beam_signal());
+            std::string soc = std::to_string(chassis_.battery_soc_percentage());
+           
 
+            nlohmann::json vehicle_data
+                    = {{"car_id", car_id},
+                       {"x", x},
+                       {"y", y},
+                       {"z", z},
+                       {"gear", gear},
+                       {"steer", steer},
+                       {"throttle", throttle},
+                       {"brake", brake},
+                       {"driving_mode", driving_mode},
+                       {"speed", speed},
+                       {"epb", epb},
+                       {"left_turn", left_turn},
+                       {"right_turn", right_turn},
+                       {"low_beam", low_beam},
+                       {"soc", soc}};
+            std::string id = std::to_string(rtc_client_.g_mylistener.feed_id);
+            AERROR << "feed id : " << id;
+            AERROR << "vehicle data: " << vehicle_data.dump();
+            if (id != "0") {
+                if (std::find(id_list.begin(), id_list.end(), id) == id_list.end()) {
+                    id_list.push_back(id);
+                }
+                if (id_list.size() > 3) {
+                    id_list.erase(id_list.begin());
+                }
+
+                for (const auto& id : id_list) {
+                    // AINFO << "id : " << id << "id size: " << id_list.size();
+                    rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.dump().c_str(), id.c_str());
+                }
+
+            } else {
+                cyber::SleepFor(std::chrono::milliseconds(100));
+            }
+
+            // AINFO<<vehicle_data;
+        }
+
+        cyber::SleepFor(std::chrono::milliseconds(100));
+    }
 }
 
+bool ExternalDriver::is_all_user_leaving() const {
+    return rtc_client_.g_mylistener.user_leaving_mark && id_list.empty();
+}
 bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image) {
     if (image == nullptr) {
         return false;
     }
-    std::vector<cv::Mat> img_;
-   
+
+    static std::vector<cv::Mat> img_;
+    img_.reserve(4);
+    img_.clear();
+
     for (u_int16_t i = 0; i < readers_.size(); ++i) {
         readers_[i]->Observe();
         const auto camera_msg = readers_[i]->GetLatestObserved();
@@ -176,570 +221,154 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
         img_.emplace_back(img);
     }
-    // img_.size()
-    
-    if (is_start_publish) {
-        // AERROR << "is_start_publish :" << is_start_publish;
+    // AERROR << "is start publish : " << is_start_publish;
+    if (is_start_publish && !id_list.empty()) {
+        // auto time1 = cyber::Time::Now().ToSecond();
+
         cv::Mat img_front = img_[0];
-        cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
-        cv::Mat img_left = img_[3];
-        cv::cvtColor(img_left, img_left, cv::COLOR_RGB2BGR);
-        cv::Mat img_right = img_[1];
-        cv::cvtColor(img_right, img_right, cv::COLOR_RGB2BGR);
-        cv::Mat img_back = img_[2];
-        cv::cvtColor(img_back, img_back, cv::COLOR_RGB2BGR);
 
-        cv::resize(img_front, img_front, cv::Size(), 0.35, 0.35);
-        cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
-        cv::resize(img_back, img_back, cv::Size(), 0.35, 0.35);
-        cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
-        // cv::Mat img_right = img_[2];
-        // const cv::Mat *img_back = &img_[3];
-        // cv::resize(img_left, img_left, cv::Size(), 0.35, 0.35);
-        // cv::resize(img_right, img_right, cv::Size(), 0.35, 0.35);
-
-        // std::string rear_image_text = "Rear Image";
-        // std::string left_image_text = "Left Image";
-        // std::string right_image_text = "Right Image";
-
-        // cv::Scalar color(255, 0, 0);
-        // cv::putText(img_left, left_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1, cv::LINE_AA);
-        // cv::putText(img_right, right_image_text, cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.1, color, 1, cv::LINE_AA);
-
-        // cv::Rect roi_left(0, 0, img_left.cols, img_left.rows);
-        // cv::Rect roi_right(img_front.cols - img_right.cols, 0, img_right.cols, img_right.rows);
-
-        // cv::Mat roi_left_rect = img_front(roi_left);
-        // cv::Mat roi_right_rect = img_front(roi_right);
-
-        // img_left.copyTo(roi_left_rect);
-        // img_right.copyTo(roi_right_rect);
-        // cv::cvtColor(img_front, img_front, cv::COLOR_RGB2BGR);
         std::vector<unsigned char> buf_front;
-        std::vector<unsigned char> buf_left;
-        std::vector<unsigned char> buf_right;
-        std::vector<unsigned char> buf_back;
-        std::vector<unsigned char> buf_stitch;
 
-        // std::vector<unsigned char> buf_stitch;
+
         cv::imencode(".jpg", img_front, buf_front);
-        cv::imencode(".jpg", img_left, buf_left);
-        cv::imencode(".jpg", img_right, buf_right);
-        cv::imencode(".jpg", img_back, buf_back);
-        
-        cv::resize(img_back, img_back, cv::Size(), 0.35, 0.35);
-        // 定义矩形区域的左上角坐标（x, y）和矩形的宽度（width）与高度（height）
-        cv::Rect roi_back((img_front.cols - img_back.cols) / 2, 0, img_back.cols, img_back.rows);
-        cv::Mat roi_back_rect = img_front(roi_back);
-        img_back.copyTo(roi_back_rect);
+        rtc_client_.g_BrtcClient->sendImage(
+                        reinterpret_cast<const char*>(buf_front.data()), buf_front.size());
+        // auto time2 = cyber::Time::Now().ToSecond();
 
-        std::vector<cv::Mat> images_to_concat = {img_left, img_front, img_right};
-        cv::Mat images_stitch;
-        cv::hconcat(images_to_concat, images_stitch);
-        // cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
-        cv::imencode(".jpg", images_stitch, buf_stitch);
-        
-        for (std::string cam : request_camera){
-            AERROR << "camera name :" << cam;
-            if (cam == "front"){
-                rtc_client_4_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_front.data()), buf_front.size());
-                AERROR<<"start send front image successfully!";
-                }else if (cam == "back"){
-                rtc_client_3_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_back.data()), buf_back.size());
-                AERROR<<"start send back image successfully!";
-                }else if (cam == "left"){
-                rtc_client_1_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_left.data()), buf_left.size());
-                AERROR<<"start send left image successfully!";
-                }else if (cam == "right"){
-                rtc_client_1_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_right.data()), buf_right.size());
-                AERROR<<"start send right image successfully!";
-                }else{
-                    continue;
-                }
-            
-        }
-
-        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
-        // AERROR<<"start send image successfully!";
-        
-        // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
         return true;
+    } else {
+        AINFO << "not recieve start publish request!";
+        // return false;
     }
-    else {
-        return false;
-    }
-
-    
+    return true;
 }
+
 bool ExternalDriver::Proc() {
-    
     std::string data = rtc_client_.g_mylistener.recieve_msg;
     // int msgtype = rtc_client_.g_mylistener.msg_type;
     // int64_t id = rtc_client_.g_mylistener.feed_id;
-
     std::string input_command_string;
     nlohmann::json command;
-    AINFO << "recieve msg from remote control --: " << data;
-    
+    AERROR << " data empty: " << !data.empty() << " rtc: " << rtc_client_.g_mylistener.re_mark;
     if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
-        
-        try{
-        command = nlohmann::json::parse(data);
-        
-        if (command.contains("action") && !command["action"].is_null()){
-        input_command_string = command["action"];
-        }
-        }
-        catch (const std::exception& e) {
+        try {
+            command = nlohmann::json::parse(data);
+
+            if (command.contains("action") && !command["action"].is_null()) {
+                input_command_string = command["action"];
+            }
+        } catch (const std::exception& e) {
             AERROR << "json parse error" << e.what();
         }
-        if (command.contains("is_start_publish")){
-            if (command["is_start_publish"] == "true"){
-                AINFO << "start publish image request!"<<command.dump();
+        if (command.contains("is_start_publish")) {
+            AERROR << "start publish image request!" << command.dump();
+            if (command["is_start_publish"] == "true") {
+                AINFO << "start publish image request!" << command.dump();
 
                 is_start_publish = true;
+                is_start_send_cloud = true;
             }
-            // else{
-            //     is_start_publish = false;
-            // }
+            if (command["is_start_publish"] == "false") {
+                is_start_publish = false;
+                is_start_send_cloud = false;
+                cloud_gear_position = apollo::canbus::Chassis::GEAR_NEUTRAL;
+                SendCloudControlCommand(0, cloud_gear_position, 0.0, 0.0, 0.0, 0, 0, 0, 0);
+            }
         }
-        if (command.contains("active_cameras")){
+        AERROR << "is_start_publish : " << is_start_publish << " is_start_send_cloud: " << is_start_send_cloud;
+        if (command.contains("active_cameras")) {
             request_camera = command["active_cameras"].get<std::vector<std::string>>();
 
             // for (auto& cam : request_camera_.items()){
             //     request_camera.push_back(cam.value());
             // }
         }
-     
-        if (input_command_string == "cloud"){
-            cloud_takeover = command["takeover"];
-            cloud_gear = command["gear"];
-            cloud_throttle = command["throttle"];
-            cloud_brake = command["brake"];
-            cloud_steer = command["steer"];
-            switch (std::stoi(cloud_gear)) {
-                case 0:
-                    cloud_gear_position = apollo::canbus::Chassis::GEAR_NEUTRAL;
-                    break;
-                case 1:
-                    cloud_gear_position = apollo::canbus::Chassis::GEAR_DRIVE;
-                    break;
-                case 2:
-                    cloud_gear_position = apollo::canbus::Chassis::GEAR_REVERSE;
-                    break;
-                case 3:
-                    cloud_gear_position = apollo::canbus::Chassis::GEAR_PARKING;
-                    break;
-                default:
-                    cloud_gear_position = apollo::canbus::Chassis::GEAR_INVALID;
+
+        if (input_command_string == "cloud") {
+            try {
+                cloud_takeover = command["takeover"];
+                if (command.contains("gear") && !command["gear"].is_null()) {
+                    cloud_gear = command["gear"];
+                    cloud_throttle = command["throttle"];
+                    cloud_brake = command["brake"];
+                    cloud_steer = command["steer"];
+                    cloud_turn_light = command["turn_light"];
+                    cloud_low_light = command["low_light"];
+                    cloud_epb = command["epb"];
+                    cloud_emergency_stop = command["emergency_stop"];
+                }
+            } catch (const std::exception& e) {
+                AERROR << "json parse error" << e.what();
             }
-                   
-        }
-    }
-    
-    if (input_command_string == "cloud"){
-        SendCloudControlCommand(std::stoi(cloud_takeover), cloud_gear_position, std::stof(cloud_throttle), std::stof(cloud_brake), -std::stof(cloud_steer));     
-        SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_CLOUD);
-    }
-    else if (input_command_string == "pull_over") {
-        SendActionCommand(apollo::external_command::ActionCommandType::PULL_OVER);
-    } else if (input_command_string == "stop") {
-        // Stop planning.
-        SendActionCommand(apollo::external_command::ActionCommandType::STOP);
-    } else if (input_command_string == "start") {
-        // Start planning.
-        SendActionCommand(apollo::external_command::ActionCommandType::START);
-    } else if (input_command_string == "clear") {
-        // Start planning.
-        SendActionCommand(apollo::external_command::ActionCommandType::CLEAR_PLANNING);
-    } else if (input_command_string == "manual") {
-        // Switch manual mode.
-        SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_MANUAL);
-    } else if (input_command_string == "auto") {
-        // Switch auto mode.
-        SendActionCommand(apollo::external_command::ActionCommandType::SWITCH_TO_AUTO);
-    } else if (input_command_string == "vin") {
-        // Send vin validation.
-        SendActionCommand(apollo::external_command::ActionCommandType::VIN_REQ);
-    } else if (input_command_string == "enter_mission") {
-        // Enter mission model.
-        SendActionCommand(apollo::external_command::ActionCommandType::ENTER_MISSION);
-    } else if (input_command_string == "exit_mission") {
-        // Exit mission model.
-        SendActionCommand(apollo::external_command::ActionCommandType::EXIT_MISSION);
-    } else if (input_command_string == "chassis") {
-        SendVehicleSignalCommand();
-    } else if (input_command_string == "custom_chassis") {
-        SendCustomChassisCommand();
-    } else if (input_command_string.find("set_speed") != std::string::npos) {
-        auto index = input_command_string.find("set_speed");
-        std::string speed_value_string
-                = input_command_string.substr(index + std::string("set_speed").length(), input_command_string.length());
-        if (!speed_value_string.empty()) {
-            double speed_value = std::atof(speed_value_string.c_str());
-            SendSpeedCommand(speed_value);
-        } else {
-            AWARN << "Input format is invalid, please input format like: "
-                     "set_speed 1.5";
-        }
-    } else if (input_command_string == "increase_speed") {
-        double speed_factor = 1.2;
-        SendSpeedFactorCommand(speed_factor);
-    } else if (input_command_string == "decrease_speed") {
-        double speed_factor = 0.8;
-        SendSpeedFactorCommand(speed_factor);
-    } else if (input_command_string == "restore_speed") {
-        RestoreSpeed();
-    } else if (input_command_string == "lane") {
-        // Modify way point as needed.
-        apollo::external_command::Pose way_point;
-        // way_point.set_x(config_.point1_x());
-        // way_point.set_y(config_.point1_y());
-        // way_point.set_heading(0.0);
-        std::vector<apollo::external_command::Pose> way_points;
-        way_points.emplace_back(way_point);
-        apollo::external_command::Pose end_pose;
-        
-        end_pose.set_x(command["order_des"]["x"]);
-        end_pose.set_y(command["order_des"]["y"]);
-        end_pose.set_heading(command["order_des"]["heading"]);
-        SendLaneFollowCommand(way_points, end_pose, config_.target_speed());
-    } else if (input_command_string == "path_loc") {
-        SendPathFollowCommandWithLocationRecord(config_.file_of_path_follow_with_localization_record());
-    } else if (input_command_string == "path_path") {
-        SendPathFollowCommandWithPathRecord(config_.file_of_path_follow_with_planning_record());
-    } else if (input_command_string == "valet_parking") {
-        std::string parking_spot_id = "ParkingSpace_1";
-        SendValetParkingCommand(parking_spot_id, config_.target_speed());
-    } else if (input_command_string.find("command_status") != std::string::npos) {
-        // Input command with format: command_status=XX, where XX is the
-        // command_id
-        const size_t start_pos = std::string("command_status=").length();
-        const size_t end_pos = input_command_string.length();
-        if (end_pos <= start_pos) {
-            AINFO << "Please check command status with format: command_status=XX!" ;
-        }
-        std::string command_id_string = input_command_string.substr(start_pos, end_pos);
-        command_id_string.erase(
-                std::remove_if(command_id_string.begin(), command_id_string.end(), ::isspace), command_id_string.end());
-        uint64_t id = std::atoi(command_id_string.c_str());
-        CheckCommandStatus(id);
-    } else if (input_command_string == "free") {
-        apollo::external_command::Pose end_pose;
-        end_pose.set_x(point["end_pose"]["x"]);
-        end_pose.set_y(point["end_pose"]["y"]);
-        end_pose.set_heading(point["end_pose"]["heading"]);
-        std::vector<apollo::external_command::Point> way_points;
-        apollo::external_command::Point point1;
-        apollo::external_command::Point point2;
-        point1.set_x(point["point1"]["x"]);
-        point1.set_y(point["point1"]["y"]);
-        point2.set_x(point["point2"]["x"]);
-        point2.set_y(point["point2"]["y"]);
+            AERROR << "cloud takeover: " << cloud_takeover;
 
-        way_points.emplace_back(point1);
-        way_points.emplace_back(point2);
+            switch (std::stoi(cloud_gear)) {
+            case 0:
+                cloud_gear_position = apollo::canbus::Chassis::GEAR_NEUTRAL;
+                break;
+            case 1:
+                cloud_gear_position = apollo::canbus::Chassis::GEAR_DRIVE;
+                break;
+            case 2:
+                cloud_gear_position = apollo::canbus::Chassis::GEAR_REVERSE;
+                break;
+            case 3:
+                cloud_gear_position = apollo::canbus::Chassis::GEAR_PARKING;
+                break;
+            default:
+                cloud_gear_position = apollo::canbus::Chassis::GEAR_INVALID;
+            }
 
-        SendFreespaceCommand(way_points, end_pose);
-    } else {
-        AINFO << "command not found!";
+            SendCloudControlCommand(
+                    std::stoi(cloud_takeover),
+                    cloud_gear_position,
+                    std::stof(cloud_throttle),
+                    std::stof(cloud_brake),
+                    -std::stof(cloud_steer),
+                    std::stoi(cloud_turn_light),
+                    std::stoi(cloud_low_light),
+                    std::stoi(cloud_epb),
+                    std::stoi(cloud_emergency_stop));
+        }
     }
     rtc_client_.g_mylistener.re_mark = false;
     return true;
 }
 
-void ExternalDriver::SendActionCommand(apollo::external_command::ActionCommandType action_command_type) {
-    auto command = std::make_shared<apollo::external_command::ActionCommand>();
-    FillCommandHeader(command);
-    command->set_command(action_command_type);
-    AINFO << "Sending action command: " << command->DebugString() ;
-    auto response = action_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AERROR << "Command sending failed, please check the service is on!\n";
-    } else {
-        AINFO << "******Finish sending command.******\n";
-    }
-}
-
-void ExternalDriver::SendVehicleSignalCommand() {
-    // Send left turn signal.
-    auto command = std::make_shared<apollo::external_command::ChassisCommand>();
-    FillCommandHeader(command);
-    command->mutable_basic_signal()->set_turn_signal(apollo::common::VehicleSignal::TURN_LEFT);
-    AINFO << "Sending chassis command: " << command->DebugString() ;
-    auto response = chassis_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
 void ExternalDriver::SendCloudControlCommand(
-      const bool& cloud_takeover_request, 
-      const apollo::canbus::Chassis::GearPosition& gear_position,
-      const float& throttle, const float& brake, const float& steering_target){
-  AINFO<< "get cloud control command: " << cloud_takeover_request;
-  auto command = std::make_shared<apollo::control::ControlCommand>();
-  command->set_cloud_takeover_request(cloud_takeover_request);
-  command->set_gear_location(gear_position);
-  command->set_throttle(throttle*100);
-  command->set_brake(brake*100);
-  command->set_steering_target(steering_target*100);
-  //command->set_driving_mode(apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE);
-  AERROR<< "Sending cloud control command: " << command->DebugString();
-  cloud_control_cmd_writer_->Write(command);
-}
-
-void ExternalDriver::SendCustomChassisCommand() {
-    // Send left turn signal.
-    auto command = std::make_shared<apollo::external_command::ChassisCommand>();
-    FillCommandHeader(command);
-    // Set custom command.
-    auto custom_operation = command->mutable_custom_operation();
-    // Set custom command values.
-    apollo::external_command::SweeperCustomCommand sweeper_command;
-    sweeper_command.set_is_turn_on_brush(true);
-    sweeper_command.set_sweeping_speed(2.0);
-    custom_operation->PackFrom(sweeper_command);
-    AINFO << "Sending custom chassis command: " << command->DebugString() ;
-    auto response = chassis_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
+        const bool& cloud_takeover_request,
+        const apollo::canbus::Chassis::GearPosition& gear_position,
+        const float& throttle,
+        const float& brake,
+        const float& steering_target,
+        const int& turn_light,
+        const int& low_light,
+        const int& epb,
+        const int& emergency_stop) {
+    AERROR << "get cloud control command: " << cloud_takeover_request;
+    auto command = std::make_shared<apollo::control::ControlCommand>();
+    command->set_cloud_takeover_request(cloud_takeover_request);
+    command->set_gear_location(gear_position);
+    command->set_throttle(throttle * 100);
+    command->set_brake(brake * 100);
+    command->set_steering_target(steering_target * 100);
+    command->set_low_beam(low_light);
+    if (turn_light == 1) {
+        command->set_left_turn(1);
+        command->set_right_turn(0);
+    } else if (turn_light == 2) {
+        command->set_right_turn(1);
+        command->set_left_turn(0);
     } else {
-        AINFO << "******Finish sending command.******\n" ;
+        command->set_left_turn(0);
+        command->set_right_turn(0);
     }
+    command->set_parking_brake(epb);
+    // command->set_emergency_stop(emergency_stop);
+    // command->set_driving_mode(apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE);
+    // AERROR<< "Sending cloud control command: " << command->DebugString();
+    cloud_control_cmd_writer_->Write(command);
 }
 
-void ExternalDriver::SendPathFollowCommandWithPathRecord(const std::string& record_path) {
-    // Read planning data from record file and use the planning path points
-    // as the path of PathFollowCommand.
-    apollo::planning::ADCTrajectory record_planning_data;
-    // Get the path points from record planning data.
-    std::shared_ptr<apollo::external_command::PathFollowCommand> path_follow_command
-            = std::make_shared<apollo::external_command::PathFollowCommand>();
-    ReadPathFromPathRecord(record_path, path_follow_command->mutable_way_point());
-    // Set header and command id of PathFollowCommand.
-    FillCommandHeader(path_follow_command);
-    // Set path boundary of path.
-    auto path_boundary = path_follow_command->mutable_boundary_with_width();
-    path_boundary->set_left_path_width(config_.left_path_width());
-    path_boundary->set_right_path_width(config_.right_path_width());
-    // Set target speed.
-    path_follow_command->set_target_speed(config_.target_speed());
-    auto response = path_follow_command_client_->SendRequest(path_follow_command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
-
-void ExternalDriver::SendPathFollowCommandWithLocationRecord(const std::string& record_dir) {
-    // Read planning data from record file and use the planning path points
-    // as the path of PathFollowCommand.
-    std::shared_ptr<apollo::external_command::PathFollowCommand> path_follow_command
-            = std::make_shared<apollo::external_command::PathFollowCommand>();
-    std::vector<std::string> record_files = apollo::cyber::common::ListSubPaths(record_dir, DT_REG);
-    std::string dir_prefix = record_dir + '/';
-    for (const auto file_name : record_files) {
-        ReadPathFromLocationRecord(dir_prefix + file_name, path_follow_command->mutable_way_point());
-    }
-
-    // Set header and command id of PathFollowCommand.
-    FillCommandHeader(path_follow_command);
-    // Set path boundary of path.
-    auto path_boundary = path_follow_command->mutable_boundary_with_width();
-    path_boundary->set_left_path_width(config_.left_path_width());
-    path_boundary->set_right_path_width(config_.right_path_width());
-    // Set target speed.
-    path_follow_command->set_target_speed(config_.target_speed());
-    auto response = path_follow_command_client_->SendRequest(path_follow_command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
-
-void ExternalDriver::SendSpeedCommand(double speed) {
-    auto command = std::make_shared<apollo::external_command::SpeedCommand>();
-    FillCommandHeader(command);
-    command->set_target_speed(speed);
-    AINFO << "Sending speed command: " << command->DebugString() ;
-    auto response = speed_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
-
-void ExternalDriver::SendSpeedFactorCommand(double speed_factor) {
-    auto command = std::make_shared<apollo::external_command::SpeedCommand>();
-    FillCommandHeader(command);
-    command->set_target_speed_factor(speed_factor);
-    AINFO << "Sending speed factor command: " << command->DebugString() ;
-    auto response = speed_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
-
-void ExternalDriver::RestoreSpeed() {
-    auto command = std::make_shared<apollo::external_command::SpeedCommand>();
-    FillCommandHeader(command);
-    command->set_is_restore_target_speed(true);
-    AINFO << "Restore speed: " << command->DebugString() ;
-    auto response = speed_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
-
-void ExternalDriver::SendLaneFollowCommand(
-        const std::vector<apollo::external_command::Pose>& way_points,
-        const apollo::external_command::Pose& end,
-        double target_speed) {
-    auto command = std::make_shared<apollo::external_command::LaneFollowCommand>();
-    FillCommandHeader(command);
-    // Copy way_points
-    // for (const auto& point : way_points) {
-    //     auto way_point = command->add_way_point();
-    //     way_point->CopyFrom(point);
-    // }
-    // Copy end point
-    command->mutable_end_pose()->CopyFrom(end);
-    if (target_speed > 0.0) {
-        command->set_target_speed(target_speed);
-    }
-    // command->set_is_start_pose_set(true);
-    AINFO << "Sending lane follow command: " << command->DebugString() ;
-    auto response = lane_follow_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
-
-void ExternalDriver::SendFreespaceCommand(
-        const std::vector<apollo::external_command::Point>& way_points,
-        const apollo::external_command::Pose& end) {
-    auto command = std::make_shared<apollo::external_command::FreeSpaceCommand>();
-    FillCommandHeader(command);
-    // Copy way_points
-    auto roi_point = command->mutable_drivable_roi();
-    for (const auto& point : way_points) {
-        roi_point->add_point()->CopyFrom(point);
-    }
-    // Copy end point
-    command->mutable_parking_spot_pose()->CopyFrom(end);
-    AINFO << "Sending lane follow command: " << command->DebugString() ;
-    auto response = free_space_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
-void ExternalDriver::SendValetParkingCommand(const std::string& parking_spot_id, double target_speed) {
-    auto command = std::make_shared<apollo::external_command::ValetParkingCommand>();
-    FillCommandHeader(command);
-    command->set_parking_spot_id(parking_spot_id);
-    if (target_speed > 0.0) {
-        command->set_target_speed(target_speed);
-    }
-    AINFO << "Sending valet parking command: " << command->DebugString() ;
-    auto response = valet_parking_command_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Command sending failed, please check the service is on!\n" ;
-    } else {
-        AINFO << "******Finish sending command.******\n" ;
-    }
-}
-
-void ExternalDriver::ReadPathFromPathRecord(
-        const std::string& record_file,
-        google::protobuf::RepeatedPtrField<apollo::external_command::Point>* waypoints) {
-    AINFO << "ReadPathFromPathRecord: " << record_file ;
-    apollo::cyber::record::RecordReader reader(record_file);
-    if (!reader.IsValid()) {
-        AINFO << "Fail to open " << record_file ;
-        return;
-    }
-
-    apollo::planning::ADCTrajectory planning_trajectory;
-    apollo::cyber::record::RecordMessage message;
-    while (reader.ReadMessage(&message)) {
-        if (message.channel_name == "/apollo/planning") {
-            if (planning_trajectory.ParseFromString(message.content)) {
-                break;
-            }
-        }
-    }
-    waypoints->Clear();
-    const auto& trajectory_points = planning_trajectory.trajectory_point();
-    for (const auto input_point : trajectory_points) {
-        auto output_point = waypoints->Add();
-        output_point->set_x(input_point.path_point().x());
-        output_point->set_y(input_point.path_point().y());
-    }
-}
-
-void ExternalDriver::CheckCommandStatus(const uint64_t command_id) {
-    auto command = std::make_shared<apollo::external_command::CommandStatusRequest>();
-    FillCommandHeader(command);
-    command->set_command_id(command_id);
-    AINFO << "Sending check command: " << command->DebugString() ;
-    auto response = status_client_->SendRequest(command);
-    if (nullptr == response) {
-        AINFO << "Check status failed!\n" ;
-    } else {
-        AINFO << response->DebugString();
-        AINFO << "******Finish checking command.******\n" ;
-    }
-}
-
-void ExternalDriver::ReadPathFromLocationRecord(
-        const std::string& record_file,
-        google::protobuf::RepeatedPtrField<apollo::external_command::Point>* waypoints) const {
-    AINFO << "ReadPathFromLocationRecord: " << record_file ;
-    apollo::cyber::record::RecordReader reader(record_file);
-    if (!reader.IsValid()) {
-        AINFO << "Fail to open " << record_file ;
-        return;
-    }
-    apollo::localization::LocalizationEstimate localization;
-    apollo::cyber::record::RecordMessage message;
-    double last_x = 0.0;
-    double last_y = 0.0;
-    bool is_last_poistion_set = false;
-    while (reader.ReadMessage(&message)) {
-        if (message.channel_name == "/apollo/localization/pose") {
-            if (localization.ParseFromString(message.content)) {
-                const auto& position = localization.pose().position();
-                if (!is_last_poistion_set) {
-                    last_x = position.x();
-                    last_y = position.y();
-                    is_last_poistion_set = true;
-                    continue;
-                }
-                // Save the location to path with min_distance.
-                if (abs(last_x - position.x()) > config_.min_distance_error()
-                    || abs(last_y - position.y()) > config_.min_distance_error()) {
-                    auto output_point = waypoints->Add();
-                    output_point->set_x(position.x());
-                    output_point->set_y(position.y());
-                    last_x = position.x();
-                    last_y = position.y();
-                }
-            }
-        }
-    }
-}
 }  // namespace external_command
 }  // namespace apollo

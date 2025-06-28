@@ -1,0 +1,47 @@
+# Define all coms in DAG streaming.
+module_config {
+    module_library : "modules/drivers/camera/libcamera_component.so"
+
+    components {
+      class_name : "CameraComponent"
+      config {
+        name : "camera_front_left_head"
+        config_file_path : "/apollo/modules/drivers/camera/conf/camera_front_a3_ir.pb.txt"
+      }
+    }
+    components {
+      class_name : "CameraComponent"
+      config {
+        name : "camera_front_left_rear"
+        config_file_path : "/apollo/modules/drivers/camera/conf/camera_front_a3_rgb.pb.txt"
+      }
+    }
+
+}
+
+module_config {
+    module_library : "modules/drivers/camera/libcamera_compress_component.so"
+    components {
+      class_name : "CompressComponent"
+      config {
+        name : "camera_a3_ir"
+        config_file_path : "/apollo/modules/drivers/camera/conf/camera_front_a3_ir.pb.txt"
+        readers {
+        channel: "/apollo/sensor/camera/camera_a3_ir/image"
+        pending_queue_size: 100
+        }
+      }
+    }
+
+    components {
+      class_name : "CompressComponent"
+      config {
+        name : "camera_a3_rgb"
+        config_file_path : "/apollo/modules/drivers/camera/conf/camera_front_a3_rgb.pb.txt"
+        readers {
+        channel: "/apollo/sensor/camera/camera_a3_rgb/image"
+        pending_queue_size: 100
+        }
+      }
+    }
+}

@@ -487,7 +487,8 @@ bool ControlComponent::Proc() {
   Status status;
   if ((local_view_.chassis().driving_mode() == apollo::canbus::Chassis::COMPLETE_AUTO_DRIVE &&
        planning_command_status_.status() != apollo::external_command::CommandStatusType::FINISHED) ||
-        local_view_.chassis().driving_mode() == apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE) {
+        local_view_.chassis().driving_mode() == apollo::canbus::Chassis::REMOTE_CLOUD_DRIVE
+        || (receive_cloud_cmd_ && cloud_takeover_)) {
     status = ProduceControlCommand(&control_command);
     ADEBUG << "Produce control command normal.";
   } else {

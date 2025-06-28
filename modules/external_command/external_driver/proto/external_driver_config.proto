@@ -38,6 +38,9 @@ message ExternalDriverConfig {
   optional string destination_path = 27;
   optional Channel channel = 28;
   optional bool enable_rtc_log = 29;
+  optional double lateral_collision_distance = 30;
+  optional double longitudinal_collision_distance = 31;
+
 }
 
 message Channel {

@@ -163,11 +163,11 @@ class VehicleController {
   /*
    * @brief Handle Apollo chassis actions
    */
-  virtual void HandleVehicleSignal(const common::VehicleSignal &signal) {
+  /* virtual void HandleVehicleSignal(const common::VehicleSignal &signal) {
     if (signal.has_high_beam() || signal.has_low_beam()) SetBeam(signal);
     if (signal.has_horn()) SetHorn(signal);
     if (signal.has_turn_signal()) SetTurningSignal(signal);
-  }
+  } */
 
   virtual void SetBeam(const common::VehicleSignal &signal) = 0;
   virtual void SetHorn(const common::VehicleSignal &signal) = 0;
@@ -293,6 +293,16 @@ ErrorCode VehicleController<SensorType>::Update(
   }
 
   // Execute action to transform driving mode
+  if (control_command.has_cloud_takeover_request() && control_command.cloud_takeover_request() == true){
+      AERROR << "control has received cloud control request:";
+      Chassis::DrivingMode mode = Chassis::REMOTE_CLOUD_DRIVE;
+      auto error_code = SetDrivingMode(mode);
+      if (error_code != ErrorCode::OK) {
+        AERROR << "Failed to set driving mode.";
+      } else {
+        AINFO << "Set driving mode success.";
+      }
+  } 
   if (control_command.has_pad_msg() && control_command.pad_msg().has_action()) {
     AINFO << "Canbus received pad msg: "
           << control_command.pad_msg().ShortDebugString();
@@ -320,7 +330,7 @@ ErrorCode VehicleController<SensorType>::Update(
         }
       }
       if (control_command.has_cloud_takeover_request() && control_command.cloud_takeover_request() == true){
-        AINFO << "control has received cloud control request:";
+        AERROR << "control has received cloud control request:";
         mode = Chassis::REMOTE_CLOUD_DRIVE;
       } 
 
@@ -358,8 +368,8 @@ ErrorCode VehicleController<SensorType>::Update(
     Brake(control_command.brake());
     Gear(control_command.gear_location());
     SetEpbBreak(control_command);
-    SetBeam(control_command);
-    SetTurningSignal(control_command);
+    //SetBeam(control_command);
+    //SetTurningSignal(control_command);
     SetLimits();
   }
 
@@ -379,8 +389,8 @@ ErrorCode VehicleController<SensorType>::Update(
        driving_mode() == Chassis::AUTO_STEER_ONLY || 
        driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) &&
       control_command.has_signal()) {
-    HandleVehicleSignal(
-        ProcessCommandChange(control_command.signal(), &last_control_command_));
+    // HandleVehicleSignal(
+    //     ProcessCommandChange(control_command.signal(), &last_control_command_));
   }
 
   return ErrorCode::OK;
@@ -399,8 +409,8 @@ ErrorCode VehicleController<SensorType>::Update(
        driving_mode() == Chassis::AUTO_STEER_ONLY  || 
        driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) &&
       chassis_command.has_basic_signal()) {
-    HandleVehicleSignal(ProcessCommandChange(chassis_command.basic_signal(),
-                                             &last_chassis_command_));
+    // HandleVehicleSignal(ProcessCommandChange(chassis_command.basic_signal(),
+    //                                          &last_chassis_command_));
   }
 
   if (chassis_command.has_custom_operation()) {

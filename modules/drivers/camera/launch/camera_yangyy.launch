@@ -1,0 +1,7 @@
+<cyber>
+    <module>
+        <name>camera</name>
+        <dag_conf>/apollo/modules/drivers/camera/dag/camera_all_yangyy_test.dag</dag_conf>
+        <process_name>gmsl2_camera</process_name>
+    </module>
+</cyber>
