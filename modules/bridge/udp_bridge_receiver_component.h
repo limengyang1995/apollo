@@ -29,11 +29,7 @@
 #include "modules/common_msgs/localization_msgs/localization.pb.h"
 #include "modules/common_msgs/perception_msgs/perception_obstacle.pb.h"
 #include "modules/common_msgs/perception_msgs/traffic_light_detection.pb.h"
-<<<<<<< HEAD
-#include "modules/common_msgs/transform_msgs/transfor.pb.h"
-=======
 #include "modules/common_msgs/transform_msgs/transform.pb.h"
->>>>>>> 67f0a995e719a8691539c605b3b0c76435a698b8
 
 #include "cyber/class_loader/class_loader.h"
 #include "cyber/component/component.h"
