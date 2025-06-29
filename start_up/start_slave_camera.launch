@@ -1,0 +1,96 @@
+<cyber>
+    
+    <module>
+        <name>prediction</name>
+        <dag_conf>/apollo/modules/prediction/dag/prediction.dag</dag_conf>
+        <process_name>prediction</process_name>
+    </module>
+    <module>
+        <name>routing</name>
+        <dag_conf>/apollo/modules/routing/dag/routing.dag</dag_conf>
+        <process_name></process_name>
+    </module>
+    <module>
+        <name>planning</name>
+        <dag_conf>/apollo/modules/planning/planning_component/dag/planning.dag</dag_conf>
+        <process_name>planning</process_name>
+    </module>
+    <module>
+        <name>control</name>
+        <dag_conf>/apollo/modules/control/control_component/dag/control.dag</dag_conf>
+        <process_name>control</process_name>
+    </module> 
+    <module>
+        <name>canbus</name>
+        <dag_conf>/apollo/modules/canbus/dag/canbus.dag</dag_conf>
+        <process_name>canbus</process_name>
+    </module>
+
+    <module>
+        <name>old_routing_adapter</name>
+        <dag_conf>/apollo/modules/external_command/old_routing_adapter/dag/old_routing_adapter.dag</dag_conf>
+        <process_name>old_routing_adapter</process_name>
+    </module>
+    
+    <module>
+        <name>external_command_process</name>
+        <dag_conf>/apollo/modules/external_command/process_component/dag/external_command_process.dag</dag_conf>
+        <process_name>external_command_process</process_name>
+    </module>
+    <module>
+        <name>external_driver</name>
+        <dag_conf>/apollo/modules/external_command/external_driver/dag/external_driver.dag</dag_conf>
+        <process_name>external_driver</process_name>
+    </module>
+
+    <module>
+        <name>camera</name>
+        <dag_conf>/apollo/modules/drivers/camera/dag/camera_all_yangyy_test.dag</dag_conf>
+        <process_name>gmsl2_camera</process_name>
+    </module>
+
+    <desc>Apollo camera 2d object detection</desc>
+    <version>1.0.0</version>
+    <module>
+        <name>camera</name>
+        <dag_conf>/apollo/modules/perception/msg_adapter/dag/msg_adapter.dag</dag_conf>
+        <!-- <dag_conf>/apollo/modules/perception/camera_detection_multi_stage/dag/camera_detection_multi_stage_front.dag</dag_conf> -->
+        <dag_conf>/apollo/modules/perception/camera_detection_multi_stage/dag/camera_detection_multi_stage_yolox3d.dag</dag_conf>
+        <dag_conf>/apollo/modules/perception/camera_location_estimation/dag/camera_location_estimation.dag</dag_conf>
+        <dag_conf>/apollo/modules/perception/camera_location_refinement/dag/camera_location_refinement.dag</dag_conf>
+        <dag_conf>/apollo/modules/perception/camera_tracking/dag/camera_tracking.dag</dag_conf>
+        <process_name>camera</process_name>
+        <version>1.0.0</version>
+    </module>
+
+    <module>
+        <name>bridge_receiver</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_localization.dag</dag_conf>
+        <process_name>udp_bridge_receiver</process_name>
+    </module>
+
+    <module>
+        <name>bridge_receiver</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_trafficlight.dag</dag_conf>
+        <process_name>udp_bridge_receiver</process_name>
+    </module>
+
+    <module>
+        <name>bridge_receiver</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_obstacle.dag</dag_conf>
+        <process_name>udp_bridge_receiver</process_name>
+    </module>
+
+    <module>
+        <name>bridge_receiver</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_tf.dag</dag_conf>
+        <process_name>udp_bridge_receiver</process_name>
+    </module>
+
+    <module>
+        <name>static_transform</name>
+        <dag_conf>/apollo/modules/transform/dag/static_transform.dag</dag_conf>
+        <process_name></process_name>
+    </module>
+</cyber>
+
