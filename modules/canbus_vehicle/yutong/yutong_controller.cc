@@ -774,6 +774,7 @@ void YutongController::SecurityDogThreadFunc() {
     start = ::apollo::cyber::Time::Now().ToMicrosecond();
     const Chassis::DrivingMode mode = driving_mode();
     bool emergency_mode = false;
+    bool takeover_mode = false;
 
     // 1. horizontal control check
     if ((mode == Chassis::COMPLETE_AUTO_DRIVE ||
@@ -783,7 +784,7 @@ void YutongController::SecurityDogThreadFunc() {
       
       ++horizontal_ctrl_fail;
       if (horizontal_ctrl_fail >= kMaxFailAttempt) {
-        emergency_mode = true;
+        takeover_mode = true;
         AERROR << "Driving_mode is into emergency by steer manual intervention";
         set_chassis_error_code(Chassis::MANUAL_INTERVENTION);
       }
@@ -798,13 +799,13 @@ void YutongController::SecurityDogThreadFunc() {
         !CheckResponse(CHECK_RESPONSE_SPEED_UNIT_FLAG, false)) {
       ++vertical_ctrl_fail;
       if (vertical_ctrl_fail >= kMaxFailAttempt) {
-        emergency_mode = true;
+        takeover_mode = true;
         AERROR << "Driving_mode is into emergency by speed manual intervention";
         set_chassis_error_code(Chassis::MANUAL_INTERVENTION);
       }
     } else {
       vertical_ctrl_fail = 0;
-    }
+    } 
 
     // 3. chassis fault check
     if (CheckChassisError()) {
@@ -812,7 +813,12 @@ void YutongController::SecurityDogThreadFunc() {
       AERROR << "check chassis error failed";
       emergency_mode = true;
     }
-
+    if (takeover_mode && mode != Chassis::COMPLETE_MANUAL) {
+      set_driving_mode(Chassis::COMPLETE_MANUAL);
+      AERROR << "enter takeover mode ";
+      message_manager_->ResetSendMessages();
+      can_sender_->Update();
+    }
     if (emergency_mode && mode != Chassis::EMERGENCY_MODE) {
       set_driving_mode(Chassis::EMERGENCY_MODE);
       AERROR << "enter emergency mode ";
