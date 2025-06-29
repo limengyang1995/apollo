@@ -70,6 +70,10 @@ void CloudMask::AddIndices(const base::PointIndices& indices, int value) {
 void CloudMask::AddIndicesOfIndices(
     const base::PointIndices& indices,
     const base::PointIndices& indices_of_indices, int value) {
+  if (indices.indices.empty() || indices_of_indices.indices.empty()) {
+    AERROR << "Input indices are empty!";
+    return;
+  }
   for (auto& id : indices_of_indices.indices) {
     mask_[indices.indices[id]] = value;
   }
