@@ -75,6 +75,15 @@ void CloudMask::AddIndicesOfIndices(
     return;
   }
   for (auto& id : indices_of_indices.indices) {
+    if (id < 0 || id >= indices.indices.size()) {
+      AERROR <<"AddIndicesOfIndices core 1 id: " << id << " size: " << indices.indices.size();
+      continue;  // 跳过非法索引，或记录错误
+    }
+    size_t point_idx = indices.indices[id];
+    if (point_idx >= mask_.size()) {
+      AERROR << "AddIndicesOfIndices core 2 id: " << point_idx << " size: " << mask_.size();
+      continue;  // 确保不越界
+    }
     mask_[indices.indices[id]] = value;
   }
 }
