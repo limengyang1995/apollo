@@ -1,0 +1,11 @@
+module_config {
+    module_library : "modules/drivers/lidar/velodyne/fusion/libvelodyne_fusion_component.so"
+    components {
+        class_name : "PriSecFusionComponent"
+        config {
+          name : "VanjeeLiDAR_fusion"
+          config_file_path : "modules/drivers/lidar/vanjeelidar/conf/vanjeelidar_fusion_conf.pb.txt"
+          readers {channel: "/apollo/sensor/vanjeelidar/up/PointCloud2" }
+        }
+    }  
+}

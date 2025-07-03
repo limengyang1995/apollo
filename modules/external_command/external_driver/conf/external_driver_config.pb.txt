@@ -1,0 +1,25 @@
+left_path_width: 2.0
+right_path_width: 2.0
+target_speed: 20
+cer_path: "/apollo/modules/external_command/external_driver/conf/a.cer"
+app_id: "appretxpzeedsn6"
+lib_path: "/apollo_workspace/modules/external_command/external_driver/rtc/lib/libbaidurtc.so"
+video_maxkbps: 2000
+image_width: 1920
+image_height: 1080
+fps: 15
+image_topic: "/apollo/sensor/image"
+lateral_collision_distance: 3
+longitudinal_collision_distance: 10
+
+destination_path: "/apollo_workspace/modules/external_command/external_driver/conf/destination.json"
+channel{
+    input_camera_channel_name: "/apollo/sensor/camera/front_fisheye/image"
+    input_camera_channel_name: "/apollo/sensor/camera/right_front_fisheye/image"
+    input_camera_channel_name: "/apollo/sensor/camera/right_fisheye/image"
+    input_camera_channel_name: "/apollo/sensor/camera/rear_fisheye/image"
+    input_camera_channel_name: "/apollo/sensor/camera/left_fisheye/image"
+    input_camera_channel_name: "/apollo/sensor/camera/left_front_fisheye/image"
+
+}
+enable_rtc_log:false

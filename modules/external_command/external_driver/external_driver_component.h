@@ -1,0 +1,111 @@
+/******************************************************************************
+ * Copyright 2023 The Apollo Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *****************************************************************************/
+#pragma once
+
+#include <memory>
+#include <string>
+#include <vector>
+#include "nlohmann/json.hpp"
+
+#include "modules/common_msgs/external_command_msgs/action_command.pb.h"
+#include "modules/common_msgs/external_command_msgs/chassis_command.pb.h"
+#include "modules/common_msgs/external_command_msgs/command_status.pb.h"
+#include "modules/common_msgs/external_command_msgs/free_space_command.pb.h"
+#include "modules/common_msgs/external_command_msgs/lane_follow_command.pb.h"
+#include "modules/common_msgs/external_command_msgs/path_follow_command.pb.h"
+#include "modules/common_msgs/external_command_msgs/speed_command.pb.h"
+#include "modules/common_msgs/external_command_msgs/valet_parking_command.pb.h"
+#include "modules/common_msgs/planning_msgs/planning.pb.h"
+#include "modules/common_msgs/control_msgs/control_cmd.pb.h"
+#include "modules/common_msgs/localization_msgs/localization.pb.h"
+#include "modules/common_msgs/chassis_msgs/chassis.pb.h"
+#include "modules/external_command/external_driver/proto/external_driver_config.pb.h"
+
+#include "cyber/component/timer_component.h"
+#include "cyber/cyber.h"
+#include "modules/common/util/message_util.h"
+
+#include "modules/common_msgs/sensor_msgs/sensor_image.pb.h"
+#include "modules/external_command/external_driver/rtc/rtc_client.h"
+
+namespace apollo {
+namespace external_command {
+
+class ExternalDriver final : public apollo::cyber::TimerComponent {
+public:
+    ExternalDriver() = default;
+    ~ExternalDriver() = default;
+
+    bool Init() override;
+
+    bool Proc() override;
+
+private:
+    RtcClient rtc_client_;
+    RtcClient rtc_client_1_;
+    RtcClient rtc_client_2_;
+    RtcClient rtc_client_3_;
+    RtcClient rtc_client_4_;
+
+    std::shared_ptr<cyber::Writer<apollo::drivers::Image>> writer_;
+    std::string destination;
+    std::string id;
+    apollo::external_command::ExternalDriverConfig config_;
+    std::vector<std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
+    nlohmann::json point;
+
+    std::shared_ptr<cyber::Reader<localization::LocalizationEstimate>> localization_reader_pose;
+    std::shared_ptr<cyber::Reader<apollo::canbus::Chassis>> canbus_reader_;
+    std::mutex mutex_;
+    const nlohmann::json data_to_cloud;
+    std::future<void> data_to_cloud_future;
+    int connect_detect_num = 0;
+    std::vector<std::string> request_camera;
+    std::vector<std::string> id_list;
+
+private:
+    bool is_all_user_leaving() const;
+    bool is_stop = false;
+    bool is_start_publish = false;
+    bool is_start_send_cloud = false;
+
+private:
+    bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);
+    //     bool InternalProc();
+    bool InitListener(const ExternalDriverConfig& config);
+    apollo::localization::LocalizationEstimate localization_;
+    apollo::canbus::Chassis chassis_;
+    void SendDataToCloud();
+
+private:
+    // template <typename T>
+    void SendCloudControlCommand(
+            const bool& cloud_takeover_request,
+            const apollo::canbus::Chassis::GearPosition& gear_position,
+            const float& throttle,
+            const float& brake,
+            const float& steering_target);
+    std::shared_ptr<apollo::cyber::Writer<apollo::control::ControlCommand>> cloud_control_cmd_writer_;
+    uint64_t command_id_;
+    const std::string module_name_;
+    //     std::string input_command_string = "";
+    std::string cloud_takeover, cloud_gear, cloud_throttle, cloud_brake, cloud_steer = "";
+    apollo::canbus::Chassis::GearPosition cloud_gear_position;
+};
+
+CYBER_REGISTER_COMPONENT(ExternalDriver);
+}  // namespace external_command
+}  // namespace apollo

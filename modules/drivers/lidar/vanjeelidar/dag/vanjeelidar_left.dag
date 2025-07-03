@@ -1,0 +1,10 @@
+module_config {
+    module_library : "modules/drivers/lidar/vanjeelidar/libvanjeelidar_component.so"
+    components {
+        class_name : "VanjeelidarComponent"
+        config {
+          name : "VanjeeLiDAR_Left_Driver"
+          config_file_path : "modules/drivers/lidar/vanjeelidar/conf/vanjeelidar_left.pb.txt"
+        }
+    }
+}

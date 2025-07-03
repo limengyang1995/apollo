@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/king23/Desktop/Jh1.0.6/modules/external_command/external_driver",
+      "program": "/Users/king23/Desktop/Jh1.0.6/modules/external_command/external_driver/build/Debug/outDebug"
+    }
+  ]
+}

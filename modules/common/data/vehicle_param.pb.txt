@@ -1,0 +1,25 @@
+vehicle_param {
+  brand: CHITU
+  vehicle_id {
+      other_unique_id: "chitu001"
+  }
+  front_edge_to_center: 2.58
+  back_edge_to_center: 0.7
+  left_edge_to_center: 0.8
+  right_edge_to_center: 0.8
+
+  length: 3.28
+  width: 1.6
+  height: 1.9
+  min_turn_radius: 4.2
+  max_acceleration: 2.0
+  max_deceleration: -2.0
+  max_steer_angle: 5.23
+  max_steer_angle_rate: 5.23
+  steer_ratio: 10.0
+  wheel_base: 2.2
+  wheel_rolling_radius: 0.277
+  max_abs_speed_when_stopped: 0.2
+  brake_deadzone: 6.0
+  throttle_deadzone: 0.0
+}

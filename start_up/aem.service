@@ -1,0 +1,13 @@
+[Unit]
+Description=Apollo AEM Service
+After=network.target
+
+[Service]
+User=linaro
+WorkingDirectory=/home/linaro/app/application-core
+ExecStart=/usr/bin/script -q -c '/usr/bin/aem enter'
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

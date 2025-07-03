@@ -1,0 +1,10 @@
+max_interval_ms: 150 
+drop_expired_data : true
+fusion_channel: "/apollo/sensor/lidar/fusion/PointCloud2"
+input_channel: [
+    "/apollo/sensor/vanjeelidar/right/PointCloud2",
+    "/apollo/sensor/vanjeelidar/left/PointCloud2"
+]
+
+# wait time after main channel receive msg, unit second
+wait_time_s: 0.15

@@ -1,0 +1,93 @@
+<cyber>
+    <module>
+        <name>gnss</name>
+        <dag_conf>modules/drivers/gnss/dag/gnss.dag</dag_conf>
+        <process_name>gnss</process_name>
+    </module>
+
+    <!-- <module>
+        <name>camera</name>
+        <dag_conf>modules/drivers/camera/dag/camera.dag</dag_conf>
+        <process_name>usb_cam</process_name>
+    </module> -->
+
+    <module>
+        <name>lidar_driver</name>
+        <dag_conf>modules/drivers/lidar/vanjeelidar/dag/vanjeelidar_up.dag</dag_conf>
+        <dag_conf>modules/drivers/lidar/vanjeelidar/dag/vanjeelidar_left.dag</dag_conf>
+        <dag_conf>modules/drivers/lidar/vanjeelidar/dag/vanjeelidar_right.dag</dag_conf>
+        <dag_conf>modules/drivers/lidar/fusion/dag/fusion.dag</dag_conf>
+        <dag_conf>modules/drivers/lidar/compensator/dag/compensator.dag</dag_conf>
+        <process_name>lidar_driver</process_name>
+    </module>
+
+    <module>
+        <name>static_transform</name>
+        <dag_conf>modules/transform/dag/static_transform.dag</dag_conf>
+        <process_name></process_name>
+    </module>
+
+    <!-- <module>
+        <name>compensator</name>
+        <dag_conf>modules/drivers/lidar/compensator/dag/compensator.dag</dag_conf>
+        <process_name>compensator</process_name>
+    </module> -->
+    
+    <module>
+        <name>localization</name>
+        <dag_conf>modules/localization/dag/dag_streaming_rtk_localization.dag</dag_conf>
+        <process_name>localization</process_name>
+    </module>
+
+    <desc>Apollo lidar 3d object detection</desc>
+    <version>1.0.0</version>
+    <module>
+        <name>lidar</name>
+        <dag_conf>modules/perception/msg_adapter/dag/msg_adapter.dag</dag_conf>
+        <dag_conf>modules/perception/pointcloud_preprocess/dag/pointcloud_preprocess.dag</dag_conf>
+        <dag_conf>modules/perception/pointcloud_map_based_roi/dag/pointcloud_map_based_roi.dag</dag_conf>
+        <dag_conf>modules/perception/pointcloud_ground_detection/dag/pointcloud_ground_detection.dag</dag_conf>
+        <dag_conf>modules/perception/lidar_detection/dag/lidar_detection.dag</dag_conf>
+        <dag_conf>modules/perception/lidar_detection_filter/dag/lidar_detection_filter.dag</dag_conf>
+        <dag_conf>modules/perception/lidar_tracking/dag/lidar_tracking.dag</dag_conf>
+        <process_name>lidar</process_name>
+        <version>1.0.0</version>
+    </module>
+
+    <module>
+        <name>prediction</name>
+        <dag_conf>modules/prediction/dag/prediction.dag</dag_conf>
+        <process_name>prediction</process_name>
+    </module>
+
+    <module>
+        <name>routing</name>
+        <dag_conf>modules/routing/dag/routing.dag</dag_conf>
+        <process_name></process_name>
+    </module>
+
+    <module>
+        <name>canbus</name>
+        <dag_conf>modules/canbus/dag/canbus.dag</dag_conf>
+        <process_name>canbus</process_name>
+    </module>
+
+    <module>
+        <name>control</name>
+        <dag_conf>modules/control/control_component/dag/control.dag</dag_conf>
+        <process_name>control</process_name>
+    </module>
+
+    <module>
+        <name>old_routing_adapter</name>
+        <dag_conf>modules/external_command/old_routing_adapter/dag/old_routing_adapter.dag</dag_conf>
+        <process_name>old_routing_adapter</process_name>
+    </module>
+
+    <module>
+        <name>planning</name>
+        <dag_conf>modules/external_command/process_component/dag/external_command_process.dag</dag_conf>
+        <dag_conf>modules/planning/planning_component/dag/planning.dag</dag_conf>
+        <process_name>planning</process_name>
+    </module>
+</cyber>
