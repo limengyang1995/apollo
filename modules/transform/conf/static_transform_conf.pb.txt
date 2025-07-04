@@ -1,7 +1,7 @@
 extrinsic_file {
     frame_id: "novatel"
-    child_frame_id: "hesai40"
-    file_path: "modules/drivers/lidar/velodyne/params/hesai40_novatel_extrinsics.yaml"
+    child_frame_id: "lidar_top"
+    file_path: "modules/localization/msf/params/velodyne_params/velodyne64_novatel_extrinsics_example.yaml"
     enable: true
 }
 

@@ -49,18 +49,19 @@ using apollo::perception::lidar::PointSemanticLabel;
 using apollo::perception::lidar::TransformToPCLXYZI;
 using base::PointF;
 
+// 这是一个常量地图，用于将nuScenes数据集中的物体名称映射到对应的子类型
 const std::map<std::string, base::ObjectSubType> kNuScenesName2SubTypeMap = {
-    {"car", base::ObjectSubType::CAR},
-    {"truck", base::ObjectSubType::TRUCK},
-    {"construction_vehicle", base::ObjectSubType::CAR},
-    {"bus", base::ObjectSubType::BUS},
-    {"trailer", base::ObjectSubType::CAR},
-    {"barrier", base::ObjectSubType::UNKNOWN_UNMOVABLE},
-    {"motorcycle", base::ObjectSubType::MOTORCYCLIST},
-    {"bicycle", base::ObjectSubType::CYCLIST},
-    {"pedestrian", base::ObjectSubType::PEDESTRIAN},
-    {"traffic_cone", base::ObjectSubType::TRAFFICCONE},
-    {"MAX_OBJECT_TYPE", base::ObjectSubType::MAX_OBJECT_TYPE},
+    {"car", base::ObjectSubType::CAR},      // "car" 对应 CAR 子类型
+    {"truck", base::ObjectSubType::TRUCK},  // "truck" 对应 TRUCK 子类型
+    {"construction_vehicle", base::ObjectSubType::CAR},  // 建筑车辆对应 CAR
+    {"bus", base::ObjectSubType::BUS},      // "bus" 对应 BUS 子类型
+    {"trailer", base::ObjectSubType::CAR},  // 拖车对应 CAR
+    {"barrier", base::ObjectSubType::UNKNOWN_UNMOVABLE},  // 障碍物对应 UNKNOWN_UNMOVABLE
+    {"motorcycle", base::ObjectSubType::MOTORCYCLIST},    // 摩托车对应 MOTORCYCLIST
+    {"bicycle", base::ObjectSubType::CYCLIST},           // 自行车对应 CYCLIST
+    {"pedestrian", base::ObjectSubType::PEDESTRIAN},     // 行人对应 PEDESTRIAN
+    {"traffic_cone", base::ObjectSubType::TRAFFICCONE},  // 交通锥对应 TRAFFICCONE
+    {"MAX_OBJECT_TYPE", base::ObjectSubType::MAX_OBJECT_TYPE}  // 最大物体类型标记
 };
 
 const std::map<int, std::string> kIndex2NuScenesName = {
