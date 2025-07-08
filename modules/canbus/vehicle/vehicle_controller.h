@@ -417,7 +417,7 @@ ErrorCode VehicleController<SensorType>::Update(
     AERROR << "Controller is not initialized.";
     return ErrorCode::CANBUS_ERROR;
   }
-  AINFO << "receive control: acc : " << control_command.acceleration() << " steer: " << control_command.steering_target();
+  //AINFO << "receive control: acc : " << control_command.acceleration() << " steer: " << control_command.steering_target();
 
   if (control_command.has_pad_msg() && control_command.pad_msg().has_action()) {
     ADEBUG << "Canbus received pad msg: "
@@ -478,7 +478,7 @@ ErrorCode VehicleController<SensorType>::Update(
   // AERROR << "enter";
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_SPEED_ONLY) {
-    AERROR << "enter set acc: " << control_command.acceleration();
+    //AERROR << "enter set acc: " << control_command.acceleration();
     // Gear(control_command.gear_location());
     // Throttle(control_command.throttle());
     //Acceleration(control_command.acceleration());

@@ -162,7 +162,7 @@ void BroadGnssBaseParser::FillImu() {
              broadgnss_message_.acc_z, imu_.mutable_linear_acceleration());
   rfu_to_flu(broadgnss_message_.gyro_x, broadgnss_message_.gyro_y,
              broadgnss_message_.gyro_z, imu_.mutable_angular_velocity());
-  imu_.set_measurement_time(broadgnss_message_.gps_timestamp_sec);
+  imu_.set_measurement_time(broadgnss_message_.gps_timestamp_sec  - 315964782);
 }
 
 void BroadGnssBaseParser::FillHeading() {

@@ -1,5 +1,5 @@
 sensor_name: "vanjeelidar_up"
-lidar_query_tf_offset: 0
+lidar_query_tf_offset: 100
 output_channel_name: "/perception/lidar/pointcloud_preprocess"
 plugin_param {
   name: "PointCloudPreprocessor"

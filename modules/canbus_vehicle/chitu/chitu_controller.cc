@@ -394,6 +394,7 @@ void ChituController::Steer(double angle) {
   }
   adas_angle_cmd_112_->set_steering_angle(vehicle_params_.max_steer_angle() / M_PI * 
     180.0 * angle / 100.0 / vehicle_params_.steer_ratio());
+  adas_angle_cmd_112_->set_ac_steering_speed(14.4);
 }
 
 // chitu default, steering with new angle and angle speed
@@ -407,7 +408,7 @@ void ChituController::Steer(double angle, double angle_spd) {
   }
   adas_angle_cmd_112_->set_steering_angle(vehicle_params_.max_steer_angle() / M_PI * 
     180.0 * angle / 100.0 / vehicle_params_.steer_ratio());
-  adas_angle_cmd_112_->set_ac_steering_speed(int(vehicle_params_.max_steer_angle_rate() /M_PI * 180 * angle_spd / 100));
+  adas_angle_cmd_112_->set_ac_steering_speed(14.4);
   
 }
 

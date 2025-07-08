@@ -31,6 +31,6 @@
 
 --map_dir=/apollo/modules/map/data/sunnyvale_loop
 
---map_dir=/apollo/modules/map/data/uqi062602
+--map_dir=/apollo/modules/map/data/uqi070803
 
 

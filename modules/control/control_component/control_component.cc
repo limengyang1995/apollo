@@ -195,7 +195,6 @@ void ControlComponent::OnMonitor(
   for (const auto &item : monitor_message.item()) {
     if (item.log_level() == common::monitor::MonitorMessageItem::FATAL) {
       estop_ = true;
-      AERROR << "estop 1";
       return;
     }
   }
@@ -213,7 +212,6 @@ Status ControlComponent::ProduceControlCommand(
     control_command->mutable_engage_advice()->set_reason(
         status.error_message());
     estop_ = true;
-    AERROR << "estop 2";
     estop_reason_ = status.error_message();
   } else {
     estop_ = false;
@@ -225,7 +223,6 @@ Status ControlComponent::ProduceControlCommand(
       // keep the history trajectory for control compute.
       // latest_trajectory_.Clear();
       estop_ = true;
-      AERROR << "estop 3";
       status = status_ts;
       if (local_view_.chassis().driving_mode() !=
           apollo::canbus::Chassis::COMPLETE_AUTO_DRIVE) {
@@ -245,10 +242,8 @@ Status ControlComponent::ProduceControlCommand(
   estop_ = FLAGS_enable_persistent_estop
                ? estop_ || local_view_.trajectory().estop().is_estop()
                : local_view_.trajectory().estop().is_estop();
-  AERROR << "estop 4: "<< estop_;
   if (local_view_.trajectory().estop().is_estop()) {
     estop_ = true;
-    AERROR << "estop 5";
     estop_reason_ = "estop from planning : ";
     estop_reason_ += local_view_.trajectory().estop().reason();
   }
@@ -256,10 +251,9 @@ Status ControlComponent::ProduceControlCommand(
   if (local_view_.trajectory().trajectory_point().empty()) {
     AWARN_EVERY(100) << "planning has no trajectory point. ";
     estop_ = true;
-    AERROR << "estop 6";
     estop_reason_ = "estop for empty planning trajectory, planning headers: " +
                     local_view_.trajectory().header().ShortDebugString();
-  }
+  } 
 
   if (FLAGS_enable_gear_drive_negative_speed_protection) {
     const double kEpsilon = 0.001;
@@ -267,7 +261,6 @@ Status ControlComponent::ProduceControlCommand(
     if (local_view_.chassis().gear_location() == Chassis::GEAR_DRIVE &&
         first_trajectory_point.v() < -1 * kEpsilon) {
       estop_ = true;
-      AERROR << "estop 7";
       estop_reason_ = "estop for negative speed when gear_drive";
     }
   }
@@ -311,7 +304,6 @@ Status ControlComponent::ProduceControlCommand(
              << " with cmd: " << control_command->ShortDebugString()
              << " status:" << status_compute.error_message();
       estop_ = true;
-      AERROR << "estop 8";
       estop_reason_ = status_compute.error_message();
       status = status_compute;
     }
@@ -368,7 +360,15 @@ bool ControlComponent::Proc() {
 
   trajectory_reader_->Observe();
   const auto &trajectory_msg = trajectory_reader_->GetLatestObserved();
-
+  if (trajectory_msg == nullptr) {
+    // AERROR << "planning msg is not ready!";
+  } else {
+    // Check if new planning data received.
+    if (latest_trajectory_.header().sequence_num() !=
+        trajectory_msg->header().sequence_num()) {
+      OnPlanning(trajectory_msg);
+    }
+  }
   planning_command_status_reader_->Observe();
   const auto &planning_status_msg =
       planning_command_status_reader_->GetLatestObserved();
@@ -381,6 +381,12 @@ bool ControlComponent::Proc() {
 
   localization_reader_->Observe();
   const auto &localization_msg = localization_reader_->GetLatestObserved();
+  if (localization_msg == nullptr) {
+    AERROR << "localization msg is not ready!";
+    injector_->set_control_process(false);
+    return false;
+  }
+  OnLocalization(localization_msg);
 
   cloud_control_command_reader_->Observe();
   const auto &cloud_control_command_msg = cloud_control_command_reader_->GetLatestObserved();
