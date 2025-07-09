@@ -63,7 +63,7 @@ DEFINE_bool(enable_trajectory_stitcher, true, "enable stitching trajectory");
 DEFINE_bool(enable_reference_line_stitching, true,
             "Enable stitching reference line, which can reducing computing "
             "time and improve stability");
-DEFINE_double(look_forward_extend_distance, 50,
+DEFINE_double(look_forward_extend_distance, 40,
               "The step size when extending reference line.");
 DEFINE_double(reference_line_stitch_overlap_distance, 20,
               "The overlap distance with the existing reference line when "
@@ -132,7 +132,7 @@ DEFINE_double(st_max_s, 100, "the maximum s of st boundary");
 DEFINE_double(st_max_t, 8, "the maximum t of st boundary");
 
 // Decision Part
-DEFINE_double(static_obstacle_nudge_l_buffer, 0.3,
+DEFINE_double(static_obstacle_nudge_l_buffer, 0.2,
               "minimum l-distance to nudge a static obstacle (meters)");
 DEFINE_double(nonstatic_obstacle_nudge_l_buffer, 0.4,
               "minimum l-distance to nudge a non-static obstacle (meters)");
@@ -145,7 +145,7 @@ DEFINE_double(min_stop_distance_obstacle, 6.0,
               "min stop distance from in-lane obstacle (meters)");
 DEFINE_double(follow_min_distance, 3.0,
               "min follow distance for vehicles/bicycles/moving objects");
-DEFINE_double(yield_distance, 5.0,
+DEFINE_double(yield_distance, 2.5,
               "min yield distance for vehicles/moving objects "
               "other than pedestrians/bicycles");
 DEFINE_double(follow_time_buffer, 2.5,
@@ -169,7 +169,7 @@ DEFINE_double(virtual_stop_wall_height, 2.0,
 // Path Deciders
 DEFINE_bool(enable_skip_path_tasks, false,
             "skip all path tasks and use trimmed previous path");
-DEFINE_double(obstacle_lat_buffer, 0.4,
+DEFINE_double(obstacle_lat_buffer, 0.3,
               "obstacle lateral buffer (meters) for deciding path boundaries");
 DEFINE_double(obstacle_lon_start_buffer, 3.0,
               "obstacle longitudinal start buffer (meters) for deciding "

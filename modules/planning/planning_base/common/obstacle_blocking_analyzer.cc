@@ -33,7 +33,7 @@ using apollo::common::VehicleConfigHelper;
 using apollo::hdmap::HDMapUtil;
 
 constexpr double kAdcDistanceThreshold = 35.0;  // unit: m
-constexpr double kObstaclesDistanceThreshold = 15.0;
+constexpr double kObstaclesDistanceThreshold = 25.0;
 constexpr double kIntersectionClearanceDist = 20.0;
 constexpr double kJunctionClearanceDist = 15.0;
 

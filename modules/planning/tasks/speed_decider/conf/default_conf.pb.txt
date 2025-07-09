@@ -1,5 +1,5 @@
 follow_min_obs_lateral_distance: 2.5
-follow_min_time_sec: 2.0
+follow_min_time_sec: 1.6
 stop_follow_distance: 2.0
 follow_distance_scheduler {
   follow_distance {
