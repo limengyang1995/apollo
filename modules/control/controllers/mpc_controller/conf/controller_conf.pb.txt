@@ -1,10 +1,10 @@
 ts: 0.01
 cf: 155494.663
 cr: 155494.663
-mass_fl: 45
-mass_fr: 45
-mass_rl: 57
-mass_rr: 57
+mass_fl: 200
+mass_fr: 200
+mass_rl: 200
+mass_rr: 200
 eps: 0.01
 matrix_q: 40.0
 matrix_q: 0.0
