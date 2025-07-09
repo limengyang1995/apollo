@@ -39,10 +39,17 @@
 #include "modules/common/util/message_util.h"
 
 #include "modules/common_msgs/sensor_msgs/sensor_image.pb.h"
-#include "modules/external_command/external_driver/rtc/rtc_client.h"
-
+#define DUMP_YUYV 1
 namespace apollo {
 namespace external_command {
+
+// #ifndef RT_FMT_YUV422_YUYV
+// #define RK_FMT_YUV422_YUYV (0x00000009)
+// #endif
+
+// #ifndef RK_VIDEO_ID_AVC
+// #define RK_VIDEO_ID_AVC (0x00000008)
+// #endif
 
 class ExternalDriver final : public apollo::cyber::TimerComponent {
 public:
@@ -54,12 +61,17 @@ public:
     bool Proc() override;
 
 private:
-    RtcClient rtc_client_;
-    RtcClient rtc_client_1_;
-    RtcClient rtc_client_2_;
-    RtcClient rtc_client_3_;
-    RtcClient rtc_client_4_;
+    std::string stream_name_map_[5] = {"all", "front", "right", "back", "left"};
 
+    std::map<std::string, int> cam_idx_map_
+            = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"back", 3}, {"left", 4}, {"left_front", 5}};
+    std::string idx_cam_map_[6] = {"front", "right_front", "right", "back", "left", "left_front"};
+
+    void CreateRtcPublisher(const ExternalDriverConfig& config);
+
+    bool is_write_ = false;
+
+private:
     std::shared_ptr<cyber::Writer<apollo::drivers::Image>> writer_;
     std::string destination;
     std::string id;
@@ -75,10 +87,10 @@ private:
     std::future<void> is_network_down_future;
     int connect_detect_num = 0;
     std::vector<std::string> request_camera;
-    std::vector<std::string> id_list;
+    // std::vector<std::string> id_list;
 
 private:
-    bool is_all_user_leaving() const;
+    // bool is_all_user_leaving() const;
     bool is_stop = false;
     bool is_start_publish = false;
     bool is_start_send_cloud = false;
@@ -91,7 +103,7 @@ private:
     apollo::localization::LocalizationEstimate localization_;
     apollo::canbus::Chassis chassis_;
     void SendDataToCloud();
-    void CreateRtcClient(const ExternalDriverConfig& config);
+    // void CreateRtcClient(const ExternalDriverConfig& config);
     void IsNetworkDown();
 
 private:

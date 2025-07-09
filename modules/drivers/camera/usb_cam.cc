@@ -71,6 +71,7 @@ UsbCam::~UsbCam() {
 bool UsbCam::init(const std::shared_ptr<Config>& cameraconfig) {
     config_ = cameraconfig;
 
+    // 设置像素格式
     if (config_->pixel_format() == "yuyv") {
         pixel_format_ = V4L2_PIX_FMT_YUYV;
     } else if (config_->pixel_format() == "uyvy") {
@@ -88,19 +89,24 @@ bool UsbCam::init(const std::shared_ptr<Config>& cameraconfig) {
                << ",must be yuyv | uyvy | mjpeg | yuvmono10 | rgb24";
         return false;
     }
+
+    // 如果是MJPEG格式，初始化MJPEG解码器
     if (pixel_format_ == V4L2_PIX_FMT_MJPEG) {
         init_mjpeg_decoder(config_->width(), config_->height());
     }
 
+    // 设置帧警告和丢弃帧的时间间隔
     // Warning when diff with last > 1.5* interval
     frame_warning_interval_ = static_cast<float>(1.5 / config_->frame_rate());
     // now max fps 30, we use an appox time 0.9 to drop image.
     frame_drop_interval_ = static_cast<float>(0.9 / config_->frame_rate());
 
+    // 打开设备
     if (!open_device()) {
         return false;
     }
 
+    // 初始化设备
     if (!init_device()) {
         close_device();
         return false;

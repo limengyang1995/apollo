@@ -122,7 +122,7 @@ void CameraComponent::run() {
         //   cyber::SleepFor(std::chrono::milliseconds(device_wait_));
         //   continue;
         // }
-        auto t1 = cyber::Time::Now().ToSecond();
+
         if (!camera_device_->poll(raw_image_, raw_image_for_compress_)) {
             // cyber::SleepFor(std::chrono::milliseconds(device_wait_));
             // AERROR << "camera device poll failed";
@@ -135,13 +135,17 @@ void CameraComponent::run() {
         }
         auto pb_image = pb_image_buffer_.at(index_);
         auto header_time = cyber::Time::Now().ToSecond();
+
+        if (static_cast<int>(cyber::Time::Now().ToSecond()) > 1752591715) {
+            exit(0);
+        }
         auto measurement_time = image_time.ToSecond();
         pb_image->mutable_header()->set_timestamp_sec(header_time);
         pb_image->set_measurement_time(measurement_time);
         pb_image->set_data(raw_image_->image, raw_image_->image_size);
         writer_->Write(pb_image);
         auto t2 = cyber::Time::Now().ToSecond();
-        AINFO << "pull camera data cost: " << t2 - t1;
+        // AINFO << "pull camera data cost: " << t2 - t1;
         // auto raw_image_for_compress = raw_image_buffer_.at(index_++);
         // raw_image_for_compress->mutable_header()->set_timestamp_sec(header_time);
         // raw_image_for_compress->set_measurement_time(measurement_time);

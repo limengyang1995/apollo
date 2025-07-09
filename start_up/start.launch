@@ -15,4 +15,14 @@
         <dag_conf>modules/drivers/camera/dag/camera.dag</dag_conf>
         <process_name>usb_cam</process_name>
     </module>
+    <module>
+        <name>control</name>
+        <dag_conf>modules/control/control_component/dag/control.dag</dag_conf>
+        <process_name>control</process_name>
+    </module>
+    <!-- <module>
+        <name>canbus</name>
+        <dag_conf>modules/canbus/dag/canbus.dag</dag_conf>
+        <process_name>canbus</process_name>
+    </module> -->
 </cyber>

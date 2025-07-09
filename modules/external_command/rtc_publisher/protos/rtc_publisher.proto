@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package rtc_publisher;
+
+service RtcPublisher {
+  rpc Create (CreateRequest) returns (CreateResponse) {}
+}
+
+message CreateRequest {
+  std::string name = 1 ;
+}
+
+message CreateResponse {
+  std::string name = 1;
+}
+    

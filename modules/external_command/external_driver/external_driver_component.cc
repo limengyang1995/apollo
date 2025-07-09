@@ -33,9 +33,16 @@
 // #include "nlohmann/json.hpp"
 #include <fstream>
 #include <sys/wait.h>
+#ifndef ENABLE_USE_GRPC
+#include "MultiMedia.h"
+#include "rtc_publisher_brtc.h"
+#else
+#include "rtc_publisher_client.h"
+#endif
 
 namespace apollo {
 namespace external_command {
+// using apollo::drivers::RtcPublisherClient;
 using apollo::external_command::CommandStatus;
 
 // ExternalDriver::ExternalDriver() : command_id_(0), module_name_("demo") {}
@@ -48,7 +55,9 @@ bool ExternalDriver::Init() {
             "/apollo/modules/external_command/external_driver/conf/"
             "external_driver_config.pb.txt",
             &config_);
-    CreateRtcClient(config_);
+    MultiMedia::sys_init();
+    CreateRtcPublisher(config_);
+
     // rtc_client_.CreateClient(config_, "all");
     // cyber::SleepFor(std::chrono::seconds(1));
     // rtc_client_1_.CreateClient(config_, "front");
@@ -84,17 +93,54 @@ bool ExternalDriver::Init() {
     return true;
 }
 
-void ExternalDriver::CreateRtcClient(const ExternalDriverConfig& config) {
-    rtc_client_.CreateClient(config_, "all");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_1_.CreateClient(config_, "front");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_2_.CreateClient(config_, "right");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_3_.CreateClient(config_, "rear");
-    cyber::SleepFor(std::chrono::seconds(1));
-    rtc_client_4_.CreateClient(config_, "left");
+void ExternalDriver::CreateRtcPublisher(const ExternalDriverConfig& config) {
+    uint32_t color_fmt = RK_FMT_YUV422_YUYV;
+
+    std::string app_id = config.app_id();
+    std::string cer_path = config.cer_path();
+    std::string car_id(getenv("CARID"));
+    int32_t video_maxkbps = config.video_maxkbps();
+    int32_t image_width = config.image_width();
+    int32_t image_height = config.image_height();
+    uint32_t pixel_fmt = RK_FMT_YUV422_YUYV;
+    uint32_t encode_codec = static_cast<uint32_t>(RK_VIDEO_ID_AVC);
+    uint32_t origin_width = config.image_width();
+    uint32_t origin_height = config.image_height();
+
+    for (auto stream_name : stream_name_map_) {
+#ifndef ENABLE_USE_GRPC
+        RtcPublisherBrtc::CreateParam param;
+        param.camera_name = stream_name;
+        param.video_maxkbps = video_maxkbps;
+        param.image_width = image_width;
+        param.image_height = image_height;
+        param.cer_path = cer_path;
+        param.app_id = app_id;
+        param.car_id = car_id;
+        param.pixel_fmt = pixel_fmt;
+        param.encode_codec = encode_codec;
+        param.origin_width = origin_width;
+        param.origin_height = origin_height;
+        RtcPublisherBrtc::GetInstance().CreateClient(param);
+#else
+
+        RtcPublisherClient::GetInst().Create(
+                stream_name,
+                app_id,
+                cer_path,
+                car_id,
+                video_maxkbps,
+                image_width,
+                image_height,
+                pixel_fmt,
+                encode_codec,
+                origin_width,
+                origin_height);
+#endif
+        cyber::SleepFor(std::chrono::seconds(1));
+    }
 }
+
 bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
     for (const auto& channel : config.channel().input_camera_channel_name()) {
         std::shared_ptr<cyber::Reader<apollo::drivers::Image>> reader_;
@@ -125,7 +171,7 @@ void ExternalDriver::IsNetworkDown() {
             AERROR << "restart all process!";
             fail_count = 0;
             network_down = false;
-            CreateRtcClient(config_);
+            // CreateRtcClient(config_);
         }
         cyber::SleepFor(std::chrono::seconds(2));
     }
@@ -168,181 +214,71 @@ void ExternalDriver::SendDataToCloud() {
                        {"right_turn", right_turn},
                        {"low_beam", low_beam},
                        {"soc", soc}};
-            std::string id = std::to_string(rtc_client_.g_mylistener.feed_id);
             AINFO << "vehicle data: " << vehicle_data.dump();
-            if (id != "0") {
-                if (std::find(id_list.begin(), id_list.end(), id) == id_list.end()) {
-                    id_list.push_back(id);
-                }
-                if (id_list.size() > 3) {
-                    id_list.erase(id_list.begin());
-                }
-
-                for (const auto& id : id_list) {
-                    // AINFO << "id : " << id << "id size: " << id_list.size();
-                    rtc_client_.g_BrtcClient->sendMessageToUser(vehicle_data.dump().c_str(), id.c_str());
-                }
-
-            } else {
-                cyber::SleepFor(std::chrono::milliseconds(100));
-            }
-
-            // AINFO<<vehicle_data;
+#ifndef ENABLE_USE_GRPC
+            RtcPublisherBrtc::GetInstance().SendUserMessage(vehicle_data.dump());
+#else
+            RtcPublisherClient::GetInst().SendUserMessage(vehicle_data.dump());
+#endif
+            cyber::SleepFor(std::chrono::milliseconds(100));
         }
-
         cyber::SleepFor(std::chrono::milliseconds(100));
     }
 }
 
-bool ExternalDriver::is_all_user_leaving() const {
-    return rtc_client_.g_mylistener.user_leaving_mark && id_list.empty();
-}
+// bool ExternalDriver::is_all_user_leaving() const {
+//     return rtc_client_.g_mylistener.user_leaving_mark && id_list.empty();
+// }
 bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image) {
     if (image == nullptr) {
+        AERROR << "image is null!";
         return false;
     }
 
-    static std::vector<cv::Mat> img_;
-    img_.reserve(4);
-    img_.clear();
+    if (is_start_publish == false) {
+        AERROR << "not recieve start publish request!";
+        return true;
+    }
+
+    std::map<std::string, std::shared_ptr<apollo::drivers::Image>> imgs;
+
+    uint32_t color_fmt = RK_FMT_YUV422_YUYV;
 
     for (u_int16_t i = 0; i < readers_.size(); ++i) {
         readers_[i]->Observe();
         const auto camera_msg = readers_[i]->GetLatestObserved();
         if (camera_msg == nullptr) {
             AERROR << "camera message is nullptr";
-            return false;
+            // return false;
         }
-        cv::Mat img(image->height(), image->width(), CV_8UC3, const_cast<char*>(camera_msg->data().data()));
-        img_.emplace_back(img);
+        imgs.insert(std::make_pair(idx_cam_map_[i], camera_msg));
     }
-    // AERROR << "is start publish : " << is_start_publish;
-    if (is_start_publish && !id_list.empty()) {
-        // auto time1 = cyber::Time::Now().ToSecond();
+#ifndef ENABLE_USE_GRPC
+    RtcPublisherBrtc::GetInstance().SendFrame(imgs, request_camera);
+#else
+    RtcPublisherClient::GetInst().SendFrame(imgs, request_camera);
+#endif
 
-        cv::Mat img_front;
-        cv::Mat img_right;
-        cv::Mat img_back;
-        cv::Mat img_left;
-        cv::Mat img_left_front;
-        cv::Mat img_right_front;
+    AERROR << "start send image successfully!";
+    // AERROR << "send image cost time :" << time2 - time1;
 
-        // const static cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << 1920, 0, 960, 0, 1920, 540, 0, 0, 1);
-        // const static cv::Mat distCoeffs = (cv::Mat_<double>(5, 1) << -0.326, 0.147, 0, 0, 0);
-        // constexpr float width = 3.0;
-
-        // constexpr float length = 20.0;
-        // constexpr float height = 2.0;
-        // const static std::vector<cv::Point3f> obj_points
-        //         = {cv::Point3f(-width / 2, 0, height),
-        //            cv::Point3f(-width / 2, length, height),
-        //            cv::Point3f(width / 2, length, height),
-        //            cv::Point3f(width / 2, 0, height)};
-
-        // const static cv::Mat rvec = (cv::Mat_<double>(3, 1) << 0.1, 0, 0);
-        // const static cv::Mat tvec = (cv::Mat_<double>(3, 1) << 0, 0.5, 5.0);
-
-        // static std::vector<cv::Point2f> img_points;
-        // img_points.clear();
-        // cv::projectPoints(obj_points, rvec, tvec, cameraMatrix, distCoeffs, img_points);
-
-        // constexpr int thickness = 2;
-        // //        const static cv::Scalar color = cv::Scalar(0, 0, 255);
-        // // for (int i = 0; i < 4; ++i) {
-        // //     cv::line(img_front, img_points[i], img_points[(i + 1) % 4], color, thickness);
-        // // }
-
-        cv::Size front_size(img_[0].cols * 0.5, img_[0].rows * 0.6);
-        cv::Size back_size(img_[3].cols * 0.18, img_[3].rows * 0.1);
-        cv::Size right_size(img_[2].cols * 0.25, img_[2].rows * 0.3);
-        cv::Size left_size(img_[4].cols * 0.25, img_[4].rows * 0.3);
-        cv::Size left_front_size(img_[5].cols * 0.25, img_[5].rows * 0.3);
-        cv::Size right_front_size(img_[1].cols * 0.25, img_[1].rows * 0.3);
-
-        std::thread t1([&]() { resize(img_[0], img_front, front_size, 0, 0, cv::INTER_NEAREST); });
-        std::thread t2([&]() { resize(img_[3], img_back, back_size, 0, 0, cv::INTER_NEAREST); });
-        std::thread t3([&]() { resize(img_[2], img_right, right_size, 0, 0, cv::INTER_NEAREST); });
-        std::thread t4([&]() { resize(img_[4], img_left, left_size, 0, 0, cv::INTER_NEAREST); });
-        std::thread t5([&]() { resize(img_[5], img_left_front, left_front_size, 0, 0, cv::INTER_NEAREST); });
-        std::thread t6([&]() { resize(img_[1], img_right_front, right_front_size, 0, 0, cv::INTER_NEAREST); });
-        t1.join();
-        t2.join();
-        t3.join();
-        t4.join();
-        t5.join();
-        t6.join();
-
-        std::vector<unsigned char> buf_front;
-        std::vector<unsigned char> buf_left;
-        std::vector<unsigned char> buf_right;
-        std::vector<unsigned char> buf_back;
-        std::vector<unsigned char> buf_stitch;
-
-        // 定义矩形区域的左上角坐标（x, y）和矩形的宽度（width）与高度（height）
-
-        cv::Rect roi_back((img_front.cols - img_back.cols) / 2, 0, img_back.cols, img_back.rows);
-        cv::Mat&& roi_back_rect = img_front(roi_back);
-        img_back.copyTo(roi_back_rect);
-
-        cv::Mat img_left_stitch;
-        cv::Mat img_right_stitch;
-        cv::Mat img_stitch;
-        cv::vconcat(img_left_front, img_left, img_left_stitch);
-        cv::vconcat(img_right_front, img_right, img_right_stitch);
-
-        std::vector<cv::Mat> images_to_concat = {img_left_stitch, img_front, img_right_stitch};
-        cv::hconcat(images_to_concat, img_stitch);
-
-        // cv::resize(images_stitch, images_stitch, cv::Size(1600,300), 0, 0,cv::INTER_LINEAR);
-        cv::imencode(".jpg", img_stitch, buf_stitch);
-        // auto time2 = cyber::Time::Now().ToSecond();
-
-        for (const auto& cam : request_camera) {
-            // AERROR << "camera name :" << cam;
-            if (cam == "front") {
-                cv::imencode(".jpg", img_front, buf_front);
-                rtc_client_1_.g_BrtcClient->sendImage(
-                        reinterpret_cast<const char*>(buf_front.data()), buf_front.size());
-                // AERROR<<"start send front image successfully!";
-            } else if (cam == "back") {
-                cv::imencode(".jpg", img_back, buf_back);
-                rtc_client_3_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_back.data()), buf_back.size());
-                // AERROR<<"start send back image successfully!";
-            } else if (cam == "left") {
-                cv::imencode(".jpg", img_left, buf_left);
-                rtc_client_4_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_left.data()), buf_left.size());
-                // AERROR<<"start send left image successfully!";
-            } else if (cam == "right") {
-                cv::imencode(".jpg", img_right, buf_right);
-                rtc_client_2_.g_BrtcClient->sendImage(
-                        reinterpret_cast<const char*>(buf_right.data()), buf_right.size());
-                // AERROR<<"start send right image successfully!";
-            } else {
-                continue;
-            }
-        }
-
-        rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
-        AINFO << "start send image successfully!";
-        // AERROR << "send image cost time :" << time2 - time1;
-
-        // rtc_client_.g_BrtcClient->sendImage(reinterpret_cast<const char*>(buf_stitch.data()), buf_stitch.size());
-        return true;
-    } else {
-        AINFO << "not recieve start publish request!";
-        // return false;
-    }
     return true;
 }
 
 bool ExternalDriver::Proc() {
-    std::string data = rtc_client_.g_mylistener.recieve_msg;
+    std::string data;
+    bool is_new_msg = false;
+#ifndef ENABLE_USE_GRPC
+    RtcPublisherBrtc::GetInstance().RecvUserMessage(data, is_new_msg);
+#else
+    RtcPublisherClient::GetInst().RecvUserMessage(data, is_new_msg);
+#endif
     // int msgtype = rtc_client_.g_mylistener.msg_type;
     // int64_t id = rtc_client_.g_mylistener.feed_id;
     std::string input_command_string;
     nlohmann::json command;
 
-    if (!data.empty() && rtc_client_.g_mylistener.re_mark) {
+    if (!data.empty() && is_new_msg) {
         try {
             command = nlohmann::json::parse(data);
 
@@ -421,7 +357,7 @@ bool ExternalDriver::Proc() {
                     std::stoi(cloud_emergency_stop));
         }
     }
-    rtc_client_.g_mylistener.re_mark = false;
+
     return true;
 }
 

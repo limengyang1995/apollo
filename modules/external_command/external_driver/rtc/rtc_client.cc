@@ -11,6 +11,17 @@ void RtcClient::SetListener(baidurtc::BaiduRtcRoomClient* client, MyListener& li
 }
 
 bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string camera_name) {
+    return true;
+}
+
+bool RtcClient::CreateClient(
+        std::string camera_name,
+        std::string app_id,
+        std::string cer_path,
+        std::string car_id,
+        int32_t video_maxkbps,
+        int32_t image_width,
+        int32_t image_height) {
     void* handle = dlopen(
             "/opt/apollo/neo/src/modules/external_command/external_driver/rtc/lib/libbaidurtc.so",
             RTLD_LAZY | RTLD_DEEPBIND);
@@ -31,7 +42,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
     s.HasAudio = false;
     s.AudioINChannel = 1;
     s.AudioINFrequency = 16000;
-    s.ImageINType = RTC_IMAGE_TYPE_JPEG;
+    // s.ImageINType = RTC_IMAGE_TYPE_JPEG;
     s.ImageOUTType = RTC_IMAGE_TYPE_H264;
     s.ConnectionTimeoutMs = 100;
     s.ReadTimeoutMs = 100;
@@ -42,17 +53,17 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
 
     s.VideoFps = 15;
 
-    s.VideoMaxkbps = config.video_maxkbps();
-    s.VideoWidth = config.image_width();
-    s.VideoHeight = config.image_height();
-    cer_path = config.cer_path();
-    app_id = config.app_id();
-    car_id = getenv("CARID");
-    std::string car_id_str(car_id);
-    std::string display_name = car_id_str + "_" + camera_name;
+    s.VideoMaxkbps = video_maxkbps;
+    s.VideoWidth = image_width;
+    s.VideoHeight = image_height;
+    cer_path = cer_path;
+    app_id = app_id;
+    // car_id = getenv("CARID");
+    std::string car_id_str;
+    std::string display_name = car_id + "_" + camera_name;
     // AERROR << "car_id:" << car_id;
 
-    car_id_str = car_id_str.substr(2);
+    car_id_str = car_id.substr(2);
 
     g_BrtcClient->setParamSettings(&s, s.RTC_PARAM_SETTINGS_ALL);
     g_BrtcClient->setAppID(app_id.c_str());
@@ -67,6 +78,7 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
 
     if (!g_BrtcClient->loginRoom("2131", uid.c_str(), display_name.c_str(), "token")) {
         AERROR << "loginRoom failed";
+        std::cout << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] loginRoom failed." << std::endl;
         return false;
     }
 
@@ -74,7 +86,10 @@ bool RtcClient::CreateClient(const ExternalDriverConfig& config, std::string cam
     if (camera_name == "all") {
         AERROR << "listener set for all camera";
         SetListener(g_BrtcClient, g_mylistener);
+        std::cout << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] listener set for all camera" << std::endl;
     }
+
+    std::cout << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] loginRoom success." << std::endl;
     // SetListener(g_BrtcClient, g_mylistener);
     return true;
 }
@@ -89,11 +104,21 @@ void MyListener::OnRtcMessage(RtcMessage& msg) {
         re_mark = true;
         feed_id = msg.data.feedId;
         AERROR << "user message: " << recieve_msg;
+        std::cout << "OnRtcMessage[" << feed_id << "]: " << recieve_msg << std::endl;
+        break;
 
     case RtcMessageType::RTC_ROOM_EVENT_ON_USER_LEAVING_ROOM:
         user_leaving_mark = true;
         leaving_user_id = msg.data.feedId;
         AINFO << msg.data.feedId;
+        std::cout << "OnRtcMessage[" << leaving_user_id << "] user is leaving room" << std::endl;
+        break;
+    case RtcMessageType::RTC_ROOM_EVENT_FORCE_KEY_FRAME:
+        // TODO:处理关键帧的逻辑
+        break;
+    case RtcMessageType::RTC_ROOM_EVENT_AVAILABLE_SEND_BITRATE:
+        // TODO:处理可用发送码率的逻辑
+        break;
     default:
         break;
     }

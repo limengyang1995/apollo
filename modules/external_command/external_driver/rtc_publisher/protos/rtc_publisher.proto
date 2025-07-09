@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package rtc_publisher;
+
+service RtcPublisher {
+  rpc Create (CreateRequest) returns (CreateResponse) {}
+  rpc Destroy (DestroyRequest) returns (DestroyResponse) {}
+  rpc SendFrame (SendFrameRequest) returns (SendFrameResponse) {}
+  rpc SendUserMessage (SendUserMessageRequest) returns (SendUserMessageResponse) {}
+  rpc RecvUserMessage (RecvUserMessageRequest) returns (RecvUserMessageResponse) {}
+}
+
+message CreateRequest {
+  //publish info
+  string camera_name = 1 ;
+  int32 video_maxkbps = 2;
+  int32 image_width = 3;
+  int32 image_height = 4;
+  string cer_path = 5;
+  string app_id = 6;
+  string car_id = 7;
+  //encode info
+  uint32 pixel_fmt = 8;
+  uint32 encode_codec = 9;
+  uint32 origin_width = 10;
+  uint32 origin_height = 11;
+}
+
+message CreateResponse {
+  bool success = 1;
+}
+    
+message DestroyRequest {
+  string camera_name = 1;
+}
+message DestroyResponse {
+  bool success = 1;
+}
+
+message FrameInfo{
+  string camera_name = 1;
+  bytes frame_data = 2;
+  int32 frame_width = 3;
+  int32 frame_height = 4;
+}
+
+message SendFrameRequest {
+  repeated string request_stream_name = 1;
+  repeated FrameInfo frame_info = 2;
+}
+
+message SendFrameResponse {
+  bool success = 1;
+}
+
+message SendUserMessageRequest {
+  string message = 1;
+}
+
+message SendUserMessageResponse {
+  bool success = 1;
+}
+
+message RecvUserMessageRequest {
+  string message = 1;    //not used
+}
+
+message RecvUserMessageResponse {
+  bool success = 1;
+  string message = 2;   
+  bool is_new = 3;    //not used
+}
