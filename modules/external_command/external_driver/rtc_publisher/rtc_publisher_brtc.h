@@ -85,8 +85,8 @@ private:
                {0, 0, 480, 360}};
 
     std::map<std::string, int> cam_idx_map_
-            = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"left", 4}, {"left_front", 5}, {"back", 3}};
-    std::vector<std::string> cam_order_list_ = {"front", "right_front", "right", "left", "left_front", "back"};
+            = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"left", 4}, {"left_front", 5}, {"rear", 3}};
+    std::vector<std::string> cam_order_list_ = {"front", "right_front", "right", "left", "left_front", "rear"};
     std::vector<std::string> rtc_id_list_;
 
     void write_data_to_file(const std::string& filename, const void* data, size_t size) {
