@@ -61,11 +61,14 @@ public:
     bool Proc() override;
 
 private:
-    std::string stream_name_map_[5] = {"all", "front", "right", "back", "left"};
+    // std::string stream_name_map_[5] = {"all", "front", "right", "back", "left"};
+    std::string stream_name_map_[1] = {"all"};
+
+    std::string publish_camera_name_ = "all";
 
     std::map<std::string, int> cam_idx_map_
-            = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"back", 3}, {"left", 4}, {"left_front", 5}};
-    std::string idx_cam_map_[6] = {"front", "right_front", "right", "back", "left", "left_front"};
+            = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"rear", 3}, {"left", 4}, {"left_front", 5}};
+    std::string idx_cam_map_[6] = {"front", "right_front", "right", "rear", "left", "left_front"};
 
     void CreateRtcPublisher(const ExternalDriverConfig& config);
 

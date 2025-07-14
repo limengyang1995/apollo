@@ -14,6 +14,8 @@ bool RtcPublisherBrtc::CreateClient(const RtcPublisherBrtc::CreateParam& param) 
     std::shared_ptr<RtcPublisherHandle> rtc_publisher_handle = std::make_shared<RtcPublisherHandle>();
     rtc_publisher_handle->name = param.camera_name;
     rtc_publisher_handle->p_rtc_client = std::make_shared<RtcClient>();
+    rtc_publisher_handle->p_rtc_client->register_sync_frame_cb(
+            std::bind(&RtcPublisherBrtc::RequestSyncFrame, this, std::placeholders::_1));
     is_success = rtc_publisher_handle->p_rtc_client->CreateClient(
             param.camera_name,
             param.app_id,
@@ -50,9 +52,10 @@ bool RtcPublisherBrtc::CreateClient(const RtcPublisherBrtc::CreateParam& param) 
     if (is_success == false) {
         rtc_publisher_handle->p_video_encoder = nullptr;
         rtc_publisher_handle->p_rtc_client = nullptr;
-        std::cout << "RtcPublisherBrtc::CreateClient: [" << param.camera_name << "] create video encoder failed.";
+        AERROR << "RtcPublisherBrtc::CreateClient: [" << param.camera_name << "] create video encoder failed.";
         return false;
     }
+
     rtc_publisher_handle_map_[param.camera_name] = rtc_publisher_handle;
     std::cout << "RtcPublisherBrtc::CreateClient: [" << param.camera_name << "] create client success.";
     return rtc_publisher_handle->p_video_encoder->start();
@@ -102,7 +105,7 @@ bool RtcPublisherBrtc::SendFrame(
         //     continue;
         // }
         auto stitch_rect = stitch_rect_[cam_idx_map_[cam_name]];
-        if (image->data().size() == 0) {
+        if (image == nullptr || image->data().size() == 0) {
             // AERROR << "camera message is nullptr";
             ImageUtil::InitBlendInfo(
                     blend_info_list[i],
@@ -153,6 +156,7 @@ bool RtcPublisherBrtc::SendFrame(
         std::cout << "RtcPublisherBrtc::SendFrame: stream all get input buffer failed." << std::endl;
     }
 
+    return true;
     if (stream_names.empty() == true) {
         std::cout << "RtcPublisherBrtc::SendFrame: request_stream_name is empty." << std::endl;
         return false;
@@ -165,7 +169,7 @@ bool RtcPublisherBrtc::SendFrame(
     //     std::cout << " stream_name:" << stream_name;
     // }
 
-    std::cout << std::endl << "----______________________________----" << std::endl;
+    // std::cout << std::endl << "----______________________________----" << std::endl;
 #endif
     for (auto stream_name : stream_names) {
         if (rtc_publisher_handle_map_.find(stream_name) == rtc_publisher_handle_map_.end()) {
@@ -198,6 +202,52 @@ bool RtcPublisherBrtc::SendFrame(
     }
 
     return true;
+}
+
+bool RtcPublisherBrtc::SendFrame(std::string stream_name, std::shared_ptr<apollo::drivers::Image> frame) {
+    if (rtc_publisher_handle_map_.find(stream_name) == rtc_publisher_handle_map_.end()) {
+        AERROR << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] stream:" << stream_name << " not exists.";
+        return false;
+    }
+
+    AERROR << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] send single stream start.";
+    // if (frame->data().size() == 0) {
+    //     return true;
+    // }
+
+    auto publisher_handle = rtc_publisher_handle_map_[stream_name];
+    MB_BLK dma_handle;
+    void* vir_addr = publisher_handle->p_video_encoder->get_input_buffer(dma_handle);
+    if (vir_addr == nullptr) {
+        AERROR << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] get input buffer failed.";
+        return false;
+    }
+    if (frame == nullptr || frame->data().size() == 0) {
+        uint32_t color_fmt = RK_FMT_YUV422_YUYV;
+        ImageUtil::Image dst_image = {1920, 1080, color_fmt, nullptr, nullptr};
+        dst_image.virtual_addr = vir_addr;
+        dst_image.data_block = dma_handle;
+        ImageUtil::QuickFill(dst_image, 0x000000);
+    } else {
+        memcpy(vir_addr, frame->data().data(), frame->data().size());
+    }
+
+    publisher_handle->p_video_encoder->put_input_buffer(dma_handle);
+    std::cout << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] send single stream end.";
+
+    return true;
+}
+
+void RtcPublisherBrtc::RequestSyncFrame(std::string stream_name) {
+    if (rtc_publisher_handle_map_.find(stream_name) == rtc_publisher_handle_map_.end()) {
+        AERROR << "RtcPublisherBrtc::RequestSyncFrame: [" << stream_name << "] stream:" << stream_name
+               << " not exists.";
+        return;
+    }
+    AERROR << "RtcPublisherBrtc::RequestSyncFrame: [" << stream_name << "] request sync frame.";
+    auto publisher_handle = rtc_publisher_handle_map_[stream_name];
+    if (publisher_handle->p_video_encoder != nullptr)
+        publisher_handle->p_video_encoder->requestSyncFrame();
 }
 
 bool RtcPublisherBrtc::SendUserMessage(const std::string& message) {
@@ -248,6 +298,8 @@ void RtcPublisherBrtc::FrameReady(
         return;
     }
 
+    // AERROR << "RtcPublisherBrtc::FrameReady: [" << name
+    //        << "] frame ready. frame_type:" << unsigned(static_cast<uint8_t>(frame_type));
     auto publisher_handle = rtc_publisher_handle_map_[name];
 
     // TODO:

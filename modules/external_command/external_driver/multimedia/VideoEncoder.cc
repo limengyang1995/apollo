@@ -66,7 +66,7 @@ bool VideoEncoder::init(uint32_t kbps, uint32_t gop) {
     // 创建编码通道
     ret = create_channel(kbps, gop);
     if (ret != RK_SUCCESS) {
-        // AERROR << "create venc channel failed, err:0x" << std::hex << ret;
+        AERROR << "create venc channel failed, err:0x" << std::hex << ret << std::dec;
         std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: create venc channel failed, err:0x" << std::hex
                   << ret << std::dec << std::endl;
         return ret;
@@ -79,17 +79,18 @@ bool VideoEncoder::init(uint32_t kbps, uint32_t gop) {
     stMbPoolCfg.bPreAlloc = RK_TRUE;  //  this must prealloc if attach enc output
     venc_pool_output_ = RK_MPI_MB_CreatePool(&stMbPoolCfg);
     if (venc_pool_output_ == MB_INVALID_POOLID) {
-        // AERROR << "create vencPoolOutput " << venc_channel_id_ << " failed!";
-        std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: create vencPoolOutput " << venc_channel_id_
-                  << " failed!" << std::endl;
+        AERROR << "create vencPoolOutput " << venc_channel_id_ << " failed!";
+        // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: create vencPoolOutput " << venc_channel_id_
+        //           << " failed!" << std::endl;
         return false;
     }
 
     ret = RK_MPI_VENC_AttachMbPool(venc_channel_id_, venc_pool_output_);
     if (ret != RK_SUCCESS) {
-        // AERROR << "RK_MPI_VENC_AttachMbPool fail:0x" << std::hex << ret;
-        std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: RK_MPI_VENC_AttachMbPool fail:0x" << std::hex << ret
-                  << std::dec << std::endl;
+        AERROR << "RK_MPI_VENC_AttachMbPool fail:0x" << std::hex << ret << std::dec;
+        // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: RK_MPI_VENC_AttachMbPool fail:0x" << std::hex <<
+        // ret
+        //           << std::dec << std::endl;
         release_inner();
         return false;
     }
@@ -132,9 +133,9 @@ bool VideoEncoder::stop() {
 
     ret = RK_MPI_VENC_DetachMbPool(venc_channel_id_);
     if (ret != RK_SUCCESS) {
-        // AERROR << "channel:" << venc_channel_id_ << "RK_MPI_VENC_DetachMbPool failed:0x" << std::hex << ret;
-        std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: channel:" << venc_channel_id_
-                  << "RK_MPI_VENC_DetachMbPool failed:0x" << std::hex << ret << std::dec << std::endl;
+        AERROR << "channel:" << venc_channel_id_ << "RK_MPI_VENC_DetachMbPool failed:0x" << std::hex << ret << std::dec;
+        // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: channel:" << venc_channel_id_
+        //           << "RK_MPI_VENC_DetachMbPool failed:0x" << std::hex << ret << std::dec << std::endl;
     }
 
     return true;
@@ -170,11 +171,11 @@ void *VideoEncoder::get_input_buffer(MB_BLK &dma_handle) {
 int VideoEncoder::put_input_buffer(MB_BLK &dma_handle) {
     RK_S32 ret;
     if (dma_handle == RK_NULL) {
-        std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: dma_handle is null!" << std::endl;
+        AERROR << "dma_handle is null!";
         return -1;
     }
     RK_MPI_SYS_MmzFlushCache(dma_handle, RK_FALSE);
-    std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]---------------------------" << std::endl;
+    // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]---------------------------" << std::endl;
     VIDEO_FRAME_INFO_S stFrame;
     memset(&stFrame, 0, sizeof(VIDEO_FRAME_INFO_S));
 
@@ -186,7 +187,7 @@ int VideoEncoder::put_input_buffer(MB_BLK &dma_handle) {
     stFrame.stVFrame.enPixelFormat = pixel_format_;
     ret = RK_MPI_VENC_SendFrame(venc_channel_id_, &stFrame, 150);  // warnning: if failed, this frame would be lost
     RK_MPI_MB_ReleaseMB(dma_handle);
-    std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]---------------------------" << std::endl;
+    // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]---------------------------" << std::endl;
     return ret;
 }
 
@@ -224,7 +225,17 @@ void VideoEncoder::put_avail_channel_id(uint32_t id) {
 bool VideoEncoder::setTargetBitrate(int64_t bps) {
     return true;
 }
-void VideoEncoder::requestSyncFrame() {}
+void VideoEncoder::requestSyncFrame() {
+    if (is_init_ == false || is_started_ == false) {
+        AERROR << "VideoEncoder is not init:" << is_init_ << " or not started:" << is_started_;
+        return;
+    }
+    // AERROR << "VideoEncoder::requestSyncFrame: [" << name_ << "]";
+    RK_S32 ret = RK_MPI_VENC_RequestIDR(venc_channel_id_, RK_FALSE);
+    if (ret != 0) {
+        AERROR << "RK_MPI_VENC_RequestIDR failed:0x" << std::hex << ret << std::dec;
+    }
+}
 
 int VideoEncoder::get_stream() {
 #if 0
@@ -273,6 +284,10 @@ int VideoEncoder::get_stream() {
 VideoEncoder::FrameType VideoEncoder::get_frame_type(VENC_PACK_S *pack_info) {
     VideoEncoder::FrameType frame_type = VideoEncoder::FrameType::P_FRAME;
     if (encode_codec_ == RK_VIDEO_ID_AVC) {
+        if (pack_info->DataType.enH264EType == H264E_NALU_IDRSLICE
+            || pack_info->DataType.enH264EType == H264E_NALU_ISLICE) {
+            return VideoEncoder::FrameType::I_FRAME;
+        }
         for (RK_U32 i = 0; i < pack_info->u32DataNum; i++) {
             if (pack_info->stPackInfo[i].u32PackType.enH264EType == H264E_NALU_IDRSLICE
                 || pack_info->stPackInfo[i].u32PackType.enH264EType == H264E_NALU_ISLICE) {
@@ -281,6 +296,10 @@ VideoEncoder::FrameType VideoEncoder::get_frame_type(VENC_PACK_S *pack_info) {
             }
         }
     } else if (encode_codec_ == RK_VIDEO_ID_HEVC) {
+        if (pack_info->DataType.enH265EType == H265E_NALU_IDRSLICE
+            || pack_info->DataType.enH265EType == H265E_NALU_ISLICE) {
+            return VideoEncoder::FrameType::I_FRAME;
+        }
         for (RK_U32 i = 0; i < pack_info->u32DataNum; i++) {
             if (pack_info->stPackInfo[i].u32PackType.enH265EType == H265E_NALU_IDRSLICE
                 || pack_info->stPackInfo[i].u32PackType.enH265EType == H265E_NALU_ISLICE) {
@@ -381,7 +400,7 @@ int32_t VideoEncoder::create_channel(uint32_t kbps, uint32_t gop) {
 
     uint32_t channel_id = get_avail_channel_id();
     if (channel_id >= VENC_MAX_CHN_NUM) {
-        // AERROR << "no available venc channel";:1
+        // AERROR << "no available venc channel";
         return -1;
     }
 

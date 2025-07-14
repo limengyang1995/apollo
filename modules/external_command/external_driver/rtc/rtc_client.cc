@@ -43,6 +43,7 @@ bool RtcClient::CreateClient(
     s.AudioINChannel = 1;
     s.AudioINFrequency = 16000;
     // s.ImageINType = RTC_IMAGE_TYPE_JPEG;
+    s.ImageINType = RTC_IMAGE_TYPE_H264;
     s.ImageOUTType = RTC_IMAGE_TYPE_H264;
     s.ConnectionTimeoutMs = 100;
     s.ReadTimeoutMs = 100;
@@ -78,18 +79,21 @@ bool RtcClient::CreateClient(
 
     if (!g_BrtcClient->loginRoom("2131", uid.c_str(), display_name.c_str(), "token")) {
         AERROR << "loginRoom failed";
-        std::cout << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] loginRoom failed." << std::endl;
+        AERROR << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] loginRoom failed.";
         return false;
     }
+
+    g_mylistener.SetClientHandle(this);
 
     // g_BrtcClient->startPublish();
     if (camera_name == "all") {
         AERROR << "listener set for all camera";
         SetListener(g_BrtcClient, g_mylistener);
-        std::cout << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] listener set for all camera" << std::endl;
+        AERROR << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] listener set for all camera";
     }
 
-    std::cout << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] loginRoom success." << std::endl;
+    camera_name_ = camera_name;
+    AERROR << "RtcPublisherBrtc::CreateClient: [" << camera_name << "] loginRoom success.";
     // SetListener(g_BrtcClient, g_mylistener);
     return true;
 }
@@ -98,28 +102,38 @@ void MyListener::OnRtcMessage(RtcMessage& msg) {
 
     // std::lock_guard<std::mutex> lock(msg_mutex);
     switch (msg.msgType) {
+    case RtcMessageType::RTC_ROOM_EVENT_ON_USER_JOINED_ROOM:
+        AERROR << "OnRtcMessage[" << msg.data.feedId << "] user joined room";
+        break;
     case RtcMessageType::RTC_ROOM_EVENT_ON_USER_MESSAGE:
 
         recieve_msg = msg.extra_info;
         re_mark = true;
         feed_id = msg.data.feedId;
         AERROR << "user message: " << recieve_msg;
-        std::cout << "OnRtcMessage[" << feed_id << "]: " << recieve_msg << std::endl;
+        AERROR << "OnRtcMessage[" << feed_id << "]: " << recieve_msg;
+
         break;
 
     case RtcMessageType::RTC_ROOM_EVENT_ON_USER_LEAVING_ROOM:
         user_leaving_mark = true;
         leaving_user_id = msg.data.feedId;
         AINFO << msg.data.feedId;
-        std::cout << "OnRtcMessage[" << leaving_user_id << "] user is leaving room" << std::endl;
+        AERROR << "OnRtcMessage[" << leaving_user_id << "] user is leaving room";
         break;
     case RtcMessageType::RTC_ROOM_EVENT_FORCE_KEY_FRAME:
+        AERROR << "OnRtcMessage force key frame!";
+        if (client_ != nullptr) {
+            client_->request_sync_frame();
+        }
         // TODO:处理关键帧的逻辑
         break;
     case RtcMessageType::RTC_ROOM_EVENT_AVAILABLE_SEND_BITRATE:
+        AERROR << "OnRtcMessage available send bitrate!";
         // TODO:处理可用发送码率的逻辑
         break;
     default:
+        AERROR << "OnRtcMessage[" << msg.msgType << "] unknow message";
         break;
     }
 }

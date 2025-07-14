@@ -188,10 +188,11 @@ void ExternalDriver::SendDataToCloud() {
             std::string gear = std::to_string(chassis_.gear_location());
             std::string steer = std::to_string(std::round(chassis_.steering_percentage()));
             std::string throttle = std::to_string(std::round(chassis_.throttle_percentage()));
+
             std::string brake = std::to_string(std::round(chassis_.brake_percentage()));
             std::string driving_mode = std::to_string(chassis_.driving_mode());
             std::string speed = std::to_string(std::round(chassis_.speed_mps()));
-            // std::string speed = std::to_string(10);
+
             std::string epb = std::to_string(chassis_.parking_brake());
             std::string left_turn = std::to_string(chassis_.left_turn_signal());
             std::string right_turn = std::to_string(chassis_.right_turn_signal());
@@ -213,7 +214,16 @@ void ExternalDriver::SendDataToCloud() {
                        {"left_turn", left_turn},
                        {"right_turn", right_turn},
                        {"low_beam", low_beam},
-                       {"soc", soc}};
+                       {"soc", soc},
+                       {"cpu_temp", "25.0"},
+                       {"cpu_load", "25.0%"},
+                       {"lidar", "online"},
+                       {"memory", "50%"},
+                       {"disk", "50%"},
+                       {"vehicle_status", "normal"},
+                       {"weather", "sunny"}
+
+                    };
             AINFO << "vehicle data: " << vehicle_data.dump();
 #ifndef ENABLE_USE_GRPC
             RtcPublisherBrtc::GetInstance().SendUserMessage(vehicle_data.dump());
@@ -254,7 +264,18 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         imgs.insert(std::make_pair(idx_cam_map_[i], camera_msg));
     }
 #ifndef ENABLE_USE_GRPC
-    RtcPublisherBrtc::GetInstance().SendFrame(imgs, request_camera);
+    AERROR << "current publish_camera_name_:" << publish_camera_name_;
+    if (publish_camera_name_ == "all") {
+        RtcPublisherBrtc::GetInstance().SendFrame(imgs, request_camera);
+    } else {
+        AERROR << " send signal camera:" << publish_camera_name_ << " image";
+        std::shared_ptr<apollo::drivers::Image> image_ptr = nullptr;
+        if (imgs.find(publish_camera_name_) != imgs.end()) {
+            image_ptr = imgs[publish_camera_name_];
+        }
+        RtcPublisherBrtc::GetInstance().SendFrame(std::string("all"), image_ptr);
+    }
+
 #else
     RtcPublisherClient::GetInst().SendFrame(imgs, request_camera);
 #endif
@@ -302,8 +323,21 @@ bool ExternalDriver::Proc() {
                 SendCloudControlCommand(0, cloud_gear_position, 0.0, 0.0, 0.0, 0, 0, 0, 0);
             }
         }
-        if (command.contains("active_cameras")) {
-            request_camera = command["active_cameras"].get<std::vector<std::string>>();
+        if (command.contains("camera")) {
+            std::string publish_camera_name = publish_camera_name_;
+            if (command["camera"] == "all") {
+                publish_camera_name = "all";
+            } else {
+                AERROR << "change camera :" << command["camera"];
+                if (cam_idx_map_.find(command["camera"]) != cam_idx_map_.end()) {
+                    publish_camera_name = command["camera"];
+                }
+            }
+            publish_camera_name_ = publish_camera_name;
+        }
+
+        if (command.contains("cameras")) {
+            request_camera = command["cameras"].get<std::vector<std::string>>();
 
             // for (auto& cam : request_camera_.items()){
             //     request_camera.push_back(cam.value());

@@ -17,6 +17,7 @@
 #include "cyber/cyber.h"
 namespace apollo {
 namespace external_command {
+class RtcClient;
 
 class MyListener : public IRtcMessageListener {
 public:
@@ -33,6 +34,12 @@ public:
 
 public:
     void OnRtcMessage(RtcMessage& msg) override;
+    void SetClientHandle(RtcClient* client) {
+        client_ = client;
+    }
+
+private:
+    RtcClient* client_{nullptr};
 };
 
 class RtcClient {
@@ -49,6 +56,16 @@ public:
             int32_t video_maxkbps,
             int32_t image_width,
             int32_t image_height);
+    void register_sync_frame_cb(std::function<void(std::string name)> callback) {
+        sync_frame_callback_ = std::move(callback);
+    }
+
+    void request_sync_frame() {
+        if (sync_frame_callback_ != nullptr) {
+            sync_frame_callback_(camera_name_);
+        }
+    }
+
     MyListener g_mylistener;
     baidurtc::BaiduRtcRoomClient* g_BrtcClient;
 
@@ -61,6 +78,8 @@ private:
     typedef void f_enable(int e);
 
     RtcParameterSettings s;
+    std::function<void(std::string name)> sync_frame_callback_;
+    std::string camera_name_;
 
     // RemoteConfig config;
 };

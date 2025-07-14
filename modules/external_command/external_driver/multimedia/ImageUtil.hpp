@@ -61,12 +61,12 @@ public:
         blend_info.data_valid = false;
         PIC_BUF_ATTR_S attr;
         MB_PIC_CAL_S pic_cal;
-        attr.u32Width = width;
-        attr.u32Height = height;
         if (width == 0 || height == 0) {
             width = 1920;
             height = 1080;
         }
+        attr.u32Width = width;
+        attr.u32Height = height;
         attr.enPixelFormat = static_cast<PIXEL_FORMAT_E>(color_fmt);
         attr.enCompMode = COMPRESS_MODE_NONE;
         if (data != nullptr) {
@@ -114,18 +114,143 @@ public:
         return 0;
     }
 
-    static int Blend(std::vector<BlendInfo> &blend_infos, ImageUtil::Image &dst_image) {
+    /**
+     * @brief 快速填充图像区域
+     *
+     * 使用指定的颜色快速填充图像区域。
+     *
+     * @param dst_image 目标图像对象
+     * @param color 填充颜色
+     *
+     * @return 填充结果，0表示成功，-1表示失败
+     */
+    static int QuickFill(ImageUtil::Image &dst_image, uint32_t color) {
+        PIXEL_FORMAT_E dst_color_fmt = static_cast<PIXEL_FORMAT_E>(dst_image.color_fmt);
+        bool need_convert = true;
+        if (dst_color_fmt >= RK_FMT_RGB565 && dst_color_fmt <= RK_FMT_RGB_BUTT && dst_color_fmt != RK_FMT_ARGB1555
+            && dst_color_fmt != RK_FMT_BGRA5551) {
+            need_convert = false;
+        }
+
+        RK_S32 ret = RK_SUCCESS;
+
+        TDE_SURFACE_S src_surface;
+        src_surface.enColorFmt = RK_FMT_RGB565;
+        src_surface.u32Width = dst_image.width;
+        src_surface.u32Height = dst_image.height;
+        src_surface.enComprocessMode = COMPRESS_MODE_NONE;
+
+        TDE_RECT_S src_rect;
+        memset(&src_rect, 0, sizeof(src_rect));
+        src_rect.s32Xpos = 0;
+        src_rect.s32Ypos = 0;
+        src_rect.u32Width = src_surface.u32Width;
+        src_rect.u32Height = src_surface.u32Height;
+
+        TDE_SURFACE_S dst_surface;
+        memset(&dst_surface, 0, sizeof(dst_surface));
+        dst_surface.pMbBlk = dst_image.data_block;
+        dst_surface.enColorFmt = dst_color_fmt;
+        dst_surface.u32Height = dst_image.height;
+        dst_surface.u32Width = dst_image.width;
+        dst_surface.enComprocessMode = COMPRESS_MODE_NONE;
+
+        TDE_RECT_S dst_rect;
+        dst_rect.s32Xpos = 0;
+        dst_rect.s32Ypos = 0;
+        dst_rect.u32Width = src_surface.u32Width;
+        dst_rect.u32Height = src_surface.u32Height;
+
         TDE_HANDLE tde_handle = RK_TDE_BeginJob();
         if (RK_ERR_TDE_INVALID_HANDLE == tde_handle) {
             AERROR << "invalid tde handle";
             return -1;
         }
 
-        AERROR << "blend src info ++++++++++++++++++++++++++++++++";
-        for (auto blend_info : blend_infos) {
-            blend_info.debug_print();
+        if (need_convert == true) {
+            PIC_BUF_ATTR_S attr;
+            MB_PIC_CAL_S pic_cal;
+            attr.u32Width = dst_image.width;
+            attr.u32Height = dst_image.height;
+            if (attr.u32Width == 0 || attr.u32Height == 0) {
+                attr.u32Width = 1920;
+                attr.u32Height = 1080;
+            }
+            attr.enPixelFormat = RK_FMT_RGB565;
+            attr.enCompMode = COMPRESS_MODE_NONE;
+            ret = RK_MPI_CAL_TDE_GetPicBufferSize(&attr, &pic_cal);
+            if (ret != RK_SUCCESS) {
+                AERROR << "RK_MPI_CAL_TDE_GetPicBufferSize failed";
+                return -1;
+            }
+            ret = RK_MPI_SYS_MmzAlloc(&src_surface.pMbBlk, RK_NULL, RK_NULL, pic_cal.u32MBSize);
+            if (ret != RK_SUCCESS) {
+                AERROR << "RK_MPI_SYS_MmzAlloc failed";
+                return -1;
+            }
+
+            ret = RK_TDE_QuickFill(tde_handle, &dst_surface, &src_rect, color);
+            if (ret != RK_SUCCESS) {
+                AERROR << "RTK_TDE_QuickFill failed, ret = " << std::hex << ret << std::dec;
+                RK_TDE_CancelJob(tde_handle);
+                RK_MPI_SYS_MmzFree(src_surface.pMbBlk);
+                return -1;
+            }
+
+            ret = RK_TDE_QuickCopy(tde_handle, &src_surface, &src_rect, &dst_surface, &src_rect);
+            if (ret != RK_SUCCESS) {
+                AERROR << "RK_TDE_QuickCopy failed, ret = " << std::hex << ret << std::dec;
+                RK_TDE_CancelJob(tde_handle);
+                RK_MPI_SYS_MmzFree(src_surface.pMbBlk);
+                return -1;
+            }
+
+        } else {
+            ret = RK_TDE_QuickFill(tde_handle, &dst_surface, &src_rect, color);
+            if (ret != RK_SUCCESS) {
+                AERROR << "RK_TDE_QuickFill failed, ret = " << std::hex << ret << std::dec;
+                RK_TDE_CancelJob(tde_handle);
+                RK_MPI_SYS_MmzFree(src_surface.pMbBlk);
+                return -1;
+            }
         }
-        AERROR << "blend src info --------------------------------";
+
+        ret = RK_TDE_EndJob(tde_handle, RK_FALSE, RK_FALSE, 0);
+        if (ret != RK_SUCCESS) {
+            AERROR << "RK_TDE_EndJob failed, ret = " << std::hex << ret;
+            RK_TDE_CancelJob(tde_handle);
+            RK_MPI_SYS_MmzFree(src_surface.pMbBlk);
+            return -1;
+        }
+
+        AERROR << " before wait for done ";
+        ret = RK_TDE_WaitForDone(tde_handle);
+        if (ret != RK_SUCCESS) {
+            AERROR << "RK_TDE_WaitForDone failed, ret = " << std::hex << ret;
+            return -1;
+        }
+
+        if (src_surface.pMbBlk != nullptr)
+            RK_MPI_SYS_MmzFree(src_surface.pMbBlk);
+
+        AERROR << " after wait for done ";
+        return true;
+    }
+
+    static int Blend(std::vector<BlendInfo> &blend_infos, ImageUtil::Image &dst_image) {
+        QuickFill(dst_image, 0x00000000);
+
+        TDE_HANDLE tde_handle = RK_TDE_BeginJob();
+        if (RK_ERR_TDE_INVALID_HANDLE == tde_handle) {
+            AERROR << "invalid tde handle";
+            return -1;
+        }
+
+        // AERROR << "blend src info ++++++++++++++++++++++++++++++++";
+        // for (auto blend_info : blend_infos) {
+        //     blend_info.debug_print();
+        // }
+        // AERROR << "blend src info --------------------------------";
 
         RK_S32 ret = RK_SUCCESS;
         TDE_SURFACE_S dst_surface;

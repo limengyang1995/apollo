@@ -16,8 +16,8 @@ class RtcPublisherBrtc {
 public:
     struct RtcPublisherHandle {
         std::string name;
-        std::shared_ptr<RtcClient> p_rtc_client;
-        std::shared_ptr<VideoEncoder> p_video_encoder;
+        std::shared_ptr<RtcClient> p_rtc_client{nullptr};
+        std::shared_ptr<VideoEncoder> p_video_encoder{nullptr};
     };
 
     struct CreateParam {
@@ -64,8 +64,11 @@ public:
     bool SendFrame(
             std::map<std::string, std::shared_ptr<apollo::drivers::Image>>& frames,
             const std::vector<std::string>& stream_names);
+    bool SendFrame(std::string stream_name, std::shared_ptr<apollo::drivers::Image> frame);
     bool SendUserMessage(const std::string& message);
     bool RecvUserMessage(std::string& message, bool& is_new_msg);
+
+    void RequestSyncFrame(std::string stream_name);
 
     void FrameReady(std::string name, uint8_t* data, int size, VideoEncoder::FrameType frame_type, uint64_t timestamp);
 
