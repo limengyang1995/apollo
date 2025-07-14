@@ -13,13 +13,23 @@ lateral_collision_distance: 3
 longitudinal_collision_distance: 10
 
 destination_path: "/apollo_workspace/modules/external_command/external_driver/conf/destination.json"
-channel{
-    input_camera_channel_name: "/apollo/sensor/camera/front_fisheye/image"
-    input_camera_channel_name: "/apollo/sensor/camera/right_front_fisheye/image"
-    input_camera_channel_name: "/apollo/sensor/camera/right_fisheye/image"
-    input_camera_channel_name: "/apollo/sensor/camera/rear_fisheye/image"
-    input_camera_channel_name: "/apollo/sensor/camera/left_fisheye/image"
-    input_camera_channel_name: "/apollo/sensor/camera/left_front_fisheye/image"
 
-}
+channel : [
+    {channel_name : "front",       input_camera_channel_name : "/apollo/sensor/camera/front_fisheye/image"},
+    {channel_name : "right_front", input_camera_channel_name : "/apollo/sensor/camera/right_front_fisheye/image"},
+    {channel_name : "right",       input_camera_channel_name : "/apollo/sensor/camera/right_fisheye/image"},
+    {channel_name : "rear",        input_camera_channel_name : "/apollo/sensor/camera/rear/image"},
+    {channel_name : "left",        input_camera_channel_name : "/apollo/sensor/camera/left_fisheye/image"},
+    {channel_name : "left_front",  input_camera_channel_name : "/apollo/sensor/camera/left_front_fisheye/image"}
+]
+
 enable_rtc_log:false
+
+stitch_param : [
+    {camera_name : "front" ,      x : 480,  y : 0,   width : 960, height : 720},
+    {camera_name : "right_front", x : 1440, y : 0,   width : 480, height : 360},
+    {camera_name : "right",       x : 1440, y : 360, width : 480, height : 360},
+    {camera_name : "rear",        x : 800,  y : 0,   width : 320, height : 180, display_order : 1},
+    {camera_name : "left",        x : 0,    y : 360, width : 480, height : 360},
+    {camera_name : "left_front",  x : 0,    y : 0,   width : 480, height : 360}
+]

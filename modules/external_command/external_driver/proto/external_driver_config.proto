@@ -36,13 +36,26 @@ message ExternalDriverConfig {
   optional int32 fps = 25;
   optional string image_topic = 26;
   optional string destination_path = 27;
-  optional Channel channel = 28;
+  repeated Channel channel = 28;
   optional bool enable_rtc_log = 29;
   optional double lateral_collision_distance = 30;
   optional double longitudinal_collision_distance = 31;
 
+  repeated StichParam stitch_param = 32;
+
 }
 
 message Channel {
-  repeated string input_camera_channel_name = 1;
+  required string channel_name = 1;
+  required string input_camera_channel_name = 2;
+}
+
+message StichParam{
+  required string camera_name = 1;
+  required int32 x = 2;
+  required int32 y = 3;
+  required int32 width = 4;
+  required int32 height = 5;
+  optional int32 display_order = 6; // display order, default: 0 -> lowest layer
+  optional uint32 bg_color = 7;  //0xAARRGGBB
 }

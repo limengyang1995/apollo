@@ -124,6 +124,21 @@ void ExternalDriver::CreateRtcPublisher(const ExternalDriverConfig& config) {
         param.origin_width = origin_width;
         param.origin_height = origin_height;
         RtcPublisherBrtc::GetInstance().CreateClient(param);
+        if (stream_name == "all") {
+            std::vector<RtcPublisherBrtc::StitchParam> stitch_param;
+            for (auto config_stitch_param : config.stitch_param()) {
+                RtcPublisherBrtc::StitchParam stitch_param_tmp;
+                stitch_param_tmp.camera_name = config_stitch_param.camera_name();
+                stitch_param_tmp.dst_rect.x = config_stitch_param.x();
+                stitch_param_tmp.dst_rect.y = config_stitch_param.y();
+                stitch_param_tmp.dst_rect.width = config_stitch_param.width();
+                stitch_param_tmp.dst_rect.height = config_stitch_param.height();
+                stitch_param_tmp.display_order = config_stitch_param.display_order();
+                stitch_param_tmp.bg_color = config_stitch_param.bg_color();
+                stitch_param.push_back(stitch_param_tmp);
+            }
+            RtcPublisherBrtc::GetInstance().SetStitchParam(stitch_param);
+        }
 #else
 
         RtcPublisherClient::GetInst().Create(
@@ -144,15 +159,18 @@ void ExternalDriver::CreateRtcPublisher(const ExternalDriverConfig& config) {
 }
 
 bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
-    for (const auto& channel : config.channel().input_camera_channel_name()) {
+    for (const auto& channel : config.channel()) {
+        std::string input_camera_channel_name = channel.input_camera_channel_name();
         std::shared_ptr<cyber::Reader<apollo::drivers::Image>> reader_;
-        if (channel == "/apollo/sensor/camera/left_front_fisheye/image") {
+        if (input_camera_channel_name == "/apollo/sensor/camera/left_front_fisheye/image") {
             reader_ = node_->CreateReader<apollo::drivers::Image>(
-                    channel, [&](const std::shared_ptr<apollo::drivers::Image>& image) { ProcessImage(image); });
+                    input_camera_channel_name,
+                    [&](const std::shared_ptr<apollo::drivers::Image>& image) { ProcessImage(image); });
         } else {
-            reader_ = node_->CreateReader<apollo::drivers::Image>(channel);
+            reader_ = node_->CreateReader<apollo::drivers::Image>(input_camera_channel_name);
         }
-        readers_.emplace_back(reader_);
+        // readers_.emplace_back(reader_);
+        readers_[input_camera_channel_name] = reader_;
     }
 
     return true;
@@ -330,19 +348,19 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
 
     uint32_t color_fmt = RK_FMT_YUV422_YUYV;
 
-    for (u_int16_t i = 0; i < readers_.size(); ++i) {
-        readers_[i]->Observe();
-        const auto camera_msg = readers_[i]->GetLatestObserved();
+    for (auto reader : readers_) {
+        reader.second->Observe();
+        const auto camera_msg = reader.second->GetLatestObserved();
         if (camera_msg == nullptr) {
             AERROR << "camera message is nullptr";
             // return false;
         }
-        imgs.insert(std::make_pair(idx_cam_map_[i], camera_msg));
+        imgs.insert(std::make_pair(reader.first, camera_msg));
     }
 #ifndef ENABLE_USE_GRPC
     AERROR << "current publish_camera_name_:" << publish_camera_name_;
     if (publish_camera_name_ == "all") {
-        RtcPublisherBrtc::GetInstance().SendFrame(imgs, request_camera);
+        RtcPublisherBrtc::GetInstance().SendFrame(imgs);
     } else {
         AERROR << " send signal camera:" << publish_camera_name_ << " image";
         std::shared_ptr<apollo::drivers::Image> image_ptr = nullptr;
@@ -405,7 +423,7 @@ bool ExternalDriver::Proc() {
                 publish_camera_name = "all";
             } else {
                 AERROR << "change camera :" << command["camera"];
-                if (cam_idx_map_.find(command["camera"]) != cam_idx_map_.end()) {
+                if (readers_.find(command["camera"]) != readers_.end()) {
                     publish_camera_name = command["camera"];
                 }
             }

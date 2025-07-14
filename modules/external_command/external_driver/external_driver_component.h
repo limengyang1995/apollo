@@ -66,9 +66,10 @@ private:
 
     std::string publish_camera_name_ = "all";
 
-    std::map<std::string, int> cam_idx_map_
-            = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"rear", 3}, {"left", 4}, {"left_front", 5}};
-    std::string idx_cam_map_[6] = {"front", "right_front", "right", "rear", "left", "left_front"};
+    // std::map<std::string, int> cam_idx_map_;
+    // std::vector<std::string> idx_cam_map_;
+    // // = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"rear", 3}, {"left", 4}, {"left_front", 5}};
+    // // std::string idx_cam_map_[6] = {"front", "right_front", "right", "rear", "left", "left_front"};
 
     void CreateRtcPublisher(const ExternalDriverConfig& config);
 
@@ -79,7 +80,9 @@ private:
     std::string destination;
     std::string id;
     apollo::external_command::ExternalDriverConfig config_;
-    std::vector<std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
+    // std::vector<std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
+    std::map<std::string, std::shared_ptr<cyber::Reader<apollo::drivers::Image>>> readers_;
+
     nlohmann::json point;
 
     std::shared_ptr<cyber::Reader<localization::LocalizationEstimate>> localization_reader_pose;
@@ -109,6 +112,8 @@ private:
     // void CreateRtcClient(const ExternalDriverConfig& config);
     void IsNetworkDown();
     std::vector<std::string> get_system_metrics();
+
+    // void LoadConfig(const std::string& config_file_path);
 
 private:
     // template <typename T>

@@ -79,32 +79,31 @@ bool RtcPublisherBrtc::DestroyClient(const std::string& stream_name) {
     return true;
 }
 
-bool RtcPublisherBrtc::SendFrame(
-        std::map<std::string, std::shared_ptr<apollo::drivers::Image>>& frames,
-        const std::vector<std::string>& stream_names) {
+bool RtcPublisherBrtc::SendFrame(std::map<std::string, std::shared_ptr<apollo::drivers::Image>>& frames) {
     // std::map<std::string, rtc_publisher::FrameInfo*> image_map;
     // std::map<std::string, RtcPublisherBrtc::FrameInfo*> image_map;
     // for (auto frame : frames) {
     //     image_map.insert(std::make_pair(frame.camera_name, &frame));
     // }
 
+    if (stitch_param_.empty()) {
+        std::cout << "RtcPublisherBrtc::SendFrame: stitch_param is empty." << std::endl;
+        return false;
+    }
     std::cout << "RtcPublisherBrtc::SendFrame: send all stream start." << std::endl;
-    std::vector<ImageUtil::BlendInfo> blend_info_list(6);
+    std::vector<ImageUtil::BlendInfo> blend_info_list(stitch_param_.size());
     uint32_t color_fmt = RK_FMT_YUV422_YUYV;
     int i = 0;
     // for (auto it = frames.begin(); it != frames.end(); ++it) {
     // for (auto it = cam_idx_map_.begin(); it != cam_idx_map_.end(); ++it) {
-    for (auto cam_name : cam_order_list_) {
+    // for (auto cam_name : cam_order_list_) {
+    for (auto stitch_param : stitch_param_) {
+        std::string cam_name = stitch_param.camera_name;
         if (frames.find(cam_name) == frames.end()) {
             continue;
         }
-        // auto image = it->second;
         auto image = frames[cam_name];
-        // if (cam_idx_map_.find(it->first) == cam_idx_map_.end()) {
-        //     i++;
-        //     continue;
-        // }
-        auto stitch_rect = stitch_rect_[cam_idx_map_[cam_name]];
+        auto& stitch_rect = stitch_param.dst_rect;
         if (image == nullptr || image->data().size() == 0) {
             // AERROR << "camera message is nullptr";
             ImageUtil::InitBlendInfo(
@@ -154,51 +153,6 @@ bool RtcPublisherBrtc::SendFrame(
         std::cout << "RtcPublisherBrtc::SendFrame: send all stream success." << std::endl;
     } else {
         std::cout << "RtcPublisherBrtc::SendFrame: stream all get input buffer failed." << std::endl;
-    }
-
-    return true;
-    if (stream_names.empty() == true) {
-        std::cout << "RtcPublisherBrtc::SendFrame: request_stream_name is empty." << std::endl;
-        return false;
-    }
-#if 1
-    // std::cout << "++++______________________________++++" << std::endl;
-    // std::cout << "request: frame_info size:" << request.frame_info().size()
-    //           << " stream_name size :" << request.request_stream_name().size() << std::endl;
-    // for (auto stream_name : request.request_stream_name()) {
-    //     std::cout << " stream_name:" << stream_name;
-    // }
-
-    // std::cout << std::endl << "----______________________________----" << std::endl;
-#endif
-    for (auto stream_name : stream_names) {
-        if (rtc_publisher_handle_map_.find(stream_name) == rtc_publisher_handle_map_.end()) {
-            std::cout << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] stream:" << stream_name
-                      << " not exists.";
-            continue;
-        }
-
-        std::cout << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] send single stream start.";
-        // if (image_map.find(stream_name) == image_map.end()) {
-        //     continue;
-        // }
-        auto image = frames[stream_name];
-        if (image->data().size() == 0) {
-            continue;
-        }
-        auto publisher_handle = rtc_publisher_handle_map_[stream_name];
-        MB_BLK dma_handle;
-        void* vir_addr = publisher_handle->p_video_encoder->get_input_buffer(dma_handle);
-        if (vir_addr == nullptr) {
-            std::cout << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] get input buffer failed.";
-            continue;
-        } else {
-            std::cout << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] get input buffer success.";
-        }
-        memcpy(vir_addr, image->data().data(),
-               image->data().size());  // TODO: attention would cause memory leak
-        publisher_handle->p_video_encoder->put_input_buffer(dma_handle);
-        std::cout << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] send single stream end.";
     }
 
     return true;

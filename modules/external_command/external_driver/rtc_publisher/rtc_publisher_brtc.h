@@ -34,6 +34,13 @@ public:
         uint32_t origin_width;
         uint32_t origin_height;
     };
+
+    struct StitchParam {
+        std::string camera_name;
+        ImageUtil::Rect dst_rect;
+        int32_t display_order;
+        uint32_t bg_color;
+    };
     // struct FrameInfo {
     //     std::string camera_name;
     //     char* frame_data;
@@ -61,9 +68,9 @@ public:
 
     bool CreateClient(const RtcPublisherBrtc::CreateParam& param);
     bool DestroyClient(const std::string& stream_name);
-    bool SendFrame(
-            std::map<std::string, std::shared_ptr<apollo::drivers::Image>>& frames,
-            const std::vector<std::string>& stream_names);
+
+    bool SendFrame(std::map<std::string, std::shared_ptr<apollo::drivers::Image>>& frames);
+
     bool SendFrame(std::string stream_name, std::shared_ptr<apollo::drivers::Image> frame);
     bool SendUserMessage(const std::string& message);
     bool RecvUserMessage(std::string& message, bool& is_new_msg);
@@ -72,21 +79,32 @@ public:
 
     void FrameReady(std::string name, uint8_t* data, int size, VideoEncoder::FrameType frame_type, uint64_t timestamp);
 
+    void SetStitchParam(std::vector<StitchParam>& stitch_rect) {
+        stitch_param_.clear();
+        stitch_param_ = stitch_rect;
+        std::sort(stitch_param_.begin(), stitch_param_.end(), [](const auto& a, const auto& b) {
+            return a.display_order < b.display_order;
+        });
+    }
+
 private:
     RtcPublisherBrtc() = default;
     std::map<std::string, std::shared_ptr<RtcPublisherBrtc::RtcPublisherHandle>> rtc_publisher_handle_map_;
 
-    ImageUtil::Rect stitch_rect_[6]
-            = {{480, 0, 960, 720},
-               {1440, 0, 480, 360},
-               {1440, 360, 480, 360},
-               {800, 0, 320, 180},
-               {0, 360, 480, 360},
-               {0, 0, 480, 360}};
+    // std::map<std::string, ImageUtil::Rect> stitch_rect_;
+    std::vector<StitchParam> stitch_param_;
 
-    std::map<std::string, int> cam_idx_map_
-            = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"left", 4}, {"left_front", 5}, {"rear", 3}};
-    std::vector<std::string> cam_order_list_ = {"front", "right_front", "right", "left", "left_front", "rear"};
+    // ImageUtil::Rect stitch_rect_[6]
+    //         = {{480, 0, 960, 720},
+    //            {1440, 0, 480, 360},
+    //            {1440, 360, 480, 360},
+    //            {800, 0, 320, 180},
+    //            {0, 360, 480, 360},
+    //            {0, 0, 480, 360}};
+
+    // std::map<std::string, int> cam_idx_map_
+    //         = {{"front", 0}, {"right_front", 1}, {"right", 2}, {"left", 4}, {"left_front", 5}, {"back", 3}};
+    // std::vector<std::string> cam_order_list_ = {"front", "right_front", "right", "left", "left_front", "rear"};
     std::vector<std::string> rtc_id_list_;
 
     void write_data_to_file(const std::string& filename, const void* data, size_t size) {

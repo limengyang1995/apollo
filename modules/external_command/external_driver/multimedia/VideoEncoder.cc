@@ -16,14 +16,15 @@ bool VideoEncoder::init(uint32_t kbps, uint32_t gop) {
     MB_POOL_CONFIG_S stMbPoolCfg;
 
     if (encode_codec_ != RK_VIDEO_ID_AVC && encode_codec_ != RK_VIDEO_ID_HEVC) {
-        // AERROR << "not suported codec: " << encode_codec_;
-        std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: not suported codec: " << encode_codec_ << std::endl;
+        AERROR << "not suported codec: " << encode_codec_;
+        // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: not suported codec: " << encode_codec_ <<
+        // std::endl;
         return false;
     }
 
-    // AERROR << "src:[" << input_width_ << "|" << input_height_;
-    std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: src:[" << input_width_ << "|" << input_height_
-              << std::endl;
+    AERROR << "src:[" << input_width_ << "|" << input_height_;
+    // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: src:[" << input_width_ << "|" << input_height_
+    //           << std::endl;
 
     PIC_BUF_ATTR_S stPicBufAttr;
     MB_PIC_CAL_S stMbPicCalResult;
@@ -35,15 +36,17 @@ bool VideoEncoder::init(uint32_t kbps, uint32_t gop) {
     stPicBufAttr.enCompMode = COMPRESS_MODE_NONE;
     ret = RK_MPI_CAL_COMM_GetPicBufferSize(&stPicBufAttr, &stMbPicCalResult);
     if (ret != RK_SUCCESS) {
-        // AERROR << "get picture buffer size failed, err:0x" << std::hex << ret;
-        std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: get picture buffer size failed, err:0x" << std::hex
-                  << ret << std::dec << std::endl;
+        AERROR << "get picture buffer size failed, err:0x" << std::hex << ret << std::dec;
+        // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: get picture buffer size failed, err:0x" <<
+        // std::hex
+        //           << ret << std::dec << std::endl;
         return false;
     }
     pre_alloc_buffer_size_ = stMbPicCalResult.u32MBSize;
 
-    std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: calc picture size:" << pre_alloc_buffer_size_
-              << " vir_w:" << stMbPicCalResult.u32VirWidth << " vir_h:" << stMbPicCalResult.u32VirHeight << std::endl;
+    // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: calc picture size:" << pre_alloc_buffer_size_
+    //           << " vir_w:" << stMbPicCalResult.u32VirWidth << " vir_h:" << stMbPicCalResult.u32VirHeight <<
+    //           std::endl;
 
     // AERROR << "calc picture size:" << pre_alloc_buffer_size_;
 
@@ -55,8 +58,8 @@ bool VideoEncoder::init(uint32_t kbps, uint32_t gop) {
     stMbPoolCfg.bPreAlloc = RK_TRUE;
     venc_pool_input_ = RK_MPI_MB_CreatePool(&stMbPoolCfg);
     if (venc_pool_input_ == MB_INVALID_POOLID) {
-        // AERROR << "create vencPoolInput failed!";
-        std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: create vencPoolInput failed!" << std::endl;
+        AERROR << "create vencPoolInput failed!";
+        // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: create vencPoolInput failed!" << std::endl;
         return false;
     }
 
@@ -67,8 +70,8 @@ bool VideoEncoder::init(uint32_t kbps, uint32_t gop) {
     ret = create_channel(kbps, gop);
     if (ret != RK_SUCCESS) {
         AERROR << "create venc channel failed, err:0x" << std::hex << ret << std::dec;
-        std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: create venc channel failed, err:0x" << std::hex
-                  << ret << std::dec << std::endl;
+        // std::cout << "[" << __FUNCTION__ << "|" << __LINE__ << "]: create venc channel failed, err:0x" << std::hex
+        //           << ret << std::dec << std::endl;
         return ret;
     }
 
