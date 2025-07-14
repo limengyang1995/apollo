@@ -56,7 +56,7 @@ LocalizationLidarProcess::LocalizationLidarProcess()
       location_covariance_(Matrix3D::Zero()),
       lidar_status_(LidarState::NOT_VALID),
       reinit_flag_(false),
-      imu_lidar_max_delay_time_(0.5),
+      imu_lidar_max_delay_time_(1.0),
       is_unstable_reset_(true),
       unstable_count_(0),
       unstable_threshold_(0.3),
@@ -81,7 +81,7 @@ Status LocalizationLidarProcess::Init(const LocalizationIntegParam& params) {
   yaw_align_mode_ = params.lidar_yaw_align_mode;
   utm_zone_id_ = params.utm_zone_id;
   map_coverage_theshold_ = params.map_coverage_theshold;
-  imu_lidar_max_delay_time_ = params.imu_lidar_max_delay_time;
+  // imu_lidar_max_delay_time_ = params.imu_lidar_max_delay_time;
 
   lidar_filter_size_ = params.lidar_filter_size;
 
@@ -175,7 +175,7 @@ void LocalizationLidarProcess::PcdProcess(const LidarFrame& lidar_frame) {
 
   if (!GetPredictPose(lidar_frame.measurement_time, &cur_predict_location_,
                       &forecast_integ_state_)) {
-    AINFO << "PcdProcess: Discard a lidar msg because can't get predict pose. "
+    ADEBUG << "PcdProcess: Discard a lidar msg because can't get predict pose. "
           << "More info see log in function GetPredictPose.";
     return;
   }
@@ -278,6 +278,7 @@ bool LocalizationLidarProcess::GetPredictPose(const double lidar_time,
   CHECK_NOTNULL(forecast_state);
 
   double latest_imu_time = pose_forecastor_->GetLastestImuTime();
+  //AERROR << "imu_lidar_max_delay_time_: " << imu_lidar_max_delay_time_;
   if (latest_imu_time - lidar_time > imu_lidar_max_delay_time_) {
     AERROR << std::setprecision(16) << "LocalizationLidar GetPredictPose: "
            << "Lidar msg too old! "
@@ -308,7 +309,7 @@ bool LocalizationLidarProcess::GetPredictPose(const double lidar_time,
   }
 
   if (state < 0) {
-    AINFO << "LocalizationLidar GetPredictPose: "
+    ADEBUG << "LocalizationLidar GetPredictPose: "
           << "Receive a lidar msg, but can't query predict pose.";
     *forecast_state = ForecastState::NOT_VALID;
     return false;
@@ -329,7 +330,7 @@ bool LocalizationLidarProcess::GetPredictPose(const double lidar_time,
     *forecast_state = ForecastState::INITIAL;
   } else {
     *forecast_state = ForecastState::INCREMENT;
-    AINFO << "The delta translation input lidar localization: " << lidar_time
+    ADEBUG << "The delta translation input lidar localization: " << lidar_time
           << " " << forecast_pose.x - pre_location_.translation()(0) << " "
           << forecast_pose.y - pre_location_.translation()(1) << " "
           << forecast_pose.z - pre_location_.translation()(2);

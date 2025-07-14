@@ -123,9 +123,9 @@ void EvaluatorManager::Init(const PredictionConf& config) {
   if (FLAGS_enable_semantic_map) {
     semantic_map_.reset(new SemanticMap());
     semantic_map_->Init();
-    AINFO << "Init SemanticMap instance.";
+    ADEBUG << "Init SemanticMap instance.";
   } else {
-    AINFO << "SemanticMap is not enabled.";
+    ADEBUG << "SemanticMap is not enabled.";
   }
 
   RegisterEvaluators();
@@ -193,11 +193,11 @@ void EvaluatorManager::Init(const PredictionConf& config) {
     }
   }
 
-  AINFO << "Defined vehicle on lane obstacle evaluator ["
+  ADEBUG << "Defined vehicle on lane obstacle evaluator ["
         << vehicle_on_lane_evaluator_ << "]";
-  AINFO << "Defined cyclist on lane obstacle evaluator ["
+  ADEBUG << "Defined cyclist on lane obstacle evaluator ["
         << cyclist_on_lane_evaluator_ << "]";
-  AINFO << "Defined default on lane obstacle evaluator ["
+  ADEBUG << "Defined default on lane obstacle evaluator ["
         << default_on_lane_evaluator_ << "]";
 }
 
@@ -233,7 +233,7 @@ void EvaluatorManager::Run(
     auto end_time_multi = std::chrono::system_clock::now();
     std::chrono::duration<double> time_cost_multi =
         end_time_multi - start_time_multi;
-    AINFO << "multi agents evaluator used time: "
+    ADEBUG << "multi agents evaluator used time: "
           << time_cost_multi.count() * 1000 << " ms.";
   }
 
@@ -276,7 +276,7 @@ void EvaluatorManager::EvaluateObstacle(
   switch (obstacle->type()) {
     case PerceptionObstacle::VEHICLE: {
       if (FLAGS_enable_multi_agent_vehicle_evaluator) {
-        AINFO << "The vehicles are evaluated by multi agent evaluator!";
+        ADEBUG << "The vehicles are evaluated by multi agent evaluator!";
         break;
       }
       if (obstacle->IsCaution() && !obstacle->IsSlow()) {
@@ -290,7 +290,7 @@ void EvaluatorManager::EvaluateObstacle(
           evaluator = GetEvaluator(vehicle_default_caution_evaluator_);
         }
         CHECK_NOTNULL(evaluator);
-        AINFO << "Caution Obstacle: " << obstacle->id() << " used " << evaluator->GetName();
+        ADEBUG << "Caution Obstacle: " << obstacle->id() << " used " << evaluator->GetName();
         // Evaluate and break if success
         if (evaluator->GetName() == "JOINTLY_PREDICTION_PLANNING_EVALUATOR") {
           if (evaluator->Evaluate(adc_trajectory_container,
@@ -318,11 +318,11 @@ void EvaluatorManager::EvaluateObstacle(
       } else if (obstacle->IsOnLane()) {
         evaluator = GetEvaluator(vehicle_on_lane_evaluator_);
       } else {
-        AINFO << "Obstacle: " << obstacle->id()
+        ADEBUG << "Obstacle: " << obstacle->id()
                << " is neither on lane, nor in junction. Skip evaluating.";
         break;
       }
-      AINFO << "Normal Obstacle: " << obstacle->id() << " used " << evaluator->GetName();
+      ADEBUG << "Normal Obstacle: " << obstacle->id() << " used " << evaluator->GetName();
       CHECK_NOTNULL(evaluator);
       if (evaluator->GetName() == "LANE_SCANNING_EVALUATOR") {
         evaluator->Evaluate(obstacle, obstacles_container, dynamic_env);
@@ -352,7 +352,7 @@ void EvaluatorManager::EvaluateObstacle(
         auto end_time_inference = std::chrono::system_clock::now();
         std::chrono::duration<double> time_cost_lstm =
             end_time_inference - start_time_inference;
-        AINFO << "semantic lstm evaluator used time: "
+        ADEBUG << "semantic lstm evaluator used time: "
                << time_cost_lstm.count() * 1000 << " ms.";
         break;
       }
@@ -385,7 +385,7 @@ void EvaluatorManager::EvaluateMultiObstacle(
           !obstacle->IsStill()) {
         evaluator->Evaluate(adc_trajectory_container, 
           obstacle, obstacles_container);
-        AINFO << "Succeed to run multi agent pedestrian evaluator!";
+        ADEBUG << "Succeed to run multi agent pedestrian evaluator!";
         break;
       }
     }
@@ -400,7 +400,7 @@ void EvaluatorManager::EvaluateMultiObstacle(
           !obstacle->IsStill()) {
         evaluator->Evaluate(adc_trajectory_container, 
           obstacle, obstacles_container);
-        AINFO << "Succeed to run multi agent vehicle evaluator!";
+        ADEBUG << "Succeed to run multi agent vehicle evaluator!";
         break;
       }
     }
@@ -536,7 +536,7 @@ std::unique_ptr<Evaluator> EvaluatorManager::CreateEvaluator(
 void EvaluatorManager::RegisterEvaluator(
     const ObstacleConf::EvaluatorType& type) {
   evaluators_[type] = CreateEvaluator(type);
-  AINFO << "Evaluator [" << type << "] is registered.";
+  ADEBUG << "Evaluator [" << type << "] is registered.";
 }
 
 }  // namespace prediction

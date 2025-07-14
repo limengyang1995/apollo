@@ -234,7 +234,7 @@ bool ReusePath::IsCollisionFree(ReferenceLineInfo* const reference_line_info) {
   const DiscretizedPath& history_path =
       history_frame->current_frame_planned_path();
   if (history_path.empty()) {
-    AINFO << "No history path skip reuse";
+    ADEBUG << "No history path skip reuse";
     return false;
   }
   // path end point

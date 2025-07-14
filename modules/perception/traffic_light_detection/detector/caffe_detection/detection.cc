@@ -46,19 +46,19 @@ bool TrafficLightDetection::Init(
     return false;
   }
 
-  AINFO << "Traffic light detection param: " << detection_param_.DebugString();
+  ADEBUG << "Traffic light detection param: " << detection_param_.DebugString();
 
   const auto &model_info = detection_param_.info();
   std::string model_path = GetModelPath(model_info.name());
-  AINFO << "Traffic light detection model_path: " << model_path;
+  ADEBUG << "Traffic light detection model_path: " << model_path;
 
   std::string proto_file =
       GetModelFile(model_path, model_info.proto_file().file());
-  AINFO << "Traffic light detection proto_file: " << proto_file;
+  ADEBUG << "Traffic light detection proto_file: " << proto_file;
 
   std::string weight_file =
       GetModelFile(model_path, model_info.weight_file().file());
-  AINFO << "Traffic light detection weight_file: " << weight_file;
+  ADEBUG << "Traffic light detection weight_file: " << weight_file;
 
   if (detection_param_.is_bgr()) {
     data_provider_image_option_.target_color = base::Color::BGR;
@@ -77,15 +77,15 @@ bool TrafficLightDetection::Init(
   net_outputs_ = inference::GetBlobNames(model_info.outputs());
 
   const auto &model_type = model_info.framework();
-  AINFO << "model_type: " << model_type;
+  ADEBUG << "model_type: " << model_type;
 
   rt_net_.reset(inference::CreateInferenceByName(model_type, proto_file,
                                                  weight_file, net_outputs_,
                                                  net_inputs_, model_path));
 
-  AINFO << "rt_net_ create succeed";
+  ADEBUG << "rt_net_ create succeed";
   rt_net_->set_gpu_id(options.gpu_id);
-  AINFO << "set gpu id " << options.gpu_id;
+  ADEBUG << "set gpu id " << options.gpu_id;
   gpu_id_ = options.gpu_id;
 
   int resize_height = detection_param_.min_crop_size();
@@ -101,10 +101,10 @@ bool TrafficLightDetection::Init(
   inference::AddShape(&input_reshape, model_info.inputs());
 
   if (!rt_net_->Init(input_reshape)) {
-    AINFO << "net init fail.";
+    ADEBUG << "net init fail.";
     return false;
   }
-  AINFO << "net init success.";
+  ADEBUG << "net init success.";
 
   mean_buffer_.reset(new base::Blob<float>(1, resize_height, resize_height, 3));
 
@@ -168,12 +168,12 @@ bool TrafficLightDetection::Inference(
     param_data[4] = 0;
     param_data[5] = 0;
 
-    AINFO << "reshape inputblob " << input_img_blob->shape_string();
+    ADEBUG << "reshape inputblob " << input_img_blob->shape_string();
 
     base::TrafficLightPtr light = lights->at(i);
     base::RectI cbox;
     crop_->getCropBox(img_width, img_height, light, &cbox);
-    AINFO << "get crop box success " << cbox.x << " " << cbox.y << " "
+    ADEBUG << "get crop box success " << cbox.x << " " << cbox.y << " "
           << cbox.width << " " << cbox.height;
 
     if (!camera::OutOfValidRegion(cbox, img_width, img_height) &&
@@ -186,7 +186,7 @@ bool TrafficLightDetection::Inference(
       data_provider_image_option_.crop_roi = cbox;
       data_provider_image_option_.target_color = base::Color::BGR;
       data_provider->GetImage(data_provider_image_option_, image_.get());
-      AINFO << "get image data success ";
+      ADEBUG << "get image data success ";
 
       float resize_scale =
           static_cast<float>(detection_param_.min_crop_size()) /
@@ -204,7 +204,7 @@ bool TrafficLightDetection::Inference(
     rt_net_->Infer();
     cudaDeviceSynchronize();
     PERF_BLOCK_END
-    AINFO << "rt_net run success";
+    ADEBUG << "rt_net run success";
 
     // dump the output
     SelectOutputBoxes(crop_box_list_, resize_scale_list_, resize_scale_list_,
@@ -218,7 +218,7 @@ bool TrafficLightDetection::Inference(
 
 bool TrafficLightDetection::Detect(camera::TrafficLightFrame *frame) {
   if (frame->traffic_lights.empty()) {
-    AINFO << "no lights to detect";
+    ADEBUG << "no lights to detect";
     return true;
   }
 
@@ -228,7 +228,7 @@ bool TrafficLightDetection::Detect(camera::TrafficLightFrame *frame) {
   int img_height = data_provider->src_height();
   std::vector<base::TrafficLightPtr> &lights_ref = frame->traffic_lights;
 
-  AINFO << "detection input " << lights_ref.size() << " lights";
+  ADEBUG << "detection input " << lights_ref.size() << " lights";
 
   selected_bboxes_.clear();
   detected_bboxes_.clear();
@@ -258,7 +258,7 @@ bool TrafficLightDetection::Detect(camera::TrafficLightFrame *frame) {
   Inference(&lights_ref, data_provider);
   PERF_BLOCK_END
 
-  AINFO << "Dump output Done! Get box num:" << detected_bboxes_.size();
+  ADEBUG << "Dump output Done! Get box num:" << detected_bboxes_.size();
 
   for (size_t j = 0; j < detected_bboxes_.size(); ++j) {
     base::RectI &region = detected_bboxes_[j]->region.detection_roi;
@@ -267,11 +267,11 @@ bool TrafficLightDetection::Detect(camera::TrafficLightFrame *frame) {
     lights_ref[0]->region.debug_roi_detect_scores.push_back(score);
   }
 
-  AINFO << "start select";
+  ADEBUG << "start select";
   select_.SelectTrafficLights(detected_bboxes_, &lights_ref);
-  AINFO << "select success";
+  ADEBUG << "select success";
 
-  AINFO << "detection success";
+  ADEBUG << "detection success";
   return true;
 }
 
@@ -291,10 +291,10 @@ bool TrafficLightDetection::SelectOutputBoxes(
     each_box_length = output_blob->shape(1);
   }
 
-  AINFO << "output blob size " << output_blob->shape(0) << " "
+  ADEBUG << "output blob size " << output_blob->shape(0) << " "
         << output_blob->shape(1) << " " << output_blob->shape(2) << " "
         << output_blob->shape(3);
-  AINFO << "result box number: " << result_box_num
+  ADEBUG << "result box number: " << result_box_num
         << " each box length: " << each_box_length;
 
   for (int candidate_id = 0; candidate_id < result_box_num; candidate_id++) {
@@ -304,7 +304,7 @@ bool TrafficLightDetection::SelectOutputBoxes(
     if (img_id < 0) {
       continue;
     } else if (img_id >= static_cast<int>(crop_box_list.size())) {
-      AINFO << "img id " << img_id << " > " << crop_box_list.size();
+      ADEBUG << "img id " << img_id << " > " << crop_box_list.size();
       continue;
     }
     base::TrafficLightPtr tmp(new base::TrafficLight);
@@ -338,12 +338,12 @@ bool TrafficLightDetection::SelectOutputBoxes(
                                    crop_box_list.at(img_id).width,
                                    crop_box_list.at(img_id).height) ||
           tmp->region.detection_roi.Area() <= 0) {
-        AINFO << "Invalid width or height or x or y: "
+        ADEBUG << "Invalid width or height or x or y: "
               << tmp->region.detection_roi.width << " | "
               << tmp->region.detection_roi.height << " | "
               << tmp->region.detection_roi.x << " | "
               << tmp->region.detection_roi.y;
-        AINFO << " max width " << crop_box_list.at(img_id).width
+        ADEBUG << " max width " << crop_box_list.at(img_id).width
               << " max height " << crop_box_list.at(img_id).height
               << " at img_id " << img_id;
         continue;
@@ -355,7 +355,7 @@ bool TrafficLightDetection::SelectOutputBoxes(
       tmp->region.detection_roi.x += crop_box_list.at(img_id).x;
       tmp->region.detection_roi.y += crop_box_list.at(img_id).y;
       tmp->region.is_detected = true;
-      AINFO << "detect roi x " << tmp->region.detection_roi.x << " "
+      ADEBUG << "detect roi x " << tmp->region.detection_roi.x << " "
             << tmp->region.detection_roi.y << " "
             << tmp->region.detection_roi.width << " "
             << tmp->region.detection_roi.height;

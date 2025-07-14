@@ -31,14 +31,14 @@ using google::protobuf::NewCallback;
 using std::vector;
 
 void Callback(int tag, BlockingCounter* counter) {
-  AINFO << "callback executed, tag: " << tag;
+  ADEBUG << "callback executed, tag: " << tag;
   counter->Decrement();
 }
 
 class MyCallback {
  public:
   void Callback(int tag, BlockingCounter* counter) {
-    AINFO << "MyCallback::callback executed, tag: " << tag;
+    ADEBUG << "MyCallback::callback executed, tag: " << tag;
     counter->Decrement();
   }
 };

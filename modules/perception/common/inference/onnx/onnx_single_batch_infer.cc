@@ -204,7 +204,7 @@ bool SingleBatchInference::OnnxToTRTModel(const std::string& model_file) {
       AERROR << "Saving serialized model file to " << trt_cache_path;
     }
   } else {
-    AINFO << "Loading TensorRT engine from serialized model file...";
+    ADEBUG << "Loading TensorRT engine from serialized model file...";
     std::ifstream planFile(trt_cache_path);
 
     if (!planFile.is_open()) {
@@ -213,7 +213,7 @@ bool SingleBatchInference::OnnxToTRTModel(const std::string& model_file) {
     }
     initLibNvInferPlugins(&onnx_gLogger, "");
 
-    AINFO << "success open serialized model";
+    ADEBUG << "success open serialized model";
     std::stringstream planBuffer;
     planBuffer << planFile.rdbuf();
     std::string plan = planBuffer.str();

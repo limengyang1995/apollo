@@ -241,7 +241,7 @@ bool CNNSegmentation::Detect(const LidarDetectorOptions& options,
   // processing clustering
   GetObjectsFromSppEngine(&frame->segmented_objects);
 
-  AINFO << "CNNSEG: mapping: " << mapping_time_ << "\t"
+  ADEBUG << "CNNSEG: mapping: " << mapping_time_ << "\t"
         << " feature: " << feature_time_ << "\t"
         << " infer: " << infer_time_ << "\t"
         << " fg-seg: " << fg_seg_time_ << "\t"
@@ -261,7 +261,7 @@ void CNNSegmentation::GetObjectsFromSppEngine(
   // copy height from roi cloud to origin cloud,
   // note ground points include other noise points
   // filtered by ground detection post process
-  AINFO << "Use origin cloud and copy height";
+  ADEBUG << "Use origin cloud and copy height";
   for (std::size_t i = 0; i < lidar_frame_ref_->roi_indices.indices.size();
        ++i) {
     const int roi_id = lidar_frame_ref_->roi_indices.indices[i];

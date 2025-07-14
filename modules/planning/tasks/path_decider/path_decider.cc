@@ -208,7 +208,7 @@ bool PathDecider::MakeStaticObstacleDecision(
     } else if (sl_boundary.end_l() >= curr_l - min_nudge_l &&
                sl_boundary.start_l() <= curr_l + min_nudge_l) {
       if (config_.skip_overlap_stop_check()) {
-        AINFO << "skip_overlap_stop_check";
+        ADEBUG << "skip_overlap_stop_check";
       } else {
         // 2. STOP if laterally too overlapping.
         *object_decision.mutable_stop() = GenerateObjectStopDecision(*obstacle);
@@ -225,7 +225,7 @@ bool PathDecider::MakeStaticObstacleDecision(
           path_decision->AddLongitudinalDecision(
               "PathDecider/not-nearest-stop", obstacle->Id(), object_decision);
         }
-        AINFO << "Add stop decision for static obs " << obstacle->Id()
+        ADEBUG << "Add stop decision for static obs " << obstacle->Id()
               << "start l" << sl_boundary.start_l() << "end l"
               << sl_boundary.end_l() << "curr_l" << curr_l << "min_nudge_l"
               << min_nudge_l;

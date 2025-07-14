@@ -318,7 +318,7 @@ void NaviPlanning::ProcessPadMsg(PadMessage::DrivingAction drvie_action) {
       std::string current_lane_id;
       switch (drvie_action) {
         case PadMessage::FOLLOW: {
-          AINFO << "Received follow drive action";
+          ADEBUG << "Received follow drive action";
           std::string current_lane_id = GetCurrentLaneId();
           if (!current_lane_id.empty()) {
             target_lane_id_ = current_lane_id;
@@ -326,7 +326,7 @@ void NaviPlanning::ProcessPadMsg(PadMessage::DrivingAction drvie_action) {
           break;
         }
         case PadMessage::CHANGE_LEFT: {
-          AINFO << "Received change left lane drive action";
+          ADEBUG << "Received change left lane drive action";
           std::vector<LaneInfoPair> lane_info_group;
           GetLeftNeighborLanesInfo(&lane_info_group);
           if (!lane_info_group.empty()) {
@@ -335,7 +335,7 @@ void NaviPlanning::ProcessPadMsg(PadMessage::DrivingAction drvie_action) {
           break;
         }
         case PadMessage::CHANGE_RIGHT: {
-          AINFO << "Received change right lane drive action";
+          ADEBUG << "Received change right lane drive action";
           std::vector<LaneInfoPair> lane_info_group;
           GetRightNeighborLanesInfo(&lane_info_group);
           if (!lane_info_group.empty()) {
@@ -344,12 +344,12 @@ void NaviPlanning::ProcessPadMsg(PadMessage::DrivingAction drvie_action) {
           break;
         }
         case PadMessage::PULL_OVER: {
-          AINFO << "Received pull over drive action";
+          ADEBUG << "Received pull over drive action";
           // to do
           break;
         }
         case PadMessage::STOP: {
-          AINFO << "Received stop drive action";
+          ADEBUG << "Received stop drive action";
           // to do
           break;
         }

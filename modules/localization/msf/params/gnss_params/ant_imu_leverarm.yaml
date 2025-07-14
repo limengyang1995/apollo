@@ -3,8 +3,8 @@
 leverarm:
   primary:
     offset:
-      x: -0.648
-      y: -0.355
+      x: 0.648
+      y: -0.35
       z: -0.240
     uncertainty:
       x: 0.05
@@ -12,8 +12,8 @@ leverarm:
       z: 0.08
   secondary:
     offset:
-      x: 0.520
-      y: -0.337
+      x: -0.520
+      y: -0.35
       z: -0.240
     uncertainty:
       x: 0.05

@@ -79,7 +79,7 @@ LatController::LatController() : name_("LQR-based Lateral Controller") {
     steer_log_file_ << std::setprecision(6);
     WriteHeaders(steer_log_file_);
   }
-  AINFO << "Using " << name_;
+  ADEBUG << "Using " << name_;
 }
 
 LatController::~LatController() { CloseLogFile(); }
@@ -156,8 +156,8 @@ void LatController::ProcessLogs(const SimpleLateralDebug *debug,
 }
 
 void LatController::LogInitParameters() {
-  AINFO << name_ << " begin.";
-  AINFO << "[LatController parameters]" << " mass_: " << mass_ << ","
+  ADEBUG << name_ << " begin.";
+  ADEBUG << "[LatController parameters]" << " mass_: " << mass_ << ","
         << " iz_: " << iz_ << "," << " lf_: " << lf_ << "," << " lr_: " << lr_;
 }
 
@@ -279,7 +279,7 @@ void LatController::LoadLatGainScheduler() {
       lat_based_lqr_controller_conf_.lat_err_gain_scheduler();
   const auto &heading_err_gain_scheduler =
       lat_based_lqr_controller_conf_.heading_err_gain_scheduler();
-  AINFO << "Lateral control gain scheduler loaded";
+  ADEBUG << "Lateral control gain scheduler loaded";
   Interpolation1D::DataType xy1, xy2;
   for (const auto &scheduler : lat_err_gain_scheduler.scheduler()) {
     xy1.push_back(std::make_pair(scheduler.speed(), scheduler.ratio()));
@@ -664,6 +664,7 @@ void LatController::UpdateState(SimpleLateralDebug *debug,
     // Transform the coordinate of the vehicle states from the center of the
     // rear-axis to the center of mass, if conditions matched
     const auto &com = vehicle_state->ComputeCOMPosition(lr_);
+    AERROR << "lr_: " << lr_ << " com.x:" << com.x() << " com.y:" << com.y();
     ComputeLateralErrors(com.x(), com.y(), driving_orientation_,
                          vehicle_state->linear_velocity(),
                          vehicle_state->angular_velocity(),
@@ -792,14 +793,15 @@ void LatController::ComputeLateralErrors(
   }
   const double dx = x - target_point.path_point().x();
   const double dy = y - target_point.path_point().y();
+  AERROR << "diff: dx: " << dx << " dy: " << dy;
 
   debug->mutable_current_target_point()->mutable_path_point()->set_x(
       target_point.path_point().x());
   debug->mutable_current_target_point()->mutable_path_point()->set_y(
       target_point.path_point().y());
 
-  ADEBUG << "x point: " << x << " y point: " << y;
-  ADEBUG << "match point information : " << target_point.ShortDebugString();
+  AERROR << "x point: " << x << " y point: " << y;
+  AERROR << "match point information : " << target_point.ShortDebugString();
 
   const double cos_target_heading = std::cos(target_point.path_point().theta());
   const double sin_target_heading = std::sin(target_point.path_point().theta());

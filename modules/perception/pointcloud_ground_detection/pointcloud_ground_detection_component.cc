@@ -30,7 +30,7 @@ bool PointCloudGroundDetectComponent::Init() {
     AERROR << "Get PointCloudGroundDetectComponentConfig file failed";
     return false;
   }
-  AINFO << "PointCloud Ground Detect Component Configs: "
+  ADEBUG << "PointCloud Ground Detect Component Configs: "
         << comp_config.DebugString();
   output_channel_name_ = comp_config.output_channel_name();
   writer_ =
@@ -58,7 +58,7 @@ bool PointCloudGroundDetectComponent::Proc(
   bool status = InternalProc(message);
   if (status) {
     writer_->Write(message);
-    AINFO << "Send pointcloud ground detect output message.";
+    ADEBUG << "Send pointcloud ground detect output message.";
   }
   return true;
 }

@@ -288,7 +288,7 @@ void OnLanePlanning::RunOnce(const LocalView& local_view,
   if (local_view_.planning_command->is_motion_command() &&
       util::IsDifferentRouting(last_command_, *local_view_.planning_command)) {
     last_command_ = *local_view_.planning_command;
-    // AINFO << "new_command:" << last_command_.DebugString();
+    // ADEBUG << "new_command:" << last_command_.DebugString();
     reference_line_provider_->Reset();
     injector_->history()->Clear();
     injector_->planning_context()->mutable_planning_status()->Clear();
@@ -314,7 +314,7 @@ void OnLanePlanning::RunOnce(const LocalView& local_view,
 
   injector_->ego_info()->Update(stitching_trajectory.back(), vehicle_state);
   const uint32_t frame_num = static_cast<uint32_t>(seq_num_++);
-  AINFO << "Planning start frame sequence id = [" << frame_num << "]";
+  ADEBUG << "Planning start frame sequence id = [" << frame_num << "]";
   status = InitFrame(frame_num, stitching_trajectory.back(), vehicle_state);
   if (status.ok()) {
     injector_->ego_info()->CalculateFrontObstacleClearDistance(
@@ -446,9 +446,9 @@ void OnLanePlanning::RunOnce(const LocalView& local_view,
           .count();
   const auto plnning_perf_ms =
       (end_planning_perf_timestamp - start_system_timestamp) * 1000;
-  AINFO << "Planning Perf: planning name [" << Name() << "], "
+  ADEBUG << "Planning Perf: planning name [" << Name() << "], "
         << plnning_perf_ms << " ms.";
-  AINFO << "Planning end frame sequence id = [" << frame_num << "]";
+  ADEBUG << "Planning end frame sequence id = [" << frame_num << "]";
   injector_->frame_history()->Add(frame_num, std::move(frame_));
 }
 
@@ -1084,7 +1084,7 @@ void OnLanePlanning::AddPartitionedTrajectory(
 void OnLanePlanning::AddStitchSpeedProfile(
     planning_internal::Debug* debug_chart) {
   if (!injector_->frame_history()->Latest()) {
-    AINFO << "Planning frame is empty!";
+    ADEBUG << "Planning frame is empty!";
     return;
   }
 

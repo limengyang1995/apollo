@@ -43,7 +43,7 @@ class MPCControllerTest : public ::testing::Test, MPCController {
     FLAGS_v = 3;
     injector_ = std::make_shared<DependencyInjector>();
     timestamp_ = Clock::NowInSeconds();
-    AINFO << "into setup test.";
+    ADEBUG << "into setup test.";
   }
 
   void ComputeLateralErrors(const double x, const double y, const double theta,
@@ -100,7 +100,7 @@ TEST_F(MPCControllerTest, ComputeLateralErrors) {
       "mpc_controller_test_data/1_planning.pb.txt");
   TrajectoryAnalyzer trajectory_analyzer(&planning_trajectory_pb);
 
-  AINFO << "Finsh load pb";
+  ADEBUG << "Finsh load pb";
   ControlCommand cmd;
   SimpleMPCDebug *debug = cmd.mutable_debug()->mutable_simple_mpc_debug();
 

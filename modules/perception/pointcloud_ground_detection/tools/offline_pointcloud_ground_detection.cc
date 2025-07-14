@@ -104,8 +104,8 @@ class OfflinePointcloudGroundDetection {
               });
 
     for (size_t i = 0; i < pcd_file_names.size(); ++i) {
-      AINFO << "***************** Frame " << i << " ******************";
-      AINFO << pcd_file_names[i];
+      ADEBUG << "***************** Frame " << i << " ******************";
+      ADEBUG << pcd_file_names[i];
 
       std::shared_ptr<LidarFrame> frame = LidarFramePool::Instance().Get();
       if (frame->cloud == nullptr) {
@@ -117,7 +117,7 @@ class OfflinePointcloudGroundDetection {
       LoadPCLPCD(pcd_file_names[i], frame->cloud.get());
       // frame->lidar2world_pose is default identity matrix
       TransformCloud(frame->cloud, frame->lidar2world_pose, frame->world_cloud);
-      AINFO << "Read point cloud from " << pcd_file_names[i]
+      ADEBUG << "Read point cloud from " << pcd_file_names[i]
             << " with cloud size: " << frame->cloud->size();
 
       GroundDetectorOptions ground_detector_options;
@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
 
   apollo::perception::lidar::OfflinePointcloudGroundDetection test;
   if (!test.Init()) {
-    AINFO << "Failed to setup OfflinePointcloudGroundDetection";
+    ADEBUG << "Failed to setup OfflinePointcloudGroundDetection";
     return -1;
   }
   return test.Run() ? 0 : -1;

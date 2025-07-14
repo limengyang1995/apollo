@@ -135,7 +135,7 @@ void HesaiComponent2::SendPointCloud(
         cloud_message->mutable_point(i)->set_intensity(msg.points[i].intensity);
     }
 
-    AINFO << boost::format("point cnt = %d; timestamp_diff = %.9f s")
+    ADEBUG << boost::format("point cnt = %d; timestamp_diff = %.9f s")
                     % point_size % timestamp_diff;
     this->WritePointCloud(cloud_message);
 }

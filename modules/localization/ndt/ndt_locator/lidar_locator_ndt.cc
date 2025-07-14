@@ -66,7 +66,7 @@ void LidarLocatorNdt::Init(const Eigen::Affine3d& init_location,
     map_.AttachMapNodePool(&map_preload_node_pool_);
     map_.LoadMapArea(location_.translation(), resolution_id_, zone_id_,
                      filter_x_, filter_y_);
-    AINFO << "Locator map pre-loading is done.";
+    ADEBUG << "Locator map pre-loading is done.";
     is_map_loaded_ = true;
   }
 
@@ -77,10 +77,10 @@ void LidarLocatorNdt::Init(const Eigen::Affine3d& init_location,
   filter_y_ =
       static_cast<int>(static_cast<float>(FLAGS_ndt_filter_size_y) /
                        map_.GetMapConfig().map_resolutions_[resolution_id_]);
-  AINFO << "Filter size: " << filter_x_ << ", " << filter_y_;
+  ADEBUG << "Filter size: " << filter_x_ << ", " << filter_y_;
 
   // set NDT
-  AINFO << "Init NDT." << std::endl;
+  ADEBUG << "Init NDT." << std::endl;
   reg_.SetMaximumIterations(ndt_max_iterations_);
   reg_.SetResolution(static_cast<float>(ndt_target_resolution_));
   reg_.SetStepSize(ndt_line_search_step_size_);
@@ -96,7 +96,7 @@ void LidarLocatorNdt::LoadMap(const Eigen::Affine3d& init_location,
   map_.AttachMapNodePool(&map_preload_node_pool_);
   map_.LoadMapArea(location_.translation(), resolution_id, zone_id, filter_x_,
                    filter_y_);
-  AINFO << "Locator map pre-loading is done.";
+  ADEBUG << "Locator map pre-loading is done.";
   is_map_loaded_ = true;
 }
 
@@ -112,12 +112,12 @@ void LidarLocatorNdt::SetVelodyneExtrinsic(const Eigen::Affine3d& extrinsic) {
 
 void LidarLocatorNdt::SetLidarHeight(double height) {
   lidar_height_ = height;
-  AINFO << "Set height: " << lidar_height_;
+  ADEBUG << "Set height: " << lidar_height_;
 }
 
 void LidarLocatorNdt::SetOnlineCloudResolution(const float& online_resolution) {
   proj_reslution_ = online_resolution;
-  AINFO << "Proj resolution: " << proj_reslution_;
+  ADEBUG << "Proj resolution: " << proj_reslution_;
 }
 
 int LidarLocatorNdt::Update(unsigned int frame_idx, const Eigen::Affine3d& pose,
@@ -132,7 +132,7 @@ int LidarLocatorNdt::Update(unsigned int frame_idx, const Eigen::Affine3d& pose,
   Eigen::Affine3d center_pose = transd * quatd;
 
   Eigen::Quaterniond pose_qbn(pose.linear());
-  AINFO << "original pose: " << std::setprecision(15) << pose.translation()[0]
+  ADEBUG << "original pose: " << std::setprecision(15) << pose.translation()[0]
         << ", " << pose.translation()[1] << ", " << pose.translation()[2]
         << ", " << pose_qbn.x() << ", " << pose_qbn.y() << ", " << pose_qbn.z()
         << ", " << pose_qbn.w();
@@ -170,14 +170,14 @@ int LidarLocatorNdt::Update(unsigned int frame_idx, const Eigen::Affine3d& pose,
   }
 
   // Filter online points
-  AINFO << "Online point cloud leaf size: " << proj_reslution_;
+  ADEBUG << "Online point cloud leaf size: " << proj_reslution_;
   pcl::PointCloud<pcl::PointXYZ>::Ptr online_points_filtered(
       new pcl::PointCloud<pcl::PointXYZ>());
   pcl::VoxelGrid<pcl::PointXYZ> sor;
   sor.setInputCloud(online_points);
   sor.setLeafSize(proj_reslution_, proj_reslution_, proj_reslution_);
   sor.filter(*online_points_filtered);
-  AINFO << "Online Pointcloud size: " << online_points->size() << "/"
+  ADEBUG << "Online Pointcloud size: " << online_points->size() << "/"
         << online_points_filtered->size();
   online_filtered_timer.End("online point calc end.");
 
@@ -221,11 +221,11 @@ int LidarLocatorNdt::Update(unsigned int frame_idx, const Eigen::Affine3d& pose,
   bool has_converged = reg_.HasConverged();
   int iteration = reg_.GetFinalNumIteration();
   Eigen::Matrix4d ndt_pose = reg_.GetFinalTransformation().cast<double>();
-  AINFO << "Ndt summary:";
-  AINFO << "Fitness Score: " << fitness_score_;
-  AINFO << "Has_converged: " << has_converged;
-  AINFO << "Iteration: %d: " << iteration;
-  AINFO << "Relative Ndt pose: " << ndt_pose(0, 3) << ", " << ndt_pose(1, 3)
+  ADEBUG << "Ndt summary:";
+  ADEBUG << "Fitness Score: " << fitness_score_;
+  ADEBUG << "Has_converged: " << has_converged;
+  ADEBUG << "Iteration: %d: " << iteration;
+  ADEBUG << "Relative Ndt pose: " << ndt_pose(0, 3) << ", " << ndt_pose(1, 3)
         << ", " << ndt_pose(2, 3);
 
   // Twv

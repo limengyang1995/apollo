@@ -103,9 +103,9 @@ bool Cipv::GetEgoLane(const std::vector<base::LaneLine> &lane_objects,
         lane_object.curve_car_coord_point_set.size();
     if (lane_object.pos_type == base::LaneLinePositionType::EGO_LEFT) {
       if (debug_level_ >= 2) {
-        AINFO << "[GetEgoLane]LEFT_image_lane_objects[" << i
+        ADEBUG << "[GetEgoLane]LEFT_image_lane_objects[" << i
               << "].curve_image_point_set.size(): " << curve_image_point_size;
-        AINFO << "[GetEgoLane]LEFT_ground_lane_objects[" << i
+        ADEBUG << "[GetEgoLane]LEFT_ground_lane_objects[" << i
               << "].curve_car_coord_point_set_size: "
               << curve_car_coord_point_set_size;
       }
@@ -129,9 +129,9 @@ bool Cipv::GetEgoLane(const std::vector<base::LaneLine> &lane_objects,
       }
     } else if (lane_object.pos_type == base::LaneLinePositionType::EGO_RIGHT) {
       if (debug_level_ >= 2) {
-        AINFO << "[GetEgoLane]RIGHT_image_lane_objects[" << i
+        ADEBUG << "[GetEgoLane]RIGHT_image_lane_objects[" << i
               << "].curve_image_point_set.size(): " << curve_image_point_size;
-        AINFO << "[GetEgoLane]RIGHT_ground_lane_objects[" << i
+        ADEBUG << "[GetEgoLane]RIGHT_ground_lane_objects[" << i
               << "].curve_car_coord_point_set_size: "
               << curve_car_coord_point_set_size;
       }
@@ -261,7 +261,7 @@ bool Cipv::ElongateEgoLane(const std::vector<base::LaneLine> &lane_objects,
   if (b_left_valid && b_right_valid) {
     // elongate both lanes or do nothing
     if (debug_level_ >= 2) {
-      AINFO << "Both lanes are fine";
+      ADEBUG << "Both lanes are fine";
     }
     // When only left lane line is available
   } else if (!b_left_valid && b_right_valid) {
@@ -270,7 +270,7 @@ bool Cipv::ElongateEgoLane(const std::vector<base::LaneLine> &lane_objects,
     MakeVirtualLane(egolane_ground->right_line, yaw_rate, offset_distance,
                     &egolane_ground->left_line);
     if (debug_level_ >= 2) {
-      AINFO << "Made left lane with offset: " << offset_distance;
+      ADEBUG << "Made left lane with offset: " << offset_distance;
     }
 
     // When only right lane line is available
@@ -280,7 +280,7 @@ bool Cipv::ElongateEgoLane(const std::vector<base::LaneLine> &lane_objects,
     MakeVirtualLane(egolane_ground->left_line, yaw_rate, offset_distance,
                     &egolane_ground->right_line);
     if (debug_level_ >= 2) {
-      AINFO << "Made right lane with offset: " << offset_distance;
+      ADEBUG << "Made right lane with offset: " << offset_distance;
     }
   }
   return true;
@@ -295,7 +295,7 @@ bool Cipv::CreateVirtualEgoLane(const float yaw_rate, const float velocity,
                                 &egolane_ground->left_line,
                                 &egolane_ground->right_line);
   if (debug_level_ >= 2) {
-    AINFO << "Made both lane_objects with size of "
+    ADEBUG << "Made both lane_objects with size of "
           << egolane_ground->left_line.line_point.size();
   }
 
@@ -324,7 +324,7 @@ bool Cipv::FindClosestObjectImage(const std::shared_ptr<base::Object> &object,
   float center_y = object->camera_supplement.box.ymax;
 
   if (debug_level_ >= 3) {
-    AINFO << "object->camera_supplement.box = base::RectF("
+    ADEBUG << "object->camera_supplement.box = base::RectF("
           << object->camera_supplement.box.xmin << ", "
           << object->camera_supplement.box.ymin << ", "
           << object->camera_supplement.box.xmax -
@@ -343,11 +343,11 @@ bool Cipv::FindClosestObjectImage(const std::shared_ptr<base::Object> &object,
   *distance =
       static_cast<float>(sqrt(center_x * center_x + center_y * center_y));
   if (debug_level_ >= 2) {
-    AINFO << "start(" << closted_object_edge->start_point(0) << ", "
+    ADEBUG << "start(" << closted_object_edge->start_point(0) << ", "
           << closted_object_edge->start_point(1) << ")->";
-    AINFO << "end(" << closted_object_edge->end_point(0) << ", "
+    ADEBUG << "end(" << closted_object_edge->end_point(0) << ", "
           << closted_object_edge->end_point(1) << ")";
-    AINFO << "closest distance: " << *distance;
+    ADEBUG << "closest distance: " << *distance;
   }
   return true;
 }
@@ -360,7 +360,7 @@ bool Cipv::FindClosestObjectGround(const std::shared_ptr<base::Object> &object,
                                    LineSegment2Df *closted_object_edge,
                                    float *distance) {
   if (debug_level_ >= 2) {
-    AINFO << "object->track_id = " << object->track_id;
+    ADEBUG << "object->track_id = " << object->track_id;
   }
   float size_x = object->size(0);
   float size_y = object->size(1);
@@ -389,7 +389,7 @@ bool Cipv::FindClosestObjectGround(const std::shared_ptr<base::Object> &object,
   theta -= M_PI_2;
 
   if (debug_level_ >= 3) {
-    AINFO << "object->camera_supplement.box = base::RectF("
+    ADEBUG << "object->camera_supplement.box = base::RectF("
           << object->camera_supplement.box.xmin << ", "
           << object->camera_supplement.box.ymin << ", "
           << object->camera_supplement.box.xmax -
@@ -399,31 +399,31 @@ bool Cipv::FindClosestObjectGround(const std::shared_ptr<base::Object> &object,
                  object->camera_supplement.box.ymin
           << ");";
 
-    AINFO << "object.center(0) = " << object->center(0) << ";";
-    AINFO << "object.center(1) = " << object->center(1) << ";";
-    AINFO << "object.center(2) = " << object->center(2) << ";";
-    AINFO << "pos(0) = " << pos(0) << ";";
-    AINFO << "pos(1) = " << pos(1) << ";";
-    AINFO << "pos(2) = " << pos(2) << ";";
-    AINFO << "object->camera_supplement.local_center(0) = "
+    ADEBUG << "object.center(0) = " << object->center(0) << ";";
+    ADEBUG << "object.center(1) = " << object->center(1) << ";";
+    ADEBUG << "object.center(2) = " << object->center(2) << ";";
+    ADEBUG << "pos(0) = " << pos(0) << ";";
+    ADEBUG << "pos(1) = " << pos(1) << ";";
+    ADEBUG << "pos(2) = " << pos(2) << ";";
+    ADEBUG << "object->camera_supplement.local_center(0) = "
           << object->camera_supplement.local_center(0) << ";";
-    AINFO << "object->camera_supplement.local_center(1) = "
+    ADEBUG << "object->camera_supplement.local_center(1) = "
           << object->camera_supplement.local_center(1) << ";";
-    AINFO << "object->camera_supplement.local_center(2) = "
+    ADEBUG << "object->camera_supplement.local_center(2) = "
           << object->camera_supplement.local_center(2) << ";";
-    AINFO << "theta_ray = " << theta_ray << ";";
-    AINFO << "object->camera_supplement.alpha = "
+    ADEBUG << "theta_ray = " << theta_ray << ";";
+    ADEBUG << "object->camera_supplement.alpha = "
           << object->camera_supplement.alpha << ";";
-    AINFO << "theta = " << theta << ";";
-    AINFO << "object.anchor_point(0) = " << object->anchor_point(0) << ";";
-    AINFO << "object.anchor_point(1) = " << object->anchor_point(1) << ";";
-    AINFO << "object.anchor_point(2) = " << object->anchor_point(2) << ";";
-    AINFO << "object.direction(0) = " << object->direction(0) << ";";
-    AINFO << "object.direction(1) = " << object->direction(1) << ";";
-    AINFO << "object.direction(2) = " << object->direction(2) << ";";
-    AINFO << "object.size(0) = " << object->size(0) << ";";
-    AINFO << "object.size(1) = " << object->size(1) << ";";
-    AINFO << "object.size(2) = " << object->size(2) << ";";
+    ADEBUG << "theta = " << theta << ";";
+    ADEBUG << "object.anchor_point(0) = " << object->anchor_point(0) << ";";
+    ADEBUG << "object.anchor_point(1) = " << object->anchor_point(1) << ";";
+    ADEBUG << "object.anchor_point(2) = " << object->anchor_point(2) << ";";
+    ADEBUG << "object.direction(0) = " << object->direction(0) << ";";
+    ADEBUG << "object.direction(1) = " << object->direction(1) << ";";
+    ADEBUG << "object.direction(2) = " << object->direction(2) << ";";
+    ADEBUG << "object.size(0) = " << object->size(0) << ";";
+    ADEBUG << "object.size(1) = " << object->size(1) << ";";
+    ADEBUG << "object.size(2) = " << object->size(2) << ";";
   }
   float x1 = size_x * 0.5f;
   float x2 = -x1;
@@ -447,10 +447,10 @@ bool Cipv::FindClosestObjectGround(const std::shared_ptr<base::Object> &object,
   p[3](1) = y2 * cos_theta - x1 * sin_theta + center_y;
 
   if (debug_level_ >= 2) {
-    AINFO << "P0(" << p[0](0) << ", " << p[0](1) << ")";
-    AINFO << "P1(" << p[1](0) << ", " << p[1](1) << ")";
-    AINFO << "P2(" << p[2](0) << ", " << p[2](1) << ")";
-    AINFO << "P3(" << p[3](0) << ", " << p[3](1) << ")";
+    ADEBUG << "P0(" << p[0](0) << ", " << p[0](1) << ")";
+    ADEBUG << "P1(" << p[1](0) << ", " << p[1](1) << ")";
+    ADEBUG << "P2(" << p[2](0) << ", " << p[2](1) << ")";
+    ADEBUG << "P3(" << p[3](0) << ", " << p[3](1) << ")";
   }
 
   float closest_x = kMaxFloat;
@@ -476,8 +476,8 @@ bool Cipv::FindClosestObjectGround(const std::shared_ptr<base::Object> &object,
 
   if (left_index < 0 || right_index < 0 || left_index == right_index) {
     if (debug_level_ >= 2) {
-      AINFO << "left_index: " << left_index;
-      AINFO << "right_index: " << right_index;
+      ADEBUG << "left_index: " << left_index;
+      ADEBUG << "right_index: " << right_index;
     }
     return false;
   }
@@ -498,11 +498,11 @@ bool Cipv::FindClosestObjectGround(const std::shared_ptr<base::Object> &object,
       static_cast<float>(sqrt(p[closest_index](0) * p[closest_index](0) +
                               p[closest_index](1) * p[closest_index](1)));
   if (debug_level_ >= 2) {
-    AINFO << "start(" << closted_object_edge->start_point(0) << ", "
+    ADEBUG << "start(" << closted_object_edge->start_point(0) << ", "
           << closted_object_edge->start_point(1) << ")->";
-    AINFO << "end(" << closted_object_edge->end_point(0) << ", "
+    ADEBUG << "end(" << closted_object_edge->end_point(0) << ", "
           << closted_object_edge->end_point(1) << ")";
-    AINFO << "closest distance to p[" << closest_index << "]("
+    ADEBUG << "closest distance to p[" << closest_index << "]("
           << p[closest_index](0) << ", " << p[closest_index](1)
           << "): " << *distance;
   }
@@ -517,28 +517,28 @@ bool Cipv::AreDistancesSane(const float distance_start_point_to_right_lane,
   float distance = -1.0f;
   if (distance_start_point_to_right_lane > kMaxDistObjectToLaneInMeter) {
     if (debug_level_ >= 1) {
-      AINFO << "distance from start to right lane("
+      ADEBUG << "distance from start to right lane("
             << distance_start_point_to_right_lane << " m) is too long";
     }
     return false;
   }
   if (distance_start_point_to_left_lane > kMaxDistObjectToLaneInMeter) {
     if (debug_level_ >= 1) {
-      AINFO << "distance from start to left lane("
+      ADEBUG << "distance from start to left lane("
             << distance_start_point_to_left_lane << " m) is too long";
     }
     return false;
   }
   if (distance_end_point_to_right_lane > kMaxDistObjectToLaneInMeter) {
     if (debug_level_ >= 1) {
-      AINFO << "distance from end to right lane("
+      ADEBUG << "distance from end to right lane("
             << distance_end_point_to_right_lane << " m) is too long";
     }
     return false;
   }
   if (distance_end_point_to_left_lane > kMaxDistObjectToLaneInMeter) {
     if (debug_level_ >= 1) {
-      AINFO << "distance from end to left lane("
+      ADEBUG << "distance from end to left lane("
             << distance_end_point_to_left_lane << " m) is too long";
     }
     return false;
@@ -547,7 +547,7 @@ bool Cipv::AreDistancesSane(const float distance_start_point_to_right_lane,
                                      distance_end_point_to_right_lane));
   if (distance > kMaxVehicleWidthInMeter) {
     if (debug_level_ >= 1) {
-      AINFO << "width of vehicle (" << distance << " m) is too long";
+      ADEBUG << "width of vehicle (" << distance << " m) is too long";
     }
     return false;
   }
@@ -556,13 +556,13 @@ bool Cipv::AreDistancesSane(const float distance_start_point_to_right_lane,
                                      distance_start_point_to_left_lane));
   if (distance > kMaxVehicleWidthInMeter) {
     if (debug_level_ >= 1) {
-      AINFO << "width of vehicle (" << distance << " m) is too long";
+      ADEBUG << "width of vehicle (" << distance << " m) is too long";
     }
     return false;
   }
   // put more conditions here if required.
 
-  // AINFO << "Distances are sane!";
+  // ADEBUG << "Distances are sane!";
 
   return true;
 }
@@ -578,7 +578,7 @@ bool Cipv::IsPointLeftOfLine(const Point2Df &point,
 
   if (cross_product > 0.0f) {
     if (debug_level_ >= 2) {
-      AINFO << "point (" << point(0) << ", " << point(1)
+      ADEBUG << "point (" << point(0) << ", " << point(1)
             << ") is left of line_segment (" << line_seg_start_point(0) << ", "
             << line_seg_start_point(1) << ")->(" << line_seg_end_point(0)
             << ", " << line_seg_end_point(1)
@@ -587,7 +587,7 @@ bool Cipv::IsPointLeftOfLine(const Point2Df &point,
     return true;
   }
   if (debug_level_ >= 2) {
-    AINFO << "point (" << point(0) << ", " << point(1)
+    ADEBUG << "point (" << point(0) << ", " << point(1)
           << ") is right of line_segment (" << line_seg_start_point(0) << ", "
           << line_seg_start_point(1) << ")->(" << line_seg_end_point(0) << ", "
           << line_seg_end_point(1) << "), cross_product: " << cross_product;
@@ -611,19 +611,19 @@ bool Cipv::IsObjectInTheLaneImage(const std::shared_ptr<base::Object> &object,
       object, egolane_image, &closted_object_edge, &distance);
   if (!b_valid_object) {
     if (debug_level_ >= 1) {
-      AINFO << "The closest edge of an object is not available";
+      ADEBUG << "The closest edge of an object is not available";
     }
     return false;
   }
   *object_distance = distance;
 
   if (debug_level_ >= 3) {
-    AINFO << "egolane_image.left_line.line_point.size(): "
+    ADEBUG << "egolane_image.left_line.line_point.size(): "
           << egolane_image.left_line.line_point.size();
   }
   if (egolane_image.left_line.line_point.size() <= 1) {
     if (debug_level_ >= 1) {
-      AINFO << "No left lane";
+      ADEBUG << "No left lane";
     }
     return false;
   }
@@ -649,27 +649,27 @@ bool Cipv::IsObjectInTheLaneImage(const std::shared_ptr<base::Object> &object,
   if (closest_index >= 0) {
     // Check if the end point is on the right of the line segment
     if (debug_level_ >= 3) {
-      AINFO << "[Left] closest_index: " << closest_index
+      ADEBUG << "[Left] closest_index: " << closest_index
             << ", shortest_distance: " << shortest_distance;
-      AINFO << "Should be left to be selected";
+      ADEBUG << "Should be left to be selected";
     }
     if (IsPointLeftOfLine(
             closted_object_edge.end_point,
             egolane_image.left_line.line_point[closest_index],
             egolane_image.left_line.line_point[closest_index + 1])) {
       b_left_lane_clear = true;
-      AINFO << "The left lane is clear";
+      ADEBUG << "The left lane is clear";
     }
   }
 
   if (debug_level_ >= 3) {
-    AINFO << "egolane_image.right_line.line_point.size(): "
+    ADEBUG << "egolane_image.right_line.line_point.size(): "
           << egolane_image.right_line.line_point.size();
   }
   // Check start_point and right lane
   if (egolane_image.right_line.line_point.size() <= 1) {
     if (debug_level_ >= 1) {
-      AINFO << "No right lane";
+      ADEBUG << "No right lane";
     }
     return false;
   }
@@ -691,9 +691,9 @@ bool Cipv::IsObjectInTheLaneImage(const std::shared_ptr<base::Object> &object,
   // When the closest line segment was found
   if (closest_index >= 0) {
     if (debug_level_ >= 3) {
-      AINFO << "[right] closest_index: " << closest_index
+      ADEBUG << "[right] closest_index: " << closest_index
             << ", shortest_distance: " << shortest_distance;
-      AINFO << "Should be right to be selected";
+      ADEBUG << "Should be right to be selected";
     }
     // Check if the end point is on the right of the line segment
     if (!IsPointLeftOfLine(
@@ -701,14 +701,14 @@ bool Cipv::IsObjectInTheLaneImage(const std::shared_ptr<base::Object> &object,
             egolane_image.right_line.line_point[closest_index],
             egolane_image.right_line.line_point[closest_index + 1])) {
       b_right_lane_clear = true;
-      AINFO << "The right lane is clear";
+      ADEBUG << "The right lane is clear";
     }
   }
 
   if (b_left_lane_clear && b_right_lane_clear) {
-    AINFO << "The object is in the ego lane";
+    ADEBUG << "The object is in the ego lane";
   } else {
-    AINFO << "The object is out of the ego lane";
+    ADEBUG << "The object is out of the ego lane";
   }
   return (b_left_lane_clear && b_right_lane_clear);
 }
@@ -740,19 +740,19 @@ bool Cipv::IsObjectInTheLaneGround(const std::shared_ptr<base::Object> &object,
       object, egolane_ground, world2camera, &closted_object_edge, &distance);
   if (!b_valid_object) {
     if (debug_level_ >= 1) {
-      AINFO << "The closest edge of an object is not available";
+      ADEBUG << "The closest edge of an object is not available";
     }
     return false;
   }
   *object_distance = distance;
 
   if (debug_level_ >= 3) {
-    AINFO << "egolane_ground.left_line.line_point.size(): "
+    ADEBUG << "egolane_ground.left_line.line_point.size(): "
           << egolane_ground.left_line.line_point.size();
   }
   if (egolane_ground.left_line.line_point.size() <= 1) {
     if (debug_level_ >= 1) {
-      AINFO << "No left lane";
+      ADEBUG << "No left lane";
     }
     return false;
   }
@@ -778,7 +778,7 @@ bool Cipv::IsObjectInTheLaneGround(const std::shared_ptr<base::Object> &object,
   if (closest_index >= 0) {
     // Check if the end point is on the right of the line segment
     if (debug_level_ >= 3) {
-      AINFO << "[Left] closest_index: " << closest_index
+      ADEBUG << "[Left] closest_index: " << closest_index
             << ", shortest_distance: " << shortest_distance;
     }
     if (!IsPointLeftOfLine(
@@ -791,13 +791,13 @@ bool Cipv::IsObjectInTheLaneGround(const std::shared_ptr<base::Object> &object,
   }
 
   if (debug_level_ >= 3) {
-    AINFO << "egolane_ground.right_line.line_point.size(): "
+    ADEBUG << "egolane_ground.right_line.line_point.size(): "
           << egolane_ground.right_line.line_point.size();
   }
   // Check start_point and right lane
   if (egolane_ground.right_line.line_point.size() <= 1) {
     if (debug_level_ >= 1) {
-      AINFO << "No right lane";
+      ADEBUG << "No right lane";
     }
     return false;
   }
@@ -819,7 +819,7 @@ bool Cipv::IsObjectInTheLaneGround(const std::shared_ptr<base::Object> &object,
   // When the closest line segment was found
   if (closest_index >= 0) {
     if (debug_level_ >= 3) {
-      AINFO << "[right] closest_index: " << closest_index
+      ADEBUG << "[right] closest_index: " << closest_index
             << ", shortest_distance: " << shortest_distance;
     }
     // Check if the end point is on the right of the line segment
@@ -855,8 +855,8 @@ bool Cipv::DetermineCipv(const std::vector<base::LaneLine> &lane_objects,
                          const Eigen::Affine3d &world2camera,
                          std::vector<std::shared_ptr<base::Object>> *objects) {
   if (debug_level_ >= 3) {
-    AINFO << "Cipv Got SensorObjects with size of " << objects->size();
-    AINFO << "Cipv Got lane object with size of " << lane_objects.size();
+    ADEBUG << "Cipv Got SensorObjects with size of " << objects->size();
+    ADEBUG << "Cipv Got lane object with size of " << lane_objects.size();
   }
 
   // float yaw_rate = options.yaw_rate;
@@ -888,7 +888,7 @@ bool Cipv::DetermineCipv(const std::vector<base::LaneLine> &lane_objects,
   float distance;
   for (int32_t i = 0; i < static_cast<int32_t>(objects->size()); ++i) {
     if (debug_level_ >= 2) {
-      AINFO << "objects[" << i << "]->track_id: " << (*objects)[i]->track_id;
+      ADEBUG << "objects[" << i << "]->track_id: " << (*objects)[i]->track_id;
     }
     if (IsObjectInTheLane((*objects)[i], egolane_image, egolane_ground,
                           world2camera, false, &distance) ||
@@ -901,7 +901,7 @@ bool Cipv::DetermineCipv(const std::vector<base::LaneLine> &lane_objects,
       }
 
       if (debug_level_ >= 2) {
-        AINFO << "current cipv_index: " << cipv_index;
+        ADEBUG << "current cipv_index: " << cipv_index;
       }
     }
     if ((*objects)[i]->track_id == old_cipv_track_id_) {
@@ -909,8 +909,8 @@ bool Cipv::DetermineCipv(const std::vector<base::LaneLine> &lane_objects,
     }
   }
   if (debug_level_ >= 1) {
-    AINFO << "old_cipv_index: " << old_cipv_index;
-    AINFO << "old_cipv_track_id_: " << old_cipv_track_id_;
+    ADEBUG << "old_cipv_index: " << old_cipv_index;
+    ADEBUG << "old_cipv_track_id_: " << old_cipv_track_id_;
   }
   if (cipv_index >= 0) {
     if (old_cipv_index >= 0 && old_cipv_index != cipv_index &&
@@ -922,18 +922,18 @@ bool Cipv::DetermineCipv(const std::vector<base::LaneLine> &lane_objects,
     // sensor_objects.cipv_index = cipv_index;
     // sensor_objects.cipv_track_id = cipv_track_id;
     if (debug_level_ >= 1) {
-      AINFO << "final cipv_index: " << cipv_index;
-      AINFO << "final cipv_track_id: " << cipv_track_id;
-      // AINFO << "CIPV Index is changed from " << old_cipv_index << "th
+      ADEBUG << "final cipv_index: " << cipv_index;
+      ADEBUG << "final cipv_track_id: " << cipv_track_id;
+      // ADEBUG << "CIPV Index is changed from " << old_cipv_index << "th
       // object to "
       //            << cipv_index << "th object.";
-      // AINFO << "CIPV Track_ID is changed from " << old_cipv_track_id <<
+      // ADEBUG << "CIPV Track_ID is changed from " << old_cipv_track_id <<
       // " to "
       //            << cipv_track_id << ".";
     }
   } else {
     if (debug_level_ >= 1) {
-      AINFO << "No cipv";
+      ADEBUG << "No cipv";
     }
   }
 
@@ -961,7 +961,7 @@ bool Cipv::CollectDrops(const base::MotionBufferPtr &motion_buffer,
                         std::vector<std::shared_ptr<base::Object>> *objects) {
   int motion_size = static_cast<int>(motion_buffer->size());
   if (debug_level_ >= 2) {
-    AINFO << " motion_size: " << motion_size;
+    ADEBUG << " motion_size: " << motion_size;
   }
   if (motion_size <= 0) {
     ADEBUG << " motion_size: " << motion_size;
@@ -972,12 +972,12 @@ bool Cipv::CollectDrops(const base::MotionBufferPtr &motion_buffer,
   // std::swap(object_trackjectories_, tmp_object_trackjectories);
 
   if (debug_level_ >= 2) {
-    AINFO << "object_trackjectories_.size(): " << object_trackjectories_.size();
+    ADEBUG << "object_trackjectories_.size(): " << object_trackjectories_.size();
   }
   for (auto obj : *objects) {
     int cur_id = obj->track_id;
     if (debug_level_ >= 2) {
-      AINFO << "target ID: " << cur_id;
+      ADEBUG << "target ID: " << cur_id;
     }
     // for (auto point : tmp_object_trackjectories[cur_id]) {
     //   object_trackjectories_[cur_id].emplace_back(point);
@@ -998,7 +998,7 @@ bool Cipv::CollectDrops(const base::MotionBufferPtr &motion_buffer,
         std::make_pair(center_x, center_y));
 
     if (debug_level_ >= 2) {
-      AINFO << "object_trackjectories_[" << cur_id
+      ADEBUG << "object_trackjectories_[" << cur_id
             << " ].size(): " << object_trackjectories_[cur_id].size();
     }
 
@@ -1026,11 +1026,11 @@ bool Cipv::CollectDrops(const base::MotionBufferPtr &motion_buffer,
       // TranformPoint(pt, (*motion_buffer)[motion_size - count - 1].motion,
       //               &transformed_pt);
       if (debug_level_ >= 3) {
-        AINFO << "(*motion_buffer)[" << motion_size - it - 1 << "].motion:";
-        AINFO << motion_buffer->at(motion_size - it - 1).motion;
-        AINFO << "accum_motion_buffer[" << motion_size - it - 1 << "] =";
-        AINFO << accum_motion_buffer;
-        AINFO << "target[" << obj->track_id << "][" << it << "]: ("
+        ADEBUG << "(*motion_buffer)[" << motion_size - it - 1 << "].motion:";
+        ADEBUG << motion_buffer->at(motion_size - it - 1).motion;
+        ADEBUG << "accum_motion_buffer[" << motion_size - it - 1 << "] =";
+        ADEBUG << accum_motion_buffer;
+        ADEBUG << "target[" << obj->track_id << "][" << it << "]: ("
               << transformed_pt(0) << ", " << transformed_pt(1) << ")";
       }
       obj->drops[count] = transformed_pt;
@@ -1055,12 +1055,12 @@ bool Cipv::CollectDrops(const base::MotionBufferPtr &motion_buffer,
       //      object_id_skip_count_[obj_id].second++;
       object_id_skip_count_[obj_id]++;
       if (debug_level_ >= 2) {
-        AINFO << "object_id_skip_count_[" << obj_id
+        ADEBUG << "object_id_skip_count_[" << obj_id
               << " ]: " << object_id_skip_count_[obj_id];
       }
       if (object_id_skip_count_[obj_id] >= kMaxAllowedSkipObject) {
         if (debug_level_ >= 2) {
-          AINFO << "Removed obsolete object " << obj_id;
+          ADEBUG << "Removed obsolete object " << obj_id;
         }
         object_trackjectories_.erase(obj_id);
         object_id_skip_count_.erase(obj_id);
@@ -1070,8 +1070,8 @@ bool Cipv::CollectDrops(const base::MotionBufferPtr &motion_buffer,
   if (debug_level_ >= 2) {
     for (auto obj : *objects) {
       int cur_id = obj->track_id;
-      AINFO << "obj->track_id: " << cur_id;
-      AINFO << "obj->drop_num: " << obj->drop_num;
+      ADEBUG << "obj->track_id: " << cur_id;
+      ADEBUG << "obj->drop_num: " << obj->drop_num;
     }
   }
   return true;
@@ -1090,7 +1090,7 @@ bool Cipv::image2ground(const float image_x, const float image_y,
     return true;
   }
   if (debug_level_ >= 1) {
-    AINFO << "p_ground(2) too small :" << p_ground(2);
+    ADEBUG << "p_ground(2) too small :" << p_ground(2);
   }
   return false;
 }
@@ -1108,7 +1108,7 @@ bool Cipv::ground2image(const float ground_x, const float ground_y,
     return true;
   }
   if (debug_level_ >= 1) {
-    AINFO << "p_image(2) too small :" << p_image(2);
+    ADEBUG << "p_image(2) too small :" << p_image(2);
   }
   return false;
 }

@@ -250,7 +250,7 @@ bool IntepolationMessageBuffer<MessageType>::WaitMessageBufferOk(
   }
 
   while (last_iter->first < timestamp) {
-    AINFO << "Waiting new message!";
+    ADEBUG << "Waiting new message!";
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
     pthread_mutex_lock(&(this->buffer_mutex_));
     msg_list->clear();
@@ -294,7 +294,7 @@ bool VisualizationManager::Init(const std::string &map_folder,
                                 const std::string &map_visual_folder,
                                 const Eigen::Affine3d &velodyne_extrinsic,
                                 const VisualMapParam &map_param) {
-  AINFO << "Get zone id.";
+  ADEBUG << "Get zone id.";
   unsigned int resolution_id = 0;
   int zone_id = 0;
 
@@ -303,9 +303,9 @@ bool VisualizationManager::Init(const std::string &map_folder,
     AERROR << "Get zone id failed.";
     return false;
   }
-  AINFO << "Get zone id succeed.";
+  ADEBUG << "Get zone id succeed.";
 
-  AINFO << "Init visualization engine.";
+  ADEBUG << "Init visualization engine.";
   success = visual_engine_.Init(map_folder, map_visual_folder, map_param,
                                 resolution_id, zone_id, velodyne_extrinsic,
                                 LOC_INFO_NUM);
@@ -313,7 +313,7 @@ bool VisualizationManager::Init(const std::string &map_folder,
     AERROR << "Visualization engine init failed.";
     return false;
   }
-  AINFO << "Visualization engine init succeed.";
+  ADEBUG << "Visualization engine init succeed.";
 
   visual_engine_.SetAutoPlay(true);
 
@@ -331,28 +331,28 @@ bool VisualizationManager::Init(const VisualizationManagerParams &params) {
 }
 
 void VisualizationManager::AddLidarFrame(const LidarVisFrame &lidar_frame) {
-  AINFO << "AddLidarFrame.";
+  ADEBUG << "AddLidarFrame.";
   static int id = 0;
-  AINFO << "id." << id;
+  ADEBUG << "id." << id;
   lidar_frame_buffer_.PushNewMessage(lidar_frame.timestamp, lidar_frame);
   id++;
 }
 
 void VisualizationManager::AddGNSSLocMessage(
     const LocalizationMsg &gnss_loc_msg) {
-  AINFO << "AddGNSSLocMessage.";
+  ADEBUG << "AddGNSSLocMessage.";
   gnss_loc_info_buffer_.PushNewMessage(gnss_loc_msg.timestamp, gnss_loc_msg);
 }
 
 void VisualizationManager::AddLidarLocMessage(
     const LocalizationMsg &lidar_loc_msg) {
-  AINFO << "AddLidarLocMessage.";
+  ADEBUG << "AddLidarLocMessage.";
   lidar_loc_info_buffer_.PushNewMessage(lidar_loc_msg.timestamp, lidar_loc_msg);
 }
 
 void VisualizationManager::AddFusionLocMessage(
     const LocalizationMsg &fusion_loc_msg) {
-  AINFO << "AddFusionLocMessage.";
+  ADEBUG << "AddFusionLocMessage.";
   fusion_loc_info_buffer_.PushNewMessage(fusion_loc_msg.timestamp,
                                          fusion_loc_msg);
 }
@@ -462,7 +462,7 @@ bool VisualizationManager::GetZoneIdFromMapFolder(
           zone_id_full_path.substr(pos + 1, zone_id_full_path.length());
 
       *zone_id = -(std::stoi(zone_id_str));
-      AINFO << "Find zone id: " << *zone_id;
+      ADEBUG << "Find zone id: " << *zone_id;
       return true;
     }
   }
@@ -472,7 +472,7 @@ bool VisualizationManager::GetZoneIdFromMapFolder(
       zone_id_full_path.substr(pos + 1, zone_id_full_path.length());
 
   *zone_id = (std::stoi(zone_id_str));
-  AINFO << "Find zone id: " << *zone_id;
+  ADEBUG << "Find zone id: " << *zone_id;
   return true;
 }
 

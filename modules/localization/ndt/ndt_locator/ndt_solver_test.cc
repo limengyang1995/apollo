@@ -210,7 +210,7 @@ TEST_F(NdtSolverTestSuite, NdtSolver) {
   bool has_converged = reg.HasConverged();
   int iteration = reg.GetFinalNumIteration();
   Eigen::Matrix4f ndt_pose = reg.GetFinalTransformation();
-  AINFO << ndt_pose(0, 3) << ", " << ndt_pose(1, 3) << ", " << ndt_pose(2, 3)
+  ADEBUG << ndt_pose(0, 3) << ", " << ndt_pose(1, 3) << ", " << ndt_pose(2, 3)
         << std::endl;
   ASSERT_LE(fitness_score, 2.0);
   ASSERT_TRUE(has_converged);

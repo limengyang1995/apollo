@@ -78,7 +78,7 @@ TEST_F(Interpolation1DTest, unordered) {
 
 TEST_F(Interpolation1DTest, gain_scheduler) {
   const auto& gain_scheduler = control_conf_.lat_err_gain_scheduler();
-  AINFO << "Lateral Error Gain Scheduler:" << gain_scheduler.DebugString();
+  ADEBUG << "Lateral Error Gain Scheduler:" << gain_scheduler.DebugString();
 
   Interpolation1D::DataType xy;
 

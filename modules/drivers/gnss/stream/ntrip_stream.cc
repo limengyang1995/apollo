@@ -110,7 +110,7 @@ bool NtripStream::Connect() {
   }
 
   bzero(buffer, sizeof(buffer));
-  AINFO << "Read ntrip response.";
+  ADEBUG << "Read ntrip response.";
   size = tcp_stream_->read(buffer, sizeof(buffer) - 1);
   while ((size == 0) && (try_times < 3)) {
     sleep(1);
@@ -128,7 +128,7 @@ bool NtripStream::Connect() {
   if (std::strstr(reinterpret_cast<char*>(buffer), "ICY 200 OK\r\n")) {
     status_ = Stream::Status::CONNECTED;
     is_login_ = true;
-    AINFO << "Ntrip login successfully.";
+    ADEBUG << "Ntrip login successfully.";
     return true;
   }
 
@@ -140,9 +140,9 @@ bool NtripStream::Connect() {
     AERROR << "Authentication failed.";
   }
 
-  AINFO << "No expect data.";
-  AINFO << "Recv data length: " << size;
-  // AINFO << "Data from server: " << reinterpret_cast<char*>(buffer);
+  ADEBUG << "No expect data.";
+  ADEBUG << "Recv data length: " << size;
+  // ADEBUG << "Data from server: " << reinterpret_cast<char*>(buffer);
 
   tcp_stream_->Disconnect();
   status_ = Stream::Status::ERROR;
@@ -163,17 +163,17 @@ bool NtripStream::Disconnect() {
 }
 
 void NtripStream::Reconnect() {
-  AINFO << "Reconnect ntrip caster.";
+  ADEBUG << "Reconnect ntrip caster.";
   std::unique_lock<std::mutex> lock(internal_mutex_);
   Disconnect();
   Connect();
   if (status_ != Stream::Status::CONNECTED) {
-    AINFO << "Reconnect ntrip caster failed.";
+    ADEBUG << "Reconnect ntrip caster failed.";
     return;
   }
 
   data_active_s_ = cyber::Time::Now().ToSecond();
-  AINFO << "Reconnect ntrip caster success.";
+  ADEBUG << "Reconnect ntrip caster success.";
 }
 
 size_t NtripStream::read(uint8_t* buffer, size_t max_length) {
@@ -201,7 +201,7 @@ size_t NtripStream::read(uint8_t* buffer, size_t max_length) {
 
   // timeout detect
   if ((cyber::Time::Now().ToSecond() - data_active_s_) > timeout_s_) {
-    AINFO << "Ntrip timeout.";
+    ADEBUG << "Ntrip timeout.";
     Reconnect();
   }
 
@@ -214,7 +214,7 @@ size_t NtripStream::write(const uint8_t* buffer, size_t length) {
   }
   std::unique_lock<std::mutex> lock(internal_mutex_, std::defer_lock);
   if (!lock.try_lock()) {
-    AINFO << "Try lock failed.";
+    ADEBUG << "Try lock failed.";
     return 0;
   }
 

@@ -893,7 +893,7 @@ bool DistanceApproachIPOPTFixedTsInterface::check_g(int n, const double* x,
     x_u_tmp[idx] = x_u_tmp[idx] + delta_v;
     x_l_tmp[idx] = x_l_tmp[idx] - delta_v;
     if (x[idx] > x_u_tmp[idx] || x[idx] < x_l_tmp[idx]) {
-      AINFO << "x idx unfeasible: " << idx << ", x: " << x[idx]
+      ADEBUG << "x idx unfeasible: " << idx << ", x: " << x[idx]
             << ", lower: " << x_l_tmp[idx] << ", upper: " << x_u_tmp[idx];
     }
   }
@@ -934,22 +934,22 @@ bool DistanceApproachIPOPTFixedTsInterface::check_g(int n, const double* x,
 
   CHECK_EQ(m11, num_of_constraints_);
 
-  AINFO << "dynamics constatins to: " << m1;
-  AINFO << "control rate constraints (only steering) to: " << m2;
-  AINFO << "sampling time equality constraints to: " << m3;
-  AINFO << "obstacle constraints to: " << m4;
-  AINFO << "start conf constraints to: " << m5;
-  AINFO << "constraints on x,y,v to: " << m6;
-  AINFO << "end constraints to: " << m7;
-  AINFO << "control bnd to: " << m8;
-  AINFO << "time interval constraints to: " << m9;
-  AINFO << "lambda constraints to: " << m10;
-  AINFO << "miu constraints to: " << m11;
-  AINFO << "total constraints: " << num_of_constraints_;
+  ADEBUG << "dynamics constatins to: " << m1;
+  ADEBUG << "control rate constraints (only steering) to: " << m2;
+  ADEBUG << "sampling time equality constraints to: " << m3;
+  ADEBUG << "obstacle constraints to: " << m4;
+  ADEBUG << "start conf constraints to: " << m5;
+  ADEBUG << "constraints on x,y,v to: " << m6;
+  ADEBUG << "end constraints to: " << m7;
+  ADEBUG << "control bnd to: " << m8;
+  ADEBUG << "time interval constraints to: " << m9;
+  ADEBUG << "lambda constraints to: " << m10;
+  ADEBUG << "miu constraints to: " << m11;
+  ADEBUG << "total constraints: " << num_of_constraints_;
 
   for (int idx = 0; idx < m; ++idx) {
     if (g[idx] > g_u_tmp[idx] + delta_v || g[idx] < g_l_tmp[idx] - delta_v) {
-      AINFO << "constratins idx unfeasible: " << idx << ", g: " << g[idx]
+      ADEBUG << "constratins idx unfeasible: " << idx << ", g: " << g[idx]
             << ", lower: " << g_l_tmp[idx] << ", upper: " << g_u_tmp[idx];
     }
   }

@@ -59,7 +59,7 @@ void SocketInput::init(const int &port) {
   }
 
   // connect to Velodyne UDP port
-  AINFO << "Opening UDP socket: port " << uint16_t(port);
+  ADEBUG << "Opening UDP socket: port " << uint16_t(port);
   port_ = port;
   sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -86,7 +86,7 @@ void SocketInput::init(const int &port) {
     return;
   }
 
-  AINFO << "Velodyne socket fd is " << sockfd_ << ", port " << port_;
+  ADEBUG << "Velodyne socket fd is " << sockfd_ << ", port " << port_;
 }
 
 /** @brief Get one velodyne packet. */
@@ -153,7 +153,7 @@ int SocketInput::get_positioning_data_packet(NMEATimePtr nmea_time) {
       }
     }
 
-    AINFO << "incomplete Velodyne packet read: " << nbytes
+    ADEBUG << "incomplete Velodyne packet read: " << nbytes
           << " bytes from port " << port_;
   }
 

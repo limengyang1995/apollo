@@ -196,10 +196,10 @@ bool DistanceApproachProblem::Solve(
         {-199, "Internal_Error"}};
 
     if (!failure_status.count(static_cast<size_t>(status))) {
-      AINFO << "Solver ends with unknown failure code: "
+      ADEBUG << "Solver ends with unknown failure code: "
             << static_cast<int>(status);
     } else {
-      AINFO << "Solver failure case: "
+      ADEBUG << "Solver failure case: "
             << failure_status[static_cast<size_t>(status)];
     }
   }

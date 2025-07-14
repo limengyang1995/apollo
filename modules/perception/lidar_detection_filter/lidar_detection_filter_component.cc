@@ -29,7 +29,7 @@ bool LidarDetectionFilterComponent::Init() {
     AERROR << "Get LidarDetectionFilterComponentConfig file failed";
     return false;
   }
-  AINFO << "Lidar Detection Filter Component Configs: "
+  ADEBUG << "Lidar Detection Filter Component Configs: "
         << comp_config.DebugString();
 
   output_channel_name_ = comp_config.output_channel_name();
@@ -54,7 +54,7 @@ bool LidarDetectionFilterComponent::Proc(
   bool status = InternalProc(message);
   if (status) {
     writer_->Write(message);
-    AINFO << "Send lidar detection filter message.";
+    ADEBUG << "Send lidar detection filter message.";
   }
   return status;
 }
@@ -66,7 +66,7 @@ bool LidarDetectionFilterComponent::InternalProc(
   PERF_BLOCK("filter_bank")
   if (use_object_filter_bank_) {
     if (!filter_bank_.Filter(filter_options, in_message->lidar_frame_.get())) {
-      AINFO << "Lidar detection filter banck error.";
+      ADEBUG << "Lidar detection filter banck error.";
       return false;
     }
   }

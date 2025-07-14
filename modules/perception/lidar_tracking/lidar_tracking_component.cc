@@ -31,7 +31,7 @@ bool LidarTrackingComponent::Init() {
     AERROR << "Get LidarTrackingComponentConfig file failed";
     return false;
   }
-  AINFO << "Lidar Tracking Component Configs: " << comp_config.DebugString();
+  ADEBUG << "Lidar Tracking Component Configs: " << comp_config.DebugString();
 
   // writer
   std::string output_channel_name = comp_config.output_channel_name();
@@ -68,7 +68,7 @@ bool LidarTrackingComponent::Init() {
 bool LidarTrackingComponent::Proc(
     const std::shared_ptr<LidarFrameMessage>& message) {
   PERF_FUNCTION()
-  AINFO << std::setprecision(16)
+  ADEBUG << std::setprecision(16)
         << "Enter LidarTracking component, message timestamp: "
         << message->timestamp_
         << " current timestamp: " << Clock::NowInSeconds();
@@ -104,7 +104,7 @@ bool LidarTrackingComponent::InternalProc(
   PERF_BLOCK("multi_target_tracker")
   MultiTargetTrackerOptions tracker_options;
   if (!multi_target_tracker_->Track(tracker_options, lidar_frame.get())) {
-    AINFO << "Lidar tracking, multi_target_tracker_ Track error.";
+    ADEBUG << "Lidar tracking, multi_target_tracker_ Track error.";
     return false;
   }
   PERF_BLOCK_END
@@ -132,7 +132,7 @@ bool LidarTrackingComponent::InternalProc(
 
   const double end_timestamp = Clock::NowInSeconds();
   const double end_latency = (end_timestamp - in_message->timestamp_) * 1e3;
-  AINFO << std::setprecision(16)
+  ADEBUG << std::setprecision(16)
         << "FRAME_STATISTICS:LidarTracking:End:msg_time["
         << in_message->timestamp_ << "]:cur_time[" << end_timestamp
         << "]:cur_latency[" << end_latency << "]";

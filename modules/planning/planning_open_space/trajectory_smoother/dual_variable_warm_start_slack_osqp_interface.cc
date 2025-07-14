@@ -100,11 +100,11 @@ void DualVariableWarmStartSlackOSQPInterface::printMatrix(
     }
   }
 
-  AINFO << "row number: " << r;
-  AINFO << "col number: " << c;
+  ADEBUG << "row number: " << r;
+  ADEBUG << "col number: " << c;
   for (int i = 0; i < r; ++i) {
-    AINFO << "row number: " << i;
-    AINFO << tmp.row(i);
+    ADEBUG << "row number: " << i;
+    ADEBUG << tmp.row(i);
   }
 }
 
@@ -137,7 +137,7 @@ bool DualVariableWarmStartSlackOSQPInterface::optimize() {
   std::vector<c_int> P_indptr;
   assembleP(&P_data, &P_indices, &P_indptr);
   if (check_mode_) {
-    AINFO << "print P_data in whole: ";
+    ADEBUG << "print P_data in whole: ";
     printMatrix(num_of_variables_, num_of_variables_, P_data, P_indices,
                 P_indptr);
   }
@@ -156,7 +156,7 @@ bool DualVariableWarmStartSlackOSQPInterface::optimize() {
   std::vector<c_int> A_indptr;
   assembleConstraint(&A_data, &A_indices, &A_indptr);
   if (check_mode_) {
-    AINFO << "print A_data in whole: ";
+    ADEBUG << "print A_data in whole: ";
     printMatrix(num_of_constraints_, num_of_variables_, A_data, A_indices,
                 A_indptr);
     assembleA(num_of_constraints_, num_of_variables_, A_data, A_indices,

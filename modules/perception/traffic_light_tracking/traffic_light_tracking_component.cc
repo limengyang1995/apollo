@@ -81,7 +81,7 @@ bool TrafficLightTrackComponent::Proc(
     const std::shared_ptr<TrafficDetectMessage>& message) {
   PERF_FUNCTION()
   auto time_imags = std::to_string(message->timestamp_);
-  AINFO << "Enter tracking component, message timestamp: " << time_imags;
+  ADEBUG << "Enter tracking component, message timestamp: " << time_imags;
 
   bool status = InternalProc(message);
 
@@ -91,7 +91,7 @@ bool TrafficLightTrackComponent::Proc(
 int TrafficLightTrackComponent::InitConfig() {
   apollo::perception::trafficlight::TrackingParam traffic_light_param;
   if (!GetProtoConfig(&traffic_light_param)) {
-    AINFO << "load trafficlights tracking component proto param failed";
+    ADEBUG << "load trafficlights tracking component proto param failed";
     return cyber::FAIL;
   }
 
@@ -102,7 +102,7 @@ int TrafficLightTrackComponent::InitConfig() {
   tl_tracker_name_ = plugin_param.name();
   config_path_ = plugin_param.config_path();
   config_file_ = plugin_param.config_file();
-  AINFO << "tl_tracker_name: " << tl_tracker_name_
+  ADEBUG << "tl_tracker_name: " << tl_tracker_name_
         << " config_path: " << config_path_ << " config_file: " << config_file_;
 
   writer_ = node_->CreateWriter<apollo::perception::TrafficLightDetection>(
@@ -149,13 +149,13 @@ bool TrafficLightTrackComponent::InternalProc(
   PERF_BLOCK_END
 
   auto frame = message->traffic_light_frame_;
-  AINFO << "Enter SyncV2XTrafficLights founction.";
+  ADEBUG << "Enter SyncV2XTrafficLights founction.";
   SyncV2XTrafficLights(frame.get());
   stoplines_ = message->stoplines_;
 
   std::shared_ptr<TrafficLightDetection> out_msg(new TrafficLightDetection);
   auto& camera_name = frame->data_provider->sensor_name();
-  AINFO << "Enter TransformOutputMessage founction.";
+  ADEBUG << "Enter TransformOutputMessage founction.";
   if (!TransformOutputMessage(frame.get(), camera_name, &out_msg, message)) {
     AERROR << "transform_output_message failed, msg_time: "
            << message->timestamp_;
@@ -164,7 +164,7 @@ bool TrafficLightTrackComponent::InternalProc(
 
   // send msg
   writer_->Write(out_msg);
-  AINFO << "Send trafficlight tracking output message.";
+  ADEBUG << "Send trafficlight tracking output message.";
 
   return true;
 }
@@ -219,7 +219,7 @@ void TrafficLightTrackComponent::SyncV2XTrafficLights(
               break;
           }
           // use v2x result directly
-          AINFO << "Sync V2X success. update color from "
+          ADEBUG << "Sync V2X success. update color from "
                 << static_cast<int>(light->status.color) << " to "
                 << static_cast<int>(v2x_color) << "; signal id: " << light->id;
           light->status.color = v2x_color;
@@ -397,7 +397,7 @@ bool TrafficLightTrackComponent::TransformOutputMessage(
     detected_trafficlight_color_ = lights.at(0)->status.color;
   }
 
-  AINFO << "Enter TransformDebugMessage founction.";
+  ADEBUG << "Enter TransformDebugMessage founction.";
   // add traffic light debug info
   if (!TransformDebugMessage(frame, out_msg, message)) {
     AERROR << "ProcComponent::Proc failed to transform debug msg.";
@@ -566,7 +566,7 @@ void TrafficLightTrackComponent::Visualize(
 
   std::string folder = "data/debug_vis/";
   if (!apollo::cyber::common::EnsureDirectory(folder)) {
-    AINFO << "EnsureDirectory folder " << folder << " error.";
+    ADEBUG << "EnsureDirectory folder " << folder << " error.";
   }
   cv::resize(output_image, output_image, cv::Size(), 0.5, 0.5);
   cv::imwrite(absl::StrCat(folder, std::to_string(frame.timestamp), ".jpg"),

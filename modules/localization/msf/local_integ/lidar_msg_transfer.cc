@@ -54,7 +54,7 @@ void LidarMsgTransfer::Transfer(const drivers::PointCloud &msg,
       }
     }
   } else {
-    AINFO << "Receiving un-organized-point-cloud, width " << msg.width()
+    ADEBUG << "Receiving un-organized-point-cloud, width " << msg.width()
           << " height " << msg.height() << "size " << msg.point_size();
     for (int i = 0; i < msg.point_size(); ++i) {
       Eigen::Vector3d pt3d;
@@ -80,7 +80,7 @@ void LidarMsgTransfer::Transfer(const drivers::PointCloud &msg,
   lidar_frame->measurement_time =
       cyber::Time(msg.measurement_time()).ToSecond();
   if (FLAGS_lidar_debug_log_flag) {
-    AINFO << std::setprecision(15) << "LocalLidar Debug Log: velodyne msg. "
+    ADEBUG << std::setprecision(15) << "LocalLidar Debug Log: velodyne msg. "
           << "[time:" << lidar_frame->measurement_time
           << "][height:" << msg.height() << "][width:" << msg.width()
           << "][point_cnt:" << msg.point_size() << "]";

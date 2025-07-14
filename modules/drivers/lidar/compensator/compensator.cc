@@ -91,7 +91,7 @@ bool Compensator::MotionCompensation(
     msg_compensated->set_is_dense(msg->is_dense());
 
     uint64_t new_time = cyber::Time().Now().ToNanosecond();
-    AINFO << "compenstator new msg diff:" << new_time - start
+    ADEBUG << "compenstator new msg diff:" << new_time - start
           << ";meta:" << msg->header().lidar_timestamp();
     msg_compensated->mutable_point()->Reserve(240000);
 
@@ -99,7 +99,7 @@ bool Compensator::MotionCompensation(
     if (QueryPoseAffineFromTF2(timestamp_min, &pose_min_time, frame_id)
         && QueryPoseAffineFromTF2(timestamp_max, &pose_max_time, frame_id)) {
         uint64_t tf_time = cyber::Time().Now().ToNanosecond();
-        AINFO << "compenstator tf msg diff:" << tf_time - new_time
+        ADEBUG << "compenstator tf msg diff:" << tf_time - new_time
               << ";meta:" << msg->header().lidar_timestamp();
         MotionCompensation(
                 msg,
@@ -111,7 +111,7 @@ bool Compensator::MotionCompensation(
         uint64_t com_time = cyber::Time().Now().ToNanosecond();
         msg_compensated->set_width(
                 msg_compensated->point_size() / msg->height());
-        AINFO << "compenstator com msg diff:" << com_time - tf_time
+        ADEBUG << "compenstator com msg diff:" << com_time - tf_time
               << ";meta:" << msg->header().lidar_timestamp();
         return true;
     }

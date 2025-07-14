@@ -29,7 +29,7 @@ using apollo::common::TrajectoryPoint;
 using apollo::common::VehicleStateProvider;
 
 DemoControlTask::DemoControlTask() : name_("demo control task") {
-  AINFO << "Using " << name_;
+  ADEBUG << "Using " << name_;
 }
 
 DemoControlTask::~DemoControlTask() {}

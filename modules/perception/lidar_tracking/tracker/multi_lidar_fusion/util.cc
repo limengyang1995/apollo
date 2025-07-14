@@ -55,7 +55,7 @@ bool JudgeBlindTrafficCone(const MlfTrackDataConstPtr& track_data,
         imu_center(0) >= FLAGS_cone_x_back &&
         imu_center(1) <= FLAGS_cone_y_front &&
         imu_center(1) >= FLAGS_cone_y_back) {
-        AINFO << "[JudgeBlindTrafficCone] track_id: " << track_data->track_id_
+        ADEBUG << "[JudgeBlindTrafficCone] track_id: " << track_data->track_id_
               << " loc: (x) " << imu_center(0) << " (y) " << imu_center(1)
               << " reserve. time_diff: " << time_diff;
         return true;

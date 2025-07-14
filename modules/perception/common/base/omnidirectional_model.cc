@@ -70,25 +70,25 @@ OmnidirectionalCameraDistortionModel::get_camera_model() {
 bool OmnidirectionalCameraDistortionModel::set_params(
     size_t width, size_t height, const Eigen::VectorXf& params) {
   if (params.size() < 9) {
-    AINFO << "Missing cam2world and world2cam model.";
+    ADEBUG << "Missing cam2world and world2cam model.";
     return false;
   }
 
   uint32_t cam2world_order = uint32_t(params(8));
-  AINFO << "cam2world order: " << cam2world_order << ", size: " << params.size()
+  ADEBUG << "cam2world order: " << cam2world_order << ", size: " << params.size()
         << std::endl;
 
   if (params.size() < 9 + cam2world_order + 1) {
-    AINFO << "Incomplete cam2world model or missing world2cam model.";
+    ADEBUG << "Incomplete cam2world model or missing world2cam model.";
     return false;
   }
 
   uint32_t world2cam_order = uint32_t(params(9 + cam2world_order));
-  AINFO << "world2cam order: " << world2cam_order << ", size: " << params.size()
+  ADEBUG << "world2cam order: " << world2cam_order << ", size: " << params.size()
         << std::endl;
 
   if (params.size() < 9 + cam2world_order + 1 + world2cam_order) {
-    AINFO << "Incomplete world2cam model.";
+    ADEBUG << "Incomplete world2cam model.";
     return false;
   }
 

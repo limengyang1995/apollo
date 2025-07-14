@@ -69,7 +69,7 @@ MPCController::MPCController() : name_("MPC Controller") {
     mpc_log_file_ << std::setprecision(6);
     WriteHeaders(mpc_log_file_);
   }
-  AINFO << "Using " << name_;
+  ADEBUG << "Using " << name_;
 }
 
 MPCController::~MPCController() { CloseLogFile(); }
@@ -157,7 +157,7 @@ bool MPCController::LoadControlConf() {
 
   use_pitch_angle_filter_ = control_conf_.use_pitch_angle_filter();
 
-  AINFO << "[MPCController] use_preview is " << use_preview_;
+  ADEBUG << "[MPCController] use_preview is " << use_preview_;
   InitControlCalibrationTable();
   ADEBUG << "MPC conf loaded";
   return true;
@@ -169,8 +169,8 @@ void MPCController::ProcessLogs(const SimpleMPCDebug *debug,
 }
 
 void MPCController::LogInitParameters() {
-  AINFO << name_ << " begin.";
-  AINFO << "[MPCController parameters]"
+  ADEBUG << name_ << " begin.";
+  ADEBUG << "[MPCController parameters]"
         << " mass_: " << mass_ << ","
         << " iz_: " << iz_ << ","
         << " lf_: " << lf_ << ","
@@ -572,7 +572,7 @@ Status MPCController::ComputeControlCommand(
   }
 
   if (std::isnan(vehicle_pitch)) {
-    AINFO << "pitch angle is nan.";
+    ADEBUG << "pitch angle is nan.";
     vehicle_pitch = 0;
   }
   debug->set_vehicle_pitch(vehicle_pitch);

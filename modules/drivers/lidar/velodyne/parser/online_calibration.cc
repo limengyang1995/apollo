@@ -40,14 +40,14 @@ int OnlineCalibration::decode(const std::shared_ptr<VelodyneScan>& scan_msgs) {
   }
   // read calibration when get 2s packet
   if (status_types_.size() < 5789 * 2) {
-    AINFO << "Wait for more scan msgs";
+    ADEBUG << "Wait for more scan msgs";
     return -1;
   }
   get_unit_index();
   int unit_size = static_cast<int>(unit_indexs_.size());
   if (unit_size < 2) {
     // can not find two unit# index, may be lost packet
-    AINFO << "unit count less than 2, maybe lost packets";
+    ADEBUG << "unit count less than 2, maybe lost packets";
     return -1;
   }
 

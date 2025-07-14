@@ -28,9 +28,9 @@ __attribute__((constructor)) void PoolInitialize() {
   PointDCloudPool::Instance();
   FramePool::Instance();
 #ifndef PERCEPTION_BASE_DISABLE_POOL
-  AINFO << "Initialize base object pool (no-malloc).";
+  ADEBUG << "Initialize base object pool (no-malloc).";
 #else
-  AINFO << "Initialize base object pool (malloc).";
+  ADEBUG << "Initialize base object pool (malloc).";
 #endif
 }
 

@@ -166,7 +166,7 @@ StageResult LaneFollowStage::PlanOnReferenceLine(
             .count();
     const auto plnning_perf_ms =
         (end_planning_perf_timestamp - start_planning_perf_timestamp) * 1000;
-    AINFO << "Planning Perf: task name [" << task->Name() << "], "
+    ADEBUG << "Planning Perf: task name [" << task->Name() << "], "
           << plnning_perf_ms << " ms.";
 
     if (ret.IsTaskError()) {

@@ -48,7 +48,7 @@ bool PathAssessmentDeciderUtil::IsValidRegularPath(
   }
   // Check if there is any collision.
   // if (IsCollidingWithStaticObstacles(reference_line_info, path_data)) {
-  //   AINFO << path_data.path_label() << ": ADC has collision.";
+  //   ADEBUG << path_data.path_label() << ": ADC has collision.";
   //   return false;
   // }
 
@@ -66,7 +66,7 @@ bool PathAssessmentDeciderUtil::IsGreatlyOffReferenceLine(
   const auto& frenet_path = path_data.frenet_frame_path();
   for (const auto& frenet_path_point : frenet_path) {
     if (std::fabs(frenet_path_point.l()) > kOffReferenceLineThreshold) {
-      AINFO << "Greatly off reference line at s = " << frenet_path_point.s()
+      ADEBUG << "Greatly off reference line at s = " << frenet_path_point.s()
             << ", with l = " << frenet_path_point.l();
       return true;
     }
@@ -85,7 +85,7 @@ bool PathAssessmentDeciderUtil::IsGreatlyOffRoad(
             frenet_path_point.s(), &road_left_width, &road_right_width)) {
       if (frenet_path_point.l() > road_left_width + kOffRoadThreshold ||
           frenet_path_point.l() < -road_right_width - kOffRoadThreshold) {
-        AINFO << "Greatly off-road at s = " << frenet_path_point.s()
+        ADEBUG << "Greatly off-road at s = " << frenet_path_point.s()
               << ", with l = " << frenet_path_point.l();
         return true;
       }
@@ -219,11 +219,11 @@ bool PathAssessmentDeciderUtil::IsStopOnReverseNeighborLane(
     if (reference_line_info.GetNeighborLaneInfo(
             ReferenceLineInfo::LaneType::LeftForward, path_point_sl.s(),
             &neighbor_lane_id, &neighbor_lane_width)) {
-      AINFO << "stop path point at LeftForward neighbor lane["
+      ADEBUG << "stop path point at LeftForward neighbor lane["
             << neighbor_lane_id.id() << "]";
       return false;
     } else {
-      AINFO << "stop path point at LeftReverse neighbor lane";
+      ADEBUG << "stop path point at LeftReverse neighbor lane";
       return true;
     }
   } else if (path_data.path_label().find("right") != std::string::npos &&
@@ -231,11 +231,11 @@ bool PathAssessmentDeciderUtil::IsStopOnReverseNeighborLane(
     if (reference_line_info.GetNeighborLaneInfo(
             ReferenceLineInfo::LaneType::RightForward, path_point_sl.s(),
             &neighbor_lane_id, &neighbor_lane_width)) {
-      AINFO << "stop path point at RightForward neighbor lane["
+      ADEBUG << "stop path point at RightForward neighbor lane["
             << neighbor_lane_id.id() << "]";
       return false;
     } else {
-      AINFO << "stop path point at RightReverse neighbor lane";
+      ADEBUG << "stop path point at RightReverse neighbor lane";
       return true;
     }
   }
@@ -266,7 +266,7 @@ void PathAssessmentDeciderUtil::TrimTailingOutLanePoints(
   }
 
   // Trim.
-  AINFO << "Trimming " << path_data->path_label();
+  ADEBUG << "Trimming " << path_data->path_label();
   auto frenet_path = path_data->frenet_frame_path();
   auto path_point_decision = path_data->path_point_decision_guide();
   while (!path_point_decision.empty() &&
@@ -274,19 +274,19 @@ void PathAssessmentDeciderUtil::TrimTailingOutLanePoints(
              PathData::PathPointType::IN_LANE) {
     if (std::get<1>(path_point_decision.back()) ==
         PathData::PathPointType::OUT_ON_FORWARD_LANE) {
-      AINFO << "Trimming out forward lane point";
+      ADEBUG << "Trimming out forward lane point";
     } else if (std::get<1>(path_point_decision.back()) ==
                PathData::PathPointType::OUT_ON_REVERSE_LANE) {
-      AINFO << "Trimming out reverse lane point";
+      ADEBUG << "Trimming out reverse lane point";
     } else {
-      AINFO << "Trimming unknown lane point";
+      ADEBUG << "Trimming unknown lane point";
     }
     frenet_path.pop_back();
     path_point_decision.pop_back();
   }
   path_data->SetFrenetPath(std::move(frenet_path));
   path_data->SetPathPointDecisionGuide(std::move(path_point_decision));
-  AINFO << "After TrimTailingOutLanePoints: FrenetPath size: "
+  ADEBUG << "After TrimTailingOutLanePoints: FrenetPath size: "
         << path_data->frenet_frame_path().size();
 }
 

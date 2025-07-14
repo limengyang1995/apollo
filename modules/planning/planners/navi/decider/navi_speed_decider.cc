@@ -331,7 +331,7 @@ Status NaviSpeedDecider::AddObstaclesConstraints(
       auto obstacle_distance = get_obstacle_distance(s);
       auto obstacle_speed = std::max(std::get<2>(info), 0.0);
       auto safe_distance = get_safe_distance(obstacle_speed);
-      AINFO << "obstacle with id: " << id << " s: " << s
+      ADEBUG << "obstacle with id: " << id << " s: " << s
             << " distance: " << obstacle_distance
             << " speed: " << obstacle_speed
             << " safe_distance: " << safe_distance;
@@ -434,7 +434,7 @@ Status NaviSpeedDecider::AddCentricAccelerationConstraints(
     start_s = end_s;
   }
 
-  AINFO << "add speed limit for centric acceleration with kappa: " << max_kappa
+  ADEBUG << "add speed limit for centric acceleration with kappa: " << max_kappa
         << " v_max: " << max_kappa_v << " v_preffered: " << preffered_kappa_v
         << " s: " << max_kappa_s;
 

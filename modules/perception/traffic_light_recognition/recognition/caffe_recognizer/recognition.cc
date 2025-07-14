@@ -29,7 +29,7 @@ bool TrafficLightRecognition::Init(
       GetConfigFile(options.config_path, options.config_file);
 
   if (!cyber::common::GetProtoFromFile(config_file, &recognize_param_)) {
-    AINFO << "load proto param failed, root dir: " << config_file;
+    ADEBUG << "load proto param failed, root dir: " << config_file;
     return false;
   }
 
@@ -53,15 +53,15 @@ bool TrafficLightRecognition::Detect(camera::TrafficLightFrame* frame) {
       candidate[0] = light;
       if (light->region.detect_class_id ==
           base::TLDetectionClass::TL_QUADRATE_CLASS) {
-        AINFO << "Recognize Use Quadrate Model!";
+        ADEBUG << "Recognize Use Quadrate Model!";
         classify_quadrate_->Perform(frame, &candidate);
       } else if (light->region.detect_class_id ==
                  base::TLDetectionClass::TL_VERTICAL_CLASS) {
-        AINFO << "Recognize Use Vertical Model!";
+        ADEBUG << "Recognize Use Vertical Model!";
         classify_vertical_->Perform(frame, &candidate);
       } else if (light->region.detect_class_id ==
                  base::TLDetectionClass::TL_HORIZONTAL_CLASS) {
-        AINFO << "Recognize Use Horizonal Model!";
+        ADEBUG << "Recognize Use Horizonal Model!";
         classify_horizontal_->Perform(frame, &candidate);
       } else {
         return false;

@@ -231,7 +231,7 @@ void Lslidar32Parser::GeneratePointcloud(
     block_num = 0;
     packet_number_ = packets_size;
 
-    AINFO << "packets_size :" << packets_size;
+    ADEBUG << "packets_size :" << packets_size;
 
     for (size_t i = 0; i < packets_size; ++i) {
         Unpack(scan_msg->firing_pkts(static_cast<int>(i)), out_msg, i);

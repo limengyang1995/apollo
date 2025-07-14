@@ -423,9 +423,9 @@ Obstacle* ReferenceLineInfo::AddObstacle(const Obstacle* obstacle) {
                                       ignore);
     path_decision_.AddLongitudinalDecision("reference_line_filter",
                                            obstacle->Id(), ignore);
-    AINFO << "NO build reference line st boundary. id:" << obstacle->Id();
+    ADEBUG << "NO build reference line st boundary. id:" << obstacle->Id();
   } else {
-    AINFO << "build reference line st boundary. id:" << obstacle->Id();
+    ADEBUG << "build reference line st boundary. id:" << obstacle->Id();
     mutable_obstacle->BuildReferenceLineStBoundary(reference_line_,
                                                    adc_sl_boundary_.start_s());
 
@@ -580,7 +580,7 @@ bool ReferenceLineInfo::CombinePathAndSpeedProfile(
                     trajectory_point.mutable_path_point()->set_s(
                         -trajectory_point.path_point().s());
                   });
-    AINFO << "reversed path";
+    ADEBUG << "reversed path";
     ptr_discretized_trajectory->SetIsReversed(true);
   }
   return true;
@@ -735,25 +735,25 @@ void ReferenceLineInfo::SetTurnSignalBasedOnLaneTurnType(
   if (path_data_.path_label().find("left") != std::string::npos &&
       is_ego_on_routing_lane) {
     vehicle_signal->set_turn_signal(VehicleSignal::TURN_LEFT);
-    AINFO << "Set turn signal to left";
+    ADEBUG << "Set turn signal to left";
     return;
   }
   if (path_data_.path_label().find("left") != std::string::npos &&
       !is_ego_on_routing_lane) {
     vehicle_signal->set_turn_signal(VehicleSignal::TURN_RIGHT);
-    AINFO << "Set turn signal to right";
+    ADEBUG << "Set turn signal to right";
     return;
   }
   if (path_data_.path_label().find("right") != std::string::npos &&
       is_ego_on_routing_lane) {
     vehicle_signal->set_turn_signal(VehicleSignal::TURN_RIGHT);
-    AINFO << "Set turn signal to right";
+    ADEBUG << "Set turn signal to right";
     return;
   }
   if (path_data_.path_label().find("right") != std::string::npos &&
       !is_ego_on_routing_lane) {
     vehicle_signal->set_turn_signal(VehicleSignal::TURN_LEFT);
-    AINFO << "Set turn signal to left";
+    ADEBUG << "Set turn signal to left";
     return;
   }
 
@@ -771,11 +771,11 @@ void ReferenceLineInfo::SetTurnSignalBasedOnLaneTurnType(
     const auto& turn = seg.lane->lane().turn();
     if (turn == hdmap::Lane::LEFT_TURN) {
       vehicle_signal->set_turn_signal(VehicleSignal::TURN_LEFT);
-      AINFO << "Set turn signal to left";
+      ADEBUG << "Set turn signal to left";
       break;
     } else if (turn == hdmap::Lane::RIGHT_TURN) {
       vehicle_signal->set_turn_signal(VehicleSignal::TURN_RIGHT);
-      AINFO << "Set turn signal to right";
+      ADEBUG << "Set turn signal to right";
       break;
     } else if (turn == hdmap::Lane::U_TURN) {
       // check left or right by geometry.
@@ -815,7 +815,7 @@ void ReferenceLineInfo::ExportVehicleSignal(
 bool ReferenceLineInfo::ReachedDestination() const {
   const double distance_destination = SDistanceToDestination();
   const double distance_ref_end = SDistanceToRefEnd();
-  AINFO << "distance_destination:" << distance_destination
+  ADEBUG << "distance_destination:" << distance_destination
         << "distance_ref_end: " << distance_ref_end;
   return distance_destination <= FLAGS_passed_destination_threshold ||
          distance_ref_end <= FLAGS_passed_referenceline_end_threshold;
@@ -835,7 +835,7 @@ double ReferenceLineInfo::SDistanceToDestination() const {
   }
   const double stop_s = dest_ptr->PerceptionSLBoundary().start_s() +
                         dest_ptr->LongitudinalDecision().stop().distance_s();
-  AINFO << "stop_s: " << stop_s << "end_s: " << adc_sl_boundary_.end_s();
+  ADEBUG << "stop_s: " << stop_s << "end_s: " << adc_sl_boundary_.end_s();
   return stop_s - adc_sl_boundary_.end_s();
 }
 
@@ -847,22 +847,22 @@ double ReferenceLineInfo::SDistanceToRefEnd() const {
     std::string id = obstacle->Id();
     if (id.find("REF_END") != std::string::npos) {
       ref_end_id = id;
-      AINFO << "Found reference line end id: " << ref_end_id;
+      ADEBUG << "Found reference line end id: " << ref_end_id;
     } else {
       continue;
     }
   }
   if (!ref_end_id.empty()) {
-    AINFO << "REF_END: " << ref_end_id;
+    ADEBUG << "REF_END: " << ref_end_id;
     const auto* ref_end_ptr = path_decision_.Find(ref_end_id);
-    AINFO << "ref_end_ptr:" << ref_end_ptr->DebugString();
+    ADEBUG << "ref_end_ptr:" << ref_end_ptr->DebugString();
     if (!ref_end_ptr && !ref_end_ptr->LongitudinalDecision().has_stop() &&
         !reference_line_.IsOnLane(
             ref_end_ptr->PerceptionBoundingBox().center())) {
       const double stop_s =
           ref_end_ptr->PerceptionSLBoundary().start_s() +
           ref_end_ptr->LongitudinalDecision().stop().distance_s();
-      AINFO << "REF_END: stop_s: " << stop_s
+      ADEBUG << "REF_END: stop_s: " << stop_s
             << "end_s: " << adc_sl_boundary_.end_s();
       res = stop_s - adc_sl_boundary_.end_s();
     }
@@ -1260,14 +1260,14 @@ void ReferenceLineInfo::GetRangeOverlaps(
       reference_line_.map_path().junction_overlaps();
 
   static constexpr double kError = 0.1;  // meter
-  AINFO << "GetRangeOverlaps start_s: " << start_s << ", end_s: " << end_s;
+  ADEBUG << "GetRangeOverlaps start_s: " << start_s << ", end_s: " << end_s;
   for (const auto& overlap : junction_overlaps) {
     if (start_s >= overlap.end_s - kError) {
       continue;
     } else if (end_s < overlap.start_s - kError) {
       break;
     } else {
-      AINFO << "overlap emplace_back " << overlap.start_s << ", "
+      ADEBUG << "overlap emplace_back " << overlap.start_s << ", "
             << overlap.end_s << " ]";
       path_overlaps->emplace_back(overlap);
     }

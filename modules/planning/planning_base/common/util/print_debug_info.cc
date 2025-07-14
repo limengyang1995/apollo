@@ -42,7 +42,7 @@ void PrintPoints::PrintToLog() {
     ssm << std::fixed << "(" << points[i].first << ", " << points[i].second
         << ");";
   }
-  AINFO << ssm.str();
+  ADEBUG << ssm.str();
 }
 
 void PrintCurves::AddPoint(std::string key, double x, double y) {
@@ -115,7 +115,7 @@ void apollo::planning::PrintBox::PrintToLog() {
       ssm << ", ";
     }
   }
-  AINFO << ssm.str();
+  ADEBUG << ssm.str();
 }
 
 }  // namespace planning

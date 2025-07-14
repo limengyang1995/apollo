@@ -184,9 +184,9 @@ void VisualizationEngine::Preprocess(const std::string &map_folder,
   char buf[256];
   snprintf(buf, sizeof(buf), "/%03u", resolution_id_);
   image_visual_resolution_path_ = image_visual_path + buf;
-  AINFO << "image_visual_resolution_path: " << image_visual_resolution_path_;
+  ADEBUG << "image_visual_resolution_path: " << image_visual_resolution_path_;
   std::string image_resolution_path = image_path + buf;
-  AINFO << "image_resolution_path: " << image_resolution_path;
+  ADEBUG << "image_resolution_path: " << image_resolution_path;
 
   if (!EnsureDirectory(image_visual_path)) {
     AERROR << "image_visual_path: " << image_visual_path
@@ -195,7 +195,7 @@ void VisualizationEngine::Preprocess(const std::string &map_folder,
   }
 
   if (DirectoryExists(image_visual_resolution_path_)) {
-    AINFO << "image_visual_resolution_path: " << image_visual_resolution_path_
+    ADEBUG << "image_visual_resolution_path: " << image_visual_resolution_path_
           << "already exists.";
     return;
   }
@@ -300,7 +300,7 @@ void VisualizationEngine::Draw() {
 }
 
 void VisualizationEngine::DrawTrajectory(const cv::Point &bias) {
-  AINFO << "Draw trajectory.";
+  ADEBUG << "Draw trajectory.";
   if (cur_level_ == 0 && is_draw_trajectory_) {
     unsigned int i = (car_loc_id_ + 1) % loc_info_num_;
     for (unsigned int k = 0; k < loc_info_num_; k++) {
@@ -352,7 +352,7 @@ void VisualizationEngine::DrawTrajectory(const cv::Point &bias) {
 }
 
 void VisualizationEngine::DrawLoc(const cv::Point &bias) {
-  AINFO << "Draw loc.";
+  ADEBUG << "Draw loc.";
   if (cur_level_ == 0) {
     unsigned int i = (car_loc_id_ + 1) % loc_info_num_;
     for (unsigned int k = 0; k < loc_info_num_; k++) {
@@ -385,7 +385,7 @@ void VisualizationEngine::DrawLoc(const cv::Point &bias) {
           cv::resize(car_img_mats_[i], mat_tem, cv::Size(48, 24), 0, 0,
                      cv::INTER_LINEAR);
           cv::Mat rotated_mat;
-          // AINFO << "yaw: " << yaw;
+          // ADEBUG << "yaw: " << yaw;
           // RotateImg(mat_tem, rotated_mat, 90 - yaw);
           // RotateImg(mat_tem, rotated_mat, - yaw - 90);
           // RotateImg(mat_tem, rotated_mat, yaw + 90);
@@ -417,7 +417,7 @@ void VisualizationEngine::DrawLoc(const cv::Point &bias) {
 }
 
 void VisualizationEngine::DrawStd(const cv::Point &bias) {
-  AINFO << "Draw std.";
+  ADEBUG << "Draw std.";
   if (cur_level_ == 0 && is_draw_std_) {
     unsigned int i = (car_loc_id_ + 1) % loc_info_num_;
     for (unsigned int k = 0; k < loc_info_num_; k++) {
@@ -455,7 +455,7 @@ void VisualizationEngine::DrawCloud(const cv::Point &bias) {
     return;
   }
 
-  AINFO << "Draw cloud.";
+  ADEBUG << "Draw cloud.";
   if (cur_level_ == 0) {
     CloudToMat(car_pose_, velodyne_extrinsic_, cloud_, &cloud_img_,
                &cloud_img_mask_);
@@ -473,7 +473,7 @@ void VisualizationEngine::DrawCloud(const cv::Point &bias) {
 }
 
 void VisualizationEngine::DrawLegend() {
-  AINFO << "Draw legend.";
+  ADEBUG << "Draw legend.";
   int fontFace = cv::FONT_HERSHEY_SIMPLEX;
   double fontScale = 0.6;
   int thickness = 2.0;
@@ -503,7 +503,7 @@ void VisualizationEngine::DrawLegend() {
 }
 
 void VisualizationEngine::DrawInfo() {
-  AINFO << "Draw info.";
+  ADEBUG << "Draw info.";
   LocalizatonInfo &loc_info = cur_loc_infos_[car_loc_id_];
 
   int fontFace = cv::FONT_HERSHEY_SIMPLEX;
@@ -533,7 +533,7 @@ void VisualizationEngine::DrawInfo() {
 }
 
 void VisualizationEngine::DrawTips() {
-  AINFO << "Draw tips.";
+  ADEBUG << "Draw tips.";
 
   tips_window_.setTo(cv::Scalar(0, 0, 0));
 
@@ -729,7 +729,7 @@ void VisualizationEngine::InitOtherParams(const int x_min, const int y_min,
   }
   // SetScale((double)max_stride_);
   image_visual_leaf_path_ = image_visual_resolution_path_ + path;
-  AINFO << "image_visual_leaf_path: " << image_visual_leaf_path_;
+  ADEBUG << "image_visual_leaf_path: " << image_visual_leaf_path_;
 }
 
 void VisualizationEngine::CloudToMat(
@@ -847,7 +847,7 @@ bool VisualizationEngine::LoadImageToCache(const MapImageKey &key) {
              key.node_east_id, key.level);
     if (cyber::common::PathExists(path)) {
       img = cv::imread(path);
-      AINFO << "visualizer load: " << path;
+      ADEBUG << "visualizer load: " << path;
       map_image_cache_.Set(key, img);
       return true;
     } else {

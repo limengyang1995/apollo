@@ -26,7 +26,7 @@ bool CameraComponent::Init() {
                                                camera_config_.get())) {
     return false;
   }
-  AINFO << "UsbCam config: " << camera_config_->DebugString();
+  ADEBUG << "UsbCam config: " << camera_config_->DebugString();
 
   camera_device_.reset(new UsbCam());
   camera_device_->init(camera_config_);
@@ -47,7 +47,7 @@ bool CameraComponent::Init() {
     raw_image_for_compress_->image_size =
       raw_image_for_compress_->width * raw_image_for_compress_->height * 2;
   } else if (camera_config_->pixel_format() == "mjpeg") {
-    AINFO << "Disable sensor raw camera output with format mjpeg";
+    ADEBUG << "Disable sensor raw camera output with format mjpeg";
     raw_image_for_compress_->image_size = 0;
   } else if (camera_config_->pixel_format() == "rgb24") {
     raw_image_for_compress_->image_size =

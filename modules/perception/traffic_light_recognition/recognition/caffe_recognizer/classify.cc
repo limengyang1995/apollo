@@ -30,35 +30,35 @@ namespace trafficlight {
 
 void ClassifyBySimple::Init(const ClassifyParam& model_config,
                             const int gpu_id) {
-  AINFO << "Enter Classify init";
+  ADEBUG << "Enter Classify init";
   net_inputs_.clear();
   net_outputs_.clear();
-  AINFO << "clear success";
+  ADEBUG << "clear success";
   net_inputs_ =
       inference::GetBlobNames(model_config.info().inputs());
   net_outputs_ =
       inference::GetBlobNames(model_config.info().outputs());
 
-  AINFO << net_inputs_.size();
-  AINFO << net_outputs_.size();
+  ADEBUG << net_inputs_.size();
+  ADEBUG << net_outputs_.size();
 
   for (auto name : net_inputs_) {
-    AINFO << "net input blobs: " << name;
+    ADEBUG << "net input blobs: " << name;
   }
   for (auto name : net_outputs_) {
-    AINFO << "net output blobs: " << name;
+    ADEBUG << "net output blobs: " << name;
   }
 
   std::string model_path = GetModelPath(model_config.info().name());
 
   std::string proto_file =
       GetModelFile(model_path, model_config.info().proto_file().file());
-  AINFO << "proto_file " << proto_file;
+  ADEBUG << "proto_file " << proto_file;
 
   std::string weight_file =
       GetModelFile(model_path, model_config.info().weight_file().file());
 
-  AINFO << "weight_file" << weight_file;
+  ADEBUG << "weight_file" << weight_file;
 
   const auto& model_type = model_config.info().framework();
   rt_net_.reset(inference::CreateInferenceByName(model_type, proto_file,
@@ -92,7 +92,7 @@ void ClassifyBySimple::Init(const ClassifyParam& model_config,
   std::map<std::string, std::vector<int>> input_reshape;
   inference::AddShape(&input_reshape, model_config.info().inputs());
 
-  AINFO << "input_reshape: " << input_reshape[net_inputs_[0]][0] << ", "
+  ADEBUG << "input_reshape: " << input_reshape[net_inputs_[0]][0] << ", "
         << input_reshape[net_inputs_[0]][1] << ", "
         << input_reshape[net_inputs_[0]][2] << ", "
         << input_reshape[net_inputs_[0]][3];
@@ -126,14 +126,14 @@ void ClassifyBySimple::Perform(const camera::TrafficLightFrame* frame,
     data_provider_image_option_.target_color = base::Color::BGR;
     frame->data_provider->GetImage(data_provider_image_option_, image_.get());
 
-    AINFO << "get img done";
+    ADEBUG << "get img done";
 
     const float* mean = mean_.get()->cpu_data();
     inference::ResizeGPU(*image_, input_blob_recog,
                          frame->data_provider->src_width(), 0, mean[0], mean[1],
                          mean[2], true, scale_);
 
-    AINFO << "resize gpu finish.";
+    ADEBUG << "resize gpu finish.";
     cudaDeviceSynchronize();
 
     PERF_BLOCK("traffic_light_recognition_inference")
@@ -141,7 +141,7 @@ void ClassifyBySimple::Perform(const camera::TrafficLightFrame* frame,
     PERF_BLOCK_END
 
     cudaDeviceSynchronize();
-    AINFO << "infer finish.";
+    ADEBUG << "infer finish.";
 
     float* out_put_data = output_blob_recog->mutable_cpu_data();
     Prob2Color(out_put_data, unknown_threshold_, light);
@@ -163,10 +163,10 @@ void ClassifyBySimple::Prob2Color(const float* out_put_data, float threshold,
 
   light->status.color = status_map[max_color_id];
   light->status.confidence = out_put_data[max_color_id];
-  AINFO << "Light status recognized as " << name_map[max_color_id];
-  AINFO << "Color Prob:";
+  ADEBUG << "Light status recognized as " << name_map[max_color_id];
+  ADEBUG << "Color Prob:";
   for (size_t j = 0; j < status_map.size(); j++) {
-    AINFO << out_put_data[j];
+    ADEBUG << out_put_data[j];
   }
 }
 

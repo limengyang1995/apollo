@@ -41,18 +41,18 @@ bool ObjectFilterBank::Init(const ObjectFilterInitOptions& options) {
             ->CreateInstance<BaseObjectFilter>(
                 ConfigUtil::GetFullClassName(name));
     if (!filter) {
-      AINFO << "Failed to find object filter: " << name << ", skipped";
+      ADEBUG << "Failed to find object filter: " << name << ", skipped";
       continue;
     }
     ObjectFilterInitOptions option;
     option.config_path = plugin.config_path();
     option.config_file = plugin.config_file();
     if (!filter->Init(option)) {
-      AINFO << "Failed to init object filter: " << name << ", skipped";
+      ADEBUG << "Failed to init object filter: " << name << ", skipped";
       continue;
     }
     filter_bank_.push_back(filter);
-    AINFO << "Filter bank add filter: " << name;
+    ADEBUG << "Filter bank add filter: " << name;
   }
   return true;
 }
@@ -62,10 +62,10 @@ bool ObjectFilterBank::Filter(const ObjectFilterOptions& options,
   size_t object_number = frame->segmented_objects.size();
   for (auto& filter : filter_bank_) {
     if (!filter->Filter(options, frame)) {
-      AINFO << "Failed to filter objects in: " << filter->Name();
+      ADEBUG << "Failed to filter objects in: " << filter->Name();
     }
   }
-  AINFO << "Object filter bank, filtered objects size: from " << object_number
+  ADEBUG << "Object filter bank, filtered objects size: from " << object_number
         << " to " << frame->segmented_objects.size();
   return true;
 }

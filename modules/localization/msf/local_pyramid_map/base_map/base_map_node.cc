@@ -63,7 +63,7 @@ void BaseMapNode::InitMapMatrix(const BaseMapConfig* map_config) {
 void BaseMapNode::Finalize() {
   if (is_changed_) {
     Save();
-    AINFO << "Save Map Node to disk: " << map_node_config_->node_index_ << ".";
+    ADEBUG << "Save Map Node to disk: " << map_node_config_->node_index_ << ".";
   }
 }
 
@@ -281,7 +281,7 @@ size_t BaseMapNode::LoadBodyBinary(std::vector<unsigned char>* buf) {
     return 0;
   }
   uncompressed_file_body_size_ = buf_uncompressed.size();
-  AINFO << "map node compress ratio: "
+  ADEBUG << "map node compress ratio: "
         << static_cast<float>(buf->size()) /
                static_cast<float>(uncompressed_file_body_size_);
 

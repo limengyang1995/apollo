@@ -48,7 +48,7 @@ Status ControlTaskAgent::Init(std::shared_ptr<DependencyInjector> injector,
           "Failed to init Controller:" + control_pipeline.controller(i).name());
     }
     controller_list_.push_back(controller);
-    AINFO << "Controller <" << controller->Name() << "> init done!";
+    ADEBUG << "Controller <" << controller->Name() << "> init done!";
   }
   return Status::OK();
 }

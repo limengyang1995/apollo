@@ -134,14 +134,14 @@ int main(int argc, char** argv) {
   std::list<MapNodeIndex> buf;
   apollo::localization::msf::GetAllMapIndex(src_map_folder, dst_map_folder,
                                             &buf);
-  AINFO << "index size: " << buf.size();
+  ADEBUG << "index size: " << buf.size();
 
   PyramidMapConfig config_transform_lossy("lossless_map");
   config_transform_lossy.Load(src_map_folder + "config.xml");
   config_transform_lossy.map_version_ = "lossy_map";
   config_transform_lossy.Save(dst_map_folder + "config.xml");
 
-  AINFO << "lossy map directory structure has built.";
+  ADEBUG << "lossy map directory structure has built.";
 
   PyramidMapNodePool lossy_map_node_pool(25, 8);
   lossy_map_node_pool.Initial(&config_transform_lossy);
@@ -149,7 +149,7 @@ int main(int argc, char** argv) {
   lossy_map.InitMapNodeCaches(12, 24);
   lossy_map.AttachMapNodePool(&lossy_map_node_pool);
   if (!lossy_map.SetMapFolderPath(dst_map_folder)) {
-    AINFO << "lossy_map config xml not exist";
+    ADEBUG << "lossy_map config xml not exist";
   }
 
   int index = 0;

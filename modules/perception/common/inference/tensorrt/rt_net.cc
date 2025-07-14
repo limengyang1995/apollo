@@ -138,7 +138,7 @@ void RTNet::addConvLayer(const LayerParameter &layer_param,
   for (int i = 0; i < 3; ++i) {
     absl::StrAppend(&dim_string, " ", tmp_out_dims.d[i]);
   }
-  AINFO << layer_param.name() << dim_string;
+  ADEBUG << layer_param.name() << dim_string;
 #endif
 }
 
@@ -179,7 +179,7 @@ void RTNet::addDeconvLayer(const LayerParameter &layer_param,
     absl::StrAppend(&dim_string, " ", inputs[0]->getDimensions().d[i]);
   }
   absl::StrAppend(&dim_string, " | output: ");
-  AINFO << layer_param.name() << dim_string;
+  ADEBUG << layer_param.name() << dim_string;
 #endif
 }
 void RTNet::addActiveLayer(const LayerParameter &layer_param,
@@ -239,7 +239,7 @@ void RTNet::addConcatLayer(const LayerParameter &layer_param,
     for (int i = 0; i < 3; ++i) {
       absl::StrAppend(&dim_string, " ", dim_tmp.d[i]);
     }
-    AINFO << layer_param.name() << ": " << layer_param.bottom(i) << " "
+    ADEBUG << layer_param.name() << ": " << layer_param.bottom(i) << " "
           << (*tensor_modify_map)[layer_param.bottom(i)] << " " << dim_string;
   }
 #endif
@@ -683,7 +683,7 @@ void RTNet::addLayer(const LayerParameter &layer_param,
     addArgmaxLayer(layer_param, inputs, nbInputs, net, tensor_map,
                    tensor_modify_map);
   } else if (layer_param.type() == "Dropout") {
-    AINFO << "skip dropout";
+    ADEBUG << "skip dropout";
   } else if (layer_param.type() == "Power") {
     addScaleLayer(layer_param, inputs, weight_map, net, tensor_map,
                   tensor_modify_map);
@@ -813,7 +813,7 @@ RTNet::RTNet(const std::string &net_file, const std::string &model_file,
 bool RTNet::shape(const std::string &name, std::vector<int> *res) {
   auto engine = &(context_->getEngine());
   if (tensor_modify_map_.find(name) == tensor_modify_map_.end()) {
-    AINFO << "can't get the shape of " << name;
+    ADEBUG << "can't get the shape of " << name;
     return false;
   }
   int bindingIndex = engine->getBindingIndex(tensor_modify_map_[name].c_str());
@@ -867,7 +867,7 @@ bool LoadCache(const std::string &path) {
 
 bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
   if (gpu_id_ < 0) {
-    AINFO << "must use gpu mode";
+    ADEBUG << "must use gpu mode";
     return false;
   }
   BASE_GPU_CHECK(cudaSetDevice(gpu_id_));
@@ -912,7 +912,7 @@ bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
   // serialize trt engine the first time
   nvinfer1::ICudaEngine *engine = nullptr;
   auto trt_cache_path = model_root_ + "/TRTengine.cache";
-  AINFO << "trt cach path" << trt_cache_path;
+  ADEBUG << "trt cach path" << trt_cache_path;
   // trt_cache_path = "/apollo/TRTengine.cache";
 
   if (!LoadCache(trt_cache_path)) {
@@ -928,7 +928,7 @@ bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
       AERROR << "Saving serialized model file to " << trt_cache_path;
     }
   } else {
-    AINFO << "Loading TensorRT engine from serialized model file...";
+    ADEBUG << "Loading TensorRT engine from serialized model file...";
     std::ifstream planFile(trt_cache_path);
 
     if (!planFile.is_open()) {
@@ -937,7 +937,7 @@ bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
     }
     initLibNvInferPlugins(&rt_gLogger, "");
 
-    AINFO << "success open serialized model";
+    ADEBUG << "success open serialized model";
     std::stringstream planBuffer;
     planBuffer << planFile.rdbuf();
     std::string plan = planBuffer.str();
@@ -953,18 +953,18 @@ bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
   buffers_.resize(input_names_.size() + output_names_.size());
   init_blob(&input_names_);
   init_blob(&output_names_);
-  AINFO << "engine init success";
+  ADEBUG << "engine init success";
   return true;
 }
 bool RTNet::checkInt8(const std::string &gpu_name,
                       nvinfer1::IInt8Calibrator *calibrator) {
   if (calibrator == nullptr) {
-    AINFO << "Device Works on FP32 Mode.";
+    ADEBUG << "Device Works on FP32 Mode.";
     return false;
   }
   for (auto ref : _gpu_checklist) {
     if (ref == gpu_name) {
-      AINFO << "Device Works on Int8 Mode.";
+      ADEBUG << "Device Works on Int8 Mode.";
       return true;
     }
   }
@@ -1024,7 +1024,7 @@ void RTNet::parse_with_api(
       network_->markOutput(*tensor_map[tensor_modify_map_[*iter]]);
       iter++;
     } else {
-      AINFO << "Erase output: " << *iter;
+      ADEBUG << "Erase output: " << *iter;
       iter = output_names_.erase(iter);
     }
   }

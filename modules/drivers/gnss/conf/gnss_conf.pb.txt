@@ -100,4 +100,4 @@ gpsbin_folder: "data/gpsbin"
 logout_commands: "EVENTOUTCONTROL MARK2 DISABLE\r\n"
 logout_commands: "EVENTOUTCONTROL MARK1 DISABLE\r\n"
 
-use_gnss_time: true
+use_gnss_time: false

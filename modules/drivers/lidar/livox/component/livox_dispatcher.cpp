@@ -45,7 +45,7 @@ bool LivoxDispatcher::GetHandleFromIP(const std::string& ip, uint32_t& handle) {
 
 void LivoxDispatcher::RegisterHandleDispatchCallback(
     uint32_t handle, PointCloudCallbackType cb) {
-  AINFO << "register handle " << handle;
+  ADEBUG << "register handle " << handle;
   std::lock_guard<std::mutex> lg(mtx);
   handle_callback_functions[handle] = cb;
 }

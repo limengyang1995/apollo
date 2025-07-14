@@ -142,7 +142,7 @@ bool PlanningTestBase::FeedTestData() {
   local_view_.traffic_light =
       std::make_shared<TrafficLightDetection>(traffic_light_detection);
 
-  AINFO << "Successfully feed proto files.";
+  ADEBUG << "Successfully feed proto files.";
   return true;
 }
 
@@ -205,7 +205,7 @@ bool PlanningTestBase::RunPlanning(const std::string& test_case_name,
   adc_trajectory_ = adc_trajectory_pb;
   TrimPlanning(&adc_trajectory_, no_trajectory_point);
   if (FLAGS_test_update_golden_log) {
-    AINFO << "The golden file is regenerated:" << full_golden_path;
+    ADEBUG << "The golden file is regenerated:" << full_golden_path;
     cyber::common::SetProtoToASCIIFile(adc_trajectory_, full_golden_path);
   } else {
     ADCTrajectory golden_result;

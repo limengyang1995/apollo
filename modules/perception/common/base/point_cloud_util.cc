@@ -113,10 +113,10 @@ bool GetPointCloudMinareaBbox(const PointFCloud& pc, BoundingCube* box,
     mar.size.height = tmp;
   }
   if (verbose) {
-    AINFO << "center = " << mar.center.x << " " << mar.center.y << std::endl;
-    AINFO << "size = " << mar.size.height << " " << mar.size.width << std::endl;
-    AINFO << "yaw = " << mar.angle << std::endl;
-    AINFO << "height = " << max_z - min_z << std::endl;
+    ADEBUG << "center = " << mar.center.x << " " << mar.center.y << std::endl;
+    ADEBUG << "size = " << mar.size.height << " " << mar.size.width << std::endl;
+    ADEBUG << "yaw = " << mar.angle << std::endl;
+    ADEBUG << "height = " << max_z - min_z << std::endl;
   }
   box->x = mar.center.x;
   box->y = mar.center.y;

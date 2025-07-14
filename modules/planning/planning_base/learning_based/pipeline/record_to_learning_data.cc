@@ -32,7 +32,7 @@ namespace apollo {
 namespace planning {
 
 void GenerateLearningData() {
-  AINFO << "map_dir: " << FLAGS_map_dir;
+  ADEBUG << "map_dir: " << FLAGS_map_dir;
   if (FLAGS_planning_offline_bags.empty()) {
     return;
   }
@@ -60,10 +60,10 @@ void GenerateLearningData() {
     std::vector<std::string> offline_bags;
     util::GetFilesByPath(boost::filesystem::path(input), &offline_bags);
     std::sort(offline_bags.begin(), offline_bags.end());
-    AINFO << "For input " << input << ", found " << offline_bags.size()
+    ADEBUG << "For input " << input << ", found " << offline_bags.size()
           << " rosbags to process";
     for (std::size_t i = 0; i < offline_bags.size(); ++i) {
-      AINFO << "\tProcessing: [ " << i + 1 << " / " << offline_bags.size()
+      ADEBUG << "\tProcessing: [ " << i + 1 << " / " << offline_bags.size()
             << " ]: " << offline_bags[i];
       message_process.ProcessOfflineData(offline_bags[i]);
       FeatureOutput::WriteRemainderiLearningData(offline_bags[i]);

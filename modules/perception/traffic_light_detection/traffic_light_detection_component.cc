@@ -45,12 +45,12 @@ bool TrafficLightDetectComponent::Proc(
     const std::shared_ptr<TrafficDetectMessage>& message) {
   PERF_FUNCTION()
   auto time_imags = std::to_string(message->timestamp_);
-  AINFO << "Enter detection component, message timestamp: " << time_imags;
+  ADEBUG << "Enter detection component, message timestamp: " << time_imags;
 
   bool status = InternalProc(message);
   if (status) {
     writer_->Write(message);
-    AINFO << "Send trafficlight detect output message.";
+    ADEBUG << "Send trafficlight detect output message.";
   }
   return status;
 }
@@ -58,7 +58,7 @@ bool TrafficLightDetectComponent::Proc(
 int TrafficLightDetectComponent::InitConfig() {
   apollo::perception::trafficlight::TrafficLightParam traffic_light_param;
   if (!GetProtoConfig(&traffic_light_param)) {
-    AINFO << "load trafficlights detection component proto param failed";
+    ADEBUG << "load trafficlights detection component proto param failed";
     return cyber::FAIL;
   }
 
@@ -68,7 +68,7 @@ int TrafficLightDetectComponent::InitConfig() {
   config_file_ = plugin_param.config_file();
 
   gpu_id_ = traffic_light_param.gpu_id();
-  AINFO << "tl_detector_name: " << tl_detector_name_
+  ADEBUG << "tl_detector_name: " << tl_detector_name_
         << " config_path: " << config_path_ << " config_file: " << config_file_
         << " gpu_id: " << gpu_id_;
 

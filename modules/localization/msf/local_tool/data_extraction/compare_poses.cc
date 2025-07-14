@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
   for (unsigned int idx = 0; idx < timestamps_a.size(); idx++) {
     auto pose_a_found_iter = out_poses_a.find(idx);
     if (pose_a_found_iter != out_poses_a.end()) {
-      AINFO << "Find pose a.";
+      ADEBUG << "Find pose a.";
       const Eigen::Affine3d &pose_a = pose_a_found_iter->second;
 
       Eigen::Quaterniond quatd_a(pose_a.linear());
@@ -208,7 +208,7 @@ int main(int argc, char **argv) {
 
       auto pose_b_found_iter = out_poses_b.find(idx);
       if (pose_b_found_iter != out_poses_b.end()) {
-        AINFO << "Find pose b.";
+        ADEBUG << "Find pose b.";
         const Eigen::Affine3d &pose_b = pose_b_found_iter->second;
         Eigen::Quaterniond quatd_b(pose_b.linear());
         Eigen::Translation3d transd_b(pose_b.translation());

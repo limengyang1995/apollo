@@ -165,9 +165,9 @@ int main(int argc, char** argv) {
   const size_t num_trials = pcd_folder_paths.size();
 
   // load all poses
-  AINFO << "Pcd folders are as follows:";
+  ADEBUG << "Pcd folders are as follows:";
   for (size_t i = 0; i < num_trials; ++i) {
-    AINFO << pcd_folder_paths[i];
+    ADEBUG << pcd_folder_paths[i];
   }
   std::vector<EigenAffine3dVec> ieout_poses(num_trials);
   std::vector<std::vector<double>> time_stamps(num_trials);
@@ -270,7 +270,7 @@ int main(int argc, char** argv) {
       const Eigen::Affine3d& pcd_pose = poses[trial_frame_idx];
       apollo::localization::msf::velodyne::LoadPcds(
           pcd_file_path, trial_frame_idx, pcd_pose, &velodyne_frame, false);
-      AINFO << "Loaded " << velodyne_frame.pt3ds.size()
+      ADEBUG << "Loaded " << velodyne_frame.pt3ds.size()
             << "3D Points at Trial: " << trial << " Frame: " << trial_frame_idx
             << ".";
 

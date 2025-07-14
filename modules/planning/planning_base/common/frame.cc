@@ -195,14 +195,14 @@ bool Frame::CreateReferenceLineInfo(
     } else {
       has_valid_reference_line = true;
       iter->set_index(ref_line_index);
-      AINFO << "get referenceline: index: " << iter->index()
+      ADEBUG << "get referenceline: index: " << iter->index()
             << ", id: " << iter->id() << ", key: " << iter->key();
       ref_line_index++;
       iter++;
     }
   }
   if (!has_valid_reference_line) {
-    AINFO << "No valid reference line";
+    ADEBUG << "No valid reference line";
   }
   return true;
 }

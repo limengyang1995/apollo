@@ -250,11 +250,11 @@ math::Vec2d VehicleStateProvider::ComputeCOMPosition(
   Eigen::Vector3d v;
   if ((FLAGS_state_transform_to_com_reverse &&
        vehicle_state_.gear() == canbus::Chassis::GEAR_REVERSE) ||
-      (FLAGS_state_transform_to_com_drive &&
-       vehicle_state_.gear() == canbus::Chassis::GEAR_DRIVE)) {
-    v << 0.0, rear_to_com_distance, 0.0;
+      (FLAGS_state_transform_to_com_drive && (
+       vehicle_state_.gear() == canbus::Chassis::GEAR_DRIVE || vehicle_state_.gear() == canbus::Chassis::GEAR_NEUTRAL))) {
+    v << 0.07, 2.365, 0.0;
   } else {
-    v << 0.0, 0.0, 0.0;
+    v << 0.07, 2.365, 0.0;
   }
   Eigen::Vector3d pos_vec(vehicle_state_.x(), vehicle_state_.y(),
                           vehicle_state_.z());

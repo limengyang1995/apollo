@@ -254,7 +254,7 @@ bool STBoundaryMapper::GetOverlapBoundaryPoints(
               std::fmax(0.0, curr_point_on_path.s() + backward_distance);
           double high_s = std::fmin(planning_max_distance_,
                                     curr_point_on_path.s() + forward_distance);
-          AINFO << "check colllision for obstacle[" << obstacle.Id()
+          ADEBUG << "check colllision for obstacle[" << obstacle.Id()
                 << "], at: " << curr_point_on_path.DebugString();
           // It is an unrotated rectangle appearing on the ST-graph.
           // TODO(jiacheng): reconsider the backward_distance, it might be
@@ -445,7 +445,7 @@ void STBoundaryMapper::ComputeSTBoundaryWithDecision(
   double characteristic_length = 0.0;
   if (decision.has_follow()) {
     characteristic_length = std::fabs(decision.follow().distance_s());
-    AINFO << "characteristic_length: " << characteristic_length;
+    ADEBUG << "characteristic_length: " << characteristic_length;
     boundary = STBoundary::CreateInstance(lower_points, upper_points)
                    .ExpandByS(characteristic_length);
     b_type = STBoundary::BoundaryType::FOLLOW;

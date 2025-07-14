@@ -51,7 +51,7 @@ bool BaseObstacleDetector::InitNetwork(const common::ModelInfo& model_info,
     net_ = apollo::cyber::plugin_manager::PluginManager::Instance()
              ->CreateInstance<inference::Inference>(plugin_name);
     net_->set_model_info(proto_file, input_names, output_names);
-    AINFO << "net load plugin success: " << plugin_name;
+    ADEBUG << "net load plugin success: " << plugin_name;
   } else {
     net_.reset(inference::CreateInferenceByName(framework, proto_file,
                                                 weight_file, output_names,

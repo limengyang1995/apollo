@@ -105,10 +105,10 @@ SLPolygon::SLPolygon(SLBoundary sl_boundary, std::string id,
   min_l_point_ = sl_boundary.boundary_point(min_l_index);
   max_s_point_ = sl_boundary.boundary_point(max_s_index);
   max_l_point_ = sl_boundary.boundary_point(max_l_index);
-  // AINFO << "min_s_point_" << min_s_point_.s() << "," << min_s_point_.l();
-  // AINFO << "min_l_point_" << min_l_point_.s() << "," << min_l_point_.l();
-  // AINFO << "max_s_point_" << max_s_point_.s() << "," << max_s_point_.l();
-  // AINFO << "max_l_point_" << max_l_point_.s() << "," << max_l_point_.l();
+  // ADEBUG << "min_s_point_" << min_s_point_.s() << "," << min_s_point_.l();
+  // ADEBUG << "min_l_point_" << min_l_point_.s() << "," << min_l_point_.l();
+  // ADEBUG << "max_s_point_" << max_s_point_.s() << "," << max_s_point_.l();
+  // ADEBUG << "max_l_point_" << max_l_point_.s() << "," << max_l_point_.l();
   int t = min_s_index;
   SLPoint sl_point;
   while (t != max_s_index) {
@@ -191,7 +191,7 @@ double SLPolygon::MinRadiusStopDistance(double check_l) {
   }
   static constexpr double stop_distance_buffer = 0.4;
   double min_turn_radius = VehicleConfigHelper::MinSafeTurnRadius();
-  AINFO << "min_turn_radius: " << min_turn_radius;
+  ADEBUG << "min_turn_radius: " << min_turn_radius;
 
   const auto& adc_param =
       VehicleConfigHelper::Instance()->GetConfig().vehicle_param();
@@ -199,7 +199,7 @@ double SLPolygon::MinRadiusStopDistance(double check_l) {
   double expand_adc_half_width =
       adc_param.width() / 2.0 + FLAGS_nonstatic_obstacle_nudge_l_buffer;
   min_turn_radius += expand_adc_half_width;
-  AINFO << "expand min_turn_radius: " << min_turn_radius;
+  ADEBUG << "expand min_turn_radius: " << min_turn_radius;
   if (nudge_type_ == NudgeType::LEFT_NUDGE) {
     lateral_diff = expand_adc_half_width - check_l + max_l_point_.l();
   } else if (nudge_type_ == NudgeType::RIGHT_NUDGE) {
@@ -208,7 +208,7 @@ double SLPolygon::MinRadiusStopDistance(double check_l) {
   lateral_diff = std::max(0.0, lateral_diff);
   const double kEpison = 1e-5;
   lateral_diff = std::min(lateral_diff, min_turn_radius - kEpison);
-  AINFO << "obs: " << id_ << ", lateral_diff: " << lateral_diff;
+  ADEBUG << "obs: " << id_ << ", lateral_diff: " << lateral_diff;
   double min_radius_stop_distance_ =
       std::sqrt(std::fabs(min_turn_radius * min_turn_radius -
                           (min_turn_radius - lateral_diff) *
@@ -223,7 +223,7 @@ double SLPolygon::MinRadiusStopDistance(double check_l) {
       std::min(min_radius_stop_distance_, FLAGS_max_stop_distance_obstacle);
   min_radius_stop_distance_ =
       std::max(min_radius_stop_distance_, FLAGS_min_stop_distance_obstacle);
-  AINFO << "obs: " << id_
+  ADEBUG << "obs: " << id_
         << ", min_radius_stop_distance: " << min_radius_stop_distance_;
   return min_radius_stop_distance_;
 }

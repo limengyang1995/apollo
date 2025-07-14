@@ -56,16 +56,16 @@ bool LoadTypes(const std::string &path,
     return false;
   }
   std::string type;
-  AINFO << "Supported types: ";
+  ADEBUG << "Supported types: ";
   while (ifs >> type) {
     if (base::kName2SubTypeMap.find(type) == base::kName2SubTypeMap.end()) {
       AERROR << "Invalid type: " << type;
       return false;
     }
     (*types).push_back(base::kName2SubTypeMap.at(type));
-    AINFO << "\t\t" << type;
+    ADEBUG << "\t\t" << type;
   }
-  AINFO << "\t\t" << (*types).size() << " in total.";
+  ADEBUG << "\t\t" << (*types).size() << " in total.";
   ifs.close();
   return true;
 }
@@ -76,10 +76,10 @@ bool LoadExpand(const std::string &path, std::vector<float> *expands) {
     return false;
   }
   float expand;
-  AINFO << "Expand nums: ";
+  ADEBUG << "Expand nums: ";
   while (ifs >> expand) {
     expands->push_back(expand);
-    AINFO << "\t\t" << expand;
+    ADEBUG << "\t\t" << expand;
   }
   ifs.close();
   return true;

@@ -66,7 +66,7 @@ ParkAndGoStageCruise::CheckADCParkAndGoCruiseCompleted(
 
   const double kLBuffer = 0.5 + reference_line_size * 3.5;
   if (std::fabs(adc_position_sl.l()) < kLBuffer) {
-    AINFO << " P&&G cruise completed";
+    ADEBUG << " P&&G cruise completed";
     return CRUISE_COMPLETE;
   }
 

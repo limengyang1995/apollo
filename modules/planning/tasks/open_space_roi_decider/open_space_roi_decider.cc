@@ -55,7 +55,7 @@ bool OpenSpaceRoiDecider::Init(
     vehicle_params_ = apollo::common::VehicleConfigHelper::GetConfig().vehicle_param();
     // Load the config this task.
     bool res = Decider::LoadConfig<OpenSpaceRoiDeciderConfig>(&config_);
-    AINFO << config_.DebugString();
+    ADEBUG << config_.DebugString();
     return res;
 }
 
@@ -147,14 +147,14 @@ Status OpenSpaceRoiDecider::Process(Frame *frame) {
                     == -1;
         }
         if (is_parking_out) {
-            AINFO << "GetParkingOutBoundary!!";
+            ADEBUG << "GetParkingOutBoundary!!";
             if (!GetParkingOutBoundary(nearby_path, frame, &roi_boundary)) {
                 const std::string msg = "Fail to get park and go boundary from map";
                 AERROR << msg;
                 return Status(ErrorCode::PLANNING_ERROR, msg);
             }
         } else {
-            AINFO << "GetParkAndGoBoundary!!!";
+            ADEBUG << "GetParkAndGoBoundary!!!";
             if (!GetParkAndGoBoundary(frame, nearby_path, &roi_boundary)) {
                 const std::string msg = "Fail to get park and go boundary from map";
                 AERROR << msg;
@@ -200,8 +200,8 @@ void OpenSpaceRoiDecider::SetOriginFromADC(Frame *const frame, const hdmap::Path
     std::vector<common::math::Vec2d> adc_corners;
     adc_box.GetAllCorners(&adc_corners);
     for (size_t i = 0; i < adc_corners.size(); ++i) {
-        AINFO << "ADC [" << i << "]x: " << std::setprecision(9) << adc_corners[i].x();
-        AINFO << "ADC [" << i << "]y: " << std::setprecision(9) << adc_corners[i].y();
+        ADEBUG << "ADC [" << i << "]x: " << std::setprecision(9) << adc_corners[i].x();
+        ADEBUG << "ADC [" << i << "]y: " << std::setprecision(9) << adc_corners[i].y();
     }
     auto left_top = adc_corners[1];
 
@@ -1586,7 +1586,7 @@ bool OpenSpaceRoiDecider::IsInParkingLot(
     ADEBUG << hdmap_->GetParkingSpaces(adc_parking_spot, kDistance, &parking_lots);
     if (hdmap_->GetParkingSpaces(adc_parking_spot, kDistance, &parking_lots) == 0) {
         GetParkSpotFromMap(parking_lots.front(), parking_lot_vertices);
-        AINFO << "Get park lot from map!!";
+        ADEBUG << "Get park lot from map!!";
         return true;
     }
     return false;
@@ -1749,7 +1749,7 @@ bool OpenSpaceRoiDecider::GetParkingOutBoundary(
     common::math::Vec2d adc_init_position = {adc_init_x, adc_init_y};
     const double adc_length = vehicle_params_.length();
     const double adc_width = vehicle_params_.width();
-    AINFO << std::fixed << "adc_init_x is " << adc_init_x << "adc_init_y is " << adc_init_y << "adc_init_heading is "
+    ADEBUG << std::fixed << "adc_init_x is " << adc_init_x << "adc_init_y is " << adc_init_y << "adc_init_heading is "
           << adc_init_heading;
     // Current localization position is not in the center of vehicle
     double shift_distance = vehicle_params_.front_edge_to_center() - 0.5 * adc_length;
@@ -1767,20 +1767,20 @@ bool OpenSpaceRoiDecider::GetParkingOutBoundary(
     auto adc_parking_spot = common::util::PointFactory::ToPointENU(adc_init_x, adc_init_y, 0);
     const double kDistance = 1.0;
     if (hdmap_->GetParkingSpaces(adc_parking_spot, kDistance, &parking_lots) != 0) {
-        AINFO << "Failed to get the parking spot!!!";
+        ADEBUG << "Failed to get the parking spot!!!";
         return false;
     } else {
-        AINFO << "Get " << parking_lots.size() << " parking spots";
+        ADEBUG << "Get " << parking_lots.size() << " parking spots";
     }
     std::vector<Vec2d> parking_boundary;
     for (const auto &parking_overlap : parking_lots) {
         const auto parking_polygon = parking_overlap->polygon();
-        AINFO << "parking_polygon: " << parking_polygon.DebugString();
+        ADEBUG << "parking_polygon: " << parking_polygon.DebugString();
         bool is_in_parking_spot = true;
         for (const auto &corner : adc_corners) {
             if (!parking_polygon.IsPointIn(corner)) {
                 is_in_parking_spot = false;
-                AINFO << "Vehicle is out of parking spot!";
+                ADEBUG << "Vehicle is out of parking spot!";
                 break;
             }
         }
@@ -1801,7 +1801,7 @@ bool OpenSpaceRoiDecider::GetParkingOutBoundary(
         }
     }
     if (parking_boundary.size() < 4) {
-        AINFO << " Current parking spot is invalid!";
+        ADEBUG << " Current parking spot is invalid!";
         return false;
     }
     auto left_top = parking_boundary[3];
@@ -2077,7 +2077,7 @@ bool OpenSpaceRoiDecider::GetParkingOutBoundary(
         AERROR << "vehicle outside of xy boundary of parking ROI";
         return false;
     }
-    AINFO << "success get ROI";
+    ADEBUG << "success get ROI";
     return true;
 }
 

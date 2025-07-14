@@ -61,7 +61,7 @@ class ObstacleContainer {
     // vertices using H-representation
     if (!ObsHRep(obstacles_num_, obstacles_edges_num_, obstacles_vertices_vec_,
                  &obstacles_A_, &obstacles_b_)) {
-      AINFO << "Fail to present obstacle in hyperplane";
+      ADEBUG << "Fail to present obstacle in hyperplane";
       return false;
     }
     return true;
@@ -72,7 +72,7 @@ class ObstacleContainer {
                const std::vector<std::vector<Vec2d>>& obstacles_vertices_vec,
                Eigen::MatrixXd* A_all, Eigen::MatrixXd* b_all) {
     if (obstacles_num != obstacles_vertices_vec.size()) {
-      AINFO << "obstacles_num != obstacles_vertices_vec.size()";
+      ADEBUG << "obstacles_num != obstacles_vertices_vec.size()";
       return false;
     }
 
@@ -144,7 +144,7 @@ class ObstacleContainer {
     // the obstacles are hard coded into vertice sets of 3, 2, 3, 2
     if (!(VPresentationObstacle(ROI_distance_approach_parking_boundary) &&
           HPresentationObstacle())) {
-      AINFO << "obstacle presentation fails";
+      ADEBUG << "obstacle presentation fails";
     }
   }
 
@@ -383,7 +383,7 @@ bool DistanceSmoothing(
         obstacles.GetbMatrix(), xWS, &l_warm_up, &n_warm_up, &s_warm_up);
 
     if (dual_variable_warm_start_status) {
-      AINFO << "Dual variable problem solved successfully!";
+      ADEBUG << "Dual variable problem solved successfully!";
     } else {
       AERROR << "Dual variable problem solving failed";
       return false;
@@ -425,7 +425,7 @@ bool DistancePlan(HybridAStar* hybridA_ptr, ObstacleContainer* obstacles_ptr,
       FLAGS_planner_open_space_config_filename, &planner_open_space_config_))
       << "Failed to load open space config file "
       << FLAGS_planner_open_space_config_filename;
-  AINFO << "FLAGS_planner_open_space_config_filename: "
+  ADEBUG << "FLAGS_planner_open_space_config_filename: "
         << FLAGS_planner_open_space_config_filename;
 
   double hybrid_total = 0.0;
@@ -445,7 +445,7 @@ bool DistancePlan(HybridAStar* hybridA_ptr, ObstacleContainer* obstacles_ptr,
                          obstacles_ptr->GetObstacleVec(),
                          &hybrid_astar_result,
                          soft_boundary_vertices_vec, false)) {
-    AINFO << "Hybrid A Star fails";
+    ADEBUG << "Hybrid A Star fails";
     return false;
   }
   const auto end_timestamp = std::chrono::system_clock::now();
@@ -537,7 +537,7 @@ bool DistancePlan(HybridAStar* hybridA_ptr, ObstacleContainer* obstacles_ptr,
         AERROR << "state horizon smaller than 2";
         return false;
       }
-      AINFO << "trajectory idx: "
+      ADEBUG << "trajectory idx: "
             << "idx range: " << trajectory_point_size << ", "
             << trajectory_point_size +
                    static_cast<size_t>(state_result_ds_vec[i].cols()) - 1;

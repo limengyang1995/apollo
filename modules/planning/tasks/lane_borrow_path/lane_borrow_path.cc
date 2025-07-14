@@ -61,7 +61,7 @@ apollo::common::Status LaneBorrowPath::Process(Frame* frame, ReferenceLineInfo* 
         return Status::OK();
     }
     if (!IsNecessaryToBorrowLane()) {
-        AINFO << "No need to borrow lane";
+        ADEBUG << "No need to borrow lane";
         return Status::OK();
     }
     std::vector<PathBoundary> candidate_path_boundaries;
@@ -204,14 +204,14 @@ bool LaneBorrowPath::AssessPath(std::vector<PathData>* candidate_path_data, Path
                 PathAssessmentDeciderUtil::TrimTailingOutLanePoints(&curr_path_data);
             }
             if (curr_path_data.Empty()) {
-                AINFO << "lane borrow path is empty after trimed";
+                ADEBUG << "lane borrow path is empty after trimed";
                 continue;
             }
             valid_path_data.push_back(curr_path_data);
         }
     }
     if (valid_path_data.empty()) {
-        AINFO << "All lane borrow path are not valid";
+        ADEBUG << "All lane borrow path are not valid";
         return false;
     }
     auto* mutable_path_decider_status
@@ -356,36 +356,36 @@ bool LaneBorrowPath::IsNecessaryToBorrowLane() {
             // non-lane-borrowing.
             mutable_path_decider_status->set_is_in_path_lane_borrow_scenario(false);
             decided_side_pass_direction_.clear();
-            AINFO << "Switch from LANE-BORROW path to SELF-LANE path.";
+            ADEBUG << "Switch from LANE-BORROW path to SELF-LANE path.";
         }
     } else {
         // If originally not borrowing neighbor lane:
-        AINFO << "Blocking obstacle ID[" << mutable_path_decider_status->front_static_obstacle_id() << "]";
+        ADEBUG << "Blocking obstacle ID[" << mutable_path_decider_status->front_static_obstacle_id() << "]";
         // ADC requirements check for lane-borrowing:
         if (!HasSingleReferenceLine(*frame_)) {
-            AINFO << "No borrow 1";
+            ADEBUG << "No borrow 1";
             return false;
         }
         if (!IsWithinSidePassingSpeedADC(*frame_)) {
-            AINFO << "No borrow 2";
+            ADEBUG << "No borrow 2";
             return false;
         }
 
         // Obstacle condition check for lane-borrowing:
         if (!IsBlockingObstacleFarFromIntersection(*reference_line_info_)) {
-            AINFO << "No borrow 3";
+            ADEBUG << "No borrow 3";
             return false;
         }
         if (!IsLongTermBlockingObstacle()) {
-            AINFO << "No borrow 4";
+            ADEBUG << "No borrow 4";
             return false;
         }
         if (!IsBlockingObstacleWithinDestination(*reference_line_info_)) {
-            AINFO << "No borrow 5";
+            ADEBUG << "No borrow 5";
             return false;
         }
         if (!IsSidePassableObstacle(*reference_line_info_)) {
-            AINFO << "No borrow 6";
+            ADEBUG << "No borrow 6";
             return false;
         }
 
@@ -397,8 +397,8 @@ bool LaneBorrowPath::IsNecessaryToBorrowLane() {
             CheckLaneBorrow(*reference_line_info_, &left_borrowable, &right_borrowable);
             if (!left_borrowable && !right_borrowable) {
                 mutable_path_decider_status->set_is_in_path_lane_borrow_scenario(false);
-                AINFO << "LEFT AND RIGHT LANE CAN NOT BORROW";
-                AINFO << "IsNecessaryToBorrowLane false 7";
+                ADEBUG << "LEFT AND RIGHT LANE CAN NOT BORROW";
+                ADEBUG << "IsNecessaryToBorrowLane false 7";
                 return false;
             } else {
                 mutable_path_decider_status->set_is_in_path_lane_borrow_scenario(true);
@@ -411,7 +411,7 @@ bool LaneBorrowPath::IsNecessaryToBorrowLane() {
             }
         }
         use_self_lane_ = 0;
-        AINFO << "Switch from SELF-LANE path to LANE-BORROW path.";
+        ADEBUG << "Switch from SELF-LANE path to LANE-BORROW path.";
     }
     return mutable_path_decider_status->is_in_path_lane_borrow_scenario();
 }
@@ -425,14 +425,14 @@ bool LaneBorrowPath::IsWithinSidePassingSpeedADC(const Frame& frame) {
 }
 
 bool LaneBorrowPath::IsLongTermBlockingObstacle() {
-    AINFO << "front_static_obstacle_cycle_counter: "
+    ADEBUG << "front_static_obstacle_cycle_counter: "
           << injector_->planning_context()->planning_status().path_decider().front_static_obstacle_cycle_counter();
     if (injector_->planning_context()->planning_status().path_decider().front_static_obstacle_cycle_counter()
         >= config_.long_term_blocking_obstacle_cycle_threshold()) {
-        AINFO << "The blocking obstacle is long-term existing.";
+        ADEBUG << "The blocking obstacle is long-term existing.";
         return true;
     } else {
-        AINFO << "The blocking obstacle is not long-term existing.";
+        ADEBUG << "The blocking obstacle is not long-term existing.";
         return false;
     }
 }
@@ -506,12 +506,12 @@ bool LaneBorrowPath::IsSidePassableObstacle(const ReferenceLineInfo& reference_l
     const auto& path_decider_status = injector_->planning_context()->planning_status().path_decider();
     const std::string blocking_obstacle_id = path_decider_status.front_static_obstacle_id();
     if (blocking_obstacle_id.empty()) {
-        AINFO << "There is no blocking obstacle.";
+        ADEBUG << "There is no blocking obstacle.";
         return false;
     }
     const Obstacle* blocking_obstacle = reference_line_info.path_decision().obstacles().Find(blocking_obstacle_id);
     if (blocking_obstacle == nullptr) {
-        AINFO << "Blocking obstacle is no longer there.";
+        ADEBUG << "Blocking obstacle is no longer there.";
         return false;
     }
 
@@ -527,7 +527,7 @@ void LaneBorrowPath::CheckLaneBorrow(
     *left_neighbor_lane_borrowable = true;
     *right_neighbor_lane_borrowable = true;
 
-    static constexpr double kLookforwardDistance = 100.0;
+    static constexpr double kLookforwardDistance = 50.0;
     double check_s = reference_line_info.AdcSlBoundary().end_s();
     const double lookforward_distance = std::min(check_s + kLookforwardDistance, reference_line.Length());
     while (check_s < lookforward_distance) {
@@ -535,16 +535,19 @@ void LaneBorrowPath::CheckLaneBorrow(
         if (ref_point.lane_waypoints().empty()) {
             *left_neighbor_lane_borrowable = false;
             *right_neighbor_lane_borrowable = false;
+            ADEBUG << "lane waypoints empty";
             return;
         }
         auto ptr_lane_info = reference_line_info.LocateLaneInfo(check_s);
         if (ptr_lane_info->lane().left_neighbor_forward_lane_id().empty()
             && ptr_lane_info->lane().left_neighbor_reverse_lane_id().empty()) {
             *left_neighbor_lane_borrowable = false;
+            ADEBUG << "left lane empty";
         }
         if (ptr_lane_info->lane().right_neighbor_forward_lane_id().empty()
             && ptr_lane_info->lane().right_neighbor_reverse_lane_id().empty()) {
             *right_neighbor_lane_borrowable = false;
+            ADEBUG << "right lane empty";
         }
         const auto waypoint = ref_point.lane_waypoints().front();
         hdmap::LaneBoundaryType::Type lane_boundary_type = hdmap::LaneBoundaryType::UNKNOWN;

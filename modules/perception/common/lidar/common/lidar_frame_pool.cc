@@ -24,7 +24,7 @@ namespace lidar {
 // @brief call pool instance once to initialize memory
 __attribute__((constructor)) void LidarFramePoolInitialize() {
   LidarFramePool::Instance();
-  AINFO << "Initialize lidar frame pool.";
+  ADEBUG << "Initialize lidar frame pool.";
 }
 
 }  // namespace lidar

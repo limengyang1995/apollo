@@ -121,7 +121,7 @@ void MlfTypeFilter::UpdateWithObject(
              << ", " << new_object->type_probs[3] << ", "
              << new_object->type_probs[4] << ", " << new_object->type_probs[5]
              << " type = " << static_cast<size_t>(new_object->type);
-        AINFO << sstr.str();
+        ADEBUG << sstr.str();
     }
     return;
 }

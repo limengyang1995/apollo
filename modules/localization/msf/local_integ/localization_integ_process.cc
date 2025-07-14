@@ -64,7 +64,7 @@ Status LocalizationIntegProcess::Init(const LocalizationIntegParam &param) {
   } else {
     gnss_antenna_extrinsic_ = TransformD::Identity();
   }
-  AINFO << "gnss and imu lever arm: "
+  ADEBUG << "gnss and imu lever arm: "
         << gnss_antenna_extrinsic_.translation()(0) << " "
         << gnss_antenna_extrinsic_.translation()(1) << " "
         << gnss_antenna_extrinsic_.translation()(2);
@@ -135,13 +135,13 @@ void LocalizationIntegProcess::RawImuProcess(const ImuData &imu_msg) {
     }
 
     if (cur_imu_time - 0.5 > pre_imu_time) {
-      AINFO << "SINS has completed alignment!" << std::endl;
+      ADEBUG << "SINS has completed alignment!" << std::endl;
       pre_imu_time = cur_imu_time;
     }
   } else {
     delay_output_counter_ = 0;
     if (cur_imu_time - 0.5 > pre_imu_time) {
-      AINFO << "SINS is aligning!" << std::endl;
+      ADEBUG << "SINS is aligning!" << std::endl;
       pre_imu_time = cur_imu_time;
     }
   }
@@ -291,7 +291,7 @@ void LocalizationIntegProcess::StopThreadLoop() {
 }
 
 void LocalizationIntegProcess::MeasureDataThreadLoop() {
-  AINFO << "Started measure data process thread";
+  ADEBUG << "Started measure data process thread";
   while (keep_running_.load()) {
     {
       std::unique_lock<std::mutex> lock(measure_data_queue_mutex_);
@@ -322,7 +322,7 @@ void LocalizationIntegProcess::MeasureDataThreadLoop() {
 
     MeasureDataProcessImpl(measure);
   }
-  AINFO << "Exited measure data process thread";
+  ADEBUG << "Exited measure data process thread";
 }
 
 void LocalizationIntegProcess::MeasureDataProcessImpl(

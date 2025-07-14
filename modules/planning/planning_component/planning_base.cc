@@ -51,19 +51,19 @@ bool PlanningBase::IsPlanningFinished(
     const ADCTrajectory::TrajectoryType& current_trajectory_type) const {
   const auto frame = injector_->frame_history()->Latest();
   if (current_trajectory_type == apollo::planning::ADCTrajectory::OPEN_SPACE) {
-    AINFO << "Current trajectory type is: OPEN SPACE";
+    ADEBUG << "Current trajectory type is: OPEN SPACE";
     if (frame->open_space_info().openspace_planning_finish()) {
-      AINFO << "OPEN SPACE: planning finished";
+      ADEBUG << "OPEN SPACE: planning finished";
       return true;
     } else {
-      AINFO << "OPEN SPACE: planning not finished";
+      ADEBUG << "OPEN SPACE: planning not finished";
       return false;
     }
   } else {
     // const auto frame = injector_->frame_history()->Latest();
     if (nullptr == frame || frame->reference_line_info().empty() ||
         nullptr == local_view_.planning_command) {
-      AINFO << "Current reference point is empty;";
+      ADEBUG << "Current reference point is empty;";
       return true;
     }
     const auto& reference_line_info = frame->reference_line_info().front();
@@ -71,26 +71,26 @@ bool PlanningBase::IsPlanningFinished(
     const auto& reference_points =
         reference_line_info.reference_line().reference_points();
     if (reference_points.empty()) {
-      AINFO << "Current reference points is empty;";
+      ADEBUG << "Current reference points is empty;";
       return true;
     }
     const auto& last_reference_point = reference_points.back();
     const std::vector<hdmap::LaneWaypoint>& lane_way_points =
         last_reference_point.lane_waypoints();
     if (lane_way_points.empty()) {
-      AINFO << "Last reference point is empty;";
+      ADEBUG << "Last reference point is empty;";
       return true;
     }
     // Get the end lane way point.
     if (nullptr == frame->local_view().end_lane_way_point) {
-      AINFO << "Current end lane way is empty;";
+      ADEBUG << "Current end lane way is empty;";
       return true;
     }
     bool is_has_passed_destination = injector_->planning_context()
                                          ->planning_status()
                                          .destination()
                                          .has_passed_destination();
-    AINFO << "Current passed destination:" << is_has_passed_destination;
+    ADEBUG << "Current passed destination:" << is_has_passed_destination;
     return is_has_passed_destination;
   }
 }
@@ -127,7 +127,7 @@ bool PlanningBase::GenerateWidthOfLane(const Vec2d& current_location,
   double left_width = 0, right_width = 0;
   const auto frame = injector_->frame_history()->Latest();
   if (nullptr == frame || frame->reference_line_info().empty()) {
-    AINFO << "Reference lane is empty!";
+    ADEBUG << "Reference lane is empty!";
     return false;
   }
   const auto& reference_line_info = frame->reference_line_info().front();
@@ -137,10 +137,10 @@ bool PlanningBase::GenerateWidthOfLane(const Vec2d& current_location,
   // Get the lane width of vehicle location
   bool get_width_of_lane = reference_line_info.reference_line().GetLaneWidth(
       current_sl.s(), &left_width, &right_width);
-  AINFO << "get_width_of_lane: " << get_width_of_lane
+  ADEBUG << "get_width_of_lane: " << get_width_of_lane
         << ", left_width: " << left_width << ", right_width: " << right_width;
   if (get_width_of_lane && left_width != 0 && right_width != 0) {
-    AINFO << "Get the width of lane successfully!";
+    ADEBUG << "Get the width of lane successfully!";
     SLPoint sl_left_point, sl_right_point;
     sl_left_point.set_s(current_sl.s());
     sl_left_point.set_l(left_width);
@@ -150,7 +150,7 @@ bool PlanningBase::GenerateWidthOfLane(const Vec2d& current_location,
     reference_line_info.reference_line().SLToXY(sl_right_point, &right_point);
     return true;
   } else {
-    AINFO << "Failed to get the width of lane!";
+    ADEBUG << "Failed to get the width of lane!";
     return false;
   }
 }

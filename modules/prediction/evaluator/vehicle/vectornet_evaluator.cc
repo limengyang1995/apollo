@@ -227,7 +227,7 @@ bool VectornetEvaluator::Evaluate(Obstacle* obstacle_ptr,
 
   auto end_time_obs = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_obs = end_time_obs - start_time_obs;
-  AINFO << "obstacle vectors used time: " << diff_obs.count() * 1000 << " ms.";
+  ADEBUG << "obstacle vectors used time: " << diff_obs.count() * 1000 << " ms.";
 
   Feature* latest_feature_ptr = obstacle_ptr->mutable_latest_feature();
   CHECK_NOTNULL(latest_feature_ptr);
@@ -249,7 +249,7 @@ bool VectornetEvaluator::Evaluate(Obstacle* obstacle_ptr,
 
   auto end_time_query = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_query = end_time_query - start_time_query;
-  AINFO << "vectors query used time: " << diff_query.count() * 1000 << " ms.";
+  ADEBUG << "vectors query used time: " << diff_query.count() * 1000 << " ms.";
 
   // process map data & map p id & v_mask for map polyline
   int map_polyline_num = map_feature.size();
@@ -314,7 +314,7 @@ bool VectornetEvaluator::Evaluate(Obstacle* obstacle_ptr,
   auto end_time_data_prep = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_data_prep =
       end_time_data_prep - start_time_data_prep;
-  AINFO << "vectornet input tensor preparation used time: "
+  ADEBUG << "vectornet input tensor preparation used time: "
          << diff_data_prep.count() * 1000 << " ms.";
 
   auto start_time_inference = std::chrono::system_clock::now();
@@ -326,7 +326,7 @@ bool VectornetEvaluator::Evaluate(Obstacle* obstacle_ptr,
   auto end_time_inference = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_inference =
       end_time_inference - start_time_inference;
-  AINFO << "vectornet inference used time: " << diff_inference.count() * 1000
+  ADEBUG << "vectornet inference used time: " << diff_inference.count() * 1000
          << " ms.";
 
   // Get the trajectory
@@ -381,7 +381,7 @@ bool VectornetEvaluator::Evaluate(Obstacle* obstacle_ptr,
   auto end_time_output_process = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_output_process =
       end_time_output_process - start_time_output_process;
-  AINFO << "vectornet output process used time: "
+  ADEBUG << "vectornet output process used time: "
          << diff_output_process.count() * 1000 << " ms.";
   return true;
 }
@@ -459,7 +459,7 @@ bool VectornetEvaluator::ExtractObstaclesHistory(
 
 void VectornetEvaluator::LoadModel() {
   if (FLAGS_use_cuda && torch::cuda::is_available()) {
-    AINFO << "CUDA is available";
+    ADEBUG << "CUDA is available";
     device_ = torch::Device(torch::kCUDA);
     torch_vehicle_model_ =
         torch::jit::load(FLAGS_torch_vehicle_vectornet_file, device_);

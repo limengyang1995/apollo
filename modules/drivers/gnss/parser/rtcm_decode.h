@@ -98,7 +98,7 @@ static inline bool gnss_sys_type(int sys_id,
       break;
 
     default:
-      AINFO << "Not support sys id: " << sys_id;
+      ADEBUG << "Not support sys id: " << sys_id;
       return false;
   }
   return true;
@@ -116,7 +116,7 @@ static inline bool gnss_baud_id(apollo::drivers::gnss::GnssType sys_type,
       } else if (seq == 2) {
         *baud_id = apollo::drivers::gnss::GnssBandID::GPS_L5;
       } else {
-        AINFO << "Not support gps baud seq : " << seq;
+        ADEBUG << "Not support gps baud seq : " << seq;
         return false;
       }
       break;
@@ -129,7 +129,7 @@ static inline bool gnss_baud_id(apollo::drivers::gnss::GnssType sys_type,
       } else if (seq == 2) {
         *baud_id = apollo::drivers::gnss::GnssBandID::BDS_B3;
       } else {
-        AINFO << "Not support beidou baud seq : " << seq;
+        ADEBUG << "Not support beidou baud seq : " << seq;
         return false;
       }
       break;
@@ -140,13 +140,13 @@ static inline bool gnss_baud_id(apollo::drivers::gnss::GnssType sys_type,
       } else if (seq == 1) {
         *baud_id = apollo::drivers::gnss::GnssBandID::GLO_G2;
       } else {
-        AINFO << "Not support beidou glonass seq : " << seq;
+        ADEBUG << "Not support beidou glonass seq : " << seq;
         return false;
       }
       break;
 
     default:
-      AINFO << "Not support sys " << static_cast<int>(sys_type) << ", seq "
+      ADEBUG << "Not support sys " << static_cast<int>(sys_type) << ", seq "
             << seq;
       return false;
   }
@@ -174,7 +174,7 @@ static inline bool gnss_time_type(
       break;
 
     default:
-      AINFO << "Not support sys " << static_cast<int>(sys_type);
+      ADEBUG << "Not support sys " << static_cast<int>(sys_type);
       return false;
   }
   return true;

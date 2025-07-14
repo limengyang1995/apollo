@@ -48,18 +48,18 @@ bool ROIBoundaryFilter::Init(const ObjectFilterInitOptions& options) {
 bool ROIBoundaryFilter::Filter(const ObjectFilterOptions& options,
                                LidarFrame* frame) {
   if (!frame) {
-    AINFO << "Lidar frame is nullptr.";
+    ADEBUG << "Lidar frame is nullptr.";
     return false;
   }
   if (!frame->hdmap_struct) {
-    AINFO << "HDMap struct is nullptr.";
+    ADEBUG << "HDMap struct is nullptr.";
     return true;
   }
   if (frame->hdmap_struct->road_boundary.size() +
           frame->hdmap_struct->road_polygons.size() +
           frame->hdmap_struct->junction_polygons.size() ==
       0) {
-    AINFO << "Donot find roi polygons, skip boundary filter.";
+    ADEBUG << "Donot find roi polygons, skip boundary filter.";
     for (auto& object : frame->segmented_objects) {
       object->lidar_supplement.is_in_roi = true;
     }
@@ -90,7 +90,7 @@ bool ROIBoundaryFilter::Filter(const ObjectFilterOptions& options,
     }
   }
   objects.resize(count);
-  AINFO << "Roi boundary filter, " << objects_valid_flag_.size() << " to "
+  ADEBUG << "Roi boundary filter, " << objects_valid_flag_.size() << " to "
         << count;
   return true;
 }

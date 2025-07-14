@@ -403,7 +403,7 @@ DEFINE_double(path_bounds_horizon, 100, "path bounds horizon");
 DEFINE_double(num_extra_tail_bound_point, 20, "The extra tail point number.");
 DEFINE_bool(enable_pull_over_at_destination, false,
             "Whether to pull over at destination");
-DEFINE_double(replan_lateral_distance_threshold, 0.5,
+DEFINE_double(replan_lateral_distance_threshold, 0.3,
               "The lateral distance threshold of replan");
 DEFINE_double(replan_longitudinal_distance_threshold, 2.5,
               "The longitudinal distance threshold of replan");

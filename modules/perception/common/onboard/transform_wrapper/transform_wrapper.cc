@@ -46,7 +46,7 @@ void TransformCache::AddTransform(const StampedTransform& transform) {
   }
   double delt = transform.timestamp - transforms_.back().timestamp;
   if (delt < 0.0) {
-    AINFO << "ERROR: add earlier transform to transform cache";
+    ADEBUG << "ERROR: add earlier transform to transform cache";
     return;
   }
 
@@ -99,11 +99,11 @@ bool TransformCache::QueryTransform(double timestamp,
 
   double delt = timestamp - transforms_.back().timestamp;
   if (delt > max_duration) {
-    AINFO << "ERROR: query timestamp is " << delt
+    ADEBUG << "ERROR: query timestamp is " << delt
           << "s later than cached timestamp";
     return false;
   } else if (delt < 0.0) {
-    AINFO << "ERROR: query earlier timestamp than transform cache";
+    ADEBUG << "ERROR: query earlier timestamp than transform cache";
     return false;
   }
 
@@ -111,7 +111,7 @@ bool TransformCache::QueryTransform(double timestamp,
   if (size == 1) {
     (*transform) = transforms_.back();
     transform->timestamp = timestamp;
-    AINFO << "use transform at " << transforms_.back().timestamp << " for "
+    ADEBUG << "use transform at " << transforms_.back().timestamp << " for "
           << timestamp;
   } else {
     double ratio =
@@ -131,7 +131,7 @@ bool TransformCache::QueryTransform(double timestamp,
         transforms_[size - 2].translation.z() * (1 - ratio) +
         transforms_[size - 1].translation.z() * ratio;
 
-    AINFO << "estimate pose at " << timestamp << " from poses at "
+    ADEBUG << "estimate pose at " << timestamp << " from poses at "
           << transforms_[size - 2].timestamp << " and "
           << transforms_[size - 1].timestamp;
   }
@@ -181,7 +181,7 @@ bool TransformWrapper::GetSensor2worldTrans(
     sensor2novatel_extrinsics_.reset(new Eigen::Affine3d);
     *sensor2novatel_extrinsics_ =
         trans_sensor2novatel.translation * trans_sensor2novatel.rotation;
-    AINFO << "Get sensor2novatel extrinsics successfully.";
+    ADEBUG << "Get sensor2novatel extrinsics successfully.";
   }
 
   StampedTransform trans_novatel2world;
@@ -209,7 +209,7 @@ bool TransformWrapper::GetSensor2worldTrans(
   if (novatel2world_trans != nullptr) {
     *novatel2world_trans = novatel2world;
   }
-  AINFO << "Get pose timestamp: " << timestamp << ", pose: \n"
+  ADEBUG << "Get pose timestamp: " << timestamp << ", pose: \n"
         << (*sensor2world_trans).matrix();
   return true;
 }
@@ -234,7 +234,7 @@ bool TransformWrapper::GetExtrinsics(double timestamp, Eigen::Affine3d* trans) {
     sensor2novatel_extrinsics_.reset(new Eigen::Affine3d);
     *sensor2novatel_extrinsics_ =
         trans_sensor2novatel.translation * trans_sensor2novatel.rotation;
-    AINFO << "Get sensor2novatel extrinsics successfully.";
+    ADEBUG << "Get sensor2novatel extrinsics successfully.";
   }
   if (!inited_ || trans == nullptr || sensor2novatel_extrinsics_ == nullptr) {
     AERROR << "TransformWrapper get extrinsics failed";

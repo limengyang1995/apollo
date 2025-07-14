@@ -173,7 +173,7 @@ bool ObjectTemplateManager::Init() {
   type_refined_by_ref_ = kTypeRefinedByRef;
 
   inited_ = true;
-  AINFO << "Init object_template_manager success.";
+  ADEBUG << "Init object_template_manager success.";
   return true;
 }
 

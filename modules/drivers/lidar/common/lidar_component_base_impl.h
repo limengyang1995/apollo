@@ -177,7 +177,7 @@ bool LidarComponentBaseImpl<ScanType, ComponentType>::WritePointCloud(
 //     std::shared_ptr<PointCloud> new_pcd_object =
 //     pcd_writer->AcquireMessage();
 //     new_pcd_object->mutable_point()->Reserve(default_point_cloud_reserve);
-//     AINFO << "new pcd frame memory allocated, reserve point size = "
+//     ADEBUG << "new pcd frame memory allocated, reserve point size = "
 //           << default_point_cloud_reserve;
 //     return new_pcd_object;
 // }

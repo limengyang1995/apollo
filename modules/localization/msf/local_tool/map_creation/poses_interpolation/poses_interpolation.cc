@@ -73,7 +73,7 @@ void PosesInterpolation::LoadPCDTimestamp() {
     }
     fclose(file);
   } else {
-    AINFO << "Can't open file to read: " << ref_timestamps_path_;
+    ADEBUG << "Can't open file to read: " << ref_timestamps_path_;
   }
 }
 

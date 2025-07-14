@@ -84,14 +84,14 @@ Status NaviPlanner::Init(const std::shared_ptr<DependencyInjector>& injector,
     return Status(ErrorCode::PLANNING_ERROR, msg);
   }
 
-  AINFO << "In NaviPlanner::Init()";
+  ADEBUG << "In NaviPlanner::Init()";
   RegisterTasks();
   PlannerNaviConfig planner_conf;
   LoadConfig<PlannerNaviConfig>(config_path, &planner_conf);
   for (const auto task : planner_conf.task()) {
     tasks_.emplace_back(
         task_factory_.CreateObject(static_cast<NaviTaskType>(task)));
-    AINFO << "Created task:" << tasks_.back()->Name();
+    ADEBUG << "Created task:" << tasks_.back()->Name();
   }
   for (auto& task : tasks_) {
     if (!task->Init(planner_conf)) {

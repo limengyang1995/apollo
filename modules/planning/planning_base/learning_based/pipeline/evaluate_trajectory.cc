@@ -46,10 +46,10 @@ void EvaluateTrajectory() {
         ++it;
       }
     }
-    AINFO << "For input " << input << ", found " << source_files.size()
+    ADEBUG << "For input " << input << ", found " << source_files.size()
           << " files to process";
     for (std::size_t i = 0; i < source_files.size(); ++i) {
-      AINFO << "\tProcessing: [ " << i + 1 << " / " << source_files.size()
+      ADEBUG << "\tProcessing: [ " << i + 1 << " / " << source_files.size()
             << " ]: " << source_files[i];
       evaluator.Evaluate(source_files[i]);
     }

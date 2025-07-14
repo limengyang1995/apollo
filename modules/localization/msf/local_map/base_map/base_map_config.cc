@@ -37,7 +37,7 @@ bool BaseMapConfig::Save(const std::string file_path) {
   boost::property_tree::ptree config;
   CreateXml(&config);
   boost::property_tree::write_xml(file_path, config);
-  AINFO << "Saved the map configuration to: " << file_path;
+  ADEBUG << "Saved the map configuration to: " << file_path;
   return true;
 }
 
@@ -48,7 +48,7 @@ bool BaseMapConfig::Load(const std::string file_path) {
   std::string map_version = config.get<std::string>("map.map_config.version");
   if (map_version_ == map_version) {
     LoadXml(config);
-    AINFO << "Loaded the map configuration from: " << file_path;
+    ADEBUG << "Loaded the map configuration from: " << file_path;
     return true;
   } else {
     AERROR << "[Fatal Error] Expect v" << map_version_ << " map, but found v"
@@ -95,13 +95,13 @@ void BaseMapConfig::LoadXml(const boost::property_tree::ptree& config) {
                 [this](const boost::property_tree::ptree::value_type& v) {
                   map_resolutions_.push_back(
                       static_cast<float>(atof(v.second.data().c_str())));
-                  AINFO << "Resolution: " << v.second.data();
+                  ADEBUG << "Resolution: " << v.second.data();
                 });
   const auto& datasets = config.get_child("map.map_record.datasets");
   std::for_each(datasets.begin(), datasets.end(),
                 [this](const boost::property_tree::ptree::value_type& v) {
                   map_datasets_.push_back(v.second.data());
-                  AINFO << "Dataset: " << v.second.data();
+                  ADEBUG << "Dataset: " << v.second.data();
                 });
 }
 

@@ -401,15 +401,15 @@ bool UsbCam::init_device(void) {
   //   return false;
   // }
 
-  AINFO << "Capability flag: 0x" << stream_params.parm.capture.capability;
+  ADEBUG << "Capability flag: 0x" << stream_params.parm.capture.capability;
 
   stream_params.parm.capture.timeperframe.numerator = 1;
   stream_params.parm.capture.timeperframe.denominator = config_->frame_rate();
 
   if (xioctl(fd_, VIDIOC_S_PARM, &stream_params) < 0) {
-    AINFO << "Couldn't set camera framerate";
+    ADEBUG << "Couldn't set camera framerate";
   } else {
-    AINFO << "Set framerate to be " << config_->frame_rate();
+    ADEBUG << "Set framerate to be " << config_->frame_rate();
   }
 
   switch (config_->io_method()) {
@@ -435,7 +435,7 @@ bool UsbCam::init_device(void) {
 
 #ifndef __aarch64__
 bool UsbCam::set_adv_trigger() {
-  AINFO << "Trigger enable, dev:" << config_->camera_dev()
+  ADEBUG << "Trigger enable, dev:" << config_->camera_dev()
         << ", fps:" << config_->trigger_fps()
         << ", internal:" << config_->trigger_internal();
   int ret = adv_trigger_enable(
@@ -788,7 +788,7 @@ bool UsbCam::read_frame(CameraImagePtr raw_image,
       if (len == -1) {
         switch (errno) {
           case EAGAIN:
-            AINFO << "EAGAIN";
+            ADEBUG << "EAGAIN";
             return false;
 
           case EIO:
@@ -859,7 +859,7 @@ bool UsbCam::read_frame(CameraImagePtr raw_image,
               static_cast<double>(camera_timestamp - last_nsec_) / 1e9;
           // drop image by frame_rate
           if (diff < frame_drop_interval_) {
-            AINFO << "drop image:" << camera_timestamp;
+            ADEBUG << "drop image:" << camera_timestamp;
             if (-1 == xioctl(fd_, VIDIOC_QBUF, &buf)) {
               AERROR << "VIDIOC_QBUF ERROR";
             }
@@ -1008,11 +1008,11 @@ void UsbCam::set_auto_focus(int value) {
       perror("VIDIOC_QUERYCTRL");
       return;
     } else {
-      AINFO << "V4L2_CID_FOCUS_AUTO is not supported";
+      ADEBUG << "V4L2_CID_FOCUS_AUTO is not supported";
       return;
     }
   } else if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED) {
-    AINFO << "V4L2_CID_FOCUS_AUTO is not supported";
+    ADEBUG << "V4L2_CID_FOCUS_AUTO is not supported";
     return;
   } else {
     memset(&control, 0, sizeof(control));

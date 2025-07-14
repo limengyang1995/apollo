@@ -57,7 +57,7 @@ HybridAStar::HybridAStar(const PlannerOpenSpaceConfig& open_space_conf) {
   if (arc_length_ < std::sqrt(2) * xy_grid_resolution_) {
     arc_length_ = std::sqrt(2) * xy_grid_resolution_;
   }
-  AINFO << "arc_length" << arc_length_;
+  ADEBUG << "arc_length" << arc_length_;
   delta_t_ = planner_open_space_config_.delta_t();
   traj_forward_penalty_ =
       planner_open_space_config_.warm_start_config().traj_forward_penalty();
@@ -274,7 +274,7 @@ double HybridAStar::TrajCost(std::shared_ptr<Node3d> current_node,
       step_size_ *
       traj_back_penalty_;
   }
-  AINFO << "traj cost: " << piecewise_cost;
+  ADEBUG << "traj cost: " << piecewise_cost;
   if (current_node->GetDirec() != next_node->GetDirec()) {
     piecewise_cost += traj_gear_switch_penalty_;
   }
@@ -294,11 +294,11 @@ bool HybridAStar::GetResult(HybridAStartResult* result) {
   std::vector<double> hybrid_a_x;
   std::vector<double> hybrid_a_y;
   std::vector<double> hybrid_a_phi;
-  AINFO << "switch node:" << current_node->GetXs().back()
+  ADEBUG << "switch node:" << current_node->GetXs().back()
         << ", " << current_node->GetYs().back();
-  AINFO << "switch node:" << current_node->GetXs().front()
+  ADEBUG << "switch node:" << current_node->GetXs().front()
         << ", " << current_node->GetYs().front();
-  AINFO << "cost: " << final_node_->GetCost()
+  ADEBUG << "cost: " << final_node_->GetCost()
         << "," << final_node_->GetTrajCost();
   while (current_node->GetPreNode() != nullptr) {
     std::vector<double> x = current_node->GetXs();
@@ -361,7 +361,7 @@ bool HybridAStar::GetResult(HybridAStartResult* result) {
 
 bool HybridAStar::GenerateSpeedAcceleration(
     HybridAStartResult* result) {
-  AINFO << "GenerateSpeedAcceleration";
+  ADEBUG << "GenerateSpeedAcceleration";
   // Sanity Check
   if (result->x.size() < 2 || result->y.size() < 2 || result->phi.size() < 2) {
     AERROR << "result size check when generating speed and acceleration fail";
@@ -408,7 +408,7 @@ bool HybridAStar::GenerateSpeedAcceleration(
 }
 
 bool HybridAStar::GenerateSCurveSpeedAcceleration(HybridAStartResult* result) {
-  AINFO << "GenerateSCurveSpeedAcceleration";
+  ADEBUG << "GenerateSCurveSpeedAcceleration";
   // sanity check
   CHECK_NOTNULL(result);
   if (result->x.size() < 2 || result->y.size() < 2 || result->phi.size() < 2) {
@@ -763,8 +763,8 @@ bool HybridAStar::Plan(
       new Node3d({sx}, {sy}, {sphi}, XYbounds_, planner_open_space_config_));
   end_node_.reset(
       new Node3d({ex}, {ey}, {ephi}, XYbounds_, planner_open_space_config_));
-  AINFO << "start node" << sx << "," << sy << "," << sphi;
-  AINFO << "end node " << ex << "," << ey << "," << ephi;
+  ADEBUG << "start node" << sx << "," << sy << "," << sphi;
+  ADEBUG << "end node " << ex << "," << ey << "," << ephi;
   if (!ValidityCheck(start_node_)) {
     AERROR << "start_node in collision with obstacles";
     AERROR << start_node_->GetX()
@@ -871,20 +871,20 @@ bool HybridAStar::Plan(
     return false;
   }
 
-  AINFO << "open_pq_.empty()" << (open_pq_.empty() ? "true" : "false");
-  AINFO << "open_pq_.size()" << open_pq_.size();
-  AINFO << "desired_explored_num" << desired_explored_num;
-  AINFO << "min cost is : " << final_node_->GetTrajCost();
-  AINFO << "max_explored_num is " << max_explored_num;
-  AINFO << "explored node num is " << explored_node_num
+  ADEBUG << "open_pq_.empty()" << (open_pq_.empty() ? "true" : "false");
+  ADEBUG << "open_pq_.size()" << open_pq_.size();
+  ADEBUG << "desired_explored_num" << desired_explored_num;
+  ADEBUG << "min cost is : " << final_node_->GetTrajCost();
+  ADEBUG << "max_explored_num is " << max_explored_num;
+  ADEBUG << "explored node num is " << explored_node_num
         << "available_result_num " << available_result_num;
-  AINFO << "best_explored_num is " << best_explored_num
+  ADEBUG << "best_explored_num is " << best_explored_num
         << "best_available_result_num is " << best_available_result_num;
-  AINFO << "cal node time is " << heuristic_time
+  ADEBUG << "cal node time is " << heuristic_time
         << "validity_check_time " << validity_check_time
         << "node_generator_time " << node_generator_time;
-  AINFO << "reed shepp time is " << rs_time;
-  AINFO << "hybrid astar total time is "
+  ADEBUG << "reed shepp time is " << rs_time;
+  ADEBUG << "hybrid astar total time is "
         << Clock::NowInSeconds() - astar_start_time;
 
   print_curves.AddPoint(

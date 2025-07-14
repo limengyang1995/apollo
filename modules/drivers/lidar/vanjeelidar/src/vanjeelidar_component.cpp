@@ -94,7 +94,7 @@ bool VanjeelidarComponent::Init() {
     AERROR << "vanjee Driver start failed";
     return false;
   }
-  AINFO << "vanjee lidar init finished";
+  ADEBUG << "vanjee lidar init finished";
   return true;
 }
 
@@ -144,7 +144,7 @@ void VanjeelidarComponent::PreparePointsMsg(PointCloud& msg) {
   double diff_time = msg.header().timestamp_sec() - lidar_time;
 
   if (diff_time > 0.02) {
-    AINFO << std::fixed << std::setprecision(16)
+    ADEBUG << std::fixed << std::setprecision(16)
           << "system time: " << msg.header().timestamp_sec()
           << ", lidar time: " << lidar_time << ", diff is:" << diff_time;
   }

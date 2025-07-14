@@ -36,18 +36,18 @@ class PushThread : public Thread {
   void Run() override {
     for (int idx = 1; idx < 10; ++idx) {
       queue_->Push(idx);
-      AINFO << "PushThread push value: " << idx;
+      ADEBUG << "PushThread push value: " << idx;
       std::this_thread::sleep_for(std::chrono::microseconds(100));
     }
     queue_->Push(0);
 
     for (int idx = 10; idx < 15; ++idx) {
       queue_->Push(idx);
-      AINFO << "PushThread push value: " << idx;
+      ADEBUG << "PushThread push value: " << idx;
       std::this_thread::sleep_for(std::chrono::microseconds(100));
     }
 
-    AINFO << "PushThread finished.";
+    ADEBUG << "PushThread finished.";
   }
 
  private:
@@ -67,11 +67,11 @@ class PopThread : public Thread {
       queue_->Pop(&value);
 
       if (value == 0) {
-        AINFO << "PopThread finished.";
+        ADEBUG << "PopThread finished.";
         break;
       }
 
-      AINFO << "PopThread pop value: " << value;
+      ADEBUG << "PopThread pop value: " << value;
     }
   }
 

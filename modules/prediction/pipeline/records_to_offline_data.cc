@@ -62,10 +62,10 @@ void GenerateDataForLearning() {
     std::vector<std::string> offline_bags;
     GetRecordFileNames(boost::filesystem::path(input), &offline_bags);
     std::sort(offline_bags.begin(), offline_bags.end());
-    AINFO << "For input " << input << ", found " << offline_bags.size()
+    ADEBUG << "For input " << input << ", found " << offline_bags.size()
           << "  rosbags to process";
     for (std::size_t i = 0; i < offline_bags.size(); ++i) {
-      AINFO << "\tProcessing: [ " << i << " / " << offline_bags.size()
+      ADEBUG << "\tProcessing: [ " << i << " / " << offline_bags.size()
             << " ]: " << offline_bags[i];
       MessageProcess::ProcessOfflineData(prediction_conf, container_manager,
                                          &evaluator_manager, &predictor_manager,

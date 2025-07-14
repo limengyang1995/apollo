@@ -45,7 +45,7 @@ bool MultiCamerasProjection::Init(const MultiCamerasInitOption& options) {
 
   for (size_t i = 0; i < options.camera_names.size(); ++i) {
     const std::string& cur_camera_name = options.camera_names.at(i);
-    AINFO << "init camera " << cur_camera_name;
+    ADEBUG << "init camera " << cur_camera_name;
 
     if (!sensor_manager->IsSensorExist(cur_camera_name)) {
       AERROR << "sensor " << cur_camera_name << " do not exist";
@@ -73,7 +73,7 @@ bool MultiCamerasProjection::Init(const MultiCamerasInitOption& options) {
                   0.5 * (rhs_cam_intrinsics(0, 0) + rhs_cam_intrinsics(1, 1));
               return lhs_focal_length > rhs_focal_length;
             });
-  AINFO << "camera_names sorted by descending focal lengths: "
+  ADEBUG << "camera_names sorted by descending focal lengths: "
         << std::accumulate(camera_names_.begin(), camera_names_.end(),
                            std::string(""),
                            [](std::string& sum, const std::string& s) {
@@ -99,7 +99,7 @@ bool MultiCamerasProjection::Project(const camera::CarPose& pose,
   c2w_pose = pose.c2w_poses_.at(option.camera_name);
 
   bool ret = false;
-  AINFO << "project use camera_name: " << option.camera_name;
+  ADEBUG << "project use camera_name: " << option.camera_name;
   ret = BoundaryBasedProject(camera_models_.at(option.camera_name), c2w_pose,
                              light->region.points, light);
 

@@ -51,36 +51,36 @@ class PadTerminal {
     terminal_thread_.reset(new std::thread([this] { terminal_thread_func(); }));
   }
   void help() {
-    AINFO << "COMMAND:0~10\n";
-    AINFO << "\t0: follow";
-    AINFO << "\t1: change left";
-    AINFO << "\t2: change right";
-    AINFO << "\t3: pull over";
-    AINFO << "\t4: stop";
-    AINFO << "\t5: resume cruise";
-    AINFO << "\t10: exit";
-    AINFO << "\tother number: print help";
+    ADEBUG << "COMMAND:0~10\n";
+    ADEBUG << "\t0: follow";
+    ADEBUG << "\t1: change left";
+    ADEBUG << "\t2: change right";
+    ADEBUG << "\t3: pull over";
+    ADEBUG << "\t4: stop";
+    ADEBUG << "\t5: resume cruise";
+    ADEBUG << "\t10: exit";
+    ADEBUG << "\tother number: print help";
   }
 
   void send(int action) {
     PadMessage pad;
     pad.set_action(PadMessage::DrivingAction(action));
     if (action == PadMessage::FOLLOW) {
-      AINFO << "sending FOLLOW action command.";
+      ADEBUG << "sending FOLLOW action command.";
     } else if (action == PadMessage::CHANGE_LEFT) {
-      AINFO << "sending CHANGE LEFT action command.";
+      ADEBUG << "sending CHANGE LEFT action command.";
     } else if (action == PadMessage::CHANGE_RIGHT) {
-      AINFO << "sending CHANGE RIGHT action command.";
+      ADEBUG << "sending CHANGE RIGHT action command.";
     } else if (action == PadMessage::PULL_OVER) {
-      AINFO << "sending PULL OVER action command.";
+      ADEBUG << "sending PULL OVER action command.";
     } else if (action == PadMessage::STOP) {
-      AINFO << "sending STOP action command.";
+      ADEBUG << "sending STOP action command.";
     } else if (action == PadMessage::RESUME_CRUISE) {
-      AINFO << "sending RESUME CRUISE action command.";
+      ADEBUG << "sending RESUME CRUISE action command.";
     }
     apollo::common::util::FillHeader("terminal", &pad);
     pad_writer_->Write(pad);
-    AINFO << "send pad_message OK";
+    ADEBUG << "send pad_message OK";
   }
 
   void terminal_thread_func() {

@@ -64,7 +64,7 @@ void OpenSpaceTrajectoryOptimizerUtil::GeneratePointBox(
     double x_next = result[i + 1].first;
     double y_next = result[i + 1].second;
     double heading = std::atan2(y_next - y, x_next - x);
-    AINFO << "init pos: " << x << " " << y;
+    ADEBUG << "init pos: " << x << " " << y;
     // ego_box.Shift(shift_vec);
     // x += shift_distance;
     Box2d box({x, y}, heading, init_length, init_width);

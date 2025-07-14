@@ -48,7 +48,7 @@ class HDMapInputTest : public testing::Test {
 //             << test_file_name;
 //   EXPECT_TRUE(false);
 // }
-// AINFO << "In test_GetSignals,load hdmap file: " << test_file_name;
+// ADEBUG << "In test_GetSignals,load hdmap file: " << test_file_name;
 // base::PointD pointd;
 // pointd.x = 438067.22;
 // pointd.y = 4444193.53;
@@ -83,7 +83,7 @@ class HDMapInputTest : public testing::Test {
 //             << test_file_name;
 //   EXPECT_TRUE(false);
 // }
-// AINFO << "In test_GetNearestLaneDirection,load hdmap file: "
+// ADEBUG << "In test_GetNearestLaneDirection,load hdmap file: "
 //          << test_file_name;
 // // data reference to hdmap-library/src/test/get_nearest_lane_test.cpp in
 // // master
@@ -130,15 +130,15 @@ class HDMapInputTest : public testing::Test {
 //   get_road_boundaries(point, distance, &road_boundaries, &junctions));
 // ASSERT_EQ(5, road_boundaries.size());
 // for (size_t i = 0; i < road_boundaries.size(); ++i) {
-//   AINFO << "road boundary "<< i << " belonged to road(id) "
+//   ADEBUG << "road boundary "<< i << " belonged to road(id) "
 //            << road_boundaries[i]->id.id().c_str();
-//   AINFO << "road_boundary left boundary point size: "
+//   ADEBUG << "road_boundary left boundary point size: "
 //            << road_boundaries[i]->left_boundary.line_points.size()
 //            << " x:"<< road_boundaries[i]->left_boundary.line_points[0].x()
 //            <<" y:" << road_boundaries[i]->left_boundary.line_points[0].y()
 //            << " x:"<< road_boundaries[i]->left_boundary.line_points[1].x()
 //            <<" y:" << road_boundaries[i]->left_boundary.line_points[1].y();
-//   AINFO << "road_boundary right boundary point size: "
+//   ADEBUG << "road_boundary right boundary point size: "
 //            << road_boundaries[i]->right_boundary.line_points.size()
 //            << " x:"<< road_boundaries[i]->right_boundary.line_points[0].x()
 //            <<" y:" << road_boundaries[i]->right_boundary.line_points[0].y()

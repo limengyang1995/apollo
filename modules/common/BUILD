@@ -5,6 +5,15 @@ package(
     default_visibility = ["//visibility:public"],
 )
 
+filegroup(
+    name = "global_flagfile",
+    srcs = glob([
+
+        "data/**",
+
+    ]),
+)
+
 # install(
 #     name = "install",
 #     library_dest = "common/lib",

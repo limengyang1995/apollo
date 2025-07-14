@@ -69,7 +69,7 @@ void LslidarCH128X1Parser::GeneratePointcloud(
         ADEBUG << "stamp: " << std::fixed << last_time_stamp_;
     }
 
-    AINFO << "packets_size :" << packets_size;
+    ADEBUG << "packets_size :" << packets_size;
     if (out_msg->point().empty()) {
         // we discard this pointcloud if empty
         AERROR << "All points is NAN!Please check lslidar:" << config_.model();

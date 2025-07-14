@@ -109,7 +109,7 @@ Status OpenSpaceTrajectoryProvider::Process() {
 
   // when in zone cover stage, should change end pose
   if (FLAGS_change_end_pose) {
-    AINFO << "Restart OpenSpaceTrajectoryProvider!";
+    ADEBUG << "Restart OpenSpaceTrajectoryProvider!";
     FLAGS_calculate_next_trajectory = true;
     Restart();
   }
@@ -133,7 +133,7 @@ Status OpenSpaceTrajectoryProvider::Process() {
     is_stop_due_to_fallback = true;
   }
   if (!is_planned_ || is_stop_due_to_fallback) {
-    AINFO << "need to fallback: is_planned" << is_planned_
+    ADEBUG << "need to fallback: is_planned" << is_planned_
           << "is_stop_due_to_fallback" << is_stop_due_to_fallback;
     const double planning_cycle_time =
         1.0 / static_cast<double>(FLAGS_planning_loop_rate);
@@ -148,7 +148,7 @@ Status OpenSpaceTrajectoryProvider::Process() {
           std::vector<TrajectoryPoint>(1, last_trajctory_point);
     }
     for (auto& trajectorypoint : stitching_trajectory) {
-      AINFO << "stitching_trajectory: " << trajectorypoint.DebugString();
+      ADEBUG << "stitching_trajectory: " << trajectorypoint.DebugString();
     }
     need_replan = true;
     injector_->planning_context()
@@ -249,12 +249,12 @@ Status OpenSpaceTrajectoryProvider::Process() {
         ReuseLastFrameDebug(previous_frame);
       }
       // reuse last frame debug when use last frame traj
-      AINFO << "ReuseLastFrameResult";
+      ADEBUG << "ReuseLastFrameResult";
       return Status(ErrorCode::OK,
                     "Waiting for open_space_trajectory_optimizer in "
                     "open_space_trajectory_provider");
     } else {
-      AINFO << "Stop due to computation not finished";
+      ADEBUG << "Stop due to computation not finished";
       if (previous_frame && !previous_frame->open_space_info()
                                  .stitched_trajectory_result()
                                  .empty()) {
@@ -393,10 +393,10 @@ bool OpenSpaceTrajectoryProvider::IsVehicleStopDueToFallBack(
   static constexpr double kEpsilon = 1.0e-1;
   const double adc_speed = vehicle_state.linear_velocity();
   if (std::abs(adc_speed) < kEpsilon) {
-    AINFO << "ADC stops due to fallback trajectory";
+    ADEBUG << "ADC stops due to fallback trajectory";
     return true;
   }
-  AINFO << "set fallback but adc not stop" << adc_speed;
+  ADEBUG << "set fallback but adc not stop" << adc_speed;
   return false;
 }
 

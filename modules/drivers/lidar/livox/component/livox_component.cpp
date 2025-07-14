@@ -147,7 +147,7 @@ void LivoxLidarComponent::PreparePointsMsg(PointCloud& msg) {
   double lidar_time = GetSecondTimestampFromNanosecondTimestamp(timestamp);
   double diff_time = msg.header().timestamp_sec() - lidar_time;
   if (diff_time > 0.2) {
-    AINFO << "timestamp difference too large " << std::fixed
+    ADEBUG << "timestamp difference too large " << std::fixed
           << std::setprecision(16)
           << "system time: " << msg.header().timestamp_sec()
           << ", lidar time: " << lidar_time << ", diff is:" << diff_time;
@@ -183,7 +183,7 @@ bool LivoxLidarComponent::Init() {
       return false;
     }
 
-    AINFO << "init lidar, handle = " << lidar_handle;
+    ADEBUG << "init lidar, handle = " << lidar_handle;
 
     LivoxDispatcher::GetLivoxDispatcherInstance()
         .RegisterHandleDispatchCallback(
@@ -197,7 +197,7 @@ bool LivoxLidarComponent::Init() {
         reinterpret_cast<void*>(
             &LivoxDispatcher::GetLivoxDispatcherInstance()));
 
-    AINFO << "livox lidar init success";
+    ADEBUG << "livox lidar init success";
   }
   return true;
 }

@@ -142,8 +142,8 @@ void LslidarLS128S2Parser::GeneratePointcloud(
         cur_pc.reset(new PointCloud());
         pre_pc.reset(new PointCloud());
     }
-    AINFO << "line: " << __LINE__ << "out_msg size: " << out_msg->point_size();
-    AINFO << "packets_size :" << packets_size;
+    ADEBUG << "line: " << __LINE__ << "out_msg size: " << out_msg->point_size();
+    ADEBUG << "packets_size :" << packets_size;
     if (out_msg->point().empty()) {
         // we discard this pointcloud if empty
         AERROR << "All points is NAN!Please check lslidar:" << config_.model();

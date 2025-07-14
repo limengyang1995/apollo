@@ -71,7 +71,7 @@ LocationExporter::~LocationExporter() {
 }
 
 void LocationExporter::GnssLocCallback(const std::string &msg_string) {
-  AINFO << "GNSS location callback.";
+  ADEBUG << "GNSS location callback.";
   LocalizationEstimate msg;
   msg.ParseFromString(msg_string);
 
@@ -99,7 +99,7 @@ void LocationExporter::GnssLocCallback(const std::string &msg_string) {
 }
 
 void LocationExporter::LidarLocCallback(const std::string &msg_string) {
-  AINFO << "Lidar location callback.";
+  ADEBUG << "Lidar location callback.";
   LocalizationEstimate msg;
   msg.ParseFromString(msg_string);
   static unsigned int index = 1;
@@ -132,7 +132,7 @@ void LocationExporter::LidarLocCallback(const std::string &msg_string) {
 }
 
 void LocationExporter::FusionLocCallback(const std::string &msg_string) {
-  AINFO << "Fusion location callback.";
+  ADEBUG << "Fusion location callback.";
   LocalizationEstimate msg;
   msg.ParseFromString(msg_string);
   static unsigned int index = 1;
@@ -165,7 +165,7 @@ void LocationExporter::FusionLocCallback(const std::string &msg_string) {
 }
 
 void LocationExporter::OdometryLocCallback(const std::string &msg_string) {
-  AINFO << "Odometry location callback.";
+  ADEBUG << "Odometry location callback.";
   Gps msg;
   msg.ParseFromString(msg_string);
   static unsigned int index = 1;

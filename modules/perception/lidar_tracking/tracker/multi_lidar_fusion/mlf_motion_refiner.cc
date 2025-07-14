@@ -65,7 +65,7 @@ bool MlfMotionRefiner::Refine(const MlfTrackDataConstPtr& track_data,
       new_object->type == base::ObjectType::PEDESTRIAN) {
     need_keep_motion = true;
   }
-  AINFO << "[Velocity-Refine] track_id: " << track_data->track_id_ << " last velocity:" << latest_object->belief_velocity.norm()
+  ADEBUG << "[Velocity-Refine] track_id: " << track_data->track_id_ << " last velocity:" << latest_object->belief_velocity.norm()
    << " new velocity gain "<< filter_velocity_gain.norm() << " acceleration gain " << filter_acceleration_gain;
   if (need_keep_motion && (!new_object->converged) && latest_object->belief_velocity.norm() > EPSION_SPEED) {
     Eigen::Vector3d current_velocity = Eigen::Vector3d::Zero();
@@ -75,7 +75,7 @@ bool MlfMotionRefiner::Refine(const MlfTrackDataConstPtr& track_data,
     // new_object->state.tail<2>().setZero();
     // new_object->belief_velocity = Eigen::Vector3d::Zero();
     // new_object->state.head<2>().setZero();
-    AINFO << "[Velocity-Refine] track_id: " << track_data->track_id_
+    ADEBUG << "[Velocity-Refine] track_id: " << track_data->track_id_
           << " KEEP MOTION because of extraodinary acceleration. current_velocity is " << current_velocity;
     return true;
   }
@@ -86,7 +86,7 @@ bool MlfMotionRefiner::Refine(const MlfTrackDataConstPtr& track_data,
   if (is_static_hypothesis) {
     new_object->output_velocity = Eigen::Vector3d::Zero();
     new_object->state.tail<2>().setZero();
-    AINFO << "[Velocity-Refine] track_id: " << track_data->track_id_
+    ADEBUG << "[Velocity-Refine] track_id: " << track_data->track_id_
           << " set velocity to zero because of static_hypothesis.";
     return true;
   }

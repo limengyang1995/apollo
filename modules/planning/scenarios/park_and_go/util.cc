@@ -118,7 +118,7 @@ bool CheckADCHeading(const common::math::Vec2d adc_position,
   const auto reference_point =
       reference_line.GetReferencePoint(adc_position_sl.s());
   const auto path_point = reference_point.ToPathPoint(adc_position_sl.s());
-  AINFO << "heading difference: "
+  ADEBUG << "heading difference: "
         << common::math::NormalizeAngle(adc_heading - path_point.theta());
   double angle_difference =
       common::math::NormalizeAngle(adc_heading - path_point.theta());

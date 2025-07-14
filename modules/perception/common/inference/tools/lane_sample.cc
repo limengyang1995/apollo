@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 
   cudaDeviceProp prop;
   cudaGetDeviceProperties(&prop, 0);
-  AINFO << prop.name;
+  ADEBUG << prop.name;
 
   apollo::perception::inference::Inference *rt_net;
   const std::string input_blob_name = "data";

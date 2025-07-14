@@ -36,7 +36,7 @@ bool TrafficLightRecognComponent::Init() {
     AERROR << "TrafficLightRecognComponent InitAlgorithmPlugin failed.";
     return false;
   }
-  AINFO << "Successfully init traffic light recognition component.";
+  ADEBUG << "Successfully init traffic light recognition component.";
   return true;
 }
 
@@ -44,12 +44,12 @@ bool TrafficLightRecognComponent::Proc(
     const std::shared_ptr<TrafficDetectMessage>& message) {
   PERF_FUNCTION()
   auto time_imags = std::to_string(message->timestamp_);
-  AINFO << "Enter recognition component, message timestamp: " << time_imags;
+  ADEBUG << "Enter recognition component, message timestamp: " << time_imags;
 
   bool status = InternalProc(message);
   if (status) {
     writer_->Write(message);
-    AINFO << "Send trafficlight recognition output message.";
+    ADEBUG << "Send trafficlight recognition output message.";
   }
   return status;
 }
@@ -57,7 +57,7 @@ bool TrafficLightRecognComponent::Proc(
 int TrafficLightRecognComponent::InitConfig() {
   apollo::perception::trafficlight::RecognitionParam traffic_light_param;
   if (!GetProtoConfig(&traffic_light_param)) {
-    AINFO << "load trafficlights recognition component proto param failed";
+    ADEBUG << "load trafficlights recognition component proto param failed";
     return cyber::FAIL;
   }
 
@@ -67,7 +67,7 @@ int TrafficLightRecognComponent::InitConfig() {
   config_file_ = plugin_param.config_file();
 
   gpu_id_ = traffic_light_param.gpu_id();
-  AINFO << "tl_recognitor_name: " << tl_recognitor_name_
+  ADEBUG << "tl_recognitor_name: " << tl_recognitor_name_
         << " config_path: " << config_path_ << " config_file: " << config_file_
         << " gpu_id: " << gpu_id_;
 

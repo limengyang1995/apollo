@@ -40,7 +40,7 @@ bool MlfTracker::Init(const MlfTrackerInitOptions options) {
     filter_init_options.config_path = options.config_path;
     ACHECK(filter->Init(filter_init_options));
     filters_.push_back(filter);
-    AINFO << "MlfTracker add filter: " << filter->Name();
+    ADEBUG << "MlfTracker add filter: " << filter->Name();
   }
 
   return true;

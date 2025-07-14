@@ -231,12 +231,12 @@ ReferenceLine::ToFrenetFrame(const common::TrajectoryPoint& traj_point) const {
       traj_point.path_point().y(), traj_point.v(), traj_point.a(),
       traj_point.path_point().theta(), traj_point.path_point().kappa(),
       &s_condition, &l_condition);
-  AINFO << "planning_start_point x,y,the,k: " << std::fixed
+  ADEBUG << "planning_start_point x,y,the,k: " << std::fixed
         << traj_point.path_point().x() << ", y: " << traj_point.path_point().y()
         << "," << traj_point.path_point().theta() << ","
         << traj_point.path_point().kappa() << "," << traj_point.v() << ","
         << traj_point.a();
-  AINFO << "ref point x y the ka dka" << std::fixed << ref_point.x() << ","
+  ADEBUG << "ref point x y the ka dka" << std::fixed << ref_point.x() << ","
         << ref_point.y() << "," << ref_point.heading() << ","
         << ref_point.kappa() << "," << ref_point.dkappa();
   return std::make_pair(s_condition, l_condition);

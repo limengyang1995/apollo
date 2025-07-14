@@ -47,7 +47,7 @@ bool VelodyneConvertComponent::Init() {
     }
     point_cloud->mutable_point()->Reserve(140000);
   }
-  AINFO << "Point cloud comp convert init success";
+  ADEBUG << "Point cloud comp convert init success";
   return true;
 }
 

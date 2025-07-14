@@ -33,7 +33,7 @@ bool PclDownSample::Init(const DownSampleInitOptions& options) {
   downsample_voxel_size_x_ = config.downsample_voxel_size_x();
   downsample_voxel_size_y_ = config.downsample_voxel_size_y();
   downsample_voxel_size_z_ = config.downsample_voxel_size_z();
-  AINFO << "PclDownSample plugin init success.";
+  ADEBUG << "PclDownSample plugin init success.";
   return true;
 }
 

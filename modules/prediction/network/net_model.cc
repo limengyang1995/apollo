@@ -65,7 +65,7 @@ bool NetModel::LoadModel(const NetParameter& net_parameter) {
     layers_.push_back(std::move(layer));
   }
   ok_ = true;
-  AINFO << "Success in loading the model!";
+  ADEBUG << "Success in loading the model!";
   ADEBUG << "Its Performance:" << PerformanceString().c_str();
   return true;
 }

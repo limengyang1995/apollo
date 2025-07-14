@@ -48,7 +48,7 @@ void Select::SelectTrafficLights(
   for (size_t row = 0; row < hdmap_bboxes->size(); ++row) {
     auto center_hd = (*hdmap_bboxes)[row]->region.detection_roi.Center();
     if ((*hdmap_bboxes)[row]->region.outside_image) {
-      AINFO << "projection_roi outside image, set score to 0.";
+      ADEBUG << "projection_roi outside image, set score to 0.";
       for (size_t col = 0; col < refined_bboxes.size(); ++col) {
         (*munkres_.costs())(row, col) = 0.0;
       }
@@ -74,14 +74,14 @@ void Select::SelectTrafficLights(
       const auto &crop_roi = (*hdmap_bboxes)[row]->region.crop_roi;
       const auto &detection_roi = refined_bboxes[col]->region.detection_roi;
       if ((detection_roi & crop_roi) != detection_roi) {
-        AINFO << "detection_roi outside crop_roi, set score to 0."
+        ADEBUG << "detection_roi outside crop_roi, set score to 0."
               << " detection_roi: " << detection_roi.x << " " << detection_roi.y
               << " " << detection_roi.width << " " << detection_roi.height
               << " crop_roi: " << crop_roi.x << " " << crop_roi.y << " "
               << crop_roi.width << " " << crop_roi.height;
         (*munkres_.costs())(row, col) = 0.0;
       }
-      AINFO << "score " << (*munkres_.costs())(row, col);
+      ADEBUG << "score " << (*munkres_.costs())(row, col);
     }
   }
 
@@ -120,7 +120,7 @@ void Select::SelectTrafficLights(
   }
 
   for (size_t i = 0; i < hdmap_bboxes->size(); ++i) {
-    AINFO << "hdmap_bboxes-" << i << ":"
+    ADEBUG << "hdmap_bboxes-" << i << ":"
           << " projection_roi: "
           << (*hdmap_bboxes)[i]->region.projection_roi.ToStr()
           << " detection_roi: "

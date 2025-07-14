@@ -176,7 +176,7 @@ float HistogramDistance(const TrackedObjectConstPtr& last_object,
       new_object->shape_features;
 
   if (old_object_shape_features.size() != new_object_shape_features.size()) {
-    AINFO << "sizes of compared features not matched. TrackObjectDistance";
+    ADEBUG << "sizes of compared features not matched. TrackObjectDistance";
     return 100;
   }
 

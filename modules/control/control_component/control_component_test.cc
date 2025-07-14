@@ -48,7 +48,7 @@ DEFINE_bool(test_update_golden_log, false, "true to update golden log file.");
 class ControlComponentTest : public ::testing::Test {
  public:
   virtual void SetUp() {
-    AINFO << "Into setup";
+    ADEBUG << "Into setup";
     FLAGS_pipeline_file =
         "modules/control/control_component/testdata/conf/"
         "pipeline.pb.txt";
@@ -92,7 +92,7 @@ class ControlComponentTest : public ::testing::Test {
 };
 
 void ControlComponentTest::SetupCyber() {
-  AINFO << "into setup cyber.";
+  ADEBUG << "into setup cyber.";
   if (is_cyber_initialized_) {
     return;
   }
@@ -178,7 +178,7 @@ bool ControlComponentTest::FeedTestData() {
       return false;
     }
   }
-  AINFO << "Successfully feed proto files.";
+  ADEBUG << "Successfully feed proto files.";
   return true;
 }
 
@@ -208,7 +208,7 @@ bool ControlComponentTest::RunControl(const std::string& test_case_name) {
   control_command_.Clear();
 
   if (FLAGS_test_update_golden_log) {
-    AINFO << "The golden file is " << tmp_golden_path << " Remember to:\n"
+    ADEBUG << "The golden file is " << tmp_golden_path << " Remember to:\n"
           << "mv " << tmp_golden_path << " " << FLAGS_test_data_dir << "\n"
           << "git add " << FLAGS_test_data_dir << "/" << golden_result_file;
     cyber::common::SetProtoToASCIIFile(control_command_, golden_result_file);
@@ -219,7 +219,7 @@ bool ControlComponentTest::RunControl(const std::string& test_case_name) {
     if (!load_success) {
       AERROR << "Failed to load golden file: " << full_golden_path;
       cyber::common::SetProtoToASCIIFile(control_command_, tmp_golden_path);
-      AINFO << "Current result is written to " << tmp_golden_path;
+      ADEBUG << "Current result is written to " << tmp_golden_path;
       return false;
     }
     bool same_result =
@@ -243,7 +243,7 @@ void ControlComponentTest::TrimControlCommand(ControlCommand* origin) {
 }
 
 TEST_F(ControlComponentTest, simple_test) {
-  AINFO << "Into the simple test";
+  ADEBUG << "Into the simple test";
   FLAGS_test_data_dir =
       "modules/control/control_component/testdata/simple_control_test/";
   FLAGS_enable_csv_debug = true;

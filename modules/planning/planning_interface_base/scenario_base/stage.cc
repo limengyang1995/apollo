@@ -128,7 +128,7 @@ StageResult Stage::ExecuteTaskOnReferenceLine(
       ADEBUG << "after task[" << task->Name()
              << "]: " << reference_line_info.PathSpeedDebugString();
       ADEBUG << task->Name() << " time spend: " << time_diff_ms << " ms.";
-      AINFO << "Planning Perf: task name [" << task->Name() << "], "
+      ADEBUG << "Planning Perf: task name [" << task->Name() << "], "
             << time_diff_ms << " ms.";
       RecordDebugInfo(&reference_line_info, task->Name(), time_diff_ms);
 
@@ -217,14 +217,14 @@ StageResult Stage::ExecuteTaskOnOpenSpace(Frame* frame) {
              << "], Error message: " << ret.error_message();
       const double end_timestamp = Clock::NowInSeconds();
       const double time_diff_ms = (end_timestamp - start_timestamp) * 1000;
-      AINFO << "Planning Perf: task name [" << task->Name() << "], "
+      ADEBUG << "Planning Perf: task name [" << task->Name() << "], "
             << time_diff_ms << " ms.";
       return stage_result;
     }
 
     const double end_timestamp = Clock::NowInSeconds();
     const double time_diff_ms = (end_timestamp - start_timestamp) * 1000;
-    AINFO << "Planning Perf: task name [" << task->Name() << "], "
+    ADEBUG << "Planning Perf: task name [" << task->Name() << "], "
           << time_diff_ms << " ms.";
   }
 

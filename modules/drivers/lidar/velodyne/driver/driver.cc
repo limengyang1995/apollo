@@ -46,7 +46,7 @@ bool VelodyneDriver::Init() {
   // default number of packets for each scan is a single revolution
   // (fractions rounded up)
   config_.set_npackets(static_cast<int>(ceil(packet_rate_ / frequency)));
-  AINFO << "publishing " << config_.npackets() << " packets per scan";
+  ADEBUG << "publishing " << config_.npackets() << " packets per scan";
 
   // open Velodyne input device
 
@@ -76,7 +76,7 @@ void VelodyneDriver::SetBaseTimeFromNmeaTime(NMEATimePtr nmea_time,
   last_gps_time_ =
       static_cast<uint32_t>((nmea_time->min * 60 + nmea_time->sec) * 1e6);
 
-  AINFO << "Set base unix time : " << time.tm_year << "-" << time.tm_mon << "-"
+  ADEBUG << "Set base unix time : " << time.tm_year << "-" << time.tm_mon << "-"
         << time.tm_mday << " " << time.tm_hour << ":" << time.tm_min << ":"
         << time.tm_sec;
   uint64_t unix_base = static_cast<uint64_t>(timegm(&time));
@@ -120,7 +120,7 @@ bool VelodyneDriver::Poll(const std::shared_ptr<VelodyneScan>& scan) {
   }
 
   if (scan->firing_pkts().empty()) {
-    AINFO << "Get an empty scan from port: " << config_.firing_data_port();
+    ADEBUG << "Get an empty scan from port: " << config_.firing_data_port();
     return false;
   }
 
@@ -186,7 +186,7 @@ void VelodyneDriver::PollPositioningPacket(void) {
       nmea_time->hour = static_cast<uint16_t>(current_time.tm_hour);
       nmea_time->min = static_cast<uint16_t>(current_time.tm_min);
       nmea_time->sec = static_cast<uint16_t>(current_time.tm_sec);
-      AINFO << "Get NMEA Time from local time :"
+      ADEBUG << "Get NMEA Time from local time :"
             << "year:" << nmea_time->year << "mon:" << nmea_time->mon
             << "day:" << nmea_time->day << "hour:" << nmea_time->hour
             << "min:" << nmea_time->min << "sec:" << nmea_time->sec;
@@ -218,7 +218,7 @@ void VelodyneDriver::UpdateGpsTopHour(uint32_t current_time) {
   if (last_gps_time_ > current_time) {
     if ((last_gps_time_ - current_time) > 3599000000) {
       basetime_ += static_cast<uint64_t>(3600 * 1e6);
-      AINFO << "Base time plus 3600s. Model: " << config_.model() << std::fixed
+      ADEBUG << "Base time plus 3600s. Model: " << config_.model() << std::fixed
             << ". current:" << current_time << ", last time:" << last_gps_time_;
     } else {
       AWARN << "Current stamp:" << std::fixed << current_time

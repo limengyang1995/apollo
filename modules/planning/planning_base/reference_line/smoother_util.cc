@@ -156,7 +156,7 @@ class SmootherUtil {
       s += DistanceXY(point, ref_points_[i + 1]);
     }
     ofs.close();
-    AINFO << "Smoothed result saved to " << filename;
+    ADEBUG << "Smoothed result saved to " << filename;
   }
 
  private:
@@ -231,7 +231,7 @@ int main(int argc, char* argv[]) {
   }
   if (FLAGS_output_file.empty()) {
     FLAGS_output_file = FLAGS_input_file + ".smoothed";
-    AINFO << "Output file not provided, set to: " << FLAGS_output_file;
+    ADEBUG << "Output file not provided, set to: " << FLAGS_output_file;
   }
   smoother_util.Export(FLAGS_output_file);
   return 0;

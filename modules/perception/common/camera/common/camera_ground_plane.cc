@@ -227,7 +227,7 @@ bool CameraGroundPlaneDetector::DetetGround(float pitch, float camera_height,
     //    l_);
     ConvertGround4ToGround3(baseline_, k_mat, plane, &ground3);
     FillGroundModel(ground3);
-    AINFO << "set ground plane from outside: " << plane[0] << ", " << plane[1]
+    ADEBUG << "set ground plane from outside: " << plane[0] << ", " << plane[1]
           << ", " << plane[2] << ", " << plane[3];
     ground_is_valid_ = true;
     return true;

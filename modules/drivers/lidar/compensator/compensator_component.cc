@@ -61,7 +61,7 @@ bool CompensatorComponent::Proc(
     const auto diff = end_time - start_time;
     const auto meta_diff =
         end_time - Time(point_cloud_compensated->header().lidar_timestamp());
-    AINFO << "compenstator diff (ms):" << (diff.ToNanosecond() / 1e6)
+    ADEBUG << "compenstator diff (ms):" << (diff.ToNanosecond() / 1e6)
           << ";meta (ns):"
           << point_cloud_compensated->header().lidar_timestamp()
           << ";meta diff (ms): " << (meta_diff.ToNanosecond() / 1e6);

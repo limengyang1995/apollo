@@ -124,7 +124,7 @@ bool DataProvider::FillImageData(int rows, int cols, const uint8_t *data,
   bool success = false;
 
 #if USE_GPU == 0  // copy to host memory
-  AINFO << "Fill in CPU mode ...";
+  ADEBUG << "Fill in CPU mode ...";
   if (handler_ != nullptr) {
     AERROR << "Undistortion DO NOT support CPU mode!";
     return false;
@@ -145,7 +145,7 @@ bool DataProvider::FillImageData(int rows, int cols, const uint8_t *data,
     AERROR << "Unrecognized image encoding: " << encoding;
   }
 #else  // copy to device memory directly
-  AINFO << "Fill in GPU mode ...";
+  ADEBUG << "Fill in GPU mode ...";
   if (encoding == "rgb8") {
     if (handler_ != nullptr) {
       cudaMemcpy(ori_rgb_->mutable_gpu_data(), data,
@@ -185,7 +185,7 @@ bool DataProvider::FillImageData(int rows, int cols, const uint8_t *data,
   }
 #endif
 
-  AINFO << "Done! (" << success << ")";
+  ADEBUG << "Done! (" << success << ")";
   return success;
 }
 
@@ -230,7 +230,7 @@ bool DataProvider::GetImageBlob(const DataProvider::ImageOptions &options,
 
 bool DataProvider::GetImage(const DataProvider::ImageOptions &options,
                             base::Image8U *image) {
-  AINFO << "GetImage ...";
+  ADEBUG << "GetImage ...";
   if (image == nullptr) {
     return false;
   }
@@ -257,10 +257,10 @@ bool DataProvider::GetImage(const DataProvider::ImageOptions &options,
   }
 
   if (options.do_crop) {
-    AINFO << "\tcropping ...";
+    ADEBUG << "\tcropping ...";
     *image = (*image)(options.crop_roi);
   }
-  AINFO << "Done!";
+  ADEBUG << "Done!";
   return true;
 }
 

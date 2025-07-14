@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 
   cudaDeviceProp prop;
   cudaGetDeviceProperties(&prop, 0);
-  AINFO << prop.name;
+  ADEBUG << prop.name;
 
   apollo::perception::inference::Inference *rt_net;
   const std::string input_blob_name = "data";
@@ -64,18 +64,18 @@ int main(int argc, char **argv) {
   apollo::perception::inference::load_data<std::string>(FLAGS_names_file,
                                                         &outputs);
   for (auto name : outputs) {
-    AINFO << "outputs name: " << name;
+    ADEBUG << "outputs name: " << name;
   }
 
   apollo::perception::inference::BatchStream stream(2, 50, "./batches/");
   nvinfer1::Int8EntropyCalibrator *calibrator =
       new nvinfer1::Int8EntropyCalibrator(stream, 0, true, "./");
   if (FLAGS_int8) {
-    AINFO << "int8";
+    ADEBUG << "int8";
     rt_net = new apollo::perception::inference::RTNet(
         proto_file, weight_file, outputs, inputs, calibrator);
   } else {
-    AINFO << "fp32";
+    ADEBUG << "fp32";
     rt_net = new apollo::perception::inference::RTNet(proto_file, weight_file,
                                                       outputs, inputs);
   }
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
 
   for (auto image_file : image_lists) {
     cv::Mat img = cv::imread(FLAGS_image_root + image_file + FLAGS_image_ext);
-    AINFO << img.channels();
+    ADEBUG << img.channels();
     cv::Rect roi(0, FLAGS_offset_y, img.cols, img.rows - FLAGS_offset_y);
     cv::Mat img_roi = img(roi);
     img_roi.copyTo(img);
@@ -121,16 +121,16 @@ int main(int argc, char **argv) {
       std::vector<float> tmp_vec(blob->cpu_data(),
                                  blob->cpu_data() + blob->count());
       // if(output_name=="conv2" || output_name == "conv1") {
-      AINFO << output_name << " " << blob->channels() << " " << blob->height()
+      ADEBUG << output_name << " " << blob->channels() << " " << blob->height()
             << " " << blob->width();
       double sum = 0;
       for (int i = 0; i < blob->count(); ++i) {
         sum += blob->cpu_data()[i];
         if (i < 100) {
-          AINFO << blob->cpu_data()[i];
+          ADEBUG << blob->cpu_data()[i];
         }
       }
-      AINFO << output_name << ", sum : " << std::endl;
+      ADEBUG << output_name << ", sum : " << std::endl;
       // end of if
 
       output_data_vec.insert(output_data_vec.end(), tmp_vec.begin(),

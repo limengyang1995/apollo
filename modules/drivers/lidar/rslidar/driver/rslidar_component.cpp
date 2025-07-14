@@ -96,7 +96,7 @@ bool RslidarComponent::Init() {
         AERROR << "Robosense Driver start failed";
         return false;
     }
-    AINFO << "rslidar init finished";
+    ADEBUG << "rslidar init finished";
     return true;
 }
 
@@ -141,7 +141,7 @@ void RslidarComponent::PreparePointsMsg(PointCloud& msg) {
     double lidar_time = GetSecondTimestampFromNanosecondTimestamp(timestamp);
     double diff_time = msg.header().timestamp_sec() - lidar_time;
     if (diff_time > 0.2) {
-        AINFO << std::fixed << std::setprecision(16)
+        ADEBUG << std::fixed << std::setprecision(16)
               << "system time: " << msg.header().timestamp_sec()
               << ", lidar time: " << lidar_time << ", diff is:" << diff_time;
     }

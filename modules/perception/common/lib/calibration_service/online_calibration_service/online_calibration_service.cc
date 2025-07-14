@@ -186,9 +186,9 @@ void OnlineCalibrationService::Update(onboard::CameraFrame *frame) {
     }
   }
   auto iter = name_camera_status_map_.find(sensor_name_);
-  AINFO << "camera_ground_height: " << iter->second.camera_ground_height
+  ADEBUG << "camera_ground_height: " << iter->second.camera_ground_height
         << " meter.";
-  AINFO << "pitch_angle: " << iter->second.pitch_angle * 180.0 / M_PI
+  ADEBUG << "pitch_angle: " << iter->second.pitch_angle * 180.0 / M_PI
         << " degree.";
   // ACHECK(BuildIndex());
   is_service_ready_ = true;
@@ -226,9 +226,9 @@ void OnlineCalibrationService::Update(CameraFrame *frame) {
     }
   }
   auto iter = name_camera_status_map_.find(sensor_name_);
-  AINFO << "camera_ground_height: " << iter->second.camera_ground_height
+  ADEBUG << "camera_ground_height: " << iter->second.camera_ground_height
         << " meter.";
-  AINFO << "pitch_angle: " << iter->second.pitch_angle * 180.0 / M_PI
+  ADEBUG << "pitch_angle: " << iter->second.pitch_angle * 180.0 / M_PI
         << " degree.";
   // ACHECK(BuildIndex());
   is_service_ready_ = true;

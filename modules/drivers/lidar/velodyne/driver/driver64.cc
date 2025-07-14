@@ -37,7 +37,7 @@ bool Velodyne64Driver::Init() {
   // default number of packets for each scan is a single revolution
   // (fractions rounded up)
   config_.set_npackets(static_cast<int>(ceil(packet_rate_ / frequency)));
-  AINFO << "publishing " << config_.npackets() << " packets per scan";
+  ADEBUG << "publishing " << config_.npackets() << " packets per scan";
 
   input_.reset(new SocketInput());
   input_->init(config_.firing_data_port());
@@ -65,7 +65,7 @@ bool Velodyne64Driver::Poll(const std::shared_ptr<VelodyneScan>& scan) {
   }
 
   if (scan->firing_pkts().empty()) {
-    AINFO << "Get an empty scan from port: " << config_.firing_data_port();
+    ADEBUG << "Get an empty scan from port: " << config_.firing_data_port();
     return false;
   }
 

@@ -53,7 +53,7 @@ template <class From, class To>
 bool MsgConverter::Add(const std::string &from_topic,
                        const std::string &to_topic,
                        Callback<From, To> convert) {
-  AINFO << "Convert: " << from_topic << " to " << to_topic;
+  ADEBUG << "Convert: " << from_topic << " to " << to_topic;
   auto writer = node_->CreateWriter<To>(to_topic);
   auto reader = node_->CreateReader<From>(
       from_topic, [=](const std::shared_ptr<From> &from) {

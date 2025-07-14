@@ -47,8 +47,8 @@ ReedShepp::ReedShepp(const common::VehicleParam& vehicle_param,
   traj_expected_shortest_length_ =
       planner_open_space_config_.warm_start_config()
           .traj_expected_shortest_length();
-  AINFO << "max kappa: " << max_kappa_;
-  AINFO << "traj_short_length_penalty_: " << traj_short_length_penalty_;
+  ADEBUG << "max kappa: " << max_kappa_;
+  ADEBUG << "traj_short_length_penalty_: " << traj_short_length_penalty_;
   AINFO_IF(FLAGS_enable_parallel_hybrid_a) << "parallel REEDShepp";
 }
 
@@ -190,7 +190,7 @@ bool ReedShepp::GenerateRSPs(
         const std::shared_ptr<Node3d> end_node,
         std::vector<ReedSheppPath>* all_possible_paths) {
   if (FLAGS_enable_parallel_hybrid_a) {
-      // AINFO << "parallel hybrid a*";
+      // ADEBUG << "parallel hybrid a*";
     if (!GenerateRSPPar(start_node, end_node, all_possible_paths)) {
       ADEBUG << "Fail to generate general profile of different RSPs";
       return false;

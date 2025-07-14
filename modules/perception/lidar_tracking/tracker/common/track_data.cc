@@ -56,7 +56,7 @@ std::pair<double, TrackedObjectPtr> TrackData::GetHistoryObject(int idx) {
 std::pair<double, TrackedObjectConstPtr> TrackData::GetHistoryObject(
     int idx) const {
   if (history_objects_.empty()) {
-    AINFO << "no object in track";
+    ADEBUG << "no object in track";
     return std::pair<double, TrackedObjectPtr>(0.0, TrackedObjectPtr(nullptr));
   }
   int max_idx = static_cast<size_t>(abs(idx)) >= history_objects_.size()

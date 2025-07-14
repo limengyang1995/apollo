@@ -200,7 +200,7 @@ bool SpatioTemporalGroundDetector::Detect(const GroundDetectorOptions& options,
   CHECK_EQ(data_id, valid_point_num * 3);
   base::PointIndices& non_ground_indices = frame->non_ground_indices;
 
-  AINFO << "spatial temporal seg: use roi " << use_roi_ << " roi points "
+  ADEBUG << "spatial temporal seg: use roi " << use_roi_ << " roi points "
         << num_points << " and input of ground detector: " << valid_point_num;
 
   pfdetector_->ResetParams(ori_sample_z_lower_, ori_sample_z_upper_);
@@ -323,7 +323,7 @@ bool SpatioTemporalGroundDetector::Detect(const GroundDetectorOptions& options,
           }
       }
   }
-  AINFO << "succeed to call ground detector with non ground points "
+  ADEBUG << "succeed to call ground detector with non ground points "
         << non_ground_indices.indices.size();
 
   float oriHeight = ground_z_value /
@@ -335,7 +335,7 @@ bool SpatioTemporalGroundDetector::Detect(const GroundDetectorOptions& options,
   }
   frame->original_ground_z = ori_height /
       (static_cast<float>(origin_ground_z_array_.size()) * 1.0f);
-  AINFO << "This frame " << std::to_string(frame->timestamp)
+  ADEBUG << "This frame " << std::to_string(frame->timestamp)
         <<" origin ground height is " << frame->original_ground_z;
 
   if (debug_output_) {
@@ -390,7 +390,7 @@ bool SpatioTemporalGroundDetector::Detect(const GroundDetectorOptions& options,
       }
       ground_service->UpdateServiceContent(ground_service_content_);
     } else {
-      AINFO << "Failed to find ground service and cannot update.";
+      ADEBUG << "Failed to find ground service and cannot update.";
     }
   }
   return true;

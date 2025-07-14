@@ -362,7 +362,7 @@ void MLPEvaluator::LoadModel(const std::string& model_file) {
   ACHECK(cyber::common::GetProtoFromFile(model_file, model_ptr_.get()))
       << "Unable to load model file: " << model_file << ".";
 
-  AINFO << "Succeeded in loading the model file: " << model_file << ".";
+  ADEBUG << "Succeeded in loading the model file: " << model_file << ".";
 }
 
 double MLPEvaluator::ComputeProbability(

@@ -76,14 +76,14 @@ bool MaskPillarsDetection::Init(const LidarDetectorInitOptions& options) {
                        ->CreateInstance<BaseDownSample>(
                            ConfigUtil::GetFullClassName(name));
     if (!down_sample_) {
-      AINFO << "Failed to find down_sample plugin: " << name << ", skipped";
+      ADEBUG << "Failed to find down_sample plugin: " << name << ", skipped";
       return false;
     }
     DownSampleInitOptions option;
     option.config_path = plugin.config_path();
     option.config_file = plugin.config_file();
     if (!down_sample_->Init(option)) {
-      AINFO << "Failed to init down_sample plugin: " << name << ", skipped";
+      ADEBUG << "Failed to init down_sample plugin: " << name << ", skipped";
       return false;
     }
   }
@@ -149,7 +149,7 @@ bool MaskPillarsDetection::Detect(const LidarDetectorOptions& options,
   downsample_time_ = timer.toc(true);
 
   num_points = cur_cloud_ptr_->size();
-  AINFO << "num points before fusing: " << num_points;
+  ADEBUG << "num points before fusing: " << num_points;
 
   // fuse clouds of preceding frames with current cloud
   cur_cloud_ptr_->mutable_points_timestamp()->assign(cur_cloud_ptr_->size(),
@@ -191,7 +191,7 @@ bool MaskPillarsDetection::Detect(const LidarDetectorOptions& options,
     }
     prev_world_clouds_.emplace_back(cur_world_cloud_ptr);
   }
-  AINFO << "num points after fusing: " << num_points;
+  ADEBUG << "num points after fusing: " << num_points;
   fuse_time_ = timer.toc(true);
 
   // shuffle points and cut off
@@ -223,7 +223,7 @@ bool MaskPillarsDetection::Detect(const LidarDetectorOptions& options,
              &out_detections, &out_labels);
   collect_time_ = timer.toc(true);
 
-  AINFO << "PointPillars: "
+  ADEBUG << "PointPillars: "
         << "\n"
         << "down sample: " << downsample_time_ << "\t"
         << "fuse: " << fuse_time_ << "\t"

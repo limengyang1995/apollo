@@ -25,7 +25,7 @@ __attribute__((constructor)) void SppPoolInitialize() {
   SppClusterPool::Instance("velodyne16");
   SppClusterPool::Instance("velodyne64");
   SppClusterPool::Instance("velodyne128");
-  AINFO << "Initialize spp cluster pool.";
+  ADEBUG << "Initialize spp cluster pool.";
 }
 
 }  // namespace lidar

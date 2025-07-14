@@ -55,7 +55,7 @@ ErrorCode VenusController::Init(
 	CanSender<::apollo::canbus::Venus> *const can_sender,
     MessageManager<::apollo::canbus::Venus> *const message_manager) {
   if (is_initialized_) {
-    AINFO << "VenusController has already been initiated.";
+    ADEBUG << "VenusController has already been initiated.";
     return ErrorCode::CANBUS_ERROR;
   }
 
@@ -105,7 +105,7 @@ ErrorCode VenusController::Init(
 
 
   // need sleep to ensure all messages received
-  AINFO << "VenusController is initialized.";
+  ADEBUG << "VenusController is initialized.";
 
   is_initialized_ = true;
   return ErrorCode::OK;
@@ -133,7 +133,7 @@ void VenusController::Stop() {
   if (thread_ != nullptr && thread_->joinable()) {
     thread_->join();
     thread_.reset();
-    AINFO << "VenusController stopped.";
+    ADEBUG << "VenusController stopped.";
   }
 }
 
@@ -293,7 +293,7 @@ void VenusController::Emergency() {
 
 ErrorCode VenusController::EnableAutoMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE) {
-    AINFO << "already in COMPLETE_AUTO_DRIVE mode";
+    ADEBUG << "already in COMPLETE_AUTO_DRIVE mode";
     return ErrorCode::OK;
   }
   acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_REQUEST);
@@ -311,13 +311,13 @@ ErrorCode VenusController::EnableAutoMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
-  AINFO << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
+  ADEBUG << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
   return ErrorCode::OK;
 }
 
 ErrorCode VenusController::EnableCloudMode() {
   if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    ADEBUG << "Already in REMOTE_CLOUD_DRIVE mode";
     return ErrorCode::OK;
   }
 
@@ -327,7 +327,7 @@ ErrorCode VenusController::EnableCloudMode() {
 
   can_sender_->Update();
   set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
-  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  ADEBUG << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
   return ErrorCode::OK;
 }
 
@@ -336,7 +336,7 @@ ErrorCode VenusController::DisableAutoMode() {
   can_sender_->Update();
   set_driving_mode(Chassis::COMPLETE_MANUAL);
   set_chassis_error_code(Chassis::NO_ERROR);
-  AINFO << "Switch to COMPLETE_MANUAL ok.";
+  ADEBUG << "Switch to COMPLETE_MANUAL ok.";
   return ErrorCode::OK;
 }
 
@@ -344,7 +344,7 @@ ErrorCode VenusController::EnableSteeringOnlyMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_STEER_ONLY) {
     set_driving_mode(Chassis::AUTO_STEER_ONLY);
-    AINFO << "Already in AUTO_STEER_ONLY mode.";
+    ADEBUG << "Already in AUTO_STEER_ONLY mode.";
     return ErrorCode::OK;
   }
   acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_REQUEST);
@@ -358,7 +358,7 @@ ErrorCode VenusController::EnableSteeringOnlyMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::AUTO_STEER_ONLY);
-  AINFO << "Switch to AUTO_STEER_ONLY mode ok.";
+  ADEBUG << "Switch to AUTO_STEER_ONLY mode ok.";
   
   return ErrorCode::OK;
 }
@@ -367,7 +367,7 @@ ErrorCode VenusController::EnableSpeedOnlyMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_SPEED_ONLY) {
     set_driving_mode(Chassis::AUTO_SPEED_ONLY);
-    AINFO << "Already in AUTO_SPEED_ONLY mode";
+    ADEBUG << "Already in AUTO_SPEED_ONLY mode";
     return ErrorCode::OK;
   }
   acu1_529_->set_acu1_steeringautocontrol(Acu1_529::ACU1_STEERINGAUTOCONTROL_NOREQUET);
@@ -382,7 +382,7 @@ ErrorCode VenusController::EnableSpeedOnlyMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::AUTO_SPEED_ONLY);
-  AINFO << "Switch to AUTO_SPEED_ONLY mode ok.";
+  ADEBUG << "Switch to AUTO_SPEED_ONLY mode ok.";
   return ErrorCode::OK;
   
 }
@@ -392,7 +392,7 @@ void VenusController::Gear(Chassis::GearPosition gear_position) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "This drive mode no need to set gear.";
+    ADEBUG << "This drive mode no need to set gear.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -459,7 +459,7 @@ void VenusController::Brake(double pedal) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current drive mode does not need to set brake pedal.";
+    ADEBUG << "The current drive mode does not need to set brake pedal.";
     return;
   }
 
@@ -477,7 +477,7 @@ void VenusController::Throttle(double pedal) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current drive mode does not need to set throttle pedal.";
+    ADEBUG << "The current drive mode does not need to set throttle pedal.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -494,7 +494,7 @@ void VenusController::Acceleration(double acc) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current drive mode does not need to set acceleration.";
+    ADEBUG << "The current drive mode does not need to set acceleration.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -514,7 +514,7 @@ void VenusController::Steer(double angle) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_STEER_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current driving mode does not need to set steer.";
+    ADEBUG << "The current driving mode does not need to set steer.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -531,7 +531,7 @@ void VenusController::Steer(double angle, double angle_spd) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_STEER_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current driving mode does not need to set steer.";
+    ADEBUG << "The current driving mode does not need to set steer.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -611,11 +611,11 @@ bool VenusController::VerifyID() {
 bool VenusController::CheckVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   if (chassis_.vehicle_id().vin().size() >= 7) {
-    AINFO << "Vin check success! Vehicel vin is "
+    ADEBUG << "Vin check success! Vehicel vin is "
           << chassis_.vehicle_id().vin();
     return true;
   } else {
-    AINFO << "Vin check failed! Current vin size is "
+    ADEBUG << "Vin check failed! Current vin size is "
           << chassis_.vehicle_id().vin().size();
     return false;
   }
@@ -628,7 +628,7 @@ void VenusController::GetVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   vehicle_mode_command_116_->set_vin_req_cmd(
       Vehicle_mode_command_116::VIN_REQ_CMD_VIN_REQ_ENABLE);
-  AINFO << "Get vin";
+  ADEBUG << "Get vin";
   can_sender_->Update();
   */
 }
@@ -638,7 +638,7 @@ void VenusController::ResetVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   vehicle_mode_command_116_->set_vin_req_cmd(
       Vehicle_mode_command_116::VIN_REQ_CMD_VIN_REQ_DISABLE);
-  AINFO << "Reset vin";
+  ADEBUG << "Reset vin";
   can_sender_->Update();
   */
 }
@@ -800,7 +800,7 @@ bool VenusController::CheckResponse(const int32_t flags, bool need_wait) {
     if (check_ok) {
       return true;
     } else {
-      AINFO << "Need to check response again.";
+      ADEBUG << "Need to check response again.";
     }
     if (need_wait) {
       --retry_num;

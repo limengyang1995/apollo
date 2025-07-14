@@ -113,7 +113,7 @@ template <class Key, class Element, class MapLRUCache>
 Element* MapNodeCache<Key, Element, MapLRUCache>::Put(const Key& key,
                                                       Element* value) {
   if (value == nullptr) {
-    AINFO << "LRUCache Warning: put a NULL";
+    ADEBUG << "LRUCache Warning: put a NULL";
     return nullptr;
   }
 

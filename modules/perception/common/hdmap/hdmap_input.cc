@@ -80,7 +80,7 @@ bool HDMapInput::InitHDMap() {
   // Option2: Load own map with different hdmap_sample_step_
   // Load hdmap path from global_flagfile.txt
   hdmap_file_ = absl::StrCat(FLAGS_map_dir, "/base_map.bin");
-  AINFO << "hdmap_file_: " << hdmap_file_;
+  ADEBUG << "hdmap_file_: " << hdmap_file_;
   if (!apollo::cyber::common::PathExists(hdmap_file_)) {
     AERROR << "Failed to find hadmap file: " << hdmap_file_;
     return false;
@@ -90,7 +90,7 @@ bool HDMapInput::InitHDMap() {
     return false;
   }
 
-  AINFO << "Load hdmap file: " << hdmap_file_;
+  ADEBUG << "Load hdmap file: " << hdmap_file_;
   return true;
 }
 
@@ -366,7 +366,7 @@ bool HDMapInput::GetNearestLaneDirection(const base::PointD& pointd,
   // int status = hdmap_->GetNearestLane(point, &nearest_lane,
   //     &nearest_s, &nearest_l);
   // if (status != 0) {
-  //   AINFO << "Failed to get nearest lane for point " <<
+  //   ADEBUG << "Failed to get nearest lane for point " <<
   //   point.DebugString();
   //   return false;
   // }

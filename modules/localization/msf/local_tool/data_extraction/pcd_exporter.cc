@@ -41,7 +41,7 @@ PCDExporter::~PCDExporter() {
 }
 
 void PCDExporter::CompensatedPcdCallback(const std::string &msg_string) {
-  AINFO << "Compensated pcd callback.";
+  ADEBUG << "Compensated pcd callback.";
   drivers::PointCloud msg;
   msg.ParseFromString(msg_string);
 

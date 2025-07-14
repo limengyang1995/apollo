@@ -245,7 +245,7 @@ bool Rtcm3Parser::ProcessObservation() {
         band_obs->set_pseudo_type(
             apollo::drivers::gnss::PseudoType::PRECISION_CODE);
       } else {
-        // AINFO << "Message type " << rtcm_.message_type;
+        // ADEBUG << "Message type " << rtcm_.message_type;
       }
 
       band_obs->set_band_id(baud_id);
@@ -265,14 +265,14 @@ bool Rtcm3Parser::ProcessEphemerides() {
   apollo::drivers::gnss::GnssType gnss_type;
 
   if (!gnss_sys(rtcm_.message_type, &gnss_type)) {
-    AINFO << "Failed get gnss type from message type " << rtcm_.message_type;
+    ADEBUG << "Failed get gnss type from message type " << rtcm_.message_type;
     return false;
   }
 
   apollo::drivers::gnss::GnssTimeType time_type;
   gnss_time_type(gnss_type, &time_type);
 
-  AINFO << "Gnss sys " << static_cast<int>(gnss_type) << "ephemeris info.";
+  ADEBUG << "Gnss sys " << static_cast<int>(gnss_type) << "ephemeris info.";
 
   ephemeris_.Clear();
   ephemeris_.set_gnss_type(gnss_type);
@@ -299,7 +299,7 @@ bool Rtcm3Parser::ProcessStationParameters() {
   auto iter = station_location_.find(rtcm_.staid);
   if (iter == station_location_.end()) {
     Point3D point;
-    AINFO << "Add pose for station id: " << rtcm_.staid;
+    ADEBUG << "Add pose for station id: " << rtcm_.staid;
     point.x = rtcm_.sta.pos[0];
     point.y = rtcm_.sta.pos[1];
     point.z = rtcm_.sta.pos[2];

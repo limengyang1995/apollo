@@ -142,7 +142,7 @@ class NormalDistributionsTransform {
     if (resolution_ != resolution) {
       resolution_ = resolution;
     }
-    AINFO << "NDT Resolution: " << resolution_;
+    ADEBUG << "NDT Resolution: " << resolution_;
   }
 
   /**@brief Get voxel grid resolution. */

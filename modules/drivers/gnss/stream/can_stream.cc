@@ -43,12 +43,12 @@ bool CanStream::Connect() {
     AERROR << "Failed to create can client.";
     return false;
   }
-  AINFO << "Can client is successfully created.";
+  ADEBUG << "Can client is successfully created.";
   if (can_client_->Start() != apollo::common::ErrorCode::OK) {
     AERROR << "Failed to start can client";
     return false;
   }
-  AINFO << "Can client is started.";
+  ADEBUG << "Can client is started.";
   return true;
 }
 

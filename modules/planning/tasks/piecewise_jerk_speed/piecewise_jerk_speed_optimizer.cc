@@ -78,7 +78,7 @@ Status PiecewiseJerkSpeedOptimizer::Process(const PathData& path_data,
   if (vehicle_state.gear() == canbus::Chassis::GEAR_REVERSE) {
     init_s[1] = std::max(-init_s[1], 0.0);
     init_s[2] = -init_s[2];
-    AINFO << "transfer reverse speed" << init_s[0] << "," << init_s[1] << ","
+    ADEBUG << "transfer reverse speed" << init_s[0] << "," << init_s[1] << ","
           << init_s[2];
   }
   double delta_t = 0.1;
@@ -198,9 +198,9 @@ Status PiecewiseJerkSpeedOptimizer::Process(const PathData& path_data,
       print_debug.AddPoint("optimize_st_curve", 0, init_s[0]);
       print_debug.AddPoint("optimize_vt_curve", 0, init_s[1]);
       print_debug.AddPoint("optimize_at_curve", 0, init_s[2]);
-      AINFO << "jerk_bound: " << FLAGS_longitudinal_jerk_lower_bound << ","
+      ADEBUG << "jerk_bound: " << FLAGS_longitudinal_jerk_lower_bound << ","
             << FLAGS_longitudinal_jerk_upper_bound;
-      AINFO << "acc bound: " << veh_param.max_deceleration() << ","
+      ADEBUG << "acc bound: " << veh_param.max_deceleration() << ","
             << veh_param.max_acceleration();
       print_debug.PrintToLog();
       return Status(ErrorCode::PLANNING_ERROR, msg);

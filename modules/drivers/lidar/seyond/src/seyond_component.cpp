@@ -69,7 +69,7 @@ bool SeyondComponent::Init() {
     AERROR << "seyond Driver start failed";
     return false;
   }
-  AINFO << "seyond lidar init finished";
+  ADEBUG << "seyond lidar init finished";
   return true;
 }
 
@@ -123,7 +123,7 @@ void SeyondComponent::SeyondLogCallback(int32_t level, const char *header,
       AWARN << header << " " << msg;
       break;
     default:
-      AINFO << header << " " << msg;
+      ADEBUG << header << " " << msg;
   }
 }
 

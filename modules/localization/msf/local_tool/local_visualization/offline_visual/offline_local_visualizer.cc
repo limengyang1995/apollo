@@ -62,7 +62,7 @@ bool OfflineLocalVisualizer::Init(
     AERROR << "Load map config failed.";
     return false;
   }
-  AINFO << "Load map config succeed.";
+  ADEBUG << "Load map config succeed.";
 
   success = velodyne::LoadExtrinsic(extrinsic_file_, &velodyne_extrinsic_);
   if (!success) {
@@ -76,28 +76,28 @@ bool OfflineLocalVisualizer::Init(
     AERROR << "Handle pcd timestamp file failed.";
     return false;
   }
-  AINFO << "Handle pcd timestamp file succeed.";
+  ADEBUG << "Handle pcd timestamp file succeed.";
 
   success = LidarLocFileHandler(pcd_timestamps_);
   if (!success) {
     AERROR << "Handle lidar localization file failed.";
     return false;
   }
-  AINFO << "Handle lidar localization file succeed.";
+  ADEBUG << "Handle lidar localization file succeed.";
 
   success = GnssLocFileHandler(pcd_timestamps_);
   if (!success) {
     AERROR << "Handle gnss localization file failed.";
     return false;
   }
-  AINFO << "Handle gnss localization file succeed.";
+  ADEBUG << "Handle gnss localization file succeed.";
 
   success = FusionLocFileHandler(pcd_timestamps_);
   if (!success) {
     AERROR << "Handle fusion localization file failed.";
     return false;
   }
-  AINFO << "Handle fusion localization file succeed.";
+  ADEBUG << "Handle fusion localization file succeed.";
 
   resolution_id_ = 0;
   success = GetZoneIdFromMapFolder(map_folder_, resolution_id_, &zone_id_);
@@ -105,7 +105,7 @@ bool OfflineLocalVisualizer::Init(
     AERROR << "Get zone id failed.";
     return false;
   }
-  AINFO << "Get zone id succeed.";
+  ADEBUG << "Get zone id succeed.";
 
   VisualMapParam map_param;
   map_param.set(map_config_.map_resolutions_, map_config_.map_node_size_x_,
@@ -120,7 +120,7 @@ bool OfflineLocalVisualizer::Init(
     AERROR << "Visualization engine init failed.";
     return false;
   }
-  AINFO << "Visualization engine init succeed.";
+  ADEBUG << "Visualization engine init succeed.";
 
   return true;
 }
@@ -131,12 +131,12 @@ void OfflineLocalVisualizer::Visualize() {
     LocalizatonInfo gnss_loc_info;
     LocalizatonInfo fusion_loc_info;
 
-    AINFO << "Frame id: " << idx + 1;
+    ADEBUG << "Frame id: " << idx + 1;
     auto pose_found_iter = lidar_poses_.find(idx);
     auto std_found_iter = lidar_stds_.find(idx);
     if (pose_found_iter != lidar_poses_.end() &&
         std_found_iter != lidar_stds_.end()) {
-      AINFO << "Find lidar pose.";
+      ADEBUG << "Find lidar pose.";
       const Eigen::Affine3d &lidar_pose = pose_found_iter->second;
       const Eigen::Vector3d &lidar_std = std_found_iter->second;
       lidar_loc_info.set(Eigen::Translation3d(lidar_pose.translation()),
@@ -148,7 +148,7 @@ void OfflineLocalVisualizer::Visualize() {
     std_found_iter = gnss_stds_.find(idx);
     if (pose_found_iter != gnss_poses_.end() &&
         std_found_iter != gnss_stds_.end()) {
-      AINFO << "Find gnss pose.";
+      ADEBUG << "Find gnss pose.";
       const Eigen::Affine3d &gnss_pose = pose_found_iter->second;
       const Eigen::Vector3d &gnss_std = std_found_iter->second;
       gnss_loc_info.set(Eigen::Translation3d(gnss_pose.translation()), gnss_std,
@@ -159,7 +159,7 @@ void OfflineLocalVisualizer::Visualize() {
     std_found_iter = fusion_stds_.find(idx);
     if (pose_found_iter != fusion_poses_.end() &&
         std_found_iter != fusion_stds_.end()) {
-      AINFO << "Find fusion pose.";
+      ADEBUG << "Find fusion pose.";
       const Eigen::Affine3d &fusion_pose = pose_found_iter->second;
       const Eigen::Vector3d &fusion_std = std_found_iter->second;
       fusion_loc_info.set(Eigen::Translation3d(fusion_pose.translation()),
@@ -311,7 +311,7 @@ bool OfflineLocalVisualizer::GetZoneIdFromMapFolder(
         zone_id_full_path.substr(pos + 1, zone_id_full_path.length());
 
     *zone_id = -(std::stoi(zone_id_str));
-    AINFO << "Find zone id: " << *zone_id;
+    ADEBUG << "Find zone id: " << *zone_id;
     return true;
   }
   std::string zone_id_full_path = (*iter_north).path().string();
@@ -320,7 +320,7 @@ bool OfflineLocalVisualizer::GetZoneIdFromMapFolder(
       zone_id_full_path.substr(pos + 1, zone_id_full_path.length());
 
   *zone_id = (std::stoi(zone_id_str));
-  AINFO << "Find zone id: " << *zone_id;
+  ADEBUG << "Find zone id: " << *zone_id;
   return true;
 }
 

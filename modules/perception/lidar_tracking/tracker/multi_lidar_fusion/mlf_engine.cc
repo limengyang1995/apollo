@@ -122,7 +122,7 @@ bool MlfEngine::Track(const MultiTargetTrackerOptions& options,
   if (!set_static_outside_hdmap_ || roi == nullptr ||
       (roi->road_polygons.empty() && roi->junction_polygons.empty() &&
        roi->road_boundary.empty())) {
-    AINFO << "MlfEngine publish objects: " << frame->tracked_objects.size()
+    ADEBUG << "MlfEngine publish objects: " << frame->tracked_objects.size()
           << " sensor_name: " << frame->sensor_info.name
           << " at timestamp: " << frame->timestamp;
     return true;
@@ -137,9 +137,9 @@ bool MlfEngine::Track(const MultiTargetTrackerOptions& options,
     // obj->acceleration = Eigen::Vector3f::Zero();
     sstr << obj->track_id << ", ";
   }
-  AINFO << sstr.str();
+  ADEBUG << sstr.str();
 
-  AINFO << "MlfEngine publish objects: " << frame->tracked_objects.size()
+  ADEBUG << "MlfEngine publish objects: " << frame->tracked_objects.size()
         << " sensor_name: " << frame->sensor_info.name
         << " at timestamp: " << frame->timestamp;
   return true;
@@ -168,7 +168,7 @@ void MlfEngine::SplitAndTransformToTrackedObjects(
       foreground_objects_.push_back(tracked_objects[i]);
     }
   }
-  AINFO << "MlfEngine: " << sensor_info.name
+  ADEBUG << "MlfEngine: " << sensor_info.name
         << " foreground: " << foreground_objects_.size()
         << " background: " << background_objects_.size();
 }
@@ -182,7 +182,7 @@ void MlfEngine::TrackObjectMatchAndAssign(
   std::vector<size_t> unassigned_objects;
   matcher_->Match(match_options, objects, *tracks, &assignments,
                   &unassigned_tracks, &unassigned_objects);
-  AINFO << "MlfEngine: " + name + " assignments " << assignments.size()
+  ADEBUG << "MlfEngine: " + name + " assignments " << assignments.size()
         << " unassigned_tracks " << unassigned_tracks.size()
         << " unassigned_objects " << unassigned_objects.size();
   // 1. for assignment, push object to cache of track_data
@@ -281,7 +281,7 @@ void MlfEngine::CollectTrackedResult(LidarFrame* frame) {
                   frame->timestamp -
                       track_data->GetLatestObject().first <= delay_output_) {
                   ++num_front_critical_reserve;
-                  AINFO << "track_id: " << track_data->track_id_
+                  ADEBUG << "track_id: " << track_data->track_id_
                         << " missed, obj-time is "
                         << std::to_string(track_data->GetLatestObject().first)
                         << " and predict output";
@@ -315,7 +315,7 @@ void MlfEngine::CollectTrackedResult(LidarFrame* frame) {
   };
   collect(&foreground_track_data_);
   collect(&background_track_data_);
-  AINFO << "MlfEngine, num_predict: " << num_predict
+  ADEBUG << "MlfEngine, num_predict: " << num_predict
         << " num delay_output: " << num_delay_output
         << " num front_critical: " << num_front_critical_reserve
         << " num blind trafficcone: " << num_blind_trafficcone
@@ -344,7 +344,7 @@ void MlfEngine::RemoveStaleTrackData(const std::string& name, double timestamp,
       ++pos;
     }
   }
-  AINFO << "MlfEngine: " << name << " remove stale tracks, from "
+  ADEBUG << "MlfEngine: " << name << " remove stale tracks, from "
         << tracks->size() << " to " << pos;
   tracks->resize(pos);
 }
@@ -382,7 +382,7 @@ void MlfEngine::ObjectsDebugInfo(LidarFrame* frame, bool foreground_log) {
               << obj->size(2) << ", " << obj->theta << ", "
               << static_cast<int>(obj->type) << std::endl;
     }
-    AINFO << ssstr.str();
+    ADEBUG << ssstr.str();
 }
 
 void MlfEngine::TrackDebugInfo(LidarFrame* frame) {
@@ -423,7 +423,7 @@ void MlfEngine::TrackDebugInfo(LidarFrame* frame) {
         }
     };
     debug_info(&foreground_track_data_);
-    AINFO << sstr.str();
+    ADEBUG << sstr.str();
 }
 
 PERCEPTION_REGISTER_MULTITARGET_TRACKER(MlfEngine);

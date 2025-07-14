@@ -141,7 +141,7 @@ void GetFilesByPath(const boost::filesystem::path& path,
     return;
   }
   if (boost::filesystem::is_regular_file(path)) {
-    AINFO << "Found record file: " << path.c_str();
+    ADEBUG << "Found record file: " << path.c_str();
     files->push_back(path.c_str());
     return;
   }

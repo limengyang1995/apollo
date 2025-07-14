@@ -112,7 +112,7 @@ class SpeedDecider : public Task {
   double EstimateProperOvertakingGap(const double target_obs_speed,
                                      const double adc_speed) const;
 
-  double EstimateProperFollowGap(const double& adc_speed) const;
+  double EstimateProperFollowGap(const double& adc_speed, const double& obs_speed) const;
 
  private:
   SLBoundary adc_sl_boundary_;

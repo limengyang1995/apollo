@@ -39,7 +39,7 @@ bool StrategyFilter::Init(const ObjectFilterInitOptions& options) {
     below_threshold_ = config.below_threshold();
     is_filter_small_size_ = config.is_filter_small_size();
     small_size_threshold_ = config.small_size_thres();
-    AINFO << "[StrategyFilter] expand_dist is " << expand_dist_;
+    ADEBUG << "[StrategyFilter] expand_dist is " << expand_dist_;
     return true;
 }
 
@@ -170,7 +170,7 @@ void StrategyFilter::MergeInclusiveObjects(LidarFrame* frame) {
                 small_obj->lidar_supplement.point_ids.clear();
 
                 sorted_objects[j].need_refine = true;
-                AINFO << "BIG: " << std::to_string(big_obj->id)
+                ADEBUG << "BIG: " << std::to_string(big_obj->id)
                       << " INCLUDE SMALL: " << std::to_string(small_obj->id);
                 break;
             }
@@ -208,7 +208,7 @@ void StrategyFilter::FilterBelowGroundObjects(LidarFrame* frame) {
     for (size_t i = 0; i < objects.size(); ++i) {
         float z_diff = frame->original_ground_z - objects[i]->center(2);
         if (z_diff >= below_threshold_) {
-            AINFO << "[BelowGround] id: " << objects[i]->id
+            ADEBUG << "[BelowGround] id: " << objects[i]->id
                   << " diff: " << z_diff;
             filter_flag[i] = true;
         }
@@ -222,7 +222,7 @@ void StrategyFilter::FilterBelowGroundObjects(LidarFrame* frame) {
         ++valid_pos;
     }
     objects.resize(valid_pos);
-    AINFO << "[FilterBelowGroundObjects] from " << filter_flag.size()
+    ADEBUG << "[FilterBelowGroundObjects] from " << filter_flag.size()
           << " to " << valid_pos;
 }
 
@@ -234,7 +234,7 @@ void StrategyFilter::FilterSmallSizeObjects(LidarFrame* frame) {
     for (size_t i = 0; i < objects.size(); ++i) {
         if (objects[i]->size(0) <= small_size_threshold_ &&
             objects[i]->size(1) <= small_size_threshold_) {
-            AINFO << "[SmallSize] id: " << objects[i]->id << " pc size is "
+            ADEBUG << "[SmallSize] id: " << objects[i]->id << " pc size is "
                   << objects[i]->lidar_supplement.cloud.size() << " size is: "
                   << objects[i]->size(0) << ", " << objects[i]->size(0);
             filter_flag[i] = true;
@@ -249,17 +249,17 @@ void StrategyFilter::FilterSmallSizeObjects(LidarFrame* frame) {
         ++valid_pos;
     }
     objects.resize(valid_pos);
-    AINFO << "[FilterSmallSizeObjects] from " << filter_flag.size()
+    ADEBUG << "[FilterSmallSizeObjects] from " << filter_flag.size()
           << " to " << valid_pos;
 }
 
 bool StrategyFilter::Filter(const ObjectFilterOptions& options,
     LidarFrame* frame) {
     if (!frame) {
-        AINFO << "Lidar frame is nullptr. StrategyFilter NOT Enter";
+        ADEBUG << "Lidar frame is nullptr. StrategyFilter NOT Enter";
         return false;
     }
-    AINFO << "[BeforeMergeInclusive]: "
+    ADEBUG << "[BeforeMergeInclusive]: "
           << std::to_string(frame->timestamp) << " object size is "
           << frame->segmented_objects.size();
 
@@ -278,7 +278,7 @@ bool StrategyFilter::Filter(const ObjectFilterOptions& options,
         merge_time_ = timer.toc(true);
     }
     PERF_BLOCK_END
-    AINFO << "[AfterMergeInclusive]: object size is "
+    ADEBUG << "[AfterMergeInclusive]: object size is "
           << frame->segmented_objects.size() << " duration is " << merge_time_;
     return true;
 }

@@ -47,7 +47,7 @@ bool ScenarioManager::Init(const std::shared_ptr<DependencyInjector>& injector,
       default_scenario_type_ = scenario;
     }
   }
-  AINFO << "Load scenario list:" << planner_config.DebugString();
+  ADEBUG << "Load scenario list:" << planner_config.DebugString();
   current_scenario_ = default_scenario_type_;
   init_ = true;
   return true;
@@ -65,7 +65,7 @@ void ScenarioManager::Update(const common::TrajectoryPoint& ego_point,
     }
     if (scenario->IsTransferable(current_scenario_.get(), *frame)) {
       current_scenario_->Exit(frame);
-      AINFO << "switch scenario from" << current_scenario_->Name() << " to "
+      ADEBUG << "switch scenario from" << current_scenario_->Name() << " to "
             << scenario->Name();
       current_scenario_ = scenario;
       current_scenario_->Reset();
@@ -79,7 +79,7 @@ void ScenarioManager::Reset(Frame* frame) {
   if (current_scenario_) {
     current_scenario_->Exit(frame);
   }
-  AINFO << "Reset to default scenario:" << default_scenario_type_->Name();
+  ADEBUG << "Reset to default scenario:" << default_scenario_type_->Name();
   default_scenario_type_->Reset();
   current_scenario_ = default_scenario_type_;
 }

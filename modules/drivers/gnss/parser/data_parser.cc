@@ -94,7 +94,7 @@ bool DataParser::Init() {
   common::util::FillHeader("gnss", &gnss_status_);
   gnssstatus_writer_->Write(gnss_status_);
 
-  AINFO << "Creating data parser of format: " << config_.data().format();
+  ADEBUG << "Creating data parser of format: " << config_.data().format();
   data_parser_.reset(Parser::CreateParser(config_));
   if (!data_parser_) {
     AFATAL << "Failed to create data parser.";
@@ -264,10 +264,14 @@ void DataParser::PublishOdometry(const MessagePtr message) {
   auto gps = std::make_shared<Gps>();
 
   common::util::FillHeader("gnss", gps.get());
-  if (config_.use_gnss_time()) {
+  if (!config_.use_gnss_time()) {
     gps->mutable_header()->set_timestamp_sec(
-        apollo::drivers::util::gps2unix(ins->measurement_time()));
-  }
+        cyber::Time::Now().ToSecond());
+  } 
+  // else {
+  //   gps->mutable_header()->set_timestamp_sec(
+  //     apollo::drivers::util::gps2unix(gps->measurement_time()));
+  // }
   auto *gps_msg = gps->mutable_localization();
 
   // 1. pose xyz
@@ -310,10 +314,17 @@ void DataParser::PublishCorrimu(const MessagePtr message) {
   Ins *ins = As<Ins>(message);
   auto imu = std::make_shared<CorrectedImu>();
   common::util::FillHeader("gnss", imu.get());
-  if (config_.use_gnss_time()) {
+  if (!config_.use_gnss_time()) {
+    imu->mutable_header()->set_timestamp_sec(cyber::Time::Now().ToSecond());
+    
+  }
+  else {
     imu->mutable_header()->set_timestamp_sec(
         apollo::drivers::util::gps2unix(ins->measurement_time()));
   }
+  //AERROR << "sys time: " << cyber::Time::Now().ToSecond();
+  //AERROR << "gps time: " << apollo::drivers::util::gps2unix(ins->measurement_time());
+  //AERROR << "time error: " << cyber::Time::Now().ToSecond() - apollo::drivers::util::gps2unix(ins->measurement_time());
   auto *imu_msg = imu->mutable_imu();
   imu_msg->mutable_linear_acceleration()->set_x(
       -ins->linear_acceleration().y());

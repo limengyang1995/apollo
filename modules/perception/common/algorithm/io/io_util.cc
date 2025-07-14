@@ -64,7 +64,7 @@ bool LoadBrownCameraIntrinsic(const std::string &yaml_file,
 
   YAML::Node node = YAML::LoadFile(yaml_file);
   if (node.IsNull()) {
-    AINFO << "Load " << yaml_file << " failed! please check!";
+    ADEBUG << "Load " << yaml_file << " failed! please check!";
     return false;
   }
 
@@ -101,7 +101,7 @@ bool LoadOmnidirectionalCameraIntrinsics(
 
   YAML::Node node = YAML::LoadFile(yaml_file);
   if (node.IsNull()) {
-    AINFO << "Load " << yaml_file << " failed! please check!";
+    ADEBUG << "Load " << yaml_file << " failed! please check!";
     return false;
   }
 
@@ -109,7 +109,7 @@ bool LoadOmnidirectionalCameraIntrinsics(
       !node["center"].IsDefined() || !node["affine"].IsDefined() ||
       !node["cam2world"].IsDefined() || !node["world2cam"].IsDefined() ||
       !node["focallength"].IsDefined() || !node["principalpoint"].IsDefined()) {
-    AINFO << "Invalid intrinsics file for an omnidirectional camera.";
+    ADEBUG << "Invalid intrinsics file for an omnidirectional camera.";
     return false;
   }
 
@@ -163,7 +163,7 @@ bool LoadOmnidirectionalCameraIntrinsics(
 bool GetFileList(const std::string &path, const std::string &suffix,
                  std::vector<std::string> *files) {
   if (!PathExists(path)) {
-    AINFO << path << " not exist.";
+    ADEBUG << path << " not exist.";
     return false;
   }
 

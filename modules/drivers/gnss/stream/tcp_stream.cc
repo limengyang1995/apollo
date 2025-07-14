@@ -170,7 +170,7 @@ bool TcpStream::Connect() {
   while ((ret = ::connect(sockfd_, reinterpret_cast<sockaddr*>(&peer_addr),
                           sizeof(peer_addr))) < 0) {
     if (errno == EINTR) {
-      AINFO << "Tcp connect return EINTR, continue.";
+      ADEBUG << "Tcp connect return EINTR, continue.";
       continue;
     } else {
       if ((errno != EISCONN) && (errno != EINPROGRESS) && (errno != EALREADY)) {
@@ -189,7 +189,7 @@ bool TcpStream::Connect() {
         AERROR << "Wait connect failed, error: " << strerror(errno);
         return false;
       } else if (ret == 0) {
-        AINFO << "Tcp connect timeout.";
+        ADEBUG << "Tcp connect timeout.";
         return false;
       } else if (FD_ISSET(sockfd_, &fds)) {
         int error = 0;
@@ -226,7 +226,7 @@ bool TcpStream::Connect() {
     AERROR << "Failed to init socket.";
     return false;
   }
-  AINFO << "Tcp connect success.";
+  ADEBUG << "Tcp connect success.";
   status_ = Stream::Status::CONNECTED;
   Login();
   return true;
@@ -276,7 +276,7 @@ size_t TcpStream::read(uint8_t* buffer, size_t max_length) {
     errno_ = errno;
     AERROR << "Remote closed.";
     if (Reconnect()) {
-      AINFO << "Reconnect tcp success.";
+      ADEBUG << "Reconnect tcp success.";
     }
   }
 

@@ -200,7 +200,7 @@ bool RawStream::Init() {
   // Creates streams.
   Stream *s = nullptr;
   if (!config_.has_data()) {
-    AINFO << "Error: Config file must provide the data stream.";
+    ADEBUG << "Error: Config file must provide the data stream.";
     return false;
   }
   s = create_stream(config_.data());
@@ -333,7 +333,7 @@ void RawStream::Start() {
 
 void RawStream::OnWheelVelocityTimer() {
   if (chassis_ptr_ == nullptr) {
-    AINFO << "No chassis message received";
+    ADEBUG << "No chassis message received";
     return;
   }
   auto latency_sec =
@@ -342,7 +342,7 @@ void RawStream::OnWheelVelocityTimer() {
   auto speed_cmps = std::lround(chassis_ptr_->speed_mps() * 100);
   auto cmd_wheelvelocity = absl::StrCat("WHEELVELOCITY ", latency_ms,
                                         " 100 0 0 0 0 0 ", speed_cmps, "\r\n");
-  AINFO << "Write command: " << cmd_wheelvelocity;
+  ADEBUG << "Write command: " << cmd_wheelvelocity;
   command_stream_->write(cmd_wheelvelocity);
 }
 
@@ -439,14 +439,14 @@ bool RawStream::Login() {
   for (const auto &login_command : config_.login_commands()) {
     data_stream_->write(login_command);
     login_data.emplace_back(login_command);
-    AINFO << "Login command: " << login_command;
+    ADEBUG << "Login command: " << login_command;
     // sleep a little to avoid overrun of the slow serial interface.
     cyber::Duration(0.5).Sleep();
   }
   data_stream_->RegisterLoginData(login_data);
 
   if (config_.has_wheel_parameters()) {
-    AINFO << "Write command: " << config_.wheel_parameters();
+    ADEBUG << "Write command: " << config_.wheel_parameters();
     command_stream_->write(config_.wheel_parameters());
   }
 
@@ -456,7 +456,7 @@ bool RawStream::Login() {
 bool RawStream::Logout() {
   for (const auto &logout_command : config_.logout_commands()) {
     data_stream_->write(logout_command);
-    AINFO << "Logout command: " << logout_command;
+    ADEBUG << "Logout command: " << logout_command;
   }
   return true;
 }

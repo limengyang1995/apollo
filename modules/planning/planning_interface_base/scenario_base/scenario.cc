@@ -60,7 +60,7 @@ bool Scenario::Init(std::shared_ptr<DependencyInjector> injector,
   config_dir_ = apollo::cyber::plugin_manager::PluginManager::Instance()
                     ->GetPluginClassHomePath<Scenario>(class_name);
   config_dir_ += "/conf";
-  AINFO << "config_dir : " << config_dir_;
+  ADEBUG << "config_dir : " << config_dir_;
   // Generate the default task config path from PluginManager.
   config_path_ = apollo::cyber::plugin_manager::PluginManager::Instance()
                      ->GetPluginConfPath<Scenario>(class_name,
@@ -70,7 +70,7 @@ bool Scenario::Init(std::shared_ptr<DependencyInjector> injector,
   std::string pipeline_config_path =
       apollo::cyber::plugin_manager::PluginManager::Instance()
           ->GetPluginConfPath<Scenario>(class_name, "conf/pipeline.pb.txt");
-  AINFO << "Load config path:" << pipeline_config_path;
+  ADEBUG << "Load config path:" << pipeline_config_path;
   // Load the pipeline of scenario.
   if (!apollo::cyber::common::GetProtoFromFile(pipeline_config_path,
                                                &scenario_pipeline_config_)) {
@@ -94,7 +94,7 @@ ScenarioResult Scenario::Process(
       scenario_result_.SetStageResult(StageStatusType::ERROR);
       return scenario_result_;
     }
-    AINFO << "Create stage " << current_stage_->Name();
+    ADEBUG << "Create stage " << current_stage_->Name();
   }
   if (current_stage_->Name().empty()) {
     scenario_result_.SetScenarioStatus(ScenarioStatusType::STATUS_DONE);
@@ -115,7 +115,7 @@ ScenarioResult Scenario::Process(
     case StageStatusType::FINISHED: {
       auto next_stage = current_stage_->NextStage();
       if (next_stage != current_stage_->Name()) {
-        AINFO << "switch stage from " << current_stage_->Name() << " to "
+        ADEBUG << "switch stage from " << current_stage_->Name() << " to "
               << next_stage;
         if (next_stage.empty()) {
           scenario_result_.SetScenarioStatus(ScenarioStatusType::STATUS_DONE);

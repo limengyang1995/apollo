@@ -267,7 +267,7 @@ void MlfMotionMeasurement::MeasurementRefine(
             //   latest_object->selected_measured_velocity;
             new_object->selected_measured_velocity =
                 latest_object->output_velocity;
-            AINFO << "[Velocity-Measurement] track_id: "
+            ADEBUG << "[Velocity-Measurement] track_id: "
                   << track_data->track_id_
                   << " history small and current BIG. Keep Lastest Output";
             return;
@@ -285,7 +285,7 @@ void MlfMotionMeasurement::MeasurementRefine(
         }
     }
     if (new_object->measured_big_velocity_age >= get_history_size) {
-        AINFO << "[Velocity-Measurement] Continuous big velocity. track_id: "
+        ADEBUG << "[Velocity-Measurement] Continuous big velocity. track_id: "
               << track_data->track_id_;
         return;
     }
@@ -294,7 +294,7 @@ void MlfMotionMeasurement::MeasurementRefine(
         //   latest_object->selected_measured_velocity;
         new_object->selected_measured_velocity =
             latest_object->output_velocity;
-        AINFO << "[Velocity-Measurement] track_id: " << track_data->track_id_
+        ADEBUG << "[Velocity-Measurement] track_id: " << track_data->track_id_
               << " history static and current BIG. Keep Lastest Output";
         return;
     }
@@ -337,7 +337,7 @@ void MlfMotionMeasurement::MeasurementRefine(
         //     latest_object->selected_measured_velocity;
         new_object->selected_measured_velocity =
             latest_object->output_velocity;
-        AINFO << "[Velocity-Measurement] track_id: " << track_data->track_id_
+        ADEBUG << "[Velocity-Measurement] track_id: " << track_data->track_id_
               << " old_ave: " << old_ave(0) << ", " << old_ave(1)
               << " old_var: " << old_var(0) << ", " << old_var(1)
               << " new_ave: " << new_ave(0) << ", " << new_ave(1)
@@ -356,7 +356,7 @@ void MlfMotionMeasurement::MeasurementRefine(
         //    latest_object->selected_measured_velocity;
         new_object->selected_measured_velocity =
             latest_object->output_velocity;
-        AINFO << "[Velocity-Measurement] track_id: " << track_data->track_id_
+        ADEBUG << "[Velocity-Measurement] track_id: " << track_data->track_id_
               << " Expected velocity CHANGE big. Keep Lastest Output";
         return;
     }

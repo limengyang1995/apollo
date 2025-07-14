@@ -22,7 +22,7 @@ namespace radar4d {
 // @brief call pool instance once to initialize memory
 __attribute__((constructor)) void RadarFramePoolInitialize() {
   RadarFramePool::Instance();
-  AINFO << "Initialize radar frame pool.";
+  ADEBUG << "Initialize radar frame pool.";
 }
 
 }  // namespace radar4d

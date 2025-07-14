@@ -161,7 +161,7 @@ bool FallbackPath::AssessPath(std::vector<PathData>* candidate_path_data,
   }
 
   if (curr_path_data.Empty()) {
-    AINFO << "Lane follow path is empty after trimed";
+    ADEBUG << "Lane follow path is empty after trimed";
     return false;
   }
   *final_path = curr_path_data;

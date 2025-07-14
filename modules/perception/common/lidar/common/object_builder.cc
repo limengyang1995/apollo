@@ -220,7 +220,7 @@ void ObjectBuilder::JudgeFrontCritical(
         x_in_novatel > FLAGS_x_back && x_in_novatel < FLAGS_x_front &&
         object->lidar_supplement.is_clustered) {
         object->is_front_critical = true;
-        AINFO << "Object " << object->id << " is FRONT-CRITICAL";
+        ADEBUG << "Object " << object->id << " is FRONT-CRITICAL";
     }
 }
 

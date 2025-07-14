@@ -71,11 +71,11 @@ void LslidarComponent::DevicePollProcess() {
     bool ret = dvr_->Poll(scan);
     if (ret) {
       common::util::FillHeader("lslidar", scan.get());
-      AINFO << "publish scan!";
+      ADEBUG << "publish scan!";
       double time1 = apollo::cyber::Time().Now().ToSecond();
       this->WriteScan(scan);
       double time2 = apollo::cyber::Time().Now().ToSecond();
-      AINFO << "apollo::cyber::Time((time2 - time1)"
+      ADEBUG << "apollo::cyber::Time((time2 - time1)"
             << apollo::cyber::Time((time2 - time1) / 2.0).ToNanosecond();
       scan_queue_.push(scan);
     } else {

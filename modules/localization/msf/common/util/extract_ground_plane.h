@@ -109,7 +109,7 @@ class FeatureXYPlane {
           cloud_tmp += it->second.cloud_;
         }
       }
-      AINFO << "the " << iter << " interation: plane_num = " << plane_num;
+      ADEBUG << "the " << iter << " interation: plane_num = " << plane_num;
       total_plane_num += plane_num;
       pointcloud_ptr.reset(new PointCloudT);
       *pointcloud_ptr = cloud_tmp;
@@ -117,10 +117,10 @@ class FeatureXYPlane {
 
     *non_xy_plane_cloud_ = *pointcloud_ptr;
     plane_time = std::clock() - plane_time;
-    AINFO << "plane_patch takes:"
+    ADEBUG << "plane_patch takes:"
           << static_cast<double>(plane_time) / CLOCKS_PER_SEC << "sec.";
-    AINFO << "total_plane_num = " << total_plane_num;
-    AINFO << "total_points_num = " << xy_plane_cloud_->points.size();
+    ADEBUG << "total_plane_num = " << total_plane_num;
+    ADEBUG << "total_points_num = " << xy_plane_cloud_->points.size();
     return;
   }
 

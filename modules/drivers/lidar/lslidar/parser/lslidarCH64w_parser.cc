@@ -58,7 +58,7 @@ void LslidarCH64wParser::GeneratePointcloud(
     gps_base_usec_ = scan_msg->basetime();
 
     packets_size = scan_msg->firing_pkts_size();
-    AINFO << "packets_size :" << packets_size;
+    ADEBUG << "packets_size :" << packets_size;
     for (size_t i = 0; i < packets_size; ++i) {
         Unpack(static_cast<int>(i),
                scan_msg->firing_pkts(static_cast<int>(i)),

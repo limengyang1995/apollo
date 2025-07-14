@@ -28,7 +28,7 @@ bool LidarDriverComponent::Init() {
     return false;
   }
   node_ = apollo::cyber::CreateNode("drivers_lidar");
-  AINFO << "conf:" << conf_.DebugString();
+  ADEBUG << "conf:" << conf_.DebugString();
   LidarDriverFactory::Instance()->RegisterLidarClients();
   driver_ = LidarDriverFactory::Instance()->CreateLidarDriver(node_, conf_);
   if (driver_ == nullptr || !driver_->Init()) {

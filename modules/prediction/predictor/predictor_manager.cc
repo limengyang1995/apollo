@@ -105,19 +105,19 @@ void PredictorManager::Init(const PredictionConf& config) {
     }
   }
 
-  AINFO << "Defined vehicle on lane obstacle predictor ["
+  ADEBUG << "Defined vehicle on lane obstacle predictor ["
         << vehicle_on_lane_predictor_ << "].";
-  AINFO << "Defined vehicle off lane obstacle predictor ["
+  ADEBUG << "Defined vehicle off lane obstacle predictor ["
         << vehicle_off_lane_predictor_ << "].";
-  AINFO << "Defined bicycle on lane obstacle predictor ["
+  ADEBUG << "Defined bicycle on lane obstacle predictor ["
         << cyclist_on_lane_predictor_ << "].";
-  AINFO << "Defined bicycle off lane obstacle predictor ["
+  ADEBUG << "Defined bicycle off lane obstacle predictor ["
         << cyclist_off_lane_predictor_ << "].";
-  AINFO << "Defined pedestrian obstacle predictor [" << pedestrian_predictor_
+  ADEBUG << "Defined pedestrian obstacle predictor [" << pedestrian_predictor_
         << "].";
-  AINFO << "Defined default on lane obstacle predictor ["
+  ADEBUG << "Defined default on lane obstacle predictor ["
         << default_on_lane_predictor_ << "].";
-  AINFO << "Defined default off lane obstacle predictor ["
+  ADEBUG << "Defined default off lane obstacle predictor ["
         << default_off_lane_predictor_ << "].";
 }
 
@@ -341,7 +341,7 @@ std::unique_ptr<Predictor> PredictorManager::CreatePredictor(
 void PredictorManager::RegisterPredictor(
     const ObstacleConf::PredictorType& type) {
   predictors_[type] = CreatePredictor(type);
-  AINFO << "Predictor [" << type << "] is registered.";
+  ADEBUG << "Predictor [" << type << "] is registered.";
 }
 
 const PredictionObstacles& PredictorManager::prediction_obstacles() {

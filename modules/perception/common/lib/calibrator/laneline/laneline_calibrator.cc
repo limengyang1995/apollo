@@ -41,7 +41,7 @@ bool LaneLineCalibrator::Calibrate(const CalibratorOptions &options,
   }
   EgoLane ego_lane;
   if (!LoadEgoLaneline(*options.lane_objects, &ego_lane)) {
-    AINFO << "Failed to get the ego lane.";
+    ADEBUG << "Failed to get the ego lane.";
     return false;
   }
 
@@ -84,8 +84,8 @@ bool LaneLineCalibrator::Calibrate(const CalibratorOptions &options,
   if (updated) {
     *pitch_angle = calibrator_.get_pitch_estimation();
     float vanishing_row = calibrator_.get_vanishing_row();
-    AINFO << "#updated pitch angle: " << *pitch_angle;
-    AINFO << "#vanishing row: " << vanishing_row;
+    ADEBUG << "#updated pitch angle: " << *pitch_angle;
+    ADEBUG << "#vanishing row: " << vanishing_row;
   }
 
   if (!is_first_frame_) {

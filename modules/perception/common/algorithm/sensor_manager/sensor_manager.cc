@@ -96,7 +96,7 @@ bool SensorManager::Init() {
   }
 
   inited_ = true;
-  AINFO << "Init sensor_manager success.";
+  ADEBUG << "Init sensor_manager success.";
   return true;
 }
 

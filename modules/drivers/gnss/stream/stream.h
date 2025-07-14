@@ -81,7 +81,7 @@ class Stream {
   void Login() {
     for (size_t i = 0; i < login_data_.size(); ++i) {
       write(login_data_[i]);
-      AINFO << "Login: " << login_data_[i];
+      ADEBUG << "Login: " << login_data_[i];
       // sleep a little to avoid overrun of the slow serial interface.
       cyber::Duration(0.5).Sleep();
     }

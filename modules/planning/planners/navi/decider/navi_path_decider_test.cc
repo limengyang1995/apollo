@@ -35,7 +35,7 @@ namespace planning {
 class NaviPathDeciderTest : public ::testing::Test {
  public:
   static void SetUpTestCase() {
-    AINFO << "NaviPathDeciderTest : SetUpTestCase";
+    ADEBUG << "NaviPathDeciderTest : SetUpTestCase";
   }
 
   static void GeneratePathData(

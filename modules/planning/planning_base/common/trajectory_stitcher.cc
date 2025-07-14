@@ -340,7 +340,7 @@ bool TrajectoryStitcher::need_replan_by_control_interactive(
   const double rel_time =
       current_timestamp - control_interactive_msg.header().timestamp_sec();
   if (rel_time > 0.5) {
-    AINFO << "control_interactive_msg time out, skip replay by control "
+    ADEBUG << "control_interactive_msg time out, skip replay by control "
              "interactive";
     return false;
   }
@@ -362,10 +362,10 @@ TrajectoryStitcher::ComputeControlInteractiveStitchingTrajectory(
           control::ReplanRequestReasonCode::REPLAN_REQ_ALL_REPLAN ||
       control_interactive_msg.replan_req_reason_code() ==
           control::ReplanRequestReasonCode::REPLAN_REQ_STATION_REPLAN) {
-    AINFO << "control_interactive_msg replan, all replan";
+    ADEBUG << "control_interactive_msg replan, all replan";
     return ComputeReinitStitchingTrajectory(planning_cycle_time, vehicle_state);
   } else {
-    AINFO << "control_interactive_msg replan, speed replan";
+    ADEBUG << "control_interactive_msg replan, speed replan";
     VehicleState vehicle_state_tmp = vehicle_state;
     vehicle_state_tmp.set_x(time_match_point.path_point().x());
     vehicle_state_tmp.set_y(time_match_point.path_point().y());

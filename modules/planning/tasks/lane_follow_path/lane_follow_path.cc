@@ -167,7 +167,7 @@ bool LaneFollowPath::DecidePathBounds(std::vector<PathBoundary>* boundary) {
   ADEBUG << "Completed generating path boundaries.";
   if (init_sl_state_.second[0] > path_bound[0].l_upper.l ||
       init_sl_state_.second[0] < path_bound[0].l_lower.l) {
-    AINFO << "not in self lane maybe lane borrow or out of road. init l : "
+    ADEBUG << "not in self lane maybe lane borrow or out of road. init l : "
           << init_sl_state_.second[0] << ", path_bound l: [ "
           << path_bound[0].l_lower.l << "," << path_bound[0].l_upper.l << " ]";
     return false;
@@ -254,7 +254,7 @@ bool LaneFollowPath::AssessPath(std::vector<PathData>* candidate_path_data,
                   reference_line_info_);
   if (!PathAssessmentDeciderUtil::IsValidRegularPath(*reference_line_info_,
                                                      curr_path_data)) {
-    AINFO << "Lane follow path is invalid";
+    ADEBUG << "Lane follow path is invalid";
     return false;
   }
 
@@ -264,11 +264,11 @@ bool LaneFollowPath::AssessPath(std::vector<PathData>* candidate_path_data,
   curr_path_data.SetPathPointDecisionGuide(std::move(path_decision));
 
   if (curr_path_data.Empty()) {
-    AINFO << "Lane follow path is empty after trimed";
+    ADEBUG << "Lane follow path is empty after trimed";
     return false;
   }
   *final_path = curr_path_data;
-  AINFO << final_path->path_label() << final_path->blocking_obstacle_id();
+  ADEBUG << final_path->path_label() << final_path->blocking_obstacle_id();
   reference_line_info_->MutableCandidatePathData()->push_back(*final_path);
   reference_line_info_->SetBlockingObstacle(
       curr_path_data.blocking_obstacle_id());

@@ -67,7 +67,7 @@ void ComputeObjectShapeFromPolygon(std::shared_ptr<Object> object,
   const PointCloud<PointD>& world_cloud = object->lidar_supplement.cloud_world;
 
   if (polygon.empty() || cloud.empty()) {
-    AINFO << "Failed to compute box, polygon size: " << polygon.size()
+    ADEBUG << "Failed to compute box, polygon size: " << polygon.size()
           << " cloud size: " << cloud.size();
     return;
   }

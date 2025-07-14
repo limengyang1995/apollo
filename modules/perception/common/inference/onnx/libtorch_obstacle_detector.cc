@@ -135,9 +135,9 @@ void ObstacleDetector::Infer() {
   torch_inputs.push_back(
       std::make_tuple(tensor_K.to(device), tensor_ratio.to(device)));
 
-  AINFO << "Start to do inference";
+  ADEBUG << "Start to do inference";
   auto outputs = net_.forward(torch_inputs).toTuple()->elements();
-  AINFO << "Finished inference";
+  ADEBUG << "Finished inference";
 
   for (size_t i = 0; i < output_names_.size(); ++i) {
     auto blob = get_blob(output_names_[i]);

@@ -58,7 +58,7 @@ bool RTKLocalizationComponent::InitConfig() {
                                                &rtk_config)) {
     return false;
   }
-  AINFO << "Rtk localization config: " << rtk_config.DebugString();
+  ADEBUG << "Rtk localization config: " << rtk_config.DebugString();
 
   localization_topic_ = rtk_config.localization_topic();
   localization_status_topic_ = rtk_config.localization_status_topic();
@@ -108,7 +108,7 @@ bool RTKLocalizationComponent::GetLocalizationToImuTF() {
       duration.Sleep();
       continue;
     }
-    AINFO << "read localization to imu transform: " << tf.DebugString();
+    ADEBUG << "read localization to imu transform: " << tf.DebugString();
     auto& rotation = tf.transform().rotation();
     imu_localization_quat_.reset(new Eigen::Quaterniond(
         rotation.qw(), rotation.qx(), rotation.qy(), rotation.qz()));

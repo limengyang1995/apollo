@@ -333,9 +333,9 @@ bool ReferenceLineProvider::GetReferenceLines(
     }
   }
 
-  AINFO << "Reference line is NOT ready.";
+  ADEBUG << "Reference line is NOT ready.";
   if (reference_line_history_.empty()) {
-    AINFO << "Failed to use reference line latest history";
+    ADEBUG << "Failed to use reference line latest history";
     return false;
   }
 

@@ -49,7 +49,7 @@ void NDTLocalization::Init() {
 
   std::string map_path_ =
       FLAGS_map_dir + "/" + FLAGS_ndt_map_dir + "/" + FLAGS_local_map_name;
-  AINFO << "map folder: " << map_path_;
+  ADEBUG << "map folder: " << map_path_;
   velodyne_extrinsic_ = Eigen::Affine3d::Identity();
   bool success =
       LoadLidarExtrinsic(lidar_extrinsics_file, &velodyne_extrinsic_);
@@ -60,7 +60,7 @@ void NDTLocalization::Init() {
     return;
   }
   Eigen::Quaterniond ext_quat(velodyne_extrinsic_.linear());
-  AINFO << "lidar extrinsics: " << velodyne_extrinsic_.translation().x() << ", "
+  ADEBUG << "lidar extrinsics: " << velodyne_extrinsic_.translation().x() << ", "
         << velodyne_extrinsic_.translation().y() << ", "
         << velodyne_extrinsic_.translation().z() << ", " << ext_quat.x() << ", "
         << ext_quat.y() << ", " << ext_quat.z() << ", " << ext_quat.w();
@@ -80,7 +80,7 @@ void NDTLocalization::Init() {
       AWARN << "Can't load utm zone id from map folder, use default value.";
     }
   }
-  AINFO << "utm zone id: " << zone_id_;
+  ADEBUG << "utm zone id: " << zone_id_;
 
   lidar_locator_.SetMapFolderPath(map_path_);
   lidar_locator_.SetVelodyneExtrinsic(velodyne_extrinsic_);
@@ -100,10 +100,10 @@ void NDTLocalization::OdometryCallback(
   static double pre_odometry_time = odometry_time;
   double time_delay = odometry_time - pre_odometry_time;
   if (time_delay > 0.1) {
-    AINFO << "Odometry message loss more than 10ms, the pre time and cur time: "
+    ADEBUG << "Odometry message loss more than 10ms, the pre time and cur time: "
           << pre_odometry_time << ", " << odometry_time;
   } else if (time_delay < 0.0) {
-    AINFO << "Odometry message's time is earlier than last one, "
+    ADEBUG << "Odometry message's time is earlier than last one, "
           << "the pre time and cur time: " << pre_odometry_time << ", "
           << odometry_time;
   }
@@ -124,7 +124,7 @@ void NDTLocalization::OdometryCallback(
     odometry_pose.linear() = tmp_quat.toRotationMatrix();
   }
   if (ZeroOdometry(odometry_pose)) {
-    AINFO << "Detect Zero Odometry";
+    ADEBUG << "Detect Zero Odometry";
     return;
   }
 
@@ -143,7 +143,7 @@ void NDTLocalization::OdometryCallback(
   }
 
   if (ndt_debug_log_flag_) {
-    AINFO << "NDTLocalization Debug Log: odometry msg: "
+    ADEBUG << "NDTLocalization Debug Log: odometry msg: "
           << std::setprecision(15) << "time: " << odometry_time << ", "
           << "x: " << odometry_msg->localization().position().x() << ", "
           << "y: " << odometry_msg->localization().position().y() << ", "
@@ -181,9 +181,9 @@ void NDTLocalization::LidarCallback(
       AERROR << "Can not query forecast pose";
       return;
     }
-    AINFO << "Query pose from TF";
+    ADEBUG << "Query pose from TF";
   } else {
-    AINFO << "Query pose from buffer";
+    ADEBUG << "Query pose from buffer";
   }
   if (!lidar_locator_.IsInitialized()) {
     lidar_locator_.Init(odometry_pose, resolution_id_, zone_id_);
@@ -201,7 +201,7 @@ void NDTLocalization::LidarCallback(
   }
   if (ndt_debug_log_flag_) {
     Eigen::Quaterniond tmp_quat(lidar_pose_.linear());
-    AINFO << "NDTLocalization Debug Log: lidar pose: " << std::setprecision(15)
+    ADEBUG << "NDTLocalization Debug Log: lidar pose: " << std::setprecision(15)
           << "time: " << time_stamp << ", "
           << "x: " << lidar_pose_.translation()[0] << ", "
           << "y: " << lidar_pose_.translation()[1] << ", "
@@ -212,7 +212,7 @@ void NDTLocalization::LidarCallback(
           << "qw: " << tmp_quat.w();
 
     Eigen::Quaterniond qbn(odometry_pose.linear());
-    AINFO << "NDTLocalization Debug Log: odometry for lidar pose: "
+    ADEBUG << "NDTLocalization Debug Log: odometry for lidar pose: "
           << std::setprecision(15) << "time: " << time_stamp << ", "
           << "x: " << odometry_pose.translation()[0] << ", "
           << "y: " << odometry_pose.translation()[1] << ", "
@@ -423,7 +423,7 @@ bool NDTLocalization::QueryPoseFromBuffer(double time, Eigen::Affine3d* pose) {
       }
     }
     if (iter == odometry_buffer_.crend()) {
-      AINFO << "Cannot find matching pose from odometry buffer";
+      ADEBUG << "Cannot find matching pose from odometry buffer";
       return false;
     }
     pre_pose = *iter;
@@ -495,7 +495,7 @@ void NDTLocalization::LidarMsgTransfer(
       }
     }
   } else {
-    AINFO << "Receiving un-organized-point-cloud, width " << msg->width()
+    ADEBUG << "Receiving un-organized-point-cloud, width " << msg->width()
           << " height " << msg->height() << "size " << msg->point_size();
     for (int i = 0; i < msg->point_size(); ++i) {
       Eigen::Vector3f pt3d;
@@ -521,7 +521,7 @@ void NDTLocalization::LidarMsgTransfer(
   lidar_frame->measurement_time =
       cyber::Time(msg->measurement_time()).ToSecond();
   if (ndt_debug_log_flag_) {
-    AINFO << std::setprecision(15)
+    ADEBUG << std::setprecision(15)
           << "NDTLocalization Debug Log: velodyne msg. "
           << "[time:" << lidar_frame->measurement_time
           << "][height:" << msg->height() << "][width:" << msg->width()

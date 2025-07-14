@@ -31,7 +31,7 @@ uint64_t VelodyneParser::GetGpsStamp(double current_packet_stamp,
     // in lidar
     if (std::abs(*previous_packet_stamp - current_packet_stamp) > 3599000000) {
       *gps_base_usec += static_cast<uint64_t>(3600 * 1e6);
-      AINFO << "Base time plus 3600s. Model: " << config_.model() << std::fixed
+      ADEBUG << "Base time plus 3600s. Model: " << config_.model() << std::fixed
             << ". current:" << current_packet_stamp
             << ", last time:" << *previous_packet_stamp;
     } else {

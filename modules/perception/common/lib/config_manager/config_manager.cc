@@ -57,7 +57,7 @@ bool ConfigManager::InitInternal() {
 
   std::string config_module_path =
       GetAbsolutePath(work_root_, FLAGS_config_manager_path);
-  AINFO << "WORK_ROOT: " << work_root_
+  ADEBUG << "WORK_ROOT: " << work_root_
         << " config_root_path: " << config_module_path;
 
   std::vector<std::string> model_config_files;
@@ -92,7 +92,7 @@ bool ConfigManager::InitInternal() {
           return false;
         }
 
-        AINFO << "load ModelConfig succ. name: " << model_config->name();
+        ADEBUG << "load ModelConfig succ. name: " << model_config->name();
 
         auto result =
             model_config_map_.emplace(model_config->name(), model_config);
@@ -104,7 +104,7 @@ bool ConfigManager::InitInternal() {
     }
   }
 
-  AINFO << "finish to load ModelConfigs. NumModels: "
+  ADEBUG << "finish to load ModelConfigs. NumModels: "
         << model_config_map_.size();
 
   inited_ = true;
@@ -207,7 +207,7 @@ bool ModelConfig::Reset(const ModelConfigProto &proto) {
     array_bool_param_map_.emplace(pair.name(), values);
   }
 
-  AINFO << "reset ModelConfig. model_name: " << name_
+  ADEBUG << "reset ModelConfig. model_name: " << name_
         << " integer_param_map's size: " << integer_param_map_.size()
         << " string_param_map's size: " << string_param_map_.size()
         << " double_param_map's size: " << double_param_map_.size()

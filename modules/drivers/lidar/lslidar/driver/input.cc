@@ -141,7 +141,7 @@ int InputSocket::GetPacket(LslidarPacket *pkt) {
     // Average the times at which we begin and end reading.  Use that to
     // estimate when the scan occurred.
     double time2 = apollo::cyber::Time().Now().ToSecond();
-    AINFO << apollo::cyber::Time((time2 + time1) / 2.0).ToNanosecond();
+    ADEBUG << apollo::cyber::Time((time2 + time1) / 2.0).ToNanosecond();
     return 0;
 }
 
@@ -167,11 +167,11 @@ InputPCAP::InputPCAP(
     repeat_delay_ = repeat_delay;
 
     if (read_once_)
-        AINFO << "Read input file only once.";
+        ADEBUG << "Read input file only once.";
     if (read_fast_)
-        AINFO << "Read input file as quickly as possible.";
+        ADEBUG << "Read input file as quickly as possible.";
     if (repeat_delay_ > 0.0)
-        AINFO << "Delay %.3f seconds before repeating input file."
+        ADEBUG << "Delay %.3f seconds before repeating input file."
               << repeat_delay_;
 
     // Open the PCAP dump file
@@ -234,23 +234,23 @@ int InputPCAP::GetPacket(LslidarPacket *pkt) {
         }
 
         if (empty_) {
-            AINFO << "Error " << res
+            ADEBUG << "Error " << res
                   << " reading lslidar packet: " << pcap_geterr(pcap_);
             return -1;
         }
 
         if (read_once_) {
-            AINFO << "end of file reached -- done reading.";
+            ADEBUG << "end of file reached -- done reading.";
             return -1;
         }
 
         if (repeat_delay_ > 0.0) {
-            AINFO << "end of file reached -- delaying" << repeat_delay_
+            ADEBUG << "end of file reached -- delaying" << repeat_delay_
                   << "seconds.";
             usleep(rint(repeat_delay_ * 1000000.0));
         }
 
-        AINFO << "replaying lslidar dump file";
+        ADEBUG << "replaying lslidar dump file";
 
         // I can't figure out how to rewind the file, because it
         // starts with some kind of header.  So, close the file

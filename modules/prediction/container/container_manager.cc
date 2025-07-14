@@ -60,7 +60,7 @@ std::unique_ptr<Container> ContainerManager::CreateContainer(
 void ContainerManager::RegisterContainer(
     const AdapterConfig::MessageType& type) {
   containers_[static_cast<int>(type)] = CreateContainer(type);
-  AINFO << "Container [" << type << "] is registered.";
+  ADEBUG << "Container [" << type << "] is registered.";
 }
 
 }  // namespace prediction

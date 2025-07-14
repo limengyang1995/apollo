@@ -40,35 +40,35 @@ bool KfcVehicleFactory::Init(const CanbusConf *canbus_conf) {
     AERROR << "Failed to create can client.";
     return false;
   }
-  AINFO << "Can client is successfully created.";
+  ADEBUG << "Can client is successfully created.";
 
   message_manager_ = this->CreateMessageManager();
   if (message_manager_ == nullptr) {
     AERROR << "Failed to create message manager.";
     return false;
   }
-  AINFO << "Message manager is successfully created.";
+  ADEBUG << "Message manager is successfully created.";
 
   if (can_receiver_.Init(can_client_.get(), message_manager_.get(),
                          canbus_conf->enable_receiver_log()) != ErrorCode::OK) {
     AERROR << "Failed to init can receiver.";
     return false;
   }
-  AINFO << "The can receiver is successfully initialized.";
+  ADEBUG << "The can receiver is successfully initialized.";
 
   if (can_sender_.Init(can_client_.get(), message_manager_.get(),
                        canbus_conf->enable_sender_log()) != ErrorCode::OK) {
     AERROR << "Failed to init can sender.";
     return false;
   }
-  AINFO << "The can sender is successfully initialized.";
+  ADEBUG << "The can sender is successfully initialized.";
 
   vehicle_controller_ = CreateVehicleController();
   if (vehicle_controller_ == nullptr) {
     AERROR << "Failed to create vehicle controller.";
     return false;
   }
-  AINFO << "The vehicle controller is successfully created.";
+  ADEBUG << "The vehicle controller is successfully created.";
 
   if (vehicle_controller_->Init(canbus_conf->vehicle_parameter(), &can_sender_,
                                 message_manager_.get()) != ErrorCode::OK) {
@@ -76,7 +76,7 @@ bool KfcVehicleFactory::Init(const CanbusConf *canbus_conf) {
     return false;
   }
 
-  AINFO << "The vehicle controller is successfully"
+  ADEBUG << "The vehicle controller is successfully"
         << " initialized with canbus conf as : "
         << canbus_conf->vehicle_parameter().ShortDebugString();
 
@@ -94,14 +94,14 @@ bool KfcVehicleFactory::Start() {
     AERROR << "Failed to start can client";
     return false;
   }
-  AINFO << "Can client is started.";
+  ADEBUG << "Can client is started.";
 
   // 2. start receive first then send
   if (can_receiver_.Start() != ErrorCode::OK) {
     AERROR << "Failed to start can receiver.";
     return false;
   }
-  AINFO << "Can receiver is started.";
+  ADEBUG << "Can receiver is started.";
 
   // 3. start send
   if (can_sender_.Start() != ErrorCode::OK) {
@@ -123,7 +123,7 @@ void KfcVehicleFactory::Stop() {
   can_receiver_.Stop();
   can_client_->Stop();
   vehicle_controller_->Stop();
-  AINFO << "Cleanup cansender, canreceiver, canclient, vehicle controller.";
+  ADEBUG << "Cleanup cansender, canreceiver, canclient, vehicle controller.";
 }
 
 void KfcVehicleFactory::UpdateCommand(

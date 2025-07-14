@@ -83,7 +83,7 @@ LonController::LonController() : name_("PID-basesd Longitudinal Controller") {
 
       fflush(speed_log_file_);
     }
-    AINFO << name_ << " used.";
+    ADEBUG << name_ << " used.";
   }
 }
 
@@ -153,7 +153,7 @@ void LonController::SetDigitalFilterPitchAngle() {
 }
 
 void LonController::InitControlCalibrationTable() {
-  AINFO << "Control calibration table size is "
+  ADEBUG << "Control calibration table size is "
         << calibration_table_.calibration_size();
   Interpolation2D::DataType xyz;
   for (const auto &calibration : calibration_table_.calibration()) {

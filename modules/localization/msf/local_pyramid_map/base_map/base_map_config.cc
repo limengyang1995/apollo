@@ -45,7 +45,7 @@ bool BaseMapConfig::Save(const std::string &file_path) {
   bool success = CreateXml(&config);
   if (success) {
     boost::property_tree::write_xml(file_path, config);
-    AINFO << "Saved the map configuration to: " << file_path;
+    ADEBUG << "Saved the map configuration to: " << file_path;
     return true;
   }
   return false;
@@ -57,7 +57,7 @@ bool BaseMapConfig::Load(const std::string &file_path) {
   bool success = LoadXml(config);
 
   if (success) {
-    AINFO << "Loaded the map configuration from: " << file_path;
+    ADEBUG << "Loaded the map configuration from: " << file_path;
     return true;
   }
   return false;
@@ -158,7 +158,7 @@ bool BaseMapConfig::LoadXml(const boost::property_tree::ptree &config) {
                   [this](const boost::property_tree::ptree::value_type &v) {
                     map_resolutions_.push_back(
                         static_cast<float>(atof(v.second.data().c_str())));
-                    AINFO << "Resolution: " << v.second.data();
+                    ADEBUG << "Resolution: " << v.second.data();
                   });
   } else {
     return false;
@@ -168,7 +168,7 @@ bool BaseMapConfig::LoadXml(const boost::property_tree::ptree &config) {
   if (datasets) {
     for (const boost::property_tree::ptree::value_type &v : *datasets) {
       map_datasets_.push_back(v.second.data());
-      AINFO << "Dataset: " << v.second.data();
+      ADEBUG << "Dataset: " << v.second.data();
     }
   }
 

@@ -87,7 +87,7 @@ void Velodyne64Parser::SetBaseTimeFromPackets(const VelodynePacket& pkt) {
       break;
   }
 
-  AINFO << "Get base time from packets. Obtained (" << year << "." << month
+  ADEBUG << "Get base time from packets. Obtained (" << year << "." << month
         << "." << day << " " << hour << ":" << minute << ":" << second;
 
   if (status_type == GPS_STATUS && year > 0 && month > 0 && day > 0 &&
@@ -106,7 +106,7 @@ void Velodyne64Parser::SetBaseTimeFromPackets(const VelodynePacket& pkt) {
     time.tm_min = 0;
     time.tm_sec = 0;
 
-    //    AINFO << "Set base unix time: (%d.%d.%d %d:%d:%d)", time.tm_year,
+    //    ADEBUG << "Set base unix time: (%d.%d.%d %d:%d:%d)", time.tm_year,
     //        time.tm_mon, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec;
 
     uint64_t unix_base = static_cast<uint64_t>(timegm(&time));

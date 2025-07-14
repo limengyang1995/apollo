@@ -93,11 +93,11 @@ void printMatrix(const int r, const int c, const std::vector<c_float>& P_data,
     }
   }
 
-  AINFO << "row number: " << r;
-  AINFO << "col number: " << c;
+  ADEBUG << "row number: " << r;
+  ADEBUG << "col number: " << c;
   for (int i = 0; i < r; ++i) {
-    AINFO << "row number: " << i;
-    AINFO << tmp.row(i);
+    ADEBUG << "row number: " << i;
+    ADEBUG << tmp.row(i);
   }
 }
 
@@ -130,7 +130,7 @@ bool DualVariableWarmStartOSQPInterface::optimize() {
   std::vector<c_int> P_indptr;
   assemble_P(&P_data, &P_indices, &P_indptr);
   if (check_mode_) {
-    AINFO << "print P_data in whole: ";
+    ADEBUG << "print P_data in whole: ";
     printMatrix(kNumParam, kNumParam, P_data, P_indices, P_indptr);
   }
   // assemble q, linear term in objective
@@ -145,7 +145,7 @@ bool DualVariableWarmStartOSQPInterface::optimize() {
   std::vector<c_int> A_indptr;
   assemble_constraint(&A_data, &A_indices, &A_indptr);
   if (check_mode_) {
-    AINFO << "print A_data in whole: ";
+    ADEBUG << "print A_data in whole: ";
     printMatrix(kNumConst, kNumParam, A_data, A_indices, A_indptr);
     assembleA(kNumConst, kNumParam, A_data, A_indices, A_indptr);
   }

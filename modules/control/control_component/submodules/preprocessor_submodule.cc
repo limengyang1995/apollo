@@ -85,7 +85,7 @@ bool PreprocessorSubmodule::Proc(const std::shared_ptr<LocalView> &local_view) {
   if (control_preprocessor.local_view().has_pad_msg()) {
     const auto &pad_message = control_preprocessor.local_view().pad_msg();
     if (pad_message.action() == DrivingAction::RESET) {
-      AINFO << "Control received RESET action!";
+      ADEBUG << "Control received RESET action!";
       estop_ = false;
       preprocessor_status->set_error_code(ErrorCode::OK);
       preprocessor_status->set_msg("");

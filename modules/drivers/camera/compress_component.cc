@@ -33,7 +33,7 @@ bool CompressComponent::Init() {
     AERROR << "Parse config file failed: " << ConfigFilePath();
     return false;
   }
-  AINFO << "Camera config: \n" << config_.DebugString();
+  ADEBUG << "Camera config: \n" << config_.DebugString();
   try {
     image_pool_.reset(new CCObjectPool<CompressedImage>(
         config_.compress_conf().image_pool_size()));

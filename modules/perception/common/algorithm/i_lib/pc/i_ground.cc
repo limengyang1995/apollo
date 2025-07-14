@@ -1165,8 +1165,8 @@ int PlaneFitGroundDetector::FitInOrder() {
     }
   }
   if (param_.debug_output) {
-      AINFO << sstr.str();
-      AINFO << "This Frame " << std::to_string(frame_timestamp_)
+      ADEBUG << sstr.str();
+      ADEBUG << "This Frame " << std::to_string(frame_timestamp_)
             << " ground_count is " << count;
   }
   sstr.clear();
@@ -1582,7 +1582,7 @@ int PlaneFitGroundDetector::SmoothInOrder() {
 void PlaneFitGroundDetector::ResetParams(float ori_z_lower, float ori_z_upper) {
     param_.sample_region_z_lower = ori_z_lower;
     param_.sample_region_z_upper = ori_z_upper;
-    AINFO << "[BEFORE]: {} " << param_.sample_region_z_lower << ",{} "
+    ADEBUG << "[BEFORE]: {} " << param_.sample_region_z_lower << ",{} "
           << param_.sample_region_z_upper;
 }
 
@@ -1592,7 +1592,7 @@ void PlaneFitGroundDetector::UpdateParams(float parsing_ground_z, float buffer, 
     param_.sample_region_z_upper = IMin(param_.sample_region_z_upper,
         parsing_ground_z + buffer);
     frame_timestamp_ = timestamp;
-    AINFO << "[AFTER]: {} " << param_.sample_region_z_lower << ",{} "
+    ADEBUG << "[AFTER]: {} " << param_.sample_region_z_lower << ",{} "
           << param_.sample_region_z_upper;
 }
 

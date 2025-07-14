@@ -36,7 +36,7 @@ bool TLPreprocessor::Init(const TrafficLightPreprocessorInitOptions &options) {
   lights_outside_image_array_.resize(num_cameras_);
   sync_interval_seconds_ = options.sync_interval_seconds;
 
-  AINFO << "preprocessor init succeed";
+  ADEBUG << "preprocessor init succeed";
 
   return true;
 }
@@ -48,10 +48,10 @@ bool TLPreprocessor::UpdateCameraSelection(
   selected_camera_name_.first = timestamp;
   selected_camera_name_.second = GetMaxFocalLenWorkingCameraName();
 
-  AINFO << "TLPreprocessor Got signal number: " << lights->size()
+  ADEBUG << "TLPreprocessor Got signal number: " << lights->size()
         << ", ts: " << timestamp;
   if (lights->empty()) {
-    AINFO << "No signals, select camera with max focal length: "
+    ADEBUG << "No signals, select camera with max focal length: "
           << selected_camera_name_.second;
     return true;
   }
@@ -61,7 +61,7 @@ bool TLPreprocessor::UpdateCameraSelection(
     AERROR << "project_lights_and_select_camera failed, ts: " << timestamp;
   }
 
-  AINFO << "selected_camera_id: " << selected_camera_name_.second;
+  ADEBUG << "selected_camera_id: " << selected_camera_name_.second;
 
   return true;
 }
@@ -70,7 +70,7 @@ bool TLPreprocessor::SyncInformation(const double image_timestamp,
                                      const std::string &cam_name) {
   const double &proj_ts = selected_camera_name_.first;
   const std::string &proj_camera_name = selected_camera_name_.second;
-  AINFO << "ready to sync information";
+  ADEBUG << "ready to sync information";
 
   if (!projection_.HasCamera(cam_name)) {
     AERROR << "sync_image failed, "
@@ -78,7 +78,7 @@ bool TLPreprocessor::SyncInformation(const double image_timestamp,
     return false;
   }
 
-  AINFO << "Enter TLPreprocessor::sync_image. proj_ts: " << proj_ts
+  ADEBUG << "Enter TLPreprocessor::sync_image. proj_ts: " << proj_ts
         << " proj_camera_name: " << proj_camera_name
         << " image_ts: " << image_timestamp
         << " image_camera_name: " << cam_name;
@@ -94,7 +94,7 @@ bool TLPreprocessor::SyncInformation(const double image_timestamp,
           << "but camera_name not match.";
     return false;
   }
-  AINFO << "sync_image succeeded.";
+  ADEBUG << "sync_image succeeded.";
   last_pub_img_ts_ = image_timestamp;
   return true;
 }
@@ -106,10 +106,10 @@ bool TLPreprocessor::UpdateLightsProjection(
   lights_on_image_.clear();
   lights_outside_image_.clear();
 
-  AINFO << "clear lights_outside_image_ " << lights_outside_image_.size();
+  ADEBUG << "clear lights_outside_image_ " << lights_outside_image_.size();
 
   if (lights->empty()) {
-    AINFO << "No lights to be projected";
+    ADEBUG << "No lights to be projected";
     return true;
   }
 
@@ -136,13 +136,13 @@ bool TLPreprocessor::UpdateLightsProjection(
                          projection_.getImageWidth(camera_name),
                          projection_.getImageHeight(camera_name),
                          option.image_borders_size->at(camera_name))) {
-      AINFO << "update_lights_projection light project out of image region. "
+      ADEBUG << "update_lights_projection light project out of image region. "
             << "camera_name: " << camera_name;
       return false;
     }
   }
 
-  AINFO << "UpdateLightsProjection success";
+  ADEBUG << "UpdateLightsProjection success";
   return true;
 }
 
@@ -154,7 +154,7 @@ bool TLPreprocessor::SetCameraWorkingFlag(const std::string &camera_name,
     return false;
   }
   camera_is_working_flags_[camera_name] = is_working;
-  AINFO << "SetCameraWorkingFlag succeeded, camera_name: " << camera_name
+  ADEBUG << "SetCameraWorkingFlag succeeded, camera_name: " << camera_name
         << ", flag: " << camera_is_working_flags_[camera_name];
   return true;
 }
@@ -183,7 +183,7 @@ void TLPreprocessor::SelectCamera(
     const TLPreprocessorOption &option, std::string *selected_camera_name) {
   // do not check boundary if this is min focal camera
   auto min_focal_len_working_camera = GetMinFocalLenWorkingCameraName();
-  AINFO << "working camera with minimum focal length: "
+  ADEBUG << "working camera with minimum focal length: "
         << min_focal_len_working_camera;
 
   const auto &camera_names = projection_.getCameraNamesByDescendingFocalLen();
@@ -192,7 +192,7 @@ void TLPreprocessor::SelectCamera(
     bool is_working = false;
     // camera is not working ,skip
     if (!GetCameraWorkingFlag(camera_name, &is_working) || !is_working) {
-      AINFO << "camera " << camera_name << "is not working";
+      ADEBUG << "camera " << camera_name << "is not working";
       continue;
     }
 
@@ -200,7 +200,7 @@ void TLPreprocessor::SelectCamera(
     if (camera_name != min_focal_len_working_camera) {
       // lights must project on the image if this is not min focal camera
       if (lights_outside_image_array->at(cam_id).size() > 0) {
-        AINFO << "light project out of image, "
+        ADEBUG << "light project out of image, "
               << "camera_name: " << camera_name
               << " lights_outside_image_array->at(cam_id).size(): "
               << lights_outside_image_array->at(cam_id).size();
@@ -214,7 +214,7 @@ void TLPreprocessor::SelectCamera(
                              projection_.getImageHeight(camera_name),
                              option.image_borders_size->at(camera_name))) {
           ok = false;
-          AINFO << "light project out of image region, "
+          ADEBUG << "light project out of image region, "
                 << "camera_name: " << camera_name << " border_size: "
                 << option.image_borders_size->at(camera_name);
           break;
@@ -230,7 +230,7 @@ void TLPreprocessor::SelectCamera(
       break;
     }
   }
-  AINFO << "select_camera selection: " << *selected_camera_name;
+  ADEBUG << "select_camera selection: " << *selected_camera_name;
 }
 
 bool TLPreprocessor::ProjectLights(
@@ -239,7 +239,7 @@ bool TLPreprocessor::ProjectLights(
     base::TrafficLightPtrs *lights_on_image,
     base::TrafficLightPtrs *lights_outside_image) {
   if (lights->empty()) {
-    AINFO << "project_lights get empty signals.";
+    ADEBUG << "project_lights get empty signals.";
     return true;
   }
   if (!projection_.HasCamera(camera_name)) {

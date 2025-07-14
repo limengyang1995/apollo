@@ -28,12 +28,12 @@ namespace drivers {
 namespace velodyne {
 
 bool VelodyneDriverComponent::Init() {
-  AINFO << "Velodyne driver component init";
+  ADEBUG << "Velodyne driver component init";
   Config velodyne_config;
   if (!GetProtoConfig(&velodyne_config)) {
     return false;
   }
-  AINFO << "Velodyne config: " << velodyne_config.DebugString();
+  ADEBUG << "Velodyne config: " << velodyne_config.DebugString();
   // start the driver
   std::shared_ptr<::apollo::cyber::Node> node =
       apollo::cyber::CreateNode("lidar_drivers");

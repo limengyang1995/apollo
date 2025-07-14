@@ -46,7 +46,7 @@ void LocalizationGnssCompensator::ProcessCompensation(
       // the next GNSS data is also invalid
       last_compensated_gnss_time_ =
         last_compensated_gnss_time_+ compensated_delta;
-      AINFO << "enter compensator: " << "last valid gnss time: " <<
+      ADEBUG << "enter compensator: " << "last valid gnss time: " <<
         last_valid_gnss_time_ << ", " << "measurement time: " <<
         *measurement_time << ", " << "measurement time after compensated: " <<
         last_compensated_gnss_time_;

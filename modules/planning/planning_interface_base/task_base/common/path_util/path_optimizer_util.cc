@@ -103,7 +103,7 @@ bool PathOptimizerUtil::OptimizePath(
   // num of knots
   const auto& lat_boundaries = path_boundary.boundary();
   const size_t kNumKnots = lat_boundaries.size();
-  AINFO << "kNumKnots: " << kNumKnots;
+  ADEBUG << "kNumKnots: " << kNumKnots;
 
   double delta_s = path_boundary.delta_s();
   PiecewiseJerkPathProblem piecewise_jerk_problem(kNumKnots, delta_s,
@@ -193,11 +193,11 @@ bool PathOptimizerUtil::OptimizePath(
 
   if (!success) {
     AERROR << path_boundary.label() << "piecewise jerk path optimizer failed";
-    AINFO << "init s(" << init_state.first[0] << "," << init_state.first[1]
+    ADEBUG << "init s(" << init_state.first[0] << "," << init_state.first[1]
           << "," << init_state.first[2] << ") l (" << init_state.second[0]
           << "," << init_state.second[1] << "," << init_state.second[2];
-    AINFO << "dx bound" << config.lateral_derivative_bound_default();
-    AINFO << "jerk bound" << dddl_bound;
+    ADEBUG << "dx bound" << config.lateral_derivative_bound_default();
+    ADEBUG << "jerk bound" << dddl_bound;
     print_curve.PrintToLog();
     return false;
   }
@@ -314,11 +314,11 @@ bool PathOptimizerUtil::OptimizePathWithTowingPoints(
 
   if (!success) {
     AERROR << path_boundary.label() << "piecewise jerk path optimizer failed";
-    AINFO << "init s(" << init_state.first[0] << "," << init_state.first[1]
+    ADEBUG << "init s(" << init_state.first[0] << "," << init_state.first[1]
           << "," << init_state.first[2] << ") l (" << init_state.second[0]
           << "," << init_state.second[1] << "," << init_state.second[2];
-    AINFO << "dx bound" << config.lateral_derivative_bound_default();
-    AINFO << "jerk bound" << dddl_bound;
+    ADEBUG << "dx bound" << config.lateral_derivative_bound_default();
+    ADEBUG << "jerk bound" << dddl_bound;
     print_curve.PrintToLog();
     return false;
   }
@@ -352,7 +352,7 @@ void PathOptimizerUtil::UpdatePathRefWithBound(
       ref_l->at(i) =
           (path_boundary[i].l_lower.l + path_boundary[i].l_upper.l) / 2.0;
       weight_ref_l->at(i) = weight;
-      AINFO << "need_update_path_ref: s: " << path_boundary[i].s
+      ADEBUG << "need_update_path_ref: s: " << path_boundary[i].s
             << ", l: " << ref_l->at(i);
     } else {
       weight_ref_l->at(i) = 0;
@@ -377,7 +377,7 @@ void PathOptimizerUtil::UpdatePathRefWithBound(
       ref_l->at(i) =
           (path_boundary[i].l_lower.l + path_boundary[i].l_upper.l) / 2.0;
       weight_ref_l->at(i) = weight;
-      AINFO << "need_update_path_ref: s: " << path_boundary[i].s
+      ADEBUG << "need_update_path_ref: s: " << path_boundary[i].s
             << ", l: " << ref_l->at(i);
     } else {
       weight_ref_l->at(i) = 0;
@@ -405,7 +405,7 @@ void PathOptimizerUtil::UpdatePathRefWithBoundInSidePassDirection(
       ref_l->at(i) =
           (path_boundary[i].l_lower.l + path_boundary[i].l_upper.l) / 2.0;
       weight_ref_l->at(i) = weight;
-      AINFO << "need_update_path_ref: s: " << path_boundary[i].s
+      ADEBUG << "need_update_path_ref: s: " << path_boundary[i].s
             << ", l: " << ref_l->at(i);
     } else {
       weight_ref_l->at(i) = 0;

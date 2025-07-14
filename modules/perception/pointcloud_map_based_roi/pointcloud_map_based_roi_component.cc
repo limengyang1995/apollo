@@ -29,7 +29,7 @@ bool PointCloudMapROIComponent::Init() {
     AERROR << "Get PointCloudMapROIComponentConfig file failed";
     return false;
   }
-  AINFO << "PointCloud map based roi Component Configs: "
+  ADEBUG << "PointCloud map based roi Component Configs: "
         << comp_config.DebugString();
   // writer
   output_channel_name_ = comp_config.output_channel_name();
@@ -48,7 +48,7 @@ bool PointCloudMapROIComponent::Init() {
     map_manager_init_options.config_file =
       comp_config.map_manager_config_file();
     if (!map_manager_.Init(map_manager_init_options)) {
-      AINFO << "Failed to init map manager.";
+      ADEBUG << "Failed to init map manager.";
       use_map_manager_ = false;
     }
   }
@@ -76,7 +76,7 @@ bool PointCloudMapROIComponent::Proc(
   bool status = InternalProc(message);
   if (status) {
     writer_->Write(message);
-    AINFO << "Send pointcloud map based roi output message.";
+    ADEBUG << "Send pointcloud map based roi output message.";
   }
   return status;
 }
@@ -89,7 +89,7 @@ bool PointCloudMapROIComponent::InternalProc(
     MapManagerOptions map_manager_options;
     if (!map_manager_.Update(map_manager_options,
                              message->lidar_frame_.get())) {
-      AINFO << "Failed to update map structure.";
+      ADEBUG << "Failed to update map structure.";
       return false;
     }
   }
@@ -103,7 +103,7 @@ bool PointCloudMapROIComponent::InternalProc(
       roi_filter_->Filter(roi_filter_options, lidar_frame_ref)) {
     // do nothing
   } else {
-    AINFO << "Fail to call roi filter, use origin cloud.";
+    ADEBUG << "Fail to call roi filter, use origin cloud.";
     lidar_frame_ref->roi_indices.indices.resize(original_cloud->size());
     // we manually fill roi indices with all cloud point indices
     std::iota(lidar_frame_ref->roi_indices.indices.begin(),

@@ -113,14 +113,14 @@ bool CenterPointDetection::Init(const LidarDetectorInitOptions &options) {
                        ->CreateInstance<BaseDownSample>(
                            ConfigUtil::GetFullClassName(name));
     if (!down_sample_) {
-      AINFO << "Failed to find down_sample plugin: " << name << ", skipped";
+      ADEBUG << "Failed to find down_sample plugin: " << name << ", skipped";
       return false;
     }
     DownSampleInitOptions option;
     option.config_path = plugin.config_path();
     option.config_file = plugin.config_file();
     if (!down_sample_->Init(option)) {
-      AINFO << "Failed to init down_sample plugin: " << name << ", skipped";
+      ADEBUG << "Failed to init down_sample plugin: " << name << ", skipped";
       return false;
     }
   }
@@ -224,7 +224,7 @@ bool CenterPointDetection::Detect(const LidarDetectorOptions &options,
             cur_cloud_ptr_, downsample_beams_cloud_ptr,
             model_param_.preprocess().downsample_beams_factor())) {
 
-              AINFO << "--------------------------------- downsampling -----------------";
+              ADEBUG << "--------------------------------- downsampling -----------------";
       cur_cloud_ptr_ = downsample_beams_cloud_ptr;
     } else {
       AWARN << "Down-sample beams factor must be >= 1. Cancel down-sampling."
@@ -242,7 +242,7 @@ bool CenterPointDetection::Detect(const LidarDetectorOptions &options,
 
   downsample_time_ = timer.toc(true);
   num_points = cur_cloud_ptr_->size();
-  AINFO << "num points before fusing: " << num_points;
+  ADEBUG << "num points before fusing: " << num_points;
 
   // fuse clouds of preceding frames with current cloud
   cur_cloud_ptr_->mutable_points_timestamp()->assign(cur_cloud_ptr_->size(),
@@ -315,9 +315,9 @@ bool CenterPointDetection::Detect(const LidarDetectorOptions &options,
   input_data_blob->Reshape(points_shape);
   float *data_ptr = input_data_blob->mutable_cpu_data();
   memcpy(data_ptr, points_data.data(), points_data.size() * sizeof(float));
-  AINFO << "Enter infer";
+  ADEBUG << "Enter infer";
   inference_->Infer();
-  AINFO << "Exit infer";
+  ADEBUG << "Exit infer";
 
   inference_time_ = timer.toc(true);
 
@@ -371,13 +371,13 @@ bool CenterPointDetection::Detect(const LidarDetectorOptions &options,
   SetPointsInROI(&frame->segmented_objects);
 
   postprocess_time_ = timer.toc(true);
-  AERROR<< "down sample: " << downsample_time_ << "\t"
+  /* AERROR<< "down sample: " << downsample_time_ << "\t"
         << "fuse: " << fuse_time_ << "\t"
         << "shuffle: " << shuffle_time_ << "\t"
         << "cloud_to_array: " << cloud_to_array_time_ << "\t"
         << "inference: " << inference_time_ << "\t"
         << "postprocess: " << postprocess_time_ << "\t"
-        << "nms: " << nms_time_ << "\t";
+        << "nms: " << nms_time_ << "\t"; */
 
   std::stringstream ssstr;
   ssstr << "[CenterPointDetection AfterNMS] "
@@ -690,7 +690,7 @@ void CenterPointDetection::GetObjects(
   GetBoxCorner(num_objects, detections, box_corner, box_rectangular);
   GetBoxIndices(
     num_objects, detections, box_corner, box_rectangular, objects);
-  AINFO << "[CenterPoint] we get " << num_objects << " objs";
+  ADEBUG << "[CenterPoint] we get " << num_objects << " objs";
 }
 
 // for nuscenes model
@@ -1044,7 +1044,7 @@ void CenterPointDetection::FilterObjectsbySemanticType(
     objects->at(valid_size) = objects->at(i);
     valid_size++;
   }
-  AINFO << "Filter " << (objects->size() - valid_size)
+  ADEBUG << "Filter " << (objects->size() - valid_size)
         << " objects from " << objects->size() << " objects.";
   objects->resize(valid_size);
 }

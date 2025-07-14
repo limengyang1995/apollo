@@ -210,14 +210,14 @@ bool LaneChangePath::AssessPath(std::vector<PathData>* candidate_path_data,
         PathAssessmentDeciderUtil::TrimTailingOutLanePoints(&curr_path_data);
       }
       if (curr_path_data.Empty()) {
-        AINFO << "lane change path is empty after trimed";
+        ADEBUG << "lane change path is empty after trimed";
         continue;
       }
       valid_path_data.push_back(curr_path_data);
     }
   }
   if (valid_path_data.empty()) {
-    AINFO << "All lane change path are not valid";
+    ADEBUG << "All lane change path are not valid";
     return false;
   }
 
@@ -268,11 +268,11 @@ void LaneChangePath::UpdateLaneChangeStatus() {
       if (now - prev_status->timestamp() >
           config_.change_lane_success_freeze_time()) {
         UpdateStatus(now, ChangeLaneStatus::IN_CHANGE_LANE, change_lane_id);
-        AINFO << "change lane again after success";
+        ADEBUG << "change lane again after success";
       }
     } else if (prev_status->status() == ChangeLaneStatus::IN_CHANGE_LANE) {
       if (prev_status->path_id() != change_lane_id) {
-        AINFO << "change_lane_id" << change_lane_id << "prev"
+        ADEBUG << "change_lane_id" << change_lane_id << "prev"
               << prev_status->path_id();
         UpdateStatus(now, ChangeLaneStatus::CHANGE_LANE_FINISHED,
                      prev_status->path_id());
@@ -463,12 +463,12 @@ void LaneChangePath::UpdateStatus(double timestamp,
   auto* lane_change_status = injector_->planning_context()
                                  ->mutable_planning_status()
                                  ->mutable_change_lane();
-  AINFO << "lane change update from" << lane_change_status->DebugString()
+  ADEBUG << "lane change update from" << lane_change_status->DebugString()
         << "to";
   lane_change_status->set_timestamp(timestamp);
   lane_change_status->set_path_id(path_id);
   lane_change_status->set_status(status_code);
-  AINFO << lane_change_status->DebugString();
+  ADEBUG << lane_change_status->DebugString();
 }
 
 bool LaneChangePath::HysteresisFilter(const double obstacle_distance,

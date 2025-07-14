@@ -328,7 +328,7 @@ void MessageProcess::ProcessOfflineData(
           writer.WriteMessage<PredictionObstacles>(
               prediction_conf.topic_conf().perception_obstacle_topic(),
               prediction_obstacles, message.time);
-          AINFO << "Generated a new prediction message.";
+          ADEBUG << "Generated a new prediction message.";
         }
       }
     } else if (message.channel_name ==

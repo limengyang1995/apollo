@@ -111,7 +111,7 @@ class ControlTask {
       AERROR << "Load calibration table failed!";
       return false;
     }
-    AINFO << "Load the calibraiton table file successfully, file path: "
+    ADEBUG << "Load the calibraiton table file successfully, file path: "
           << calibration_table_path;
     return true;
   }
@@ -132,7 +132,7 @@ bool ControlTask::LoadConfig(T *config) {
     AERROR << "Load config of " << class_name << " failed!";
     return false;
   }
-  AINFO << "Load the [" << class_name
+  ADEBUG << "Load the [" << class_name
         << "] config file successfully, file path: " << config_path_;
   return true;
 }

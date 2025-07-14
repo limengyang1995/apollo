@@ -157,7 +157,7 @@ void OnlineLocalizationExpert::CheckGnssLidarMsfStatus(
   latest_gnsspos_timestamp_mutex_.lock();
   if (cur_imu_time - latest_gnsspos_timestamp_ >
       bestgnsspose_loss_time_threshold_) {
-    AINFO << std::setprecision(15)
+    ADEBUG << std::setprecision(15)
           << "The bestgnsspose msg loses more than 2 seconds: "
           << "imu time and latest gnss time: " << cur_imu_time << " "
           << latest_gnsspos_timestamp_;
@@ -166,7 +166,7 @@ void OnlineLocalizationExpert::CheckGnssLidarMsfStatus(
   latest_gnsspos_timestamp_mutex_.unlock();
   latest_lidar_timestamp_mutex_.lock();
   if (cur_imu_time - latest_lidar_timestamp_ > lidar_loss_time_threshold_) {
-    AINFO << std::setprecision(15)
+    ADEBUG << std::setprecision(15)
           << "The local lidar msg loses more than 2 seconds: "
           << "imu time and latest local lidar time: " << cur_imu_time << " "
           << latest_lidar_timestamp_;

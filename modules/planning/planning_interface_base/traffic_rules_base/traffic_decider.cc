@@ -34,7 +34,7 @@ using apollo::common::Status;
 bool TrafficDecider::Init(const std::shared_ptr<DependencyInjector> &injector) {
   if (init_) return true;
   // Load the pipeline config.
-  AINFO << "Load config path:" << FLAGS_traffic_rule_config_filename;
+  ADEBUG << "Load config path:" << FLAGS_traffic_rule_config_filename;
   // Load the pipeline of scenario.
   if (!apollo::cyber::common::LoadConfig(FLAGS_traffic_rule_config_filename,
                                          &rule_pipeline_)) {

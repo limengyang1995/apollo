@@ -26,12 +26,6 @@
         <dag_conf>modules/transform/dag/static_transform.dag</dag_conf>
         <process_name></process_name>
     </module>
-
-    <!-- <module>
-        <name>compensator</name>
-        <dag_conf>modules/drivers/lidar/compensator/dag/compensator.dag</dag_conf>
-        <process_name>compensator</process_name>
-    </module> -->
     
     <module>
         <name>localization</name>
@@ -71,23 +65,24 @@
         <dag_conf>modules/canbus/dag/canbus.dag</dag_conf>
         <process_name>canbus</process_name>
     </module>
-
-    <module>
-        <name>control</name>
-        <dag_conf>modules/control/control_component/dag/control.dag</dag_conf>
-        <process_name>control</process_name>
-    </module>
-
     <module>
         <name>old_routing_adapter</name>
         <dag_conf>modules/external_command/old_routing_adapter/dag/old_routing_adapter.dag</dag_conf>
         <process_name>old_routing_adapter</process_name>
     </module>
-
     <module>
         <name>planning</name>
         <dag_conf>modules/external_command/process_component/dag/external_command_process.dag</dag_conf>
         <dag_conf>modules/planning/planning_component/dag/planning.dag</dag_conf>
         <process_name>planning</process_name>
     </module>
+    <module>
+        <name>control</name>
+        <dag_conf>modules/control/control_component/dag/control.dag</dag_conf>
+        <process_name>control</process_name>
+    </module>
+
+    
+
+    
 </cyber>

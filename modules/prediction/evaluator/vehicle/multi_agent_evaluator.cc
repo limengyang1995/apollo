@@ -321,12 +321,12 @@ bool MultiAgentEvaluator::Evaluate(
   auto start_time_pre = std::chrono::system_clock::now();
 
   if (adc_trajectory_container == nullptr) {
-    AINFO << "Null adc traj container.";
+    ADEBUG << "Null adc traj container.";
     with_planning_traj = false;
   }
 
   if (adc_trajectory_container->adc_trajectory().trajectory_point().size() < 1) {
-    AINFO << "Adc traj points are not enough.";
+    ADEBUG << "Adc traj points are not enough.";
     with_planning_traj = false;
   }
 
@@ -363,14 +363,14 @@ bool MultiAgentEvaluator::Evaluate(
   } else if (obs_num > 50) {
     AERROR << "Number of obstacles to be evaluated is too large: " << obs_num;
   } else {
-    AINFO << "Number of objects to be evaluated: " << obs_num;
+    ADEBUG << "Number of objects to be evaluated: " << obs_num;
   }
   // planning traj, not to be evaulated
   vector_obs_num = obs_num + 1;
 
   auto end_time_pre = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_pre = end_time_pre - start_time_pre;
-  AINFO << "Evaluator prepare used time: " << diff_pre.count() * 1000 << " ms.";
+  ADEBUG << "Evaluator prepare used time: " << diff_pre.count() * 1000 << " ms.";
   /*************************************/
 
   /* process the obstacle history pos into vector */
@@ -398,7 +398,7 @@ bool MultiAgentEvaluator::Evaluate(
 
   auto end_time_obs = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_obs = end_time_obs - start_time_obs;
-  AINFO << "Obstacle vectors used time: " << diff_obs.count() * 1000 << " ms.";
+  ADEBUG << "Obstacle vectors used time: " << diff_obs.count() * 1000 << " ms.";
   /*************************************/
 
   /* Query the map data */
@@ -422,7 +422,7 @@ bool MultiAgentEvaluator::Evaluate(
 
   auto end_time_query = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_query = end_time_query - start_time_query;
-  AINFO << "map vector query used time: " << diff_query.count() * 1000 << " ms.";
+  ADEBUG << "map vector query used time: " << diff_query.count() * 1000 << " ms.";
   /*************************************/
 
   /* process map data & map p id & v_mask for map polyline */
@@ -449,7 +449,7 @@ bool MultiAgentEvaluator::Evaluate(
   auto end_time_map_vectorize = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_map_vectorize =
       end_time_map_vectorize - start_time_map_vectorize;
-  AINFO << "Map vectors used time: "
+  ADEBUG << "Map vectors used time: "
          << diff_map_vectorize.count() * 1000 << " ms.";
   /*************************************/
 
@@ -513,7 +513,7 @@ bool MultiAgentEvaluator::Evaluate(
   auto end_time_data_prep = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_data_prep =
       end_time_data_prep - start_time_data_prep;
-  AINFO << "vectornet input tensor preparation used time: "
+  ADEBUG << "vectornet input tensor preparation used time: "
          << diff_data_prep.count() * 1000 << " ms.";
   /*************************************/
 
@@ -541,7 +541,7 @@ bool MultiAgentEvaluator::Evaluate(
   auto end_time_inference = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_inference =
       end_time_inference - start_time_inference;
-  AINFO << "vectornet inference used time: " << diff_inference.count() * 1000
+  ADEBUG << "vectornet inference used time: " << diff_inference.count() * 1000
          << " ms.";
   /*************************************/
 
@@ -614,7 +614,7 @@ bool MultiAgentEvaluator::Evaluate(
   auto end_time_output_process = std::chrono::system_clock::now();
   std::chrono::duration<double> diff_output_process =
       end_time_output_process - start_time_output_process;
-  AINFO << "vectornet output process used time: "
+  ADEBUG << "vectornet output process used time: "
          << diff_output_process.count() * 1000 << " ms.";
   /*************************************/
 

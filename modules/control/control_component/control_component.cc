@@ -44,13 +44,13 @@ bool ControlComponent::Init() {
   injector_ = std::make_shared<DependencyInjector>();
   init_time_ = Clock::Now();
 
-  AINFO << "Control init, starting ...";
+  ADEBUG << "Control init, starting ...";
 
   ACHECK(
       cyber::common::GetProtoFromFile(FLAGS_pipeline_file, &control_pipeline_))
       << "Unable to load control pipeline file: " + FLAGS_pipeline_file;
 
-  AINFO << "ControlTask pipeline config file: " << FLAGS_pipeline_file
+  ADEBUG << "ControlTask pipeline config file: " << FLAGS_pipeline_file
         << " is loaded.";
 
   // initial controller agent when not using control submodules
@@ -134,13 +134,13 @@ bool ControlComponent::Init() {
   // set initial vehicle state by cmd
   // need to sleep, because advertised channel is not ready immediately
   // simple test shows a short delay of 80 ms or so
-  AINFO << "Control resetting vehicle state, sleeping for 1000 ms ...";
+  ADEBUG << "Control resetting vehicle state, sleeping for 1000 ms ...";
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   // should init_vehicle first, let car enter work status, then use status msg
   // trigger control
 
-  AINFO << "Control default driving action is "
+  ADEBUG << "Control default driving action is "
         << DrivingAction_Name((enum DrivingAction)FLAGS_action);
   pad_msg_.set_action((enum DrivingAction)FLAGS_action);
 
@@ -441,7 +441,7 @@ bool ControlComponent::Proc() {
     ADEBUG << "pad_msg: " << pad_msg_.ShortDebugString();
     ADEBUG << "pad_msg is not nullptr";
     if (pad_msg_.action() == DrivingAction::RESET) {
-      AINFO << "Control received RESET action!";
+      ADEBUG << "Control received RESET action!";
       estop_ = false;
       estop_reason_.clear();
     }
@@ -449,9 +449,9 @@ bool ControlComponent::Proc() {
   }
 
   if (cloud_control_command_msg != nullptr){
-    AINFO << "cloud control command message: " << latest_cloud_command_.ShortDebugString();
+    ADEBUG << "cloud control command message: " << latest_cloud_command_.ShortDebugString();
     if (latest_cloud_command_.cloud_takeover_request() == true){
-      AINFO << "Cloud reuest takeover";
+      ADEBUG << "Cloud reuest takeover";
       cloud_takeover_ = true;
     }else{
       cloud_takeover_ = false;
@@ -530,7 +530,7 @@ bool ControlComponent::Proc() {
   control_command.mutable_latency_stats()->set_total_time_exceeded(
       time_diff_ms > FLAGS_control_period * 1e3);
   if (control_command.mutable_latency_stats()->total_time_exceeded()) {
-    AINFO << "total control cycle time is exceeded: " << time_diff_ms << " ms.";
+    ADEBUG << "total control cycle time is exceeded: " << time_diff_ms << " ms.";
   }
   status.Save(control_command.mutable_header()->mutable_status());
 
@@ -559,7 +559,7 @@ bool ControlComponent::Proc() {
   const double process_control_time_diff =
       (end_process_control_time - start_time).ToSecond() * 1e3;
   if (control_command.mutable_latency_stats()->total_time_exceeded()) {
-    AINFO << "control all spend time is: " << process_control_time_diff
+    ADEBUG << "control all spend time is: " << process_control_time_diff
           << " ms.";
   }
 
@@ -598,7 +598,7 @@ Status ControlComponent::CheckTimestamp(const LocalView &local_view) {
 
 void ControlComponent::ResetAndProduceZeroControlCommand(
     ControlCommand *control_command) {
-  AINFO << "Reset and produce zero control command.!!!!!!!!!";
+  ADEBUG << "Reset and produce zero control command.!!!!!!!!!";
   control_command->set_throttle(0.0);
   control_command->set_steering_target(0.0);
   control_command->set_steering_rate(0.0);
@@ -624,7 +624,7 @@ void ControlComponent::CheckAutoMode(const canbus::Chassis *chassis) {
            ->is_auto() &&
       chassis->driving_mode() == apollo::canbus::Chassis::COMPLETE_AUTO_DRIVE) {
     from_else_to_auto_ = true;
-    AINFO << "From else to auto!!!";
+    ADEBUG << "From else to auto!!!";
   } else {
     from_else_to_auto_ = false;
   }

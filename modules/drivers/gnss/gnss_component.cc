@@ -33,7 +33,7 @@ bool GnssDriverComponent::Init() {
                                  config_file_path_);
     return false;
   }
-  AINFO << "Gnss config: " << gnss_config.DebugString();
+  ADEBUG << "Gnss config: " << gnss_config.DebugString();
 
   raw_stream_.reset(new RawStream(gnss_config, node_));
 

@@ -77,7 +77,7 @@ TEST_F(Interpolation2DTest, normal) {
 
 TEST_F(Interpolation2DTest, calibration_table) {
   const auto &calibration_table = calibration_table_;
-  AINFO << "Throttle calibration table:" << calibration_table.DebugString();
+  ADEBUG << "Throttle calibration table:" << calibration_table.DebugString();
 
   Interpolation2D::DataType xyz;
 

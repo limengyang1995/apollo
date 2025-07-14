@@ -183,14 +183,14 @@ void LslidarCXV4Parser::GeneratePointcloud(
             = (const unsigned char *)scan_msg->difop_pkts(0).data().c_str();
     if (difop_ptr[0] == 0xa5 && difop_ptr[1] == 0xff && difop_ptr[2] == 0x00
         && difop_ptr[3] == 0x5a) {
-        AINFO << "设备包，暂时用不上...";  // todo 暂时不用设备包
+        ADEBUG << "设备包，暂时用不上...";  // todo 暂时不用设备包
     }
 
     size_t packets_size = scan_msg->firing_pkts_size();
     block_num = 0;
     packet_number_ = packets_size;
 
-    AINFO << "packets_size :" << packets_size;
+    ADEBUG << "packets_size :" << packets_size;
 
     for (size_t i = 0; i < packets_size; ++i) {
         Unpack(scan_msg->firing_pkts(static_cast<int>(i)), out_msg, i);

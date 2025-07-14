@@ -57,11 +57,11 @@ bool NaviPathDecider::Init(const PlannerNaviConfig& config) {
       max_speed_levels_.push_back(max_speed_level);
     }
   }
-  AINFO << "Maximum speeds and move to dest lane config: ";
+  ADEBUG << "Maximum speeds and move to dest lane config: ";
   for (const auto& data : move_dest_lane_config_talbe_) {
     auto max_speed = data.first;
     auto max_move_dest_lane_shift_y = data.second;
-    AINFO << "[max_speed : " << max_speed
+    ADEBUG << "[max_speed : " << max_speed
           << " ,max move dest lane shift y : " << max_move_dest_lane_shift_y
           << "]";
   }

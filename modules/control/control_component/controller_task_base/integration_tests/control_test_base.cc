@@ -52,7 +52,7 @@ bool ControlTestBase::test_control() {
     exit(EXIT_FAILURE);
   }
 
-  AINFO << "Pipeline file: " << FLAGS_pipeline_file << " is loaded.";
+  ADEBUG << "Pipeline file: " << FLAGS_pipeline_file << " is loaded.";
 
   // set controller
   control_.injector_ = std::make_shared<DependencyInjector>();
@@ -67,7 +67,7 @@ bool ControlTestBase::test_control() {
 
   // Pad message
   if (!FLAGS_test_pad_file.empty()) {
-    AINFO << "Into the pad load file.";
+    ADEBUG << "Into the pad load file.";
     PadMessage pad_message;
     if (!cyber::common::GetProtoFromFile(
             FLAGS_test_data_dir + FLAGS_test_pad_file, &pad_message)) {
@@ -80,7 +80,7 @@ bool ControlTestBase::test_control() {
 
   // Localization
   if (!FLAGS_test_localization_file.empty()) {
-    AINFO << "Into the localization load file.";
+    ADEBUG << "Into the localization load file.";
     LocalizationEstimate localization;
     if (!cyber::common::GetProtoFromFile(
             FLAGS_test_data_dir + FLAGS_test_localization_file,
@@ -96,7 +96,7 @@ bool ControlTestBase::test_control() {
 
   // Planning
   if (!FLAGS_test_planning_file.empty()) {
-    AINFO << "Into the planning load file.";
+    ADEBUG << "Into the planning load file.";
     ADCTrajectory trajectory;
     if (!cyber::common::GetProtoFromFile(
             FLAGS_test_data_dir + FLAGS_test_planning_file, &trajectory)) {
@@ -110,7 +110,7 @@ bool ControlTestBase::test_control() {
 
   // Chassis
   if (!FLAGS_test_chassis_file.empty()) {
-    AINFO << "Into the chassis load file.";
+    ADEBUG << "Into the chassis load file.";
     Chassis chassis;
     if (!cyber::common::GetProtoFromFile(
             FLAGS_test_data_dir + FLAGS_test_chassis_file, &chassis)) {
@@ -123,7 +123,7 @@ bool ControlTestBase::test_control() {
 
   // Monitor
   if (!FLAGS_test_monitor_file.empty()) {
-    AINFO << "Into the monitor load file.";
+    ADEBUG << "Into the monitor load file.";
     MonitorMessage monitor_message;
     if (!cyber::common::GetProtoFromFile(
             FLAGS_test_data_dir + FLAGS_test_monitor_file, &monitor_message)) {
@@ -145,7 +145,7 @@ bool ControlTestBase::test_control() {
     ADEBUG << "control ProduceControlCommand failed";
     return false;
   }
-  AINFO << "Finish the test_control().";
+  ADEBUG << "Finish the test_control().";
   return true;
 }
 
@@ -172,7 +172,7 @@ bool ControlTestBase::test_control(const std::string &test_case_name,
 
   trim_control_command(&control_command_);
   if (FLAGS_test_update_golden_log) {
-    AINFO << "The golden file is " << tmp_golden_path << " Remember to:\n"
+    ADEBUG << "The golden file is " << tmp_golden_path << " Remember to:\n"
           << "mv " << tmp_golden_path << " " << FLAGS_test_data_dir << "\n"
           << "git add " << FLAGS_test_data_dir << "/" << golden_result_file;
     cyber::common::SetProtoToASCIIFile(control_command_, golden_result_file);
@@ -183,7 +183,7 @@ bool ControlTestBase::test_control(const std::string &test_case_name,
     if (!load_success) {
       AERROR << "Failed to load golden file: " << full_golden_path;
       cyber::common::SetProtoToASCIIFile(control_command_, tmp_golden_path);
-      AINFO << "Current result is written to " << tmp_golden_path;
+      ADEBUG << "Current result is written to " << tmp_golden_path;
       return false;
     }
     bool same_result =

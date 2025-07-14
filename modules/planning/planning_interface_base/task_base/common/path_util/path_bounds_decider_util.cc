@@ -83,7 +83,7 @@ void PathBoundsDeciderUtil::GetStartPoint(
     planning_start_point =
         InferFrontAxeCenterFromRearAxeCenter(planning_start_point);
   }
-  AINFO << std::fixed << "Plan at the starting point: x = "
+  ADEBUG << std::fixed << "Plan at the starting point: x = "
         << planning_start_point.path_point().x()
         << ", y = " << planning_start_point.path_point().y()
         << ", and angle = " << planning_start_point.path_point().theta();
@@ -173,13 +173,13 @@ void PathBoundsDeciderUtil::TrimPathBounds(
     const int path_blocked_idx, PathBoundary* const path_boundaries) {
   if (path_blocked_idx != -1) {
     if (path_blocked_idx == 0) {
-      AINFO << "Completely blocked. Cannot move at all.";
+      ADEBUG << "Completely blocked. Cannot move at all.";
     }
     double front_edge_to_center =
         VehicleConfigHelper::GetConfig().vehicle_param().front_edge_to_center();
     double trimmed_s =
         path_boundaries->at(path_blocked_idx).s - front_edge_to_center;
-    AINFO << "Trimmed from " << path_boundaries->back().s << " to "
+    ADEBUG << "Trimmed from " << path_boundaries->back().s << " to "
           << path_boundaries->at(path_blocked_idx).s;
     while (path_boundaries->size() > 1 &&
            path_boundaries->back().s > trimmed_s) {
@@ -254,10 +254,10 @@ bool PathBoundsDeciderUtil::UpdatePathBoundaryBySLPolygon(
     last_max_nudge_l = *std::max_element(
         begin_it, center_l.end(),
         [](double a, double b) { return std::fabs(a) < std::fabs(b); });
-    AINFO << "last max nudge l: " << last_max_nudge_l;
+    ADEBUG << "last max nudge l: " << last_max_nudge_l;
     for (size_t j = 0; j < sl_polygon->size(); j++) {
       if (sl_polygon->at(j).NudgeInfo() == SLPolygon::IGNORE) {
-        AINFO << "UpdatePathBoundaryBySLPolygon, ignore obs: "
+        ADEBUG << "UpdatePathBoundaryBySLPolygon, ignore obs: "
               << sl_polygon->at(j).id();
         continue;
       }
@@ -291,7 +291,7 @@ bool PathBoundsDeciderUtil::UpdatePathBoundaryBySLPolygon(
       //     right_bound.l > path_boundary->at(i).towing_l;
 
       if (sl_polygon->at(j).NudgeInfo() == SLPolygon::UNDEFINED) {
-        AINFO << "last_max_nudge_l: " << last_max_nudge_l
+        ADEBUG << "last_max_nudge_l: " << last_max_nudge_l
               << ", obs id: " << sl_polygon->at(j).id()
               << ", obs l: " << l_lower << ", " << l_upper;
         double obs_l = (l_lower + l_upper) / 2;
@@ -301,36 +301,36 @@ bool PathBoundsDeciderUtil::UpdatePathBoundaryBySLPolygon(
                 std::fabs(path_boundary_s - init_sl_state.first[0]) < 5.0) {
               if (init_sl_state.second[0] < obs_l) {
                 sl_polygon->at(j).SetNudgeInfo(SLPolygon::RIGHT_NUDGE);
-                AINFO << sl_polygon->at(j).id()
+                ADEBUG << sl_polygon->at(j).id()
                       << " right nudge with init_sl_state";
               } else {
                 sl_polygon->at(j).SetNudgeInfo(SLPolygon::LEFT_NUDGE);
-                AINFO << sl_polygon->at(j).id()
+                ADEBUG << sl_polygon->at(j).id()
                       << " left nudge width init_sl_state";
               }
             } else {
               if (last_max_nudge_l < obs_l) {
                 sl_polygon->at(j).SetNudgeInfo(SLPolygon::RIGHT_NUDGE);
-                AINFO << sl_polygon->at(j).id()
+                ADEBUG << sl_polygon->at(j).id()
                       << " right nudge, according max_nudge_l";
               } else {
                 sl_polygon->at(j).SetNudgeInfo(SLPolygon::LEFT_NUDGE);
-                AINFO << sl_polygon->at(j).id()
+                ADEBUG << sl_polygon->at(j).id()
                       << " left nudge, according max_nudge_l";
               }
             }
           } else {
             sl_polygon->at(j).SetNudgeInfo(SLPolygon::RIGHT_NUDGE);
-            AINFO << sl_polygon->at(j).id()
+            ADEBUG << sl_polygon->at(j).id()
                   << " right nudge, left is not passable";
           }
         } else {
           sl_polygon->at(j).SetNudgeInfo(SLPolygon::LEFT_NUDGE);
-          AINFO << sl_polygon->at(j).id()
+          ADEBUG << sl_polygon->at(j).id()
                 << " left nudge, right is not passable";
         }
       } else {
-        AINFO << "last_max_nudge_l: " << last_max_nudge_l
+        ADEBUG << "last_max_nudge_l: " << last_max_nudge_l
               << ", obs id: " << sl_polygon->at(j).id()
               << ", obs l: " << l_lower << ", " << l_upper
               << ", nudge info: " << sl_polygon->at(j).NudgeInfo();
@@ -345,14 +345,14 @@ bool PathBoundsDeciderUtil::UpdatePathBoundaryBySLPolygon(
         if (!sl_polygon->at(j).is_passable()[RIGHT_INDEX]) {
           // boundary is blocked
           *blocked_id = sl_polygon->at(j).id();
-          AINFO << "blocked at " << *blocked_id << ", s: " << path_boundary_s
+          ADEBUG << "blocked at " << *blocked_id << ", s: " << path_boundary_s
                 << ", left bound: " << left_bound.l
                 << ", right bound: " << right_bound.l;
           sl_polygon->at(j).SetNudgeInfo(SLPolygon::BLOCKED);
           break;
         }
         if (obs_right_nudge_bound.l_upper.l < left_bound.l) {
-          AINFO << "update left_bound: s " << path_boundary_s << ", l "
+          ADEBUG << "update left_bound: s " << path_boundary_s << ", l "
                 << left_bound.l << " -> " << obs_right_nudge_bound.l_upper.l;
           left_bound.l = obs_right_nudge_bound.l_upper.l;
           left_bound.type = BoundType::OBSTACLE;
@@ -370,14 +370,14 @@ bool PathBoundsDeciderUtil::UpdatePathBoundaryBySLPolygon(
         if (!sl_polygon->at(j).is_passable()[LEFT_INDEX]) {
           // boundary is blocked
           *blocked_id = sl_polygon->at(j).id();
-          AINFO << "blocked at " << *blocked_id << ", s: " << path_boundary_s
+          ADEBUG << "blocked at " << *blocked_id << ", s: " << path_boundary_s
                 << ", left bound: " << left_bound.l
                 << ", right bound: " << right_bound.l;
           sl_polygon->at(j).SetNudgeInfo(SLPolygon::BLOCKED);
           break;
         }
         if (obs_left_nudge_bound.l_lower.l > right_bound.l) {
-          AINFO << "update right_bound: s " << path_boundary_s << ", l "
+          ADEBUG << "update right_bound: s " << path_boundary_s << ", l "
                 << right_bound.l << " -> " << obs_left_nudge_bound.l_lower.l;
           right_bound.l = obs_left_nudge_bound.l_lower.l;
           right_bound.type = BoundType::OBSTACLE;
@@ -413,7 +413,7 @@ bool PathBoundsDeciderUtil::UpdatePathBoundaryBySLPolygon(
     //                               : path_boundary->at(i).towing_l;
     // center_l.push_back(current_center_l);
     center_l.push_back((left_bound.l + right_bound.l) / 2.0);
-    AINFO << "update s: " << path_boundary_s
+    ADEBUG << "update s: " << path_boundary_s
           << ", center_l: " << center_l.back();
   }
   return true;
@@ -487,7 +487,7 @@ bool PathBoundsDeciderUtil::AddCornerPoint(
       extra_constraints->blocked_id = obs_id;
       extra_constraints->block_left_index = left_index;
       extra_constraints->block_right_index = right_index;
-      AINFO << "AddCornerPoint blocked id: " << obs_id << ", index ["
+      ADEBUG << "AddCornerPoint blocked id: " << obs_id << ", index ["
             << left_index << ", " << right_index << "]";
       return false;
     }
@@ -520,7 +520,7 @@ bool PathBoundsDeciderUtil::AddCornerPoint(
         extra_constraints->blocked_id = obs_id;
         extra_constraints->block_left_index = left_index;
         extra_constraints->block_right_index = right_index;
-        AINFO << "AddCornerPoint blocked id: " << obs_id << ", index ["
+        ADEBUG << "AddCornerPoint blocked id: " << obs_id << ", index ["
               << left_index << ", " << right_index << "]";
         return false;
       }
@@ -573,7 +573,7 @@ void PathBoundsDeciderUtil::AddCornerBounds(
       //   }
       // }
     } else {
-      AINFO << "no nugde info, ignore obs: " << obs_polygon.id();
+      ADEBUG << "no nugde info, ignore obs: " << obs_polygon.id();
     }
     if (!extra_path_bound->blocked_id.empty()) {
       break;
@@ -779,7 +779,7 @@ bool PathBoundsDeciderUtil::GetBoundaryFromRoad(
       break;
     }
   }
-  AINFO << "path_blocked_idx: " << path_blocked_idx;
+  ADEBUG << "path_blocked_idx: " << path_blocked_idx;
   TrimPathBounds(path_blocked_idx, path_bound);
   return true;
 }
@@ -898,7 +898,7 @@ bool PathBoundsDeciderUtil::RelaxBoundaryPoint(
 
     relax_constraint =
         std::max(path_bound_point->l_upper.l, init_l + protective_restrict);
-    AINFO << "init_pt_l: " << init_l
+    ADEBUG << "init_pt_l: " << init_l
           << ", left_bound: " << path_bound_point->l_upper.l
           << ",  diff s: " << delta_s << ", radius: " << radius
           << ", protective_restrict: " << protective_restrict
@@ -912,7 +912,7 @@ bool PathBoundsDeciderUtil::RelaxBoundaryPoint(
     relax_constraint =
         std::min(path_bound_point->l_upper.l + old_buffer - new_buffer,
                  relax_constraint);
-    AINFO << "left_obs_constraint: " << relax_constraint;
+    ADEBUG << "left_obs_constraint: " << relax_constraint;
     path_bound_point->l_upper.l = relax_constraint;
   } else {
     if (init_frenet_kappa < 0 && heading > 0) {
@@ -925,7 +925,7 @@ bool PathBoundsDeciderUtil::RelaxBoundaryPoint(
     }
     relax_constraint =
         std::min(path_bound_point->l_lower.l, init_l + protective_restrict);
-    AINFO << "init_pt_l: " << init_l
+    ADEBUG << "init_pt_l: " << init_l
           << ", right_bound: " << path_bound_point->l_lower.l
           << ",  diff s: " << delta_s << ", radius: " << radius
           << ", protective_restrict: " << protective_restrict
@@ -939,7 +939,7 @@ bool PathBoundsDeciderUtil::RelaxBoundaryPoint(
     relax_constraint =
         std::max(path_bound_point->l_lower.l - old_buffer + new_buffer,
                  relax_constraint);
-    AINFO << "right_obs_constraint: " << relax_constraint;
+    ADEBUG << "right_obs_constraint: " << relax_constraint;
     path_bound_point->l_lower.l = relax_constraint;
   }
   return is_success;
@@ -948,7 +948,7 @@ bool PathBoundsDeciderUtil::RelaxBoundaryPoint(
 bool PathBoundsDeciderUtil::RelaxEgoPathBoundary(
     PathBoundary* const path_boundary, const SLState& init_sl_state) {
   if (path_boundary->size() < 2) {
-    AINFO << "path_boundary size = 0, return.";
+    ADEBUG << "path_boundary size = 0, return.";
     return false;
   }
   const auto& veh_param =
@@ -1008,7 +1008,7 @@ bool PathBoundsDeciderUtil::RelaxEgoPathBoundary(
 bool PathBoundsDeciderUtil::RelaxObsCornerBoundary(
     PathBoundary* const path_boundary, const SLState& init_sl_state) {
   if (path_boundary->size() < 2) {
-    AINFO << "path_boundary size = 0, return.";
+    ADEBUG << "path_boundary size = 0, return.";
     return false;
   }
   const auto& veh_param =
@@ -1060,7 +1060,7 @@ bool PathBoundsDeciderUtil::RelaxObsCornerBoundary(
 
       double left_obs_constraint = std::max(
           extra_path_bound.upper_bound, init_pt_l + left_protective_restrict);
-      AINFO << "extra_path_bound, init_pt_l: " << init_pt_l
+      ADEBUG << "extra_path_bound, init_pt_l: " << init_pt_l
             << ", left_bound: " << extra_path_bound.upper_bound
             << ",  diff s: " << delta_s << ", min_radius: " << min_radius
             << ", init_frenet_heading: " << init_frenet_heading
@@ -1069,7 +1069,7 @@ bool PathBoundsDeciderUtil::RelaxObsCornerBoundary(
       left_obs_constraint = std::min(
           extra_path_bound.upper_bound + FLAGS_obstacle_lat_buffer - new_buffer,
           left_obs_constraint);
-      AINFO << "extra_path_bound left_obs_constraint: " << left_obs_constraint;
+      ADEBUG << "extra_path_bound left_obs_constraint: " << left_obs_constraint;
       extra_path_bound.upper_bound = left_obs_constraint;
     }
 
@@ -1089,7 +1089,7 @@ bool PathBoundsDeciderUtil::RelaxObsCornerBoundary(
 
       double right_obs_constraint = std::min(
           extra_path_bound.lower_bound, init_pt_l + right_protective_restrict);
-      AINFO << "extra_path_bound, init_pt_l: " << init_pt_l
+      ADEBUG << "extra_path_bound, init_pt_l: " << init_pt_l
             << ", right_bound: " << extra_path_bound.lower_bound
             << ",  diff s: " << delta_s << ", min_radius: " << min_radius
             << ", init_frenet_heading: " << init_frenet_heading
@@ -1098,7 +1098,7 @@ bool PathBoundsDeciderUtil::RelaxObsCornerBoundary(
       right_obs_constraint = std::max(
           extra_path_bound.lower_bound - FLAGS_obstacle_lat_buffer + new_buffer,
           right_obs_constraint);
-      AINFO << "extra_path_bound, right_obs_constraint: "
+      ADEBUG << "extra_path_bound, right_obs_constraint: "
             << right_obs_constraint;
       extra_path_bound.lower_bound = right_obs_constraint;
     }
@@ -1113,7 +1113,7 @@ bool PathBoundsDeciderUtil::RelaxObsCornerBoundary(
 bool PathBoundsDeciderUtil::UpdateBlockInfoWithObsCornerBoundary(
     PathBoundary* const path_boundary, std::string* const blocked_id) {
   if (path_boundary->extra_path_bound().blocked_id.empty()) {
-    AINFO << "UpdateBlockInfoWithObsCornerBoundary, block id empty";
+    ADEBUG << "UpdateBlockInfoWithObsCornerBoundary, block id empty";
     return true;
   }
   auto* extra_path_bound = path_boundary->mutable_extra_path_bound();
@@ -1122,7 +1122,7 @@ bool PathBoundsDeciderUtil::UpdateBlockInfoWithObsCornerBoundary(
   // trim path boundary width corner constraints block obstacle id
   *blocked_id = extra_path_bound->blocked_id;
   TrimPathBounds(path_boundary_block_index, path_boundary);
-  AINFO << "update block id: " << *blocked_id
+  ADEBUG << "update block id: " << *blocked_id
         << ", path_boundary size: " << path_boundary->size();
 
   if (path_boundary->size() < 1) {
@@ -1135,7 +1135,7 @@ bool PathBoundsDeciderUtil::UpdateBlockInfoWithObsCornerBoundary(
   while (extra_path_bound->size() > 0 &&
          (extra_path_bound->back().id == *blocked_id ||
           extra_path_bound->back().right_index > new_path_index)) {
-    AINFO << "remove extra_path_bound: s "
+    ADEBUG << "remove extra_path_bound: s "
           << extra_path_bound->back().rear_axle_s << ", index ["
           << extra_path_bound->back().left_index << ", "
           << extra_path_bound->back().right_index << "]";

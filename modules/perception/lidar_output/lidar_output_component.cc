@@ -42,7 +42,7 @@ bool LidarOutputComponent::Init() {
     AERROR << "Get LidarOutputComponentConfig file failed";
     return false;
   }
-  AINFO << "Lidar Output Component Configs: "
+  ADEBUG << "Lidar Output Component Configs: "
         << comp_config.DebugString();
 
   // writer
@@ -80,7 +80,7 @@ bool LidarOutputComponent::Init() {
   // PS: part1 is RIGHT, completely equal to pointcloud-timestamp)
   timestamp_two_decimal_format_ = comp_config.timestamp_two_decimal_format();
 
-  AINFO << "Register LidarFrameMessage for benchmark";
+  ADEBUG << "Register LidarFrameMessage for benchmark";
   return true;
 }
 
@@ -115,7 +115,7 @@ bool LidarOutputComponent::Proc(
   }
 
   writer_->Write(out_message);
-  AINFO << "Send lidar tracking output message.";
+  ADEBUG << "Send lidar tracking output message.";
 
   return true;
 }
@@ -161,7 +161,7 @@ bool LidarOutputComponent::SaveBenchmarkFrame(
   }
 
   if (!EnsureDirectory(benchmark_frame_output_dir_)) {
-    AINFO << "Create dir " << benchmark_frame_output_dir_ << " error.";
+    ADEBUG << "Create dir " << benchmark_frame_output_dir_ << " error.";
     return false;
   }
 
@@ -237,7 +237,7 @@ bool LidarOutputComponent::SaveBenchmarkLidarFrame(
     }
     SetProtoToASCIIFile(*out_message, pb_name);
 
-    AINFO << "SaveBenchmarkLidarFrame Success: time is "
+    ADEBUG << "SaveBenchmarkLidarFrame Success: time is "
           << std::to_string(timestamp);
     return true;
 }
@@ -263,7 +263,7 @@ void LidarOutputComponent::BenchmarkThreadFunc() {
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
-  AINFO << "Save benchmark frames finished.";
+  ADEBUG << "Save benchmark frames finished.";
 }
 
 }  // namespace lidar

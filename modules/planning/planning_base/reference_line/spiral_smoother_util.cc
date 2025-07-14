@@ -119,7 +119,7 @@ class SpiralSmootherUtil {
     if (!res) {
       AWARN << "Optimization failed; the result may not be smooth";
     } else {
-      AINFO << "Optimal solution found";
+      ADEBUG << "Optimal solution found";
     }
 
     std::for_each(opt_x.begin(), opt_x.end(),
@@ -151,7 +151,7 @@ class SpiralSmootherUtil {
           << ", \"dkappa\":" << point.dkappa() << "}";
     }
     ofs.close();
-    AINFO << "Smoothed result saved to " << filename;
+    ADEBUG << "Smoothed result saved to " << filename;
   }
 };
 
@@ -180,7 +180,7 @@ int main(int argc, char* argv[]) {
 
   if (FLAGS_output_file.empty()) {
     FLAGS_output_file = FLAGS_input_file + ".smoothed";
-    AINFO << "Output file not provided, set to: " << FLAGS_output_file;
+    ADEBUG << "Output file not provided, set to: " << FLAGS_output_file;
   }
   apollo::planning::SpiralSmootherUtil::Export(FLAGS_output_file,
                                                smooth_points);

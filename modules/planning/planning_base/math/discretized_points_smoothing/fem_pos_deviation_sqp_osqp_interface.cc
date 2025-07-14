@@ -336,13 +336,13 @@ void FemPosDeviationSqpOsqpInterface::CalculateOffset(
   for (int i = 0; i < num_of_slack_variables_; ++i) {
     (*q)[num_of_pos_variables_ + i] = weight_curvature_constraint_slack_var_;
   }
-  AINFO << "FLAGS_enable_obstacle_potential_field: "
+  ADEBUG << "FLAGS_enable_obstacle_potential_field: "
         << FLAGS_enable_obstacle_potential_field
         << " num_of_points_: " << num_of_points_
         << "point_box_: " << point_box_.size();
   if (FLAGS_enable_obstacle_potential_field &&
       point_box_.size() == num_of_points_ - 1) {
-    AINFO << "use obstacle potential field";
+    ADEBUG << "use obstacle potential field";
     for (int i = 1; i < num_of_points_ - 1; ++i) {
       double grad_x = 0;
       double grad_y = 0;

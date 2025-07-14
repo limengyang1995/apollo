@@ -102,6 +102,6 @@ int main(int argc, char** argv) {
     planning_writer->Write(trajectory);
     sleep_for(std::chrono::milliseconds(1000 / FLAGS_feed_frequency));
   }
-  AINFO << "Successfully fed proto files.";
+  ADEBUG << "Successfully fed proto files.";
   return 0;
 }

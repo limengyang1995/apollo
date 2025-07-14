@@ -114,7 +114,7 @@ bool BaseMapNode::Save() {
   snprintf(buf, sizeof(buf), "/%08u", index_.n_);
   path = path + buf;
 
-  AINFO << "Save node: " << path;
+  ADEBUG << "Save node: " << path;
 
   FILE* file = fopen(path.c_str(), "wb");
   if (file) {

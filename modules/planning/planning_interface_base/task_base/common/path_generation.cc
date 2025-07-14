@@ -44,7 +44,7 @@ void PathGeneration::RecordDebugInfo(
     ReferenceLineInfo* const reference_line_info) {
   // Sanity checks.
   if (path_boundaries.empty()) {
-    AINFO << "path boundary is empty!";
+    ADEBUG << "path boundary is empty!";
     return;
   }
   CHECK_NOTNULL(reference_line_info);
@@ -121,7 +121,7 @@ void PathGeneration::GetStartPointSLState() {
         front_to_rear_axe_distance *
             std::sin(planning_start_point.path_point().theta()));
   }
-  AINFO << std::fixed << "Plan at the starting point: x = "
+  ADEBUG << std::fixed << "Plan at the starting point: x = "
         << planning_start_point.path_point().x()
         << ", y = " << planning_start_point.path_point().y()
         << ", and angle = " << planning_start_point.path_point().theta();

@@ -150,7 +150,7 @@ bool LslidarDriver::Poll(
         return false;
 
     if (scan->firing_pkts().empty()) {
-        AINFO << "Get an empty scan from port: " << config_.msop_port();
+        ADEBUG << "Get an empty scan from port: " << config_.msop_port();
         return false;
     }
     // publish message using time of last packet read
@@ -190,7 +190,7 @@ int LslidarDriver::PollStandard(
                    PKT_DATA_LENGTH);
             packet->set_data(data_ptr, PKT_DATA_LENGTH);
             packet->set_stamp((scan_start.stamp()));
-            AINFO << "scan->firing_pkts_size(): " << scan->firing_pkts_size();
+            ADEBUG << "scan->firing_pkts_size(): " << scan->firing_pkts_size();
         }
 
         scan_fill = false;
@@ -332,7 +332,7 @@ int LslidarDriver::PollStandard(
             while (true) {
                 // keep reading until full packet received
                 int rc = input_->GetPacket(packet);
-                AINFO << "[debug ] line: " << __LINE__
+                ADEBUG << "[debug ] line: " << __LINE__
                       << "  file: " << __FILE__;
                 if (rc == 0) {
                     if (!config_.time_synchronization()) {
@@ -441,7 +441,7 @@ int LslidarDriver::PollStandard(
             while (true) {
                 // keep reading until full packet received
                 int rc = input_->GetPacket(packet);
-                AINFO << "[debug ] line: " << __LINE__
+                ADEBUG << "[debug ] line: " << __LINE__
                       << "  file: " << __FILE__;
                 if (rc == 0) {
                     if (config_.model() == LSLIDAR_CH64w

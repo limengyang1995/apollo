@@ -83,7 +83,7 @@ Status LocalizationIntegImpl::Init(const LocalizationIntegParam& params) {
   } else {
     gnss_antenna_extrinsic_ = Eigen::Affine3d::Identity();
   }
-  AINFO << "gnss and imu lever arm: "
+  ADEBUG << "gnss and imu lever arm: "
         << gnss_antenna_extrinsic_.translation()(0) << " "
         << gnss_antenna_extrinsic_.translation()(1) << " "
         << gnss_antenna_extrinsic_.translation()(2);

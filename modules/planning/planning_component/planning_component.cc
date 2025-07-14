@@ -67,7 +67,7 @@ bool PlanningComponent::Init() {
   planning_command_reader_ = node_->CreateReader<PlanningCommand>(
       config_.topic_config().planning_command_topic(),
       [this](const std::shared_ptr<PlanningCommand>& planning_command) {
-        AINFO << "Received planning data: run planning callback."
+        ADEBUG << "Received planning data: run planning callback."
               << planning_command->header().DebugString();
         std::lock_guard<std::mutex> lock(mutex_);
         planning_command_.CopyFrom(*planning_command);
@@ -188,7 +188,7 @@ bool PlanningComponent::Proc(
   }
 
   if (!CheckInput()) {
-    AINFO << "Input check failed";
+    ADEBUG << "Input check failed";
     return false;
   }
 
@@ -250,10 +250,10 @@ bool PlanningComponent::Proc(
     command_status.set_status(external_command::CommandStatusType::ERROR);
     command_status.set_message(adc_trajectory_pb.header().status().msg());
   } else if (planning_base_->IsPlanningFinished(current_trajectory_type)) {
-    AINFO << "Set the external_command: FINISHED";
+    ADEBUG << "Set the external_command: FINISHED";
     command_status.set_status(external_command::CommandStatusType::FINISHED);
   } else {
-    AINFO << "Set the external_command: RUNNING";
+    ADEBUG << "Set the external_command: RUNNING";
     command_status.set_status(external_command::CommandStatusType::RUNNING);
   }
   command_status_writer_->Write(command_status);
@@ -311,7 +311,7 @@ bool PlanningComponent::CheckInput() {
   }
 
   if (not_ready->has_reason()) {
-    AINFO << not_ready->reason() << "; skip the planning cycle.";
+    ADEBUG << not_ready->reason() << "; skip the planning cycle.";
     common::util::FillHeader(node_->Name(), &trajectory_pb);
     planning_writer_->Write(trajectory_pb);
     return false;

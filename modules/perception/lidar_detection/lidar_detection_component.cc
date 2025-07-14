@@ -29,7 +29,7 @@ bool LidarDetectionComponent::Init() {
     AERROR << "Get LidarDetectionComponentConfig file failed";
     return false;
   }
-  AINFO << "Lidar Detection Component Configs: " << comp_config.DebugString();
+  ADEBUG << "Lidar Detection Component Configs: " << comp_config.DebugString();
 
   sensor_name_ = comp_config.sensor_name();
   // writer
@@ -63,7 +63,7 @@ bool LidarDetectionComponent::Init() {
     ACHECK(builder_.Init(builder_init_options));
   }
 
-  AINFO << "Successfully init lidar detection component.";
+  ADEBUG << "Successfully init lidar detection component.";
   return true;
 }
 
@@ -74,7 +74,7 @@ bool LidarDetectionComponent::Proc(
   bool status = InternalProc(message);
   if (status) {
     writer_->Write(message);
-    AINFO << "Send Lidar detection output message.";
+    ADEBUG << "Send Lidar detection output message.";
   }
   return status;
 }

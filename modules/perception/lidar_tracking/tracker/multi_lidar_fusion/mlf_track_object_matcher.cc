@@ -38,11 +38,11 @@ bool MlfTrackObjectMatcher::Init(
   foreground_matcher_ = BaseBipartiteGraphMatcherRegisterer::GetInstanceByName(
       config.foreground_mathcer_method());
   ACHECK(foreground_matcher_ != nullptr);
-  AINFO << "MlfTrackObjectMatcher, fg: " << foreground_matcher_->Name();
+  ADEBUG << "MlfTrackObjectMatcher, fg: " << foreground_matcher_->Name();
   background_matcher_ = BaseBipartiteGraphMatcherRegisterer::GetInstanceByName(
       config.background_matcher_method());
   ACHECK(background_matcher_ != nullptr);
-  AINFO << "MlfTrackObjectMatcher, bg: " << background_matcher_->Name();
+  ADEBUG << "MlfTrackObjectMatcher, bg: " << background_matcher_->Name();
   foreground_matcher_->cost_matrix()->Reserve(1000, 1000);
   background_matcher_->cost_matrix()->Reserve(1000, 1000);
 

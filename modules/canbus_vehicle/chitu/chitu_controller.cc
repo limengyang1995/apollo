@@ -53,7 +53,7 @@ ErrorCode ChituController::Init(
 	CanSender<::apollo::canbus::Chitu> *const can_sender,
   MessageManager<::apollo::canbus::Chitu> *const message_manager) {
   if (is_initialized_) {
-    AINFO << "ChituController has already been initiated.";
+    ADEBUG << "ChituController has already been initiated.";
     return ErrorCode::CANBUS_ERROR;
   }
 
@@ -101,7 +101,7 @@ ErrorCode ChituController::Init(
 
   AddSendMessage();
 
-  AINFO << "ChituController is initialized.";
+  ADEBUG << "ChituController is initialized.";
 
   is_initialized_ = true;
   return ErrorCode::OK;
@@ -129,7 +129,7 @@ void ChituController::Stop() {
   if (thread_ != nullptr && thread_->joinable()) {
     thread_->join();
     thread_.reset();
-    AINFO << "ChituController stopped.";
+    ADEBUG << "ChituController stopped.";
   }
 }
 
@@ -224,7 +224,7 @@ void ChituController::Emergency() {
 
 ErrorCode ChituController::EnableAutoMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE) {
-    AINFO << "already in COMPLETE_AUTO_DRIVE mode";
+    ADEBUG << "already in COMPLETE_AUTO_DRIVE mode";
     return ErrorCode::OK;
   }
   // set enable
@@ -241,19 +241,19 @@ ErrorCode ChituController::EnableAutoMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
-  AINFO << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
+  ADEBUG << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
   return ErrorCode::OK;
 }
 
 ErrorCode ChituController::EnableCloudMode() {
   if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    ADEBUG << "Already in REMOTE_CLOUD_DRIVE mode";
     return ErrorCode::OK;
   }
 
   can_sender_->Update();
   set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
-  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  ADEBUG << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
   return ErrorCode::OK;
 }
 
@@ -262,7 +262,7 @@ ErrorCode ChituController::DisableAutoMode() {
   can_sender_->Update();
   set_driving_mode(Chassis::COMPLETE_MANUAL);
   set_chassis_error_code(Chassis::NO_ERROR);
-  AINFO << "Switch to COMPLETE_MANUAL ok.";
+  ADEBUG << "Switch to COMPLETE_MANUAL ok.";
   return ErrorCode::OK;
 }
 
@@ -270,7 +270,7 @@ ErrorCode ChituController::EnableSteeringOnlyMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_STEER_ONLY) {
     set_driving_mode(Chassis::AUTO_STEER_ONLY);
-    AINFO << "Already in AUTO_STEER_ONLY mode.";
+    ADEBUG << "Already in AUTO_STEER_ONLY mode.";
     return ErrorCode::OK;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -286,7 +286,7 @@ ErrorCode ChituController::EnableSteeringOnlyMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::AUTO_STEER_ONLY);
-  AINFO << "Switch to AUTO_STEER_ONLY mode ok.";
+  ADEBUG << "Switch to AUTO_STEER_ONLY mode ok.";
   return ErrorCode::OK;
   */
   return ErrorCode::OK;
@@ -296,7 +296,7 @@ ErrorCode ChituController::EnableSpeedOnlyMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_SPEED_ONLY) {
     set_driving_mode(Chassis::AUTO_SPEED_ONLY);
-    AINFO << "Already in AUTO_SPEED_ONLY mode";
+    ADEBUG << "Already in AUTO_SPEED_ONLY mode";
     return ErrorCode::OK;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -312,7 +312,7 @@ ErrorCode ChituController::EnableSpeedOnlyMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::AUTO_SPEED_ONLY);
-  AINFO << "Switch to AUTO_SPEED_ONLY mode ok.";
+  ADEBUG << "Switch to AUTO_SPEED_ONLY mode ok.";
   return ErrorCode::OK;
   */
   return ErrorCode::OK;
@@ -322,7 +322,7 @@ ErrorCode ChituController::EnableSpeedOnlyMode() {
 void ChituController::Gear(Chassis::GearPosition gear_position) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY) {
-    AINFO << "This drive mode no need to set gear.";
+    ADEBUG << "This drive mode no need to set gear.";
     return;
   }
   
@@ -335,7 +335,7 @@ void ChituController::Brake(double pedal) {
   // TODO(All) :  Update brake value based on mode
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY) {
-    AINFO << "The current drive mode does not need to set brake pedal.";
+    ADEBUG << "The current drive mode does not need to set brake pedal.";
     return;
   }
   
@@ -346,7 +346,7 @@ void ChituController::Brake(double pedal) {
 void ChituController::Throttle(double pedal) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY) {
-    AINFO << "The current drive mode does not need to set throttle pedal.";
+    ADEBUG << "The current drive mode does not need to set throttle pedal.";
     return;
   }
   
@@ -358,7 +358,7 @@ void ChituController::Throttle(double pedal) {
 void ChituController::Acceleration(double acc) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY) {
-    AINFO << "The current drive mode does not need to set acceleration.";
+    ADEBUG << "The current drive mode does not need to set acceleration.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -372,7 +372,7 @@ void ChituController::Acceleration(double acc) {
 void ChituController::Speed(double speed) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY) {
-    AINFO << "The current drive mode does not need to set speed.";
+    ADEBUG << "The current drive mode does not need to set speed.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -389,7 +389,7 @@ void ChituController::Speed(double speed) {
 void ChituController::Steer(double angle) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_STEER_ONLY) {
-    AINFO << "The current driving mode does not need to set steer.";
+    ADEBUG << "The current driving mode does not need to set steer.";
     return;
   }
   adas_angle_cmd_112_->set_steering_angle(vehicle_params_.max_steer_angle() / M_PI * 
@@ -403,7 +403,7 @@ void ChituController::Steer(double angle) {
 void ChituController::Steer(double angle, double angle_spd) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_STEER_ONLY) {
-    AINFO << "The current driving mode does not need to set steer.";
+    ADEBUG << "The current driving mode does not need to set steer.";
     return;
   }
   adas_angle_cmd_112_->set_steering_angle(vehicle_params_.max_steer_angle() / M_PI * 
@@ -471,11 +471,11 @@ bool ChituController::VerifyID() {
 bool ChituController::CheckVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   if (chassis_.vehicle_id().vin().size() >= 7) {
-    AINFO << "Vin check success! Vehicel vin is "
+    ADEBUG << "Vin check success! Vehicel vin is "
           << chassis_.vehicle_id().vin();
     return true;
   } else {
-    AINFO << "Vin check failed! Current vin size is "
+    ADEBUG << "Vin check failed! Current vin size is "
           << chassis_.vehicle_id().vin().size();
     return false;
   }
@@ -488,7 +488,7 @@ void ChituController::GetVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   vehicle_mode_command_116_->set_vin_req_cmd(
       Vehicle_mode_command_116::VIN_REQ_CMD_VIN_REQ_ENABLE);
-  AINFO << "Get vin";
+  ADEBUG << "Get vin";
   can_sender_->Update();
   */
 }
@@ -498,7 +498,7 @@ void ChituController::ResetVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   vehicle_mode_command_116_->set_vin_req_cmd(
       Vehicle_mode_command_116::VIN_REQ_CMD_VIN_REQ_DISABLE);
-  AINFO << "Reset vin";
+  ADEBUG << "Reset vin";
   can_sender_->Update();
   */
 }
@@ -623,7 +623,7 @@ bool ChituController::CheckResponse(const int32_t flags, bool need_wait) {
     if (check_ok) {
       return true;
     } else {
-      AINFO << "Need to check response again.";
+      ADEBUG << "Need to check response again.";
     }
     if (need_wait) {
       --retry_num;

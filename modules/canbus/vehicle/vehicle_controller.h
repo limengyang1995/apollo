@@ -355,13 +355,13 @@ ErrorCode VehicleController<SensorType>::SetDrivingMode(
   }
 
   // vehicle in emergency mode only response to manual mode to reset.
-  if (this->driving_mode() == Chassis::EMERGENCY_MODE &&
+  /* if (this->driving_mode() == Chassis::EMERGENCY_MODE &&
       driving_mode != Chassis::COMPLETE_MANUAL) {
     AINFO
         << "Vehicle in EMERGENCY_MODE, only response to COMPLETE_MANUAL mode.";
     AINFO << "Only response to RESET ACTION.";
     return ErrorCode::CANBUS_ERROR;
-  }
+  } */
 
   // if current mode is same as previous, no need to set.
   if (this->driving_mode() == driving_mode) {
@@ -500,7 +500,7 @@ ErrorCode VehicleController<SensorType>::Update(
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_STEER_ONLY || 
       driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
-    AERROR << "enter set steer: " << control_command.steering_target();
+    //AERROR << "enter set steer: " << control_command.steering_target();
     const double steering_rate_threshold = 1.0;
     if (control_command.steering_rate() > steering_rate_threshold) {
       Steer(control_command.steering_target(), control_command.steering_rate());

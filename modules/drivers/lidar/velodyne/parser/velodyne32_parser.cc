@@ -80,7 +80,7 @@ uint64_t Velodyne32Parser::GetTimestamp(double base_time, float time_offset,
     // in lidar
     if (std::abs(previous_firing_stamp_ - t) > 3599000000) {
       gps_base_usec_ += static_cast<uint64_t>(3600 * 1e6);
-      AINFO << "Base time plus 3600s. Model: " << config_.model() << std::fixed
+      ADEBUG << "Base time plus 3600s. Model: " << config_.model() << std::fixed
             << ". current:" << t << ", last time:" << previous_firing_stamp_;
     } else if (config_.model() != VLP32C ||
                (previous_firing_stamp_ - t > 34.560f) ||
@@ -151,7 +151,7 @@ void Velodyne32Parser::UnpackVLP32C(const VelodynePacket& pkt,
           raw_distance.raw_distance * VLP32_DISTANCE_RESOLUTION;
       float distance = real_distance + corrections.dist_correction;
 
-      // AINFO << "raw_distance:" << raw_distance.raw_distance << ", distance:"
+      // ADEBUG << "raw_distance:" << raw_distance.raw_distance << ", distance:"
       // << distance;
       if (raw_distance.raw_distance == 0 ||
           !is_scan_valid(azimuth_corrected, distance)) {

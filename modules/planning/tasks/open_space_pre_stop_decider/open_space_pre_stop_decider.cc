@@ -46,7 +46,7 @@ bool OpenSpacePreStopDecider::Init(
   }
   // Load the config this task.
   bool res = Decider::LoadConfig<OpenSpacePreStopDeciderConfig>(&config_);
-  AINFO << "Load config:" << config_.DebugString();
+  ADEBUG << "Load config:" << config_.DebugString();
   return res;
 }
 

@@ -52,7 +52,7 @@ bool CCRFSingleShotTypeFusion::Init(const TypeFilterInitOption& options) {
     for (auto& pair : smooth_matrices_) {
         type_util::NormalizeRow(&pair.second);
         pair.second.transposeInPlace();
-        AINFO << "Source: " << pair.first << std::endl << pair.second;
+        ADEBUG << "Source: " << pair.first << std::endl << pair.second;
     }
 
     confidence_smooth_matrix_ = Matrixd::Identity();
@@ -61,7 +61,7 @@ bool CCRFSingleShotTypeFusion::Init(const TypeFilterInitOption& options) {
         confidence_smooth_matrix_ = iter->second;
         smooth_matrices_.erase(iter);
     }
-    AINFO << "ConfSmoothMatrix: " << std::endl << confidence_smooth_matrix_;
+    ADEBUG << "ConfSmoothMatrix: " << std::endl << confidence_smooth_matrix_;
 
     return true;
 }
@@ -152,14 +152,14 @@ bool CCRFMultiShotTypeFusion::Init(const TypeFilterInitOption& options) {
     for (std::size_t i = 0; i < VALID_OBJECT_TYPE; ++i) {
         type_util::NormalizeRow(&transition_matrix_);
     }
-    AINFO << "TypeTransitionMatrix: " << std::endl << transition_matrix_;
+    ADEBUG << "TypeTransitionMatrix: " << std::endl << transition_matrix_;
 
     for (std::size_t i = 0; i < VALID_OBJECT_TYPE; ++i) {
         for (std::size_t j = 0; j < VALID_OBJECT_TYPE; ++j) {
             transition_matrix_(i, j) = log(transition_matrix_(i, j));
         }
     }
-    AINFO << "TypeTransitionMatrix(Log): " << std::endl << transition_matrix_;
+    ADEBUG << "TypeTransitionMatrix(Log): " << std::endl << transition_matrix_;
     return true;
 }
 

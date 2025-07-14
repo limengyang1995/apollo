@@ -162,7 +162,7 @@ bool PullOverPath::DecidePathBounds(std::vector<PathBoundary>* boundary) {
     pull_over_status->set_width_left(vehicle_param.width() / 2.0);
     pull_over_status->set_width_right(vehicle_param.width() / 2.0);
 
-    AINFO << "Pull Over: x[" << std::fixed << pull_over_status->position().x()
+    ADEBUG << "Pull Over: x[" << std::fixed << pull_over_status->position().x()
           << "] y[" << pull_over_status->position().y() << "] theta["
           << pull_over_status->theta() << "]";
   }
@@ -247,7 +247,7 @@ bool PullOverPath::AssessPath(std::vector<PathData>* candidate_path_data,
                   reference_line_info_);
   if (!PathAssessmentDeciderUtil::IsValidRegularPath(*reference_line_info_,
                                                      curr_path_data)) {
-    AINFO << "Lane follow path is invalid";
+    ADEBUG << "Lane follow path is invalid";
     return false;
   }
 
@@ -257,7 +257,7 @@ bool PullOverPath::AssessPath(std::vector<PathData>* candidate_path_data,
   curr_path_data.SetPathPointDecisionGuide(std::move(path_decision));
 
   if (curr_path_data.Empty()) {
-    AINFO << "Lane follow path is empty after trimed";
+    ADEBUG << "Lane follow path is empty after trimed";
     return false;
   }
   *final_path = curr_path_data;

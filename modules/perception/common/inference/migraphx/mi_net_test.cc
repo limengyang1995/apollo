@@ -139,7 +139,7 @@ TEST_P(NetworkInferenceTests, InferenceFP32) {
     for (size_t k = 0; k < 10; ++k) {
       ss << input_ptr[k] << ", ";
     }
-    AINFO << ss.str();
+    ADEBUG << ss.str();
   }
 
   cudaDeviceSynchronize();
@@ -168,7 +168,7 @@ TEST_P(NetworkInferenceTests, InferenceFP32) {
         ss << "(" << output_ptr[i] << ", " << output_gd_ptr[i] << ") ";
       if (err_cnt > 10) break;
     }
-    AINFO << output_name << ": " << ss.str();
+    ADEBUG << output_name << ": " << ss.str();
   }
 }
 

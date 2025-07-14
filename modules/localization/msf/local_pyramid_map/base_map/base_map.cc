@@ -213,9 +213,9 @@ void BaseMap::PreloadMapNodes(std::set<MapNodeIndex>* map_ids) {
   // load form disk sync
   std::vector<std::future<void>> preload_futures;
   itr = map_ids->begin();
-  AINFO << "Preload map node size: " << map_ids->size();
+  ADEBUG << "Preload map node size: " << map_ids->size();
   while (itr != map_ids->end()) {
-    AINFO << "Preload map node: " << *itr << std::endl;
+    ADEBUG << "Preload map node: " << *itr << std::endl;
     boost::unique_lock<boost::recursive_mutex> lock3(map_load_mutex_);
     map_preloading_task_index_.insert(*itr);
     lock3.unlock();
@@ -242,9 +242,9 @@ void BaseMap::LoadMapNodeThreadSafety(const MapNodeIndex& index,
   map_node->SetMapNodeIndex(index);
 
   if (!map_node->Load()) {
-    AINFO << "Created map node: " << index;
+    ADEBUG << "Created map node: " << index;
   } else {
-    AINFO << "Loaded map node: " << index;
+    ADEBUG << "Loaded map node: " << index;
   }
   map_node->SetIsReserved(is_reserved);
   boost::unique_lock<boost::recursive_mutex> lock(map_load_mutex_);

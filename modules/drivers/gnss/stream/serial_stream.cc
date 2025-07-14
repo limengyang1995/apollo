@@ -278,7 +278,7 @@ size_t SerialStream::read(uint8_t* buffer, size_t max_length) {
     if (!Connect()) {
       return 0;
     }
-    AINFO << "Connect " << device_name_ << " success.";
+    ADEBUG << "Connect " << device_name_ << " success.";
   }
 
   ssize_t bytes_read = 0;
@@ -301,7 +301,7 @@ size_t SerialStream::read(uint8_t* buffer, size_t max_length) {
                  << strerror(errno);
           Disconnect();
           if (Connect()) {
-            AINFO << "Reconnect " << device_name_ << " success.";
+            ADEBUG << "Reconnect " << device_name_ << " success.";
             bytes_current_read = 0;
             break;  // has recoverable
           }
@@ -335,7 +335,7 @@ size_t SerialStream::write(const uint8_t* data, size_t length) {
     if (!Connect()) {
       return 0;
     }
-    AINFO << "Connect " << device_name_ << " success.";
+    ADEBUG << "Connect " << device_name_ << " success.";
   }
 
   size_t total_nsent = 0;
@@ -355,7 +355,7 @@ size_t SerialStream::write(const uint8_t* data, size_t length) {
         case EIO:
           Disconnect();
           if (Connect()) {
-            AINFO << "Reconnect " << device_name_ << "success.";
+            ADEBUG << "Reconnect " << device_name_ << "success.";
             nsent = 0;
             break;  // has recoverable
           }

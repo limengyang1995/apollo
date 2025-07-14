@@ -82,14 +82,14 @@ TEST(hdmap_roi_filter_bitmap2d_test, test_bitmap) {
   EXPECT_FALSE(bitmap.IsExists(Eigen::Vector2d(80.0, 80.0)));
   EXPECT_TRUE(bitmap.IsExists(Eigen::Vector2d(1.0, 1.0)));
 
-  AINFO << bitmap;
+  ADEBUG << bitmap;
 }
 
 // polygon scan test
 TEST(hdmap_roi_filter_bitmap2d_test, test_polygon_scan_cvter) {
   Edge edge;
   EXPECT_EQ(edge.min_x, 0.0);
-  AINFO << edge;
+  ADEBUG << edge;
 
   Polygon polygon;
   polygon.push_back(Point(1.0, 3.0));

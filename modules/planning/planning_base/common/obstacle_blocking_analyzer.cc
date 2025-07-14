@@ -43,14 +43,14 @@ bool IsNonmovableObstacle(const ReferenceLineInfo& reference_line_info,
   const SLBoundary& adc_sl_boundary = reference_line_info.AdcSlBoundary();
   if (obstacle.PerceptionSLBoundary().start_s() >
       adc_sl_boundary.end_s() + kAdcDistanceThreshold) {
-    AINFO << " - It is too far ahead and we are not so sure of its status." << "obstacle: " << obstacle.PerceptionSLBoundary().start_s()
+    ADEBUG << " - It is too far ahead and we are not so sure of its status." << "obstacle: " << obstacle.PerceptionSLBoundary().start_s()
           << " adc: " << adc_sl_boundary.end_s() ;
     return false;
   }
 
   // Obstacle is parked obstacle.
   if (IsParkedVehicle(reference_line_info.reference_line(), &obstacle)) {
-    AINFO << "It is Parked and NON-MOVABLE.";
+    ADEBUG << "It is Parked and NON-MOVABLE.";
     return true;
   }
 
@@ -75,7 +75,7 @@ bool IsNonmovableObstacle(const ReferenceLineInfo& reference_line_info,
       continue;
     }
     double delta_s = other_boundary.start_s() - this_boundary.end_s();
-    AINFO << "Delta_s: " << delta_s << " Obstacle: " << obstacle.Id();
+    ADEBUG << "Delta_s: " << delta_s << " Obstacle: " << obstacle.Id();
     if (delta_s < 0.0 || delta_s > kObstaclesDistanceThreshold) {
       continue;
     }
@@ -215,9 +215,9 @@ bool IsParkedVehicle(const ReferenceLine& reference_line,
                               &road_left_width, &road_right_width);
   max_road_right_width = std::max(max_road_right_width, road_right_width);
   bool is_at_road_edge = std::abs(obstacle->PerceptionSLBoundary().start_l()) >
-                         max_road_right_width - 0.1;
+                         max_road_right_width - 0.3;
 
-  AINFO << "road edge:" << max_road_right_width << "  obs boundary l :"<< std::abs(obstacle->PerceptionSLBoundary().start_l());
+  ADEBUG << "road edge:" << max_road_right_width << "  obs boundary l :"<< std::abs(obstacle->PerceptionSLBoundary().start_l());
   std::vector<std::shared_ptr<const hdmap::LaneInfo>> lanes;
   auto obstacle_box = obstacle->PerceptionBoundingBox();
   HDMapUtil::BaseMapPtr()->GetLanes(
@@ -231,7 +231,7 @@ bool IsParkedVehicle(const ReferenceLine& reference_line,
   }
 
   bool is_parked = is_on_parking_lane || is_at_road_edge;
-  AINFO << "Obstacle " << obstacle->Id() << " is parked? " << is_parked << "is on parking lane? " << is_on_parking_lane << " is at road edge? " << is_at_road_edge;
+  ADEBUG << "Obstacle " << obstacle->Id() << " is parked? " << is_parked << "is on parking lane? " << is_on_parking_lane << " is at road edge? " << is_at_road_edge;
   return is_parked && obstacle->IsStatic();
 }
 
@@ -341,14 +341,14 @@ double DistanceBlockingObstacleToJunction(
   double blocking_obstacle_end_s =
       blocking_obstacle->PerceptionSLBoundary().end_s();
   double min_distance = std::numeric_limits<double>::max();
-  AINFO << "Blocking obstacle start s = " << blocking_obstacle_start_s
+  ADEBUG << "Blocking obstacle start s = " << blocking_obstacle_start_s
         << ", end_s: " << blocking_obstacle_end_s;
   // Get intersection's s and compare with threshold.
   const auto& first_encountered_overlaps =
       reference_line_info.FirstEncounteredOverlaps();
   for (const auto& overlap :
        reference_line_info.reference_line().map_path().junction_overlaps()) {
-    AINFO << overlap.DebugString();
+    ADEBUG << overlap.DebugString();
     double distance = std::numeric_limits<double>::max();
     if ((blocking_obstacle_start_s >= overlap.start_s &&
          blocking_obstacle_start_s <= overlap.end_s) ||

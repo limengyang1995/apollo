@@ -27,7 +27,7 @@ bool MsgAdapterComponent::Init() {
   msg_converter_->Add(FLAGS_cameraframe_to_obstacles_in,
                       FLAGS_cameraframe_to_obstacles_out,
                       ConvertCameraFrame2Obstacles);
-  AINFO << "cameraframe_to_obstacles_in: "
+  ADEBUG << "cameraframe_to_obstacles_in: "
         << FLAGS_cameraframe_to_obstacles_in
         << " cameraframe_to_obstacles_out: "
         << FLAGS_cameraframe_to_obstacles_out;
@@ -35,7 +35,7 @@ bool MsgAdapterComponent::Init() {
   msg_converter_->Add(FLAGS_sensorframe_message_to_obstacles_in,
                       FLAGS_sensorframe_message_to_obstacles_out,
                       ConvertSensorFrameMessage2Obstacles);
-  AINFO << "sensorframe_message_to_obstacles_in: "
+  ADEBUG << "sensorframe_message_to_obstacles_in: "
         << FLAGS_sensorframe_message_to_obstacles_in
         << " sensorframe_message_to_obstacles_out: "
         << FLAGS_sensorframe_message_to_obstacles_out;
@@ -43,7 +43,7 @@ bool MsgAdapterComponent::Init() {
   msg_converter_->Add(FLAGS_lidarframe_to_obstacles_in,
                       FLAGS_lidarframe_to_obstacles_out,
                       ConvertLidarFrameMessage2Obstacles);
-  AINFO << "lidarframe_to_obstacles_in: "
+  ADEBUG << "lidarframe_to_obstacles_in: "
         << FLAGS_lidarframe_to_obstacles_in
         << " lidarframe_to_obstacles_out: "
         << FLAGS_lidarframe_to_obstacles_out;

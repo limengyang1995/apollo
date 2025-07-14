@@ -34,11 +34,11 @@ bool BackgroundFilter::Init(const ObjectFilterInitOptions& options) {
 bool BackgroundFilter::Filter(const ObjectFilterOptions& options,
                                LidarFrame* frame) {
   if (!frame) {
-    AINFO << "Lidar frame is nullptr.";
+    ADEBUG << "Lidar frame is nullptr.";
     return false;
   }
   if (!frame->hdmap_struct) {
-    AINFO << "HDMap struct is nullptr.";
+    ADEBUG << "HDMap struct is nullptr.";
     for (auto& object : frame->segmented_objects) {
       object->lidar_supplement.is_in_roi = true;
       object->lidar_supplement.is_background = false;
@@ -49,7 +49,7 @@ bool BackgroundFilter::Filter(const ObjectFilterOptions& options,
       frame->hdmap_struct->road_polygons.size() +
       frame->hdmap_struct->junction_polygons.size() ==
       0) {
-    AINFO << "Donot find hdmap polygons, set object foreground.";
+    ADEBUG << "Donot find hdmap polygons, set object foreground.";
     for (auto& object : frame->segmented_objects) {
       object->lidar_supplement.is_in_roi = true;
       object->lidar_supplement.is_background = false;
@@ -99,7 +99,7 @@ bool BackgroundFilter::Filter(const ObjectFilterOptions& options,
     }
   }
   size_t size = frame->segmented_objects.size();
-  AINFO << "BackgroundFilter, filter " << size - valid_num << " objects from "
+  ADEBUG << "BackgroundFilter, filter " << size - valid_num << " objects from "
         << size << " objects, " << "reserve " << valid_num <<" objects.";
 
   frame->segmented_objects.resize(valid_num);

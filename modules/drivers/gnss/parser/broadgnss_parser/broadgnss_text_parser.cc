@@ -63,7 +63,7 @@ bool BroadGnssTextParser::PrepareMessage() {
     }
   }
   if (data_start != data_) {
-    AINFO << "BroadGnss message has been truncated: " << data_;
+    ADEBUG << "BroadGnss message has been truncated: " << data_;
   }
 
   if (*data_start != '$') {
@@ -75,7 +75,7 @@ bool BroadGnssTextParser::PrepareMessage() {
   }
 
   if (*(data_end_ - 1) != 0x0A) {
-    AINFO << "BroadGnss ASCII message is not complete: " << data_start;
+    ADEBUG << "BroadGnss ASCII message is not complete: " << data_start;
     return false;
   } else {
     ADEBUG << "BroadGnss ASCII message is complete";

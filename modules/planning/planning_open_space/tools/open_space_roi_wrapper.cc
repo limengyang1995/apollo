@@ -109,9 +109,9 @@ class OpenSpaceROITest {
     start_left -= origin_point_;
     end_right -= origin_point_;
     end_left -= origin_point_;
-    AINFO << "left_down x " << left_down.x();
-    AINFO << "right_down x " << right_down.x();
-    AINFO << "left_top x " << left_top.x();
+    ADEBUG << "left_down x " << left_down.x();
+    ADEBUG << "right_down x " << right_down.x();
+    ADEBUG << "left_top x " << left_top.x();
     left_top.SelfRotate(-origin_heading_);
     left_down.SelfRotate(-origin_heading_);
     right_top.SelfRotate(-origin_heading_);
@@ -349,7 +349,7 @@ class OpenSpaceROITest {
   bool VPresentationObstacle(const std::string& lane_id,
                              const std::string& parking_id) {
     if (!LoadMap(lane_id, parking_id)) {
-      AINFO << "fail at loading map";
+      ADEBUG << "fail at loading map";
       return false;
     }
 
@@ -362,11 +362,11 @@ class OpenSpaceROITest {
 
     // load info from pnc map
     if (!OpenSpaceROI()) {
-      AINFO << "fail at ROI()";
+      ADEBUG << "fail at ROI()";
       return false;
     }
     if (!NoRotateOpenSpaceROI()) {
-      AINFO << "fail at ROI()";
+      ADEBUG << "fail at ROI()";
       return false;
     }
 
@@ -489,7 +489,7 @@ bool ROITest(
   std::string lane_id_str(lane_id);
   std::string parking_id_str(parking_id);
   if (!test_ptr->VPresentationObstacle(lane_id_str, parking_id_str)) {
-    AINFO << "VPresentationObstacle fail";
+    ADEBUG << "VPresentationObstacle fail";
     return false;
   }
   std::vector<std::vector<Vec2d>>* unrotated_roi_boundary_ =

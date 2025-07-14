@@ -54,7 +54,7 @@ ErrorCode JtController::Init(
 	CanSender<::apollo::canbus::Jt> *const can_sender,
   MessageManager<::apollo::canbus::Jt> *const message_manager) {
   if (is_initialized_) {
-    AINFO << "JtController has already been initiated.";
+    ADEBUG << "JtController has already been initiated.";
     return ErrorCode::CANBUS_ERROR;
   }
 
@@ -109,7 +109,7 @@ ErrorCode JtController::Init(
 
   AddSendMessage();
 
-  AINFO << "JtController is initialized.";
+  ADEBUG << "JtController is initialized.";
 
   is_initialized_ = true;
   return ErrorCode::OK;
@@ -137,7 +137,7 @@ void JtController::Stop() {
   if (thread_ != nullptr && thread_->joinable()) {
     thread_->join();
     thread_.reset();
-    AINFO << "JtController stopped.";
+    ADEBUG << "JtController stopped.";
   }
 }
 
@@ -292,7 +292,7 @@ void JtController::Emergency() {
 
 ErrorCode JtController::EnableAutoMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE) {
-    AINFO << "already in COMPLETE_AUTO_DRIVE mode";
+    ADEBUG << "already in COMPLETE_AUTO_DRIVE mode";
     return ErrorCode::OK;
   }
   // set enable
@@ -314,14 +314,14 @@ ErrorCode JtController::EnableAutoMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
-  AINFO << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
+  ADEBUG << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
   acu4_154_->set_acu4_hazardlamprequest(Acu4_154::ACU4_HAZARDLAMPREQUEST_OFF);
   return ErrorCode::OK;
 }
 
 ErrorCode JtController::EnableCloudMode() {
   if (driving_mode() == Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "Already in REMOTE_CLOUD_DRIVE mode";
+    ADEBUG << "Already in REMOTE_CLOUD_DRIVE mode";
     return ErrorCode::OK;
   }
   // set enable
@@ -334,7 +334,7 @@ ErrorCode JtController::EnableCloudMode() {
 
   can_sender_->Update();
   set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
-  AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
+  ADEBUG << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
   acu4_154_->set_acu4_hazardlamprequest(Acu4_154::ACU4_HAZARDLAMPREQUEST_OFF);
   return ErrorCode::OK;
 }
@@ -344,7 +344,7 @@ ErrorCode JtController::DisableAutoMode() {
   can_sender_->Update();
   set_driving_mode(Chassis::COMPLETE_MANUAL);
   set_chassis_error_code(Chassis::NO_ERROR);
-  AINFO << "Switch to COMPLETE_MANUAL ok.";
+  ADEBUG << "Switch to COMPLETE_MANUAL ok.";
   return ErrorCode::OK;
 }
 
@@ -352,7 +352,7 @@ ErrorCode JtController::EnableSteeringOnlyMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_STEER_ONLY) {
     set_driving_mode(Chassis::AUTO_STEER_ONLY);
-    AINFO << "Already in AUTO_STEER_ONLY mode.";
+    ADEBUG << "Already in AUTO_STEER_ONLY mode.";
     acu4_154_->set_acu4_hazardlamprequest(Acu4_154::ACU4_HAZARDLAMPREQUEST_OFF);
     return ErrorCode::OK;
   }
@@ -369,7 +369,7 @@ ErrorCode JtController::EnableSteeringOnlyMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::AUTO_STEER_ONLY);
-  AINFO << "Switch to AUTO_STEER_ONLY mode ok.";
+  ADEBUG << "Switch to AUTO_STEER_ONLY mode ok.";
   return ErrorCode::OK;
 }
 
@@ -377,7 +377,7 @@ ErrorCode JtController::EnableSpeedOnlyMode() {
   if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE ||
       driving_mode() == Chassis::AUTO_SPEED_ONLY) {
     set_driving_mode(Chassis::AUTO_SPEED_ONLY);
-    AINFO << "Already in AUTO_SPEED_ONLY mode";
+    ADEBUG << "Already in AUTO_SPEED_ONLY mode";
     return ErrorCode::OK;
   }
   // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS MODE OR NOT
@@ -395,7 +395,7 @@ ErrorCode JtController::EnableSpeedOnlyMode() {
     return ErrorCode::CANBUS_ERROR;
   }
   set_driving_mode(Chassis::AUTO_SPEED_ONLY);
-  AINFO << "Switch to AUTO_SPEED_ONLY mode ok.";
+  ADEBUG << "Switch to AUTO_SPEED_ONLY mode ok.";
   acu4_154_->set_acu4_hazardlamprequest(Acu4_154::ACU4_HAZARDLAMPREQUEST_OFF);
   return ErrorCode::OK;
 }
@@ -405,7 +405,7 @@ void JtController::Gear(Chassis::GearPosition gear_position) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "This drive mode no need to set gear.";
+    ADEBUG << "This drive mode no need to set gear.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -452,12 +452,12 @@ void JtController::Brake(double pedal) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current drive mode does not need to set brake pedal.";
+    ADEBUG << "The current drive mode does not need to set brake pedal.";
     return;
   }
 /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
-  AINFO << "break COMMAND 1 IS "<< pedal;
+  ADEBUG << "break COMMAND 1 IS "<< pedal;
   acu3_153_->set_acu3_brakingcontrolflag(Acu3_153::ACU3_BRAKINGCONTROLFLAG_REQUEST_POSITION);  //brakepedal
   // wait for brake pedal or acceleration command
   acu3_153_->set_acu3_brakingtargetposition(std::abs(int(pedal)));
@@ -470,12 +470,12 @@ void JtController::Throttle(double pedal) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current drive mode does not need to set throttle pedal.";
+    ADEBUG << "The current drive mode does not need to set throttle pedal.";
     return;
   }
 /* ADD YOUR OWN CAR CHASSIS OPERATION
   */
-  AINFO << "PEDAL COMMAND 1 IS "<< pedal;
+  ADEBUG << "PEDAL COMMAND 1 IS "<< pedal;
   if (pedal >= 0){
     acu2_152_->set_acu2_drivingcontrolflag(Acu2_152::ACU2_DRIVINGCONTROLFLAG_REQUESTTHROTTLE);  //throttle
     acu2_152_->set_acu2_drivingtargetthrottle(int(pedal));
@@ -491,7 +491,7 @@ void JtController::Throttle(double pedal) {
 void JtController::Acceleration(double acc) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY) {
-    AINFO << "The current drive mode does not need to set acceleration.";
+    ADEBUG << "The current drive mode does not need to set acceleration.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -508,7 +508,7 @@ void JtController::Acceleration(double acc) {
 void JtController::Speed(double speed) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_SPEED_ONLY ) {
-    AINFO << "The current drive mode does not need to set speed.";
+    ADEBUG << "The current drive mode does not need to set speed.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -531,7 +531,7 @@ void JtController::Steer(double angle) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_STEER_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current driving mode does not need to set steer.";
+    ADEBUG << "The current driving mode does not need to set steer.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -549,7 +549,7 @@ void JtController::Steer(double angle, double angle_spd) {
   if (driving_mode() != Chassis::COMPLETE_AUTO_DRIVE &&
       driving_mode() != Chassis::AUTO_STEER_ONLY &&
       driving_mode() != Chassis::REMOTE_CLOUD_DRIVE) {
-    AINFO << "The current driving mode does not need to set steer.";
+    ADEBUG << "The current driving mode does not need to set steer.";
     return;
   }
   /* ADD YOUR OWN CAR CHASSIS OPERATION
@@ -621,11 +621,11 @@ bool JtController::VerifyID() {
 bool JtController::CheckVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   if (chassis_.vehicle_id().vin().size() >= 7) {
-    AINFO << "Vin check success! Vehicel vin is "
+    ADEBUG << "Vin check success! Vehicel vin is "
           << chassis_.vehicle_id().vin();
     return true;
   } else {
-    AINFO << "Vin check failed! Current vin size is "
+    ADEBUG << "Vin check failed! Current vin size is "
           << chassis_.vehicle_id().vin().size();
     return false;
   }
@@ -638,7 +638,7 @@ void JtController::GetVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   vehicle_mode_command_116_->set_vin_req_cmd(
       Vehicle_mode_command_116::VIN_REQ_CMD_VIN_REQ_ENABLE);
-  AINFO << "Get vin";
+  ADEBUG << "Get vin";
   can_sender_->Update();
   */
 }
@@ -648,7 +648,7 @@ void JtController::ResetVin() {
   /* ADD YOUR OWN CAR CHASSIS OPERATION
   vehicle_mode_command_116_->set_vin_req_cmd(
       Vehicle_mode_command_116::VIN_REQ_CMD_VIN_REQ_DISABLE);
-  AINFO << "Reset vin";
+  ADEBUG << "Reset vin";
   can_sender_->Update();
   */
 }
@@ -838,7 +838,7 @@ bool JtController::CheckResponse(const int32_t flags, bool need_wait) {
     if (check_ok) {
       return true;
     } else {
-      AINFO << "Need to check response again.";
+      ADEBUG << "Need to check response again.";
     }
     if (need_wait) {
       --retry_num;

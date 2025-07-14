@@ -36,7 +36,7 @@ bool PointCloudPreprocessComponent::Init() {
     AERROR << "Get PointCloudPreprocessComponentConfig file failed";
     return false;
   }
-  AINFO << "PointCloud Preprocess Component Configs: "
+  ADEBUG << "PointCloud Preprocess Component Configs: "
         << comp_config.DebugString();
 
   output_channel_name_ = comp_config.output_channel_name();
@@ -69,7 +69,7 @@ bool PointCloudPreprocessComponent::Init() {
 bool PointCloudPreprocessComponent::Proc(
     const std::shared_ptr<drivers::PointCloud>& message) {
   PERF_FUNCTION()
-  AINFO << std::setprecision(16)
+  ADEBUG << std::setprecision(16)
         << "Enter pointcloud preprocess component, message timestamp: "
         << message->measurement_time()
         << " current timestamp: " << Clock::NowInSeconds();
@@ -79,7 +79,7 @@ bool PointCloudPreprocessComponent::Proc(
   bool status = InternalProc(message, out_message);
   if (status) {
     writer_->Write(out_message);
-    AINFO << "Send pointcloud preprocess output message.";
+    ADEBUG << "Send pointcloud preprocess output message.";
   }
 
   return status;
@@ -107,7 +107,7 @@ bool PointCloudPreprocessComponent::InternalProc(
   const double timestamp = in_message->measurement_time();
   const double cur_time = Clock::NowInSeconds();
   const double start_latency = (cur_time - timestamp) * 1e3;
-  AINFO << std::setprecision(16) << "FRAME:Preprocess:Start:msg_time["
+  ADEBUG << std::setprecision(16) << "FRAME:Preprocess:Start:msg_time["
         << timestamp << "]:sensor[" << sensor_name_ << "]:cur_time[" << cur_time
         << "]:cur_latency[" << start_latency << "]";
 

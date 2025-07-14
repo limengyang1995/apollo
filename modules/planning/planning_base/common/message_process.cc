@@ -98,7 +98,7 @@ void MessageProcess::Close() {
     // offline process logging
     const std::string msg = absl::StrCat("Total learning_data_frame number: ",
                                          total_learning_data_frame_num_);
-    AINFO << msg;
+    ADEBUG << msg;
     log_file_ << msg << std::endl;
     auto end_time = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end_time - start_time_;
@@ -324,7 +324,7 @@ void MessageProcess::OnStoryTelling(
 
 void MessageProcess::OnTrafficLightDetection(
     const TrafficLightDetection& traffic_light_detection) {
-  // AINFO << "traffic_light_detection received at frame["
+  // ADEBUG << "traffic_light_detection received at frame["
   //      << total_learning_data_frame_num_ << "]";
   traffic_light_detection_message_timestamp_ =
       traffic_light_detection.header().timestamp_sec();
@@ -1135,7 +1135,7 @@ void MessageProcess::GenerateADCTrajectoryPoints(
       log_file_ << msg << std::endl;
     }
   }
-  // AINFO << "number of ADC trajectory points in one frame: "
+  // ADEBUG << "number of ADC trajectory points in one frame: "
   //      << trajectory_point_index;
 }
 

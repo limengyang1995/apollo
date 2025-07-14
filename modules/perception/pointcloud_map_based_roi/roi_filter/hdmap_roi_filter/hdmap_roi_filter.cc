@@ -59,7 +59,7 @@ bool HdmapROIFilter::Init(const ROIFilterInitOptions& options) {
   bitmap_.Init(min_range, max_range, cell_size);
 
   // output input parameters
-  AINFO << " HDMap Roi Filter Parameters: "
+  ADEBUG << " HDMap Roi Filter Parameters: "
         << " range: " << range_ << " cell_size: " << cell_size_
         << " extend_dist: " << extend_dist_
         << " no_edge_table: " << no_edge_table_
@@ -80,7 +80,7 @@ bool HdmapROIFilter::Filter(const ROIFilterOptions& options,
   auto& junction_polygons = frame->hdmap_struct->junction_polygons;
   size_t polygons_world_size = road_polygons.size() + junction_polygons.size();
   if (0 == polygons_world_size) {
-    AINFO << " Polygon Empty.";
+    ADEBUG << " Polygon Empty.";
     return false;
   }
 
@@ -129,7 +129,7 @@ bool HdmapROIFilter::Filter(const ROIFilterOptions& options,
       }
       roi_service->UpdateServiceContent(roi_service_content_);
     } else {
-      AINFO << "Failed to find roi service and cannot update.";
+      ADEBUG << "Failed to find roi service and cannot update.";
     }
   }
   return ret;

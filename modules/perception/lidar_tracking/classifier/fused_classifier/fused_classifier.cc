@@ -63,7 +63,7 @@ bool FusedClassifier::Classify(const ClassifierOptions& options,
                                         : &(frame->segmented_objects);
   if (enable_temporal_fusion_ && frame->timestamp > 0.0) {
     // sequence fusion
-    AINFO << "Combined classifier, temporal fusion";
+    ADEBUG << "Combined classifier, temporal fusion";
     sequence_.AddTrackedFrameObjects(*objects, frame->timestamp);
     ObjectSequence::TrackedObjects tracked_objects;
     for (auto& object : *objects) {
@@ -93,7 +93,7 @@ bool FusedClassifier::Classify(const ClassifierOptions& options,
     }
   } else {
     // one shot fusion
-    AINFO << "Combined classifier, one shot fusion";
+    ADEBUG << "Combined classifier, one shot fusion";
     for (auto& object : *objects) {
       if (object->lidar_supplement.is_background) {
         object->type_probs.assign(static_cast<int>(ObjectType::MAX_OBJECT_TYPE),

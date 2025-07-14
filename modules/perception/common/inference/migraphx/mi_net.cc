@@ -34,7 +34,7 @@
 #if PRINT_DEBUG
 #define DEBUG_LOG(...)                                              \
   {                                                                 \
-    AINFO << "INFO [" << DEBUG_GET_FN_NAME() << "] " << __VA_ARGS__ \
+    ADEBUG << "INFO [" << DEBUG_GET_FN_NAME() << "] " << __VA_ARGS__ \
           << std::endl;                                             \
   }
 #else
@@ -799,7 +799,7 @@ void MINet::addLayer(const LayerParameter &layer_param, Tensor const *inputs,
     addArgmaxLayer(layer_param, inputs, nbInputs, net, tensor_map,
                    tensor_modify_map);
   } else if (layer_param.type() == "Dropout") {
-    AINFO << "skip dropout";
+    ADEBUG << "skip dropout";
   } else if (layer_param.type() == "Power") {
     addScaleLayer(layer_param, inputs, weight_map, net, tensor_map,
                   tensor_modify_map);
@@ -937,7 +937,7 @@ void MINet::init_blob(std::map<std::string, Tensor> *tensor_map) {
 bool MINet::Init(const std::map<std::string, std::vector<int>> &shapes) {
   // TODO(B1tway): add cpu support
   if (gpu_id_ < 0) {
-    AINFO << "must use gpu mode";
+    ADEBUG << "must use gpu mode";
     return false;
   }
 

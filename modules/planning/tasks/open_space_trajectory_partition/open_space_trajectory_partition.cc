@@ -67,7 +67,7 @@ bool OpenSpaceTrajectoryPartition::Init(
   ego_width_ = vehicle_param_.width();
   shift_distance_ = ego_length_ / 2.0 - vehicle_param_.back_edge_to_center();
   wheel_base_ = vehicle_param_.wheel_base();
-  AINFO << config_.DebugString();
+  ADEBUG << config_.DebugString();
   return res;
 }
 
@@ -139,7 +139,7 @@ Status OpenSpaceTrajectoryPartition::Process() {
   CHECK_GT(trajectory_size, 0U);
   flag_change_to_next = CheckReachTrajectoryEnd(
       cur_trajectory, gear, trajectories_size, &current_trajectory_point_index);
-  AINFO << "current_trajectory_index_" << current_trajectory_index_ << ","
+  ADEBUG << "current_trajectory_index_" << current_trajectory_index_ << ","
         << current_trajectory_point_index << "time index" << last_index_
         << "flag_change_to_next" << flag_change_to_next;
   auto* chosen_partitioned_trajectory =
@@ -163,7 +163,7 @@ Status OpenSpaceTrajectoryPartition::Process() {
   std::priority_queue<std::pair<size_t, double>,
                       std::vector<std::pair<size_t, double>>, comp_>
       closest_point;
-  AINFO << "ego:" << std::fixed << ego_x_ << "," << ego_y_ << ","
+  ADEBUG << "ego:" << std::fixed << ego_x_ << "," << ego_y_ << ","
         << vehicle_moving_direction_;
   for (size_t j = 0; j < trajectory_size; ++j) {
     const TrajectoryPoint& trajectory_point = cur_trajectory.at(j);
@@ -182,7 +182,7 @@ Status OpenSpaceTrajectoryPartition::Process() {
     //     NormalizeAngle(tracking_direction - vehicle_moving_direction_));
     const double heading_search_difference = std::abs(NormalizeAngle(
         traj_point_moving_direction - vehicle_moving_direction_));
-    // AINFO << "XY" << std::fixed << path_point_x << "," << path_point_y << ","
+    // ADEBUG << "XY" << std::fixed << path_point_x << "," << path_point_y << ","
     //       << path_point_theta << "," << distance << ","
     //       << heading_search_difference << "ego heading"
     //       << vehicle_moving_direction_;
@@ -221,7 +221,7 @@ Status OpenSpaceTrajectoryPartition::Process() {
     auto& traj = partitioned_trajectories->at(current_trajectory_index_).first;
     if (last_index_ != -1) {
       veh_rel_time = traj[last_index_].relative_time() + now_time - last_time_;
-      AINFO << std::fixed << now_time << "," << last_time_;
+      ADEBUG << std::fixed << now_time << "," << last_time_;
       time_match_index = traj.QueryLowerBoundPoint(veh_rel_time);
     } else {
       time_match_index = current_trajectory_point_index;
@@ -229,9 +229,9 @@ Status OpenSpaceTrajectoryPartition::Process() {
       last_time_ = now_time;
     }
 
-    AINFO << "time_match_index" << time_match_index << "pos match index"
+    ADEBUG << "time_match_index" << time_match_index << "pos match index"
           << current_trajectory_point_index;
-    AINFO << "TRAJ CLOSEST" << std::fixed
+    ADEBUG << "TRAJ CLOSEST" << std::fixed
           << traj.at(current_trajectory_point_index).path_point().x() << ","
           << traj.at(current_trajectory_point_index).path_point().y();
     if (std::abs(traj[time_match_index].path_point().s() -
@@ -239,7 +239,7 @@ Status OpenSpaceTrajectoryPartition::Process() {
         config_.speed_replan_distance()) {
       current_trajectory_point_index = time_match_index;
     } else {
-      AINFO << "reset speed because matched point too far";
+      ADEBUG << "reset speed because matched point too far";
       last_index_ = current_trajectory_point_index;
       last_time_ = now_time;
     }
@@ -531,12 +531,12 @@ bool OpenSpaceTrajectoryPartition::CheckReachTrajectoryEnd(
         current_trajectory_index_ += 1;
         *current_trajectory_point_index = 0;
       }
-      AINFO << "Reach the end of a trajectory, switching to next one";
+      ADEBUG << "Reach the end of a trajectory, switching to next one";
       return true;
     }
   }
 
-  AINFO << "Vehicle did not reach end of a trajectory with conditions for "
+  ADEBUG << "Vehicle did not reach end of a trajectory with conditions for "
            "lateral distance_check: "
         << (lateral_offset < lateral_offset_to_midpoint_)
         << " and actual lateral distance: " << lateral_offset
@@ -657,7 +657,7 @@ bool OpenSpaceTrajectoryPartition::InsertGearShiftTrajectory(
         current_gear_status->gear_shift_position == ego_gear_) {
       current_gear_status->gear_shift_period_finished = true;
       current_gear_status->gear_shift_period_started = true;
-      AINFO << "finished gear shift";
+      ADEBUG << "finished gear shift";
     } else {
       double init_kappa = partitioned_trajectories.at(current_trajectory_index)
                               .first[0]
