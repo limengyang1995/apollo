@@ -1,11 +1,4 @@
 <cyber>
-
-    <!-- <module>
-        <name>external_command_process</name>
-        <dag_conf>modules/external_command/process_component/dag/external_command_process.dag</dag_conf>
-        <process_name>external_command_process</process_name>
-    </module>
-     -->
     <module>
         <name>camera</name>
         <dag_conf>modules/drivers/camera/dag/camera_front.dag</dag_conf>
@@ -40,21 +33,5 @@
         <name>camera</name>
         <dag_conf>modules/drivers/camera/dag/camera_left.dag</dag_conf>
         <process_name>usb_cam</process_name>
-    </module>
-    <module>
-        <name>control</name>
-        <dag_conf>modules/control/control_component/dag/control.dag</dag_conf>
-        <process_name>control</process_name>
-    </module>
-    <module>
-        <name>canbus</name>
-        <dag_conf>modules/canbus/dag/canbus.dag</dag_conf>
-        <process_name>canbus</process_name>
-    </module>
-
-    <module>
-        <name>external_driver</name>
-        <dag_conf>modules/external_command/external_driver/dag/external_driver.dag</dag_conf>
-        <process_name>external_driver</process_name>
     </module>
 </cyber>
