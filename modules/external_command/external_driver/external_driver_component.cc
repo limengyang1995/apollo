@@ -27,7 +27,9 @@
 #include "cyber/common/log.h"
 #include <string>
 #include "thread"
-
+#include <iomanip>
+#include <sys/statvfs.h>
+#include <sstream>
 #include "opencv2/opencv.hpp"
 #include "opencv2/core.hpp"
 // #include "nlohmann/json.hpp"
@@ -176,6 +178,78 @@ void ExternalDriver::IsNetworkDown() {
         cyber::SleepFor(std::chrono::seconds(2));
     }
 }
+std::vector<std::string> ExternalDriver::get_system_metrics() {
+    float temp = -1.0;
+    long mem_avail = -1;
+    float load_1min = -1.0;
+    double disk_free = -1.0;
+
+    std::ifstream temp_file("/sys/class/thermal/thermal_zone0/temp");
+    if (temp_file) {
+        temp_file >> temp;
+        temp /= 1000;  // 转换为摄氏度
+    }
+
+    std::ifstream mem_file("/proc/meminfo");
+    std::string line;
+    while (std::getline(mem_file, line)) {
+        if (line.find("MemAvailable:") == 0) {
+            sscanf(line.c_str(), "MemAvailable: %ld kB", &mem_avail);
+            mem_avail /= 1024;  // 转换为MB
+            break;
+        }
+    }
+
+    std::ifstream load_file("/proc/loadavg");
+    if (load_file) {
+        load_file >> load_1min;
+    }
+
+    struct statvfs vfs;
+    if (statvfs("/", &vfs) == 0) {
+        double available_bytes = static_cast<double>(vfs.f_frsize) * vfs.f_bavail;
+        disk_free = available_bytes / (1024 * 1024 * 1024);  // 转换为GB
+    }
+
+    // 创建字符串向量
+    std::vector<std::string> metrics;
+
+    // 转换温度
+    if (temp < 0) {
+        metrics.push_back("N/A");
+    } else {
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(1) << temp << "°C";
+        metrics.push_back(oss.str());
+    }
+
+    // 转换内存
+    if (mem_avail < 0) {
+        metrics.push_back("N/A");
+    } else {
+        metrics.push_back(std::to_string(mem_avail) + "MB");
+    }
+
+    // 转换负载
+    if (load_1min < 0) {
+        metrics.push_back("N/A");
+    } else {
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(2) << load_1min / 8 * 100 << "%";
+        metrics.push_back(oss.str());
+    }
+
+    // 转换硬盘空间
+    if (disk_free < 0) {
+        metrics.push_back("N/A");
+    } else {
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(1) << disk_free << "GB";
+        metrics.push_back(oss.str());
+    }
+
+    return metrics;
+}
 void ExternalDriver::SendDataToCloud() {
     std::string car_id(getenv("CARID"));
 
@@ -198,6 +272,7 @@ void ExternalDriver::SendDataToCloud() {
             std::string right_turn = std::to_string(chassis_.right_turn_signal());
             std::string low_beam = std::to_string(chassis_.low_beam_signal());
             std::string soc = std::to_string(chassis_.battery_soc_percentage());
+            auto sys_info = get_system_metrics();
 
             nlohmann::json vehicle_data
                     = {{"car_id", car_id},
@@ -214,14 +289,15 @@ void ExternalDriver::SendDataToCloud() {
                        {"left_turn", left_turn},
                        {"right_turn", right_turn},
                        {"low_beam", low_beam},
-                       {"soc", soc},
-                       {"cpu_temp", "60.0"},
-                       {"cpu_load", "25.0"},
-                       {"lidar", "online"},
-                       {"memory", "50%"},
-                       {"disk", "50%"},
-                       {"vehicle_status", "normal"},
-                       {"weather", "sunny"}
+                       {"soc", "350km"},
+                       {"cpu_temp", sys_info[2]},
+                       {"cpu_load", sys_info[0]},
+
+                       {"lidar", " "},
+                       {"memory", sys_info[1]},
+                       {"disk", sys_info[3]},
+                       {"vehicle_status", "正常"},
+                       {"weather", "多云"}
 
                     };
             AINFO << "vehicle data: " << vehicle_data.dump();

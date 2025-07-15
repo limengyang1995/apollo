@@ -108,6 +108,7 @@ private:
     void SendDataToCloud();
     // void CreateRtcClient(const ExternalDriverConfig& config);
     void IsNetworkDown();
+    std::vector<std::string> get_system_metrics();
 
 private:
     // template <typename T>

@@ -4,7 +4,7 @@ target_speed: 20
 cer_path: "/apollo/modules/external_command/external_driver/conf/a.cer"
 app_id: "appretxpzeedsn6"
 lib_path: "/apollo_workspace/modules/external_command/external_driver/rtc/lib/libbaidurtc.so"
-video_maxkbps: 2000
+video_maxkbps: 4000
 image_width: 1920
 image_height: 1080
 fps: 15
