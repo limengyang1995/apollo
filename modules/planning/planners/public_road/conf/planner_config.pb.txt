@@ -38,10 +38,10 @@ scenario {
     name: "PULL_OVER"
     type: "PullOverScenario"
 }
-#scenario {
-#    name: "PARK_AND_GO"
-#    type: "ParkAndGoScenario"
-#}
+scenario {
+    name: "PARK_AND_GO"
+    type: "ParkAndGoScenario"
+}
 scenario {
     name: "LANE_FOLLOW"
     type: "LaneFollowScenario"

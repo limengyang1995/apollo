@@ -228,7 +228,7 @@ void DataParser::PublishBestpos(const MessagePtr message) {
   auto bestpos = std::make_shared<GnssBestPose>(*As<GnssBestPose>(message));
   common::util::FillHeader("gnss", bestpos.get());
   if (!config_.use_gnss_time()) {
-    bestpos->set_measurement_time(cyber::Time::Now().ToSecond());
+    bestpos->set_measurement_time(cyber::Time::Now().ToSecond()- 315964782);
   } else if (bestpos->has_measurement_time()) {
     bestpos->set_measurement_time(
         apollo::drivers::util::gps2unix(bestpos->measurement_time()));
@@ -251,7 +251,7 @@ void DataParser::PublishImu(const MessagePtr message) {
 
   common::util::FillHeader("gnss", raw_imu.get());
   if (!config_.use_gnss_time()) {
-    raw_imu->set_measurement_time(cyber::Time::Now().ToSecond());
+    raw_imu->set_measurement_time(cyber::Time::Now().ToSecond() - 315964782);
   } else if (raw_imu->has_measurement_time()) {
     raw_imu->set_measurement_time(
         apollo::drivers::util::gps2unix(raw_imu->measurement_time()));
@@ -357,7 +357,7 @@ void DataParser::PublishObservation(const MessagePtr message) {
 void DataParser::PublishHeading(const MessagePtr message) {
   auto heading = std::make_shared<Heading>(*As<Heading>(message));
   if (!config_.use_gnss_time()) {
-    heading->set_measurement_time(cyber::Time::Now().ToSecond());
+    heading->set_measurement_time(cyber::Time::Now().ToSecond() - 315964782 );
   } else if (heading->has_measurement_time()) {
     heading->set_measurement_time(
         apollo::drivers::util::gps2unix(heading->measurement_time()));

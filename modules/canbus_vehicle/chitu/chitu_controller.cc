@@ -206,7 +206,7 @@ Chassis ChituController::chassis() {
     if (chassis_detail.vcu_diversion_angle_100().has_actual_steering_radian()) {
       chassis_.set_steering_percentage(
         static_cast<float>(chassis_detail.vcu_diversion_angle_100().actual_steering_radian() 
-        * vehicle_params_.steer_ratio() * 100.0 / (vehicle_params_.max_steer_angle() * 180 / M_PI)));
+        * vehicle_params_.steer_ratio() * 100.0 / (vehicle_params_.max_steer_angle() * 180 / M_PI) - 8));
     } else {    
       chassis_.set_steering_percentage(0);
     }
@@ -393,7 +393,7 @@ void ChituController::Steer(double angle) {
     return;
   }
   adas_angle_cmd_112_->set_steering_angle(vehicle_params_.max_steer_angle() / M_PI * 
-    180.0 * angle / 100.0 / vehicle_params_.steer_ratio());
+    180.0 * (angle + 8 ) / 100.0 / vehicle_params_.steer_ratio());
   adas_angle_cmd_112_->set_ac_steering_speed(14.4);
 }
 
@@ -407,7 +407,7 @@ void ChituController::Steer(double angle, double angle_spd) {
     return;
   }
   adas_angle_cmd_112_->set_steering_angle(vehicle_params_.max_steer_angle() / M_PI * 
-    180.0 * angle / 100.0 / vehicle_params_.steer_ratio());
+    180.0 * (angle + 8 ) / 100.0 / vehicle_params_.steer_ratio());
   adas_angle_cmd_112_->set_ac_steering_speed(14.4);
   
 }
