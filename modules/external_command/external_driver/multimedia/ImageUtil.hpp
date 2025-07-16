@@ -223,7 +223,7 @@ public:
             return -1;
         }
 
-        AERROR << " before wait for done ";
+        // AERROR << " before wait for done ";
         ret = RK_TDE_WaitForDone(tde_handle);
         if (ret != RK_SUCCESS) {
             AERROR << "RK_TDE_WaitForDone failed, ret = " << std::hex << ret;
@@ -233,7 +233,7 @@ public:
         if (src_surface.pMbBlk != nullptr)
             RK_MPI_SYS_MmzFree(src_surface.pMbBlk);
 
-        AERROR << " after wait for done ";
+        // AERROR << " after wait for done ";
         return true;
     }
 
@@ -299,14 +299,14 @@ public:
             return -1;
         }
 
-        AERROR << " before wait for done ";
+        // AERROR << " before wait for done ";
         ret = RK_TDE_WaitForDone(tde_handle);
         if (ret != RK_SUCCESS) {
             AERROR << "RK_TDE_WaitForDone failed, ret = " << std::hex << ret;
             return -1;
         }
 
-        AERROR << " after wait for done ";
+        // AERROR << " after wait for done ";
 
         return 0;
     }

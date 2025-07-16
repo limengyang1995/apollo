@@ -85,6 +85,11 @@ public:
         std::sort(stitch_param_.begin(), stitch_param_.end(), [](const auto& a, const auto& b) {
             return a.display_order < b.display_order;
         });
+        for (auto stich_param : stitch_param_) {
+            AERROR << "stitch_param: " << stich_param.camera_name << " " << stich_param.dst_rect.x << " "
+                   << stich_param.dst_rect.y << " " << stich_param.dst_rect.width << " " << stich_param.dst_rect.height
+                   << " " << stich_param.display_order << " " << stich_param.bg_color;
+        }
     }
 
 private:

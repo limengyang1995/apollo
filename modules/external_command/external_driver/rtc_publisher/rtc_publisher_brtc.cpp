@@ -5,8 +5,7 @@ namespace external_command {
 
 bool RtcPublisherBrtc::CreateClient(const RtcPublisherBrtc::CreateParam& param) {
     if (rtc_publisher_handle_map_.find(param.camera_name) != rtc_publisher_handle_map_.end()) {
-        std::cout << "RtcPublisherBrtc::CreateClient: [" << param.camera_name << "] client already exists."
-                  << std::endl;
+        AERROR << "[" << param.camera_name << "] client already exists." << std::endl;
         return false;
     }
 
@@ -25,8 +24,7 @@ bool RtcPublisherBrtc::CreateClient(const RtcPublisherBrtc::CreateParam& param) 
             param.image_width,
             param.image_height);
     if (is_success == false) {
-        std::cout << "RtcPublisherBrtc::CreateClient: [" << param.camera_name << "] create rtc client failed."
-                  << std::endl;
+        AERROR << "[" << param.camera_name << "] create rtc client failed." << std::endl;
         rtc_publisher_handle->p_rtc_client = nullptr;
         return false;
     }
@@ -57,14 +55,14 @@ bool RtcPublisherBrtc::CreateClient(const RtcPublisherBrtc::CreateParam& param) 
     }
 
     rtc_publisher_handle_map_[param.camera_name] = rtc_publisher_handle;
-    std::cout << "RtcPublisherBrtc::CreateClient: [" << param.camera_name << "] create client success.";
+    AERROR << "[" << param.camera_name << "] create client success.";
     return rtc_publisher_handle->p_video_encoder->start();
 }
 
 bool RtcPublisherBrtc::DestroyClient(const std::string& stream_name) {
     auto it = rtc_publisher_handle_map_.find(stream_name);
     if (it == rtc_publisher_handle_map_.end()) {
-        std::cout << "RtcPublisherBrtc::DestroyClient: [" << stream_name << "] client not exists.";
+        AERROR << "[" << stream_name << "] client not exists.";
         return true;
     }
 
@@ -87,19 +85,17 @@ bool RtcPublisherBrtc::SendFrame(std::map<std::string, std::shared_ptr<apollo::d
     // }
 
     if (stitch_param_.empty()) {
-        std::cout << "RtcPublisherBrtc::SendFrame: stitch_param is empty." << std::endl;
+        AERROR << "stitch_param is empty.";
         return false;
     }
-    std::cout << "RtcPublisherBrtc::SendFrame: send all stream start." << std::endl;
+    // AERROR << " send all stream start , stich_param_.size():" << stitch_param_.size();
     std::vector<ImageUtil::BlendInfo> blend_info_list(stitch_param_.size());
     uint32_t color_fmt = RK_FMT_YUV422_YUYV;
     int i = 0;
-    // for (auto it = frames.begin(); it != frames.end(); ++it) {
-    // for (auto it = cam_idx_map_.begin(); it != cam_idx_map_.end(); ++it) {
-    // for (auto cam_name : cam_order_list_) {
     for (auto stitch_param : stitch_param_) {
         std::string cam_name = stitch_param.camera_name;
         if (frames.find(cam_name) == frames.end()) {
+            AERROR << " frame " << cam_name << " not found.";
             continue;
         }
         auto image = frames[cam_name];
@@ -116,7 +112,7 @@ bool RtcPublisherBrtc::SendFrame(std::map<std::string, std::shared_ptr<apollo::d
                     stitch_rect.y,
                     stitch_rect.width,
                     stitch_rect.height);
-            std::cout << "RtcPublisherBrtc::SendFrame: [" << cam_name << "] camera message is nullptr." << std::endl;
+            AERROR << "[" << cam_name << "] camera message is nullptr." << std::endl;
         } else {
             ImageUtil::InitBlendInfo(
                     blend_info_list[i],
@@ -150,9 +146,9 @@ bool RtcPublisherBrtc::SendFrame(std::map<std::string, std::shared_ptr<apollo::d
         for (auto blend_info : blend_info_list) {
             ImageUtil::ReleaseBlendInfo(blend_info);
         }
-        std::cout << "RtcPublisherBrtc::SendFrame: send all stream success." << std::endl;
+        // AERROR << "RtcPublisherBrtc::SendFrame: send all stream success.";
     } else {
-        std::cout << "RtcPublisherBrtc::SendFrame: stream all get input buffer failed." << std::endl;
+        AERROR << "RtcPublisherBrtc::SendFrame: stream all get input buffer failed.";
     }
 
     return true;
@@ -187,7 +183,7 @@ bool RtcPublisherBrtc::SendFrame(std::string stream_name, std::shared_ptr<apollo
     }
 
     publisher_handle->p_video_encoder->put_input_buffer(dma_handle);
-    std::cout << "RtcPublisherBrtc::SendFrame: [" << stream_name << "] send single stream end.";
+    AERROR << "[" << stream_name << "] send single stream end.";
 
     return true;
 }

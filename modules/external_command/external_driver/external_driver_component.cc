@@ -162,7 +162,7 @@ bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
     for (const auto& channel : config.channel()) {
         std::string input_camera_channel_name = channel.input_camera_channel_name();
         std::shared_ptr<cyber::Reader<apollo::drivers::Image>> reader_;
-        if (input_camera_channel_name == "/apollo/sensor/camera/left_front_fisheye/image") {
+        if (input_camera_channel_name == "/apollo/sensor/camera/front_fisheye/image") {
             reader_ = node_->CreateReader<apollo::drivers::Image>(
                     input_camera_channel_name,
                     [&](const std::shared_ptr<apollo::drivers::Image>& image) { ProcessImage(image); });
@@ -170,7 +170,7 @@ bool ExternalDriver::InitListener(const ExternalDriverConfig& config) {
             reader_ = node_->CreateReader<apollo::drivers::Image>(input_camera_channel_name);
         }
         // readers_.emplace_back(reader_);
-        readers_[input_camera_channel_name] = reader_;
+        readers_[channel.channel_name()] = reader_;
     }
 
     return true;
@@ -352,13 +352,13 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         reader.second->Observe();
         const auto camera_msg = reader.second->GetLatestObserved();
         if (camera_msg == nullptr) {
-            AERROR << "camera message is nullptr";
+            AERROR << "camera message is nullptr, " << reader.first;
             // return false;
         }
         imgs.insert(std::make_pair(reader.first, camera_msg));
     }
 #ifndef ENABLE_USE_GRPC
-    AERROR << "current publish_camera_name_:" << publish_camera_name_;
+    // AERROR << "current publish_camera_name_:" << publish_camera_name_;
     if (publish_camera_name_ == "all") {
         RtcPublisherBrtc::GetInstance().SendFrame(imgs);
     } else {
@@ -374,7 +374,7 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
     RtcPublisherClient::GetInst().SendFrame(imgs, request_camera);
 #endif
 
-    AERROR << "start send image successfully!";
+    // AERROR << "start send image successfully!";
     // AERROR << "send image cost time :" << time2 - time1;
 
     return true;
