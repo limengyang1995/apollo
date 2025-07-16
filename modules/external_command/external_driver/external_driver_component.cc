@@ -235,7 +235,7 @@ std::vector<std::string> ExternalDriver::get_system_metrics() {
         metrics.push_back("N/A");
     } else {
         std::ostringstream oss;
-        oss << std::fixed << std::setprecision(2) << load_1min / 8 * 100 << "%";
+        oss << std::fixed << std::setprecision(2) << load_1min / 16 * 100 << "%";
         metrics.push_back(oss.str());
     }
 
@@ -293,7 +293,7 @@ void ExternalDriver::SendDataToCloud() {
                        {"cpu_temp", sys_info[2]},
                        {"cpu_load", sys_info[0]},
 
-                       {"lidar", " "},
+                       {"lidar", "未在线"},
                        {"memory", sys_info[1]},
                        {"disk", sys_info[3]},
                        {"vehicle_status", "正常"},

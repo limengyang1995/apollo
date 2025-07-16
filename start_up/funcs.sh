@@ -833,7 +833,7 @@ apollo_enter_container() {
 
   # compatibility with old version
   envs+=('-e' "DOCKER_USER=${APOLLO_ENV_CONTAINER_USER}")
-
+  
   # Allow X server connection from container.
   xhost +local:root 1> /dev/null 2>&1
 
@@ -851,9 +851,15 @@ apollo_enter_container() {
           sleep 3
       fi
   done
+ 
+
   if [ "${DEBUG}" = "true" ];then
     CONTAINER_CMD="/bin/bash"
   else
+    # can0 init
+    echo nvidia | sudo -S ip link set can1 up type can bitrate 500000 
+    # sleep 1s
+
     CONTAINER_CMD="/bin/bash -c "/apollo_workspace/start_up/start_all.sh""
   fi
   docker exec \

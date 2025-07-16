@@ -135,10 +135,6 @@ void CameraComponent::run() {
         }
         auto pb_image = pb_image_buffer_.at(index_);
         auto header_time = cyber::Time::Now().ToSecond();
-
-        if (static_cast<int>(cyber::Time::Now().ToSecond()) > 1752591715) {
-            exit(0);
-        }
         auto measurement_time = image_time.ToSecond();
         pb_image->mutable_header()->set_timestamp_sec(header_time);
         pb_image->set_measurement_time(measurement_time);
