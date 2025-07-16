@@ -9,37 +9,37 @@
     <module>
         <name>camera</name>
         <dag_conf>modules/drivers/camera/dag/camera_front.dag</dag_conf>
-        <process_name>usb_cam</process_name>
+        <process_name>usb_cam1</process_name>
     </module>
 
     <module>
         <name>camera</name>
         <dag_conf>modules/drivers/camera/dag/camera_left_front.dag</dag_conf>
-        <process_name>usb_cam</process_name>
+        <process_name>usb_cam2</process_name>
     </module>
 
     <module>
         <name>camera</name>
         <dag_conf>modules/drivers/camera/dag/camera_right_front.dag</dag_conf>
-        <process_name>usb_cam</process_name>
+        <process_name>usb_cam3</process_name>
     </module>
 
     <module>
         <name>camera</name>
         <dag_conf>modules/drivers/camera/dag/camera_right.dag</dag_conf>
-        <process_name>usb_cam</process_name>
+        <process_name>usb_cam4</process_name>
     </module>
 
     <module>
         <name>camera</name>
         <dag_conf>modules/drivers/camera/dag/camera_rear.dag</dag_conf>
-        <process_name>usb_cam</process_name>
+        <process_name>usb_cam5</process_name>
     </module>
 
     <module>
         <name>camera</name>
         <dag_conf>modules/drivers/camera/dag/camera_left.dag</dag_conf>
-        <process_name>usb_cam</process_name>
+        <process_name>usb_cam6</process_name>
     </module>
     <module>
         <name>control</name>
