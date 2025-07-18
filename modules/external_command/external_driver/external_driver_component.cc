@@ -253,7 +253,7 @@ std::vector<std::string> ExternalDriver::get_system_metrics() {
         metrics.push_back("N/A");
     } else {
         std::ostringstream oss;
-        oss << std::fixed << std::setprecision(2) << load_1min / 16 * 100 << "%";
+        oss << std::fixed << std::setprecision(2) << load_1min / 20 * 100 << "%";
         metrics.push_back(oss.str());
     }
 
@@ -291,6 +291,19 @@ void ExternalDriver::SendDataToCloud() {
             std::string low_beam = std::to_string(chassis_.low_beam_signal());
             std::string soc = std::to_string(chassis_.battery_soc_percentage());
             auto sys_info = get_system_metrics();
+            // AERROR << "soc-------" << throttle << "-"<<brake<< "-"<<steer;
+            if(soc.empty()){
+                soc =  "0";
+            }
+            if (throttle == "nan"){
+                throttle = "0";
+            }
+            if (brake == "nan"){
+                brake = "0";
+            }
+            if (steer == "nan"){
+                steer = "0";
+            }
 
             nlohmann::json vehicle_data
                     = {{"car_id", car_id},
@@ -307,7 +320,7 @@ void ExternalDriver::SendDataToCloud() {
                        {"left_turn", left_turn},
                        {"right_turn", right_turn},
                        {"low_beam", low_beam},
-                       {"soc", "350km"},
+                       {"soc",soc},
                        {"cpu_temp", sys_info[2]},
                        {"cpu_load", sys_info[0]},
 
