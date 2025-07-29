@@ -93,6 +93,7 @@ private:
     std::future<void> is_network_down_future;
     int connect_detect_num = 0;
     std::vector<std::string> request_camera;
+    std::vector<std::string> offline_camera_name;
     // std::vector<std::string> id_list;
 
 private:
@@ -101,6 +102,7 @@ private:
     bool is_start_publish = false;
     bool is_start_send_cloud = false;
     bool network_down = false;
+    uint32_t num = 0;
 
 private:
     bool ProcessImage(const std::shared_ptr<apollo::drivers::Image>& image);

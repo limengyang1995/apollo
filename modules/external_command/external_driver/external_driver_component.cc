@@ -60,21 +60,6 @@ bool ExternalDriver::Init() {
     MultiMedia::sys_init();
     CreateRtcPublisher(config_);
 
-    // rtc_client_.CreateClient(config_, "all");
-    // cyber::SleepFor(std::chrono::seconds(1));
-    // rtc_client_1_.CreateClient(config_, "front");
-    // cyber::SleepFor(std::chrono::seconds(1));
-    // rtc_client_2_.CreateClient(config_, "right");
-    // cyber::SleepFor(std::chrono::seconds(1));
-    // rtc_client_3_.CreateClient(config_, "rear");
-    // cyber::SleepFor(std::chrono::seconds(1));
-    // rtc_client_4_.CreateClient(config_, "left");
-
-    // std::ifstream f(config_.destination_path());
-    // if (f.fail()) {
-    //     AERROR << "failed to load destination file";
-    // }
-    // point = nlohmann::json::parse(f);
     data_to_cloud_future = cyber::Async(&ExternalDriver::SendDataToCloud, this);
     is_network_down_future = cyber::Async(&ExternalDriver::IsNetworkDown, this);
     InitListener(config_);
@@ -197,15 +182,15 @@ void ExternalDriver::IsNetworkDown() {
     }
 }
 std::vector<std::string> ExternalDriver::get_system_metrics() {
-    float temp = -1.0;
-    long mem_avail = -1;
+    float temp = 0;
+    int mem_avail = 0;
     float load_1min = -1.0;
     double disk_free = -1.0;
 
     std::ifstream temp_file("/sys/class/thermal/thermal_zone0/temp");
     if (temp_file) {
         temp_file >> temp;
-        temp /= 1000;  // 转换为摄氏度
+        temp /= 1000;
     }
 
     std::ifstream mem_file("/proc/meminfo");
@@ -213,7 +198,9 @@ std::vector<std::string> ExternalDriver::get_system_metrics() {
     while (std::getline(mem_file, line)) {
         if (line.find("MemAvailable:") == 0) {
             sscanf(line.c_str(), "MemAvailable: %ld kB", &mem_avail);
-            mem_avail /= 1024;  // 转换为MB
+            int size = 1024 * 1024 * 7 / 100;
+            mem_avail /= size;
+
             break;
         }
     }
@@ -226,13 +213,11 @@ std::vector<std::string> ExternalDriver::get_system_metrics() {
     struct statvfs vfs;
     if (statvfs("/", &vfs) == 0) {
         double available_bytes = static_cast<double>(vfs.f_frsize) * vfs.f_bavail;
-        disk_free = available_bytes / (1024 * 1024 * 1024);  // 转换为GB
+        disk_free = available_bytes / (1024 * 1024 * 1024);
     }
 
-    // 创建字符串向量
     std::vector<std::string> metrics;
 
-    // 转换温度
     if (temp < 0) {
         metrics.push_back("N/A");
     } else {
@@ -241,14 +226,12 @@ std::vector<std::string> ExternalDriver::get_system_metrics() {
         metrics.push_back(oss.str());
     }
 
-    // 转换内存
     if (mem_avail < 0) {
         metrics.push_back("N/A");
     } else {
-        metrics.push_back(std::to_string(mem_avail) + "MB");
+        metrics.push_back(std::to_string(mem_avail) + "%");
     }
 
-    // 转换负载
     if (load_1min < 0) {
         metrics.push_back("N/A");
     } else {
@@ -257,7 +240,6 @@ std::vector<std::string> ExternalDriver::get_system_metrics() {
         metrics.push_back(oss.str());
     }
 
-    // 转换硬盘空间
     if (disk_free < 0) {
         metrics.push_back("N/A");
     } else {
@@ -279,11 +261,12 @@ void ExternalDriver::SendDataToCloud() {
             std::string z = std::to_string(localization_.pose().position().z());
             std::string gear = std::to_string(chassis_.gear_location());
             std::string steer = std::to_string(std::round(chassis_.steering_percentage()));
+
             std::string throttle = std::to_string(std::round(chassis_.throttle_percentage()));
 
             std::string brake = std::to_string(std::round(chassis_.brake_percentage()));
             std::string driving_mode = std::to_string(chassis_.driving_mode());
-            std::string speed = std::to_string(std::round(chassis_.speed_mps()));
+            std::string speed = std::to_string(std::round(chassis_.speed_mps() * 3.6));
 
             std::string epb = std::to_string(chassis_.parking_brake());
             std::string left_turn = std::to_string(chassis_.left_turn_signal());
@@ -291,17 +274,16 @@ void ExternalDriver::SendDataToCloud() {
             std::string low_beam = std::to_string(chassis_.low_beam_signal());
             std::string soc = std::to_string(chassis_.battery_soc_percentage());
             auto sys_info = get_system_metrics();
-            // AERROR << "soc-------" << throttle << "-"<<brake<< "-"<<steer;
-            if(soc.empty()){
-                soc =  "0";
+            if (soc.empty()) {
+                soc = "0";
             }
-            if (throttle == "nan"){
+            if (throttle == "nan") {
                 throttle = "0";
             }
-            if (brake == "nan"){
+            if (brake == "nan") {
                 brake = "0";
             }
-            if (steer == "nan"){
+            if (steer == "nan") {
                 steer = "0";
             }
 
@@ -320,15 +302,16 @@ void ExternalDriver::SendDataToCloud() {
                        {"left_turn", left_turn},
                        {"right_turn", right_turn},
                        {"low_beam", low_beam},
-                       {"soc",soc},
+                       {"soc", soc},
                        {"cpu_temp", sys_info[2]},
                        {"cpu_load", sys_info[0]},
 
-                       {"lidar", "未在线"},
+                       {"lidar", "-"},
                        {"memory", sys_info[1]},
                        {"disk", sys_info[3]},
                        {"vehicle_status", "正常"},
-                       {"weather", "多云"}
+                       {"weather", "多云"},
+                       {"offline_camera", offline_camera_name}
 
                     };
             AINFO << "vehicle data: " << vehicle_data.dump();
@@ -365,7 +348,13 @@ bool ExternalDriver::ProcessImage(const std::shared_ptr<apollo::drivers::Image>&
         reader.second->Observe();
         const auto camera_msg = reader.second->GetLatestObserved();
         if (camera_msg == nullptr) {
-            AERROR << "camera message is nullptr, " << reader.first;
+            num += 1;
+            if (num > 30) {
+                auto it = std::find(offline_camera_name.begin(), offline_camera_name.end(), reader.first);
+                if (it == offline_camera_name.end()) {
+                    offline_camera_name.push_back(reader.first);
+                }
+            }
             // return false;
         }
         imgs.insert(std::make_pair(reader.first, camera_msg));

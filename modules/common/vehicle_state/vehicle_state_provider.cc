@@ -82,7 +82,7 @@ Status VehicleStateProvider::Update(
 bool VehicleStateProvider::ConstructExceptLinearVelocity(
     const localization::LocalizationEstimate &localization) {
   if (!localization.has_pose()) {
-    AERROR << "Invalid localization input.";
+    // AERROR << "Invalid localization input.";
     return false;
   }
 

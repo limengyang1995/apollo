@@ -143,7 +143,7 @@ Chassis VenusController::chassis() {
         set_chassis_error_code(Chassis::NO_ERROR);
     }
 
-    chassis_.set_driving_mode(driving_mode());
+    // chassis_.set_driving_mode(driving_mode());
     chassis_.set_error_code(chassis_error_code());
     // 3
     chassis_.set_engine_started(true);
@@ -215,84 +215,105 @@ Chassis VenusController::chassis() {
             chassis_.set_left_turn_signal(0);
             chassis_.set_right_turn_signal(0);
         }
-    }
+        if (chassis_detail.vcu6_56c().has_vcu6_controlmode()) {
+            switch (chassis_detail.vcu6_56c().vcu6_controlmode()) {
+            case Vcu6_56c::VCU6_CONTROLMODE_STOP:
+                chassis_.set_driving_mode(Chassis::COMPLETE_MANUAL);
+                break;
+            case Vcu6_56c::VCU6_CONTROLMODE_REMOTE:
+                chassis_.set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
+                break;
+            case Vcu6_56c::VCU6_CONTROLMODE_IPC:
+                chassis_.set_driving_mode(Chassis::EMERGENCY_MODE);
+                break;
+            case Vcu6_56c::VCU6_CONTROLMODE_TOGETHER:
+                chassis_.set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+                break;
+            case Vcu6_56c::VCU6_CONTROLMODE_RESERVED1:
+                chassis_.set_driving_mode(Chassis::AUTO_STEER_ONLY);
+                break;
+            default:
+                chassis_.set_driving_mode(Chassis::COMPLETE_MANUAL);
+            }
+        }
 
-    // gear location
+        // gear location
 
-    if (chassis_detail.has_vcu1_56f() && chassis_detail.vcu1_56f().has_vcu1_gearinfo()) {
-        switch (chassis_detail.vcu1_56f().vcu1_gearinfo()) {
-        case Vcu1_56f::VCU1_GEARINFO_NOCONNECTION: {
+        if (chassis_detail.has_vcu1_56f() && chassis_detail.vcu1_56f().has_vcu1_gearinfo()) {
+            switch (chassis_detail.vcu1_56f().vcu1_gearinfo()) {
+            case Vcu1_56f::VCU1_GEARINFO_NOCONNECTION: {
+                chassis_.set_gear_location(Chassis::GEAR_INVALID);
+            } break;
+            case Vcu1_56f::VCU1_GEARINFO_D: {
+                chassis_.set_gear_location(Chassis::GEAR_DRIVE);
+            } break;
+            case Vcu1_56f::VCU1_GEARINFO_N: {
+                chassis_.set_gear_location(Chassis::GEAR_NEUTRAL);
+            } break;
+            case Vcu1_56f::VCU1_GEARINFO_R: {
+                chassis_.set_gear_location(Chassis::GEAR_REVERSE);
+            } break;
+            case Vcu1_56f::VCU1_GEARINFO_P: {
+                chassis_.set_gear_location(Chassis::GEAR_PARKING);
+            } break;
+            default:
+                chassis_.set_gear_location(Chassis::GEAR_INVALID);
+                break;
+            }
+        } else {
             chassis_.set_gear_location(Chassis::GEAR_INVALID);
-        } break;
-        case Vcu1_56f::VCU1_GEARINFO_D: {
-            chassis_.set_gear_location(Chassis::GEAR_DRIVE);
-        } break;
-        case Vcu1_56f::VCU1_GEARINFO_N: {
-            chassis_.set_gear_location(Chassis::GEAR_NEUTRAL);
-        } break;
-        case Vcu1_56f::VCU1_GEARINFO_R: {
-            chassis_.set_gear_location(Chassis::GEAR_REVERSE);
-        } break;
-        case Vcu1_56f::VCU1_GEARINFO_P: {
-            chassis_.set_gear_location(Chassis::GEAR_PARKING);
-        } break;
-        default:
-            chassis_.set_gear_location(Chassis::GEAR_INVALID);
-            break;
         }
-    } else {
-        chassis_.set_gear_location(Chassis::GEAR_INVALID);
-    }
 
-    // 8 steering_percentage
-    if (chassis_detail.has_vcu1_56f()) {
-        if (chassis_detail.vcu1_56f().has_vcu1_steeringangle_f()) {
-            chassis_.set_steering_percentage(
-                    static_cast<float>(
-                            (-1) * chassis_detail.vcu1_56f().vcu1_steeringangle_f() * 100.0
-                            / (vehicle_params_.max_steer_angle() * 180 / M_PI)));
-        } else {
-            chassis_.set_steering_percentage(0);
+        // 8 steering_percentage
+        if (chassis_detail.has_vcu1_56f()) {
+            if (chassis_detail.vcu1_56f().has_vcu1_steeringangle_f()) {
+                chassis_.set_steering_percentage(
+                        static_cast<float>(
+                                (-1) * chassis_detail.vcu1_56f().vcu1_steeringangle_f() * 100.0
+                                / (vehicle_params_.max_steer_angle() * 180 / M_PI)));
+            } else {
+                chassis_.set_steering_percentage(0);
+            }
+            if (chassis_detail.vcu1_56f().has_vcu1_steeringangle_r()) {
+                chassis_.set_rear_steering_percentage(
+                        static_cast<float>(
+                                (-1) * chassis_detail.vcu1_56f().vcu1_steeringangle_r() * 100.0
+                                / (vehicle_params_.max_steer_angle() * 180 / M_PI)));
+            } else {
+                chassis_.set_rear_steering_percentage(0);
+            }
+            if (chassis_detail.vcu1_56f().has_vcu1_button1()) {
+                chassis_.set_low_beam_signal(chassis_detail.vcu1_56f().vcu1_button1());
+            } else {
+                chassis_.set_low_beam_signal(0);
+            }
         }
-        if (chassis_detail.vcu1_56f().has_vcu1_steeringangle_r()) {
-            chassis_.set_rear_steering_percentage(
-                    static_cast<float>(
-                            (-1) * chassis_detail.vcu1_56f().vcu1_steeringangle_r() * 100.0
-                            / (vehicle_params_.max_steer_angle() * 180 / M_PI)));
+        // 9  epb
+        if (chassis_detail.has_vcu1_56f() && chassis_detail.vcu1_56f().has_vcu1_parkingbrakeinfo()) {
+            chassis_.set_parking_brake(
+                    chassis_detail.vcu1_56f().vcu1_parkingbrakeinfo() == Vcu1_56f::VCU1_PARKINGBRAKEINFO_LOCKED);
         } else {
-            chassis_.set_rear_steering_percentage(0);
+            chassis_.set_parking_brake(false);
         }
-        if (chassis_detail.vcu1_56f().has_vcu1_button1()) {
-            chassis_.set_low_beam_signal(chassis_detail.vcu1_56f().vcu1_button1());
-        } else {
-            chassis_.set_low_beam_signal(0);
-        }
-    }
-    // 9  epb
-    if (chassis_detail.has_vcu1_56f() && chassis_detail.vcu1_56f().has_vcu1_parkingbrakeinfo()) {
-        chassis_.set_parking_brake(
-                chassis_detail.vcu1_56f().vcu1_parkingbrakeinfo() == Vcu1_56f::VCU1_PARKINGBRAKEINFO_LOCKED);
-    } else {
-        chassis_.set_parking_brake(false);
-    }
 
-    /* if (chassis_.error_code() != ErrorCode::NO_ERROR){
-      if (chassis_.has_engage_advice()) {
-        chassis_.mutable_engage_advice()->set_advice(
-            apollo::common::EngageAdvice::DISALLOW_ENGAGE);
-        chassis_.mutable_engage_advice()->set_reason("Chassis error!");
-      }
-    }else{
-      if (chassis_.has_engage_advice()) {
-        chassis_.mutable_engage_advice()->set_advice(
-            apollo::common::EngageAdvice::READY_TO_ENGAGE);
-      }
-    } */
+        /* if (chassis_.error_code() != ErrorCode::NO_ERROR){
+          if (chassis_.has_engage_advice()) {
+            chassis_.mutable_engage_advice()->set_advice(
+                apollo::common::EngageAdvice::DISALLOW_ENGAGE);
+            chassis_.mutable_engage_advice()->set_reason("Chassis error!");
+          }
+        }else{
+          if (chassis_.has_engage_advice()) {
+            chassis_.mutable_engage_advice()->set_advice(
+                apollo::common::EngageAdvice::READY_TO_ENGAGE);
+          }
+        } */
+    }
     return chassis_;
 }
 
 void VenusController::Emergency() {
-    set_driving_mode(Chassis::EMERGENCY_MODE);
+    // set_driving_mode(Chassis::EMERGENCY_MODE);
     ResetProtocol();
     acu3_534_->set_acu3_hazardlight(Acu3_534::ACU3_HAZARDLIGHT_ON);
 }
@@ -315,7 +336,7 @@ ErrorCode VenusController::EnableAutoMode() {
         set_chassis_error_code(Chassis::CHASSIS_ERROR);
         return ErrorCode::CANBUS_ERROR;
     }
-    set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
+    // set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
     AINFO << "Switch to COMPLETE_AUTO_DRIVE mode ok.";
     return ErrorCode::OK;
 }
@@ -331,7 +352,7 @@ ErrorCode VenusController::EnableCloudMode() {
     acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
 
     can_sender_->Update();
-    set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+    // set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
     AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
     return ErrorCode::OK;
 }
@@ -339,7 +360,7 @@ ErrorCode VenusController::EnableCloudMode() {
 ErrorCode VenusController::DisableAutoMode() {
     ResetProtocol();
     can_sender_->Update();
-    set_driving_mode(Chassis::COMPLETE_MANUAL);
+    // set_driving_mode(Chassis::COMPLETE_MANUAL);
     set_chassis_error_code(Chassis::NO_ERROR);
     AINFO << "Switch to COMPLETE_MANUAL ok.";
     return ErrorCode::OK;
@@ -347,7 +368,7 @@ ErrorCode VenusController::DisableAutoMode() {
 
 ErrorCode VenusController::EnableSteeringOnlyMode() {
     if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE || driving_mode() == Chassis::AUTO_STEER_ONLY) {
-        set_driving_mode(Chassis::AUTO_STEER_ONLY);
+        // set_driving_mode(Chassis::AUTO_STEER_ONLY);
         AINFO << "Already in AUTO_STEER_ONLY mode.";
         return ErrorCode::OK;
     }
@@ -361,7 +382,7 @@ ErrorCode VenusController::EnableSteeringOnlyMode() {
         set_chassis_error_code(Chassis::CHASSIS_ERROR);
         return ErrorCode::CANBUS_ERROR;
     }
-    set_driving_mode(Chassis::AUTO_STEER_ONLY);
+    // set_driving_mode(Chassis::AUTO_STEER_ONLY);
     AINFO << "Switch to AUTO_STEER_ONLY mode ok.";
 
     return ErrorCode::OK;
@@ -369,7 +390,7 @@ ErrorCode VenusController::EnableSteeringOnlyMode() {
 
 ErrorCode VenusController::EnableSpeedOnlyMode() {
     if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE || driving_mode() == Chassis::AUTO_SPEED_ONLY) {
-        set_driving_mode(Chassis::AUTO_SPEED_ONLY);
+        // set_driving_mode(Chassis::AUTO_SPEED_ONLY);
         AINFO << "Already in AUTO_SPEED_ONLY mode";
         return ErrorCode::OK;
     }
@@ -384,7 +405,7 @@ ErrorCode VenusController::EnableSpeedOnlyMode() {
         set_chassis_error_code(Chassis::CHASSIS_ERROR);
         return ErrorCode::CANBUS_ERROR;
     }
-    set_driving_mode(Chassis::AUTO_SPEED_ONLY);
+    // set_driving_mode(Chassis::AUTO_SPEED_ONLY);
     AINFO << "Switch to AUTO_SPEED_ONLY mode ok.";
     return ErrorCode::OK;
 }
@@ -579,13 +600,12 @@ void VenusController::SetTurningSignal(const ControlCommand& command) {
     if (command.left_turn()) {
         acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_LEFT);
         return;
-    } 
+    }
     if (command.right_turn()) {
         acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_RIGHT);
         return;
-    } 
+    }
     acu3_534_->set_acu3_steeringlight(Acu3_534::ACU3_STEERINGLIGHT_NOREQUEST);
-    
 }
 
 ErrorCode VenusController::HandleCustomOperation(const external_command::ChassisCommand& command) {
@@ -746,7 +766,7 @@ void VenusController::SecurityDogThreadFunc() {
         }
 
         if (emergency_mode && mode != Chassis::EMERGENCY_MODE) {
-            set_driving_mode(Chassis::EMERGENCY_MODE);
+            // set_driving_mode(Chassis::EMERGENCY_MODE);
             message_manager_->ResetSendMessages();
             can_sender_->Update();
         }

@@ -396,7 +396,7 @@ ErrorCode VehicleController<SensorType>::Update(const ControlCommand &control_co
     }
 
     Chassis::DrivingMode mode = Chassis::COMPLETE_MANUAL;
-    AERROR << "ENTER UPDATE!!!  " << control_command.has_cloud_takeover_request() << "  "
+    AINFO << "ENTER UPDATE!!!  " << control_command.has_cloud_takeover_request() << "  "
            << control_command.cloud_takeover_request();
     if (control_command.has_cloud_takeover_request() && control_command.cloud_takeover_request() == true) {
         AERROR << "control has received cloud control request:";
