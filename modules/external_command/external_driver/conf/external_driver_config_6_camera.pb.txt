@@ -26,11 +26,17 @@ channel : [
 enable_rtc_log:false
 
 stitch_param : [
-    {camera_name : "front" ,      x : 480,  y : 0,   width : 960, height : 720},
-    {camera_name : "right_front", x : 1440, y : 0,   width : 480, height : 360},
-    {camera_name : "right",       x : 1440, y : 360, width : 480, height : 360},
-   # {camera_name : "rear",        x : 800,  y : 0,   width : 320, height : 180, display_order : 1},
-    {camera_name : "rear",        x : 800,  y : 720, width : 320, height : 180, display_order : 1},
-    {camera_name : "left",        x : 0,    y : 360, width : 480, height : 360},
-    {camera_name : "left_front",  x : 0,    y : 0,   width : 480, height : 360}
+    #{camera_name : "front" ,      x : 480,  y : 0,   width : 960, height : 720},
+    #{camera_name : "right_front", x : 1440, y : 0,   width : 480, height : 360},
+    #{camera_name : "right",       x : 1440, y : 360, width : 480, height : 360},
+    #{camera_name : "rear",        x : 720,  y : 720, width : 480, height : 180, display_order : 1},
+    #{camera_name : "left",        x : 0,    y : 360, width : 480, height : 360},
+    #{camera_name : "left_front",  x : 0,    y : 0,   width : 480, height : 360}
+
+    {camera_name : "front" ,      x : 480,  y : 0,   width : 960, height : 540},
+    {camera_name : "right_front", x : 1440, y : 0,   width : 480, height : 270},
+    {camera_name : "right",       x : 1440, y : 270, width : 480, height : 270},
+    {camera_name : "rear",        x : 720,  y : 540, width : 480, height : 180, display_order : 1},
+    {camera_name : "left",        x : 0,    y : 270, width : 480, height : 270},
+    {camera_name : "left_front",  x : 0,    y : 0,   width : 480, height : 270}
 ]
