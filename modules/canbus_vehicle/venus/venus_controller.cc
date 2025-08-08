@@ -143,7 +143,7 @@ Chassis VenusController::chassis() {
         set_chassis_error_code(Chassis::NO_ERROR);
     }
 
-    // chassis_.set_driving_mode(driving_mode());
+    chassis_.set_driving_mode(driving_mode());
     chassis_.set_error_code(chassis_error_code());
     // 3
     chassis_.set_engine_started(true);
@@ -215,7 +215,7 @@ Chassis VenusController::chassis() {
             chassis_.set_left_turn_signal(0);
             chassis_.set_right_turn_signal(0);
         }
-        if (chassis_detail.vcu6_56c().has_vcu6_controlmode()) {
+        /* if (chassis_detail.vcu6_56c().has_vcu6_controlmode()) {
             switch (chassis_detail.vcu6_56c().vcu6_controlmode()) {
             case Vcu6_56c::VCU6_CONTROLMODE_STOP:
                 chassis_.set_driving_mode(Chassis::COMPLETE_MANUAL);
@@ -235,7 +235,7 @@ Chassis VenusController::chassis() {
             default:
                 chassis_.set_driving_mode(Chassis::COMPLETE_MANUAL);
             }
-        }
+        } */
 
         // gear location
 
@@ -313,7 +313,7 @@ Chassis VenusController::chassis() {
 }
 
 void VenusController::Emergency() {
-    // set_driving_mode(Chassis::EMERGENCY_MODE);
+    set_driving_mode(Chassis::EMERGENCY_MODE);
     ResetProtocol();
     acu3_534_->set_acu3_hazardlight(Acu3_534::ACU3_HAZARDLIGHT_ON);
 }
@@ -352,7 +352,7 @@ ErrorCode VenusController::EnableCloudMode() {
     acu2_532_->set_acu2_axialautocontrol(Acu2_532::ACU2_AXIALAUTOCONTROL_REQUEST);
 
     can_sender_->Update();
-    // set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
+    set_driving_mode(Chassis::REMOTE_CLOUD_DRIVE);
     AINFO << "Switch to REMOTE_CLOUD_DRIVE mode ok.";
     return ErrorCode::OK;
 }
@@ -360,7 +360,7 @@ ErrorCode VenusController::EnableCloudMode() {
 ErrorCode VenusController::DisableAutoMode() {
     ResetProtocol();
     can_sender_->Update();
-    // set_driving_mode(Chassis::COMPLETE_MANUAL);
+    set_driving_mode(Chassis::COMPLETE_MANUAL);
     set_chassis_error_code(Chassis::NO_ERROR);
     AINFO << "Switch to COMPLETE_MANUAL ok.";
     return ErrorCode::OK;
@@ -766,7 +766,7 @@ void VenusController::SecurityDogThreadFunc() {
         }
 
         if (emergency_mode && mode != Chassis::EMERGENCY_MODE) {
-            // set_driving_mode(Chassis::EMERGENCY_MODE);
+            set_driving_mode(Chassis::EMERGENCY_MODE);
             message_manager_->ResetSendMessages();
             can_sender_->Update();
         }
