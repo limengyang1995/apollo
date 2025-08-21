@@ -1,0 +1,1578 @@
+car_type: yutong
+protocols:
+  18a70017:
+    id: 18a70017
+    name: gw_24_18a70017
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 24
+      enum:
+        0: HORN_SIGNAL_OFF
+        1: HORN_SIGNAL_ON
+      is_signed_var: false
+      len: 2
+      name: Horn_signal
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 27
+      enum:
+        0: FOG_LIGHT_SIGNAL_OFF
+        1: FOG_LIGHT_SIGNAL_ON
+      is_signed_var: false
+      len: 2
+      name: Fog_light_signal
+      offset: 0.0
+      order: motorola
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 28
+      enum:
+        0: LOW_BEAM_SIGNAL_OFF
+        1: LOW_BEAM_SIGNAL_ON
+      is_signed_var: false
+      len: 2
+      name: Low_beam_signal
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 30
+      enum:
+        0: HIGH_BEAM_SIGNAL_OFF
+        1: HIGH_BEAM_SIGNAL_ON
+      is_signed_var: false
+      len: 2
+      name: High_beam_signal
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 32
+      enum:
+        0: LEFT_TURN_SIGNAL_OFF
+        1: LEFT_TURN_SIGNAL_ON
+      is_signed_var: false
+      len: 2
+      name: Left_turn_signal
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 34
+      enum:
+        0: RIGHT_TURN_SIGNAL_OFF
+        1: RIGHT_TURN_SIGNAL_ON
+      is_signed_var: false
+      len: 2
+      name: Right_turn_signal
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 36
+      enum:
+        0: BRAKINGSTS_OFF
+        1: BRAKINGSTS_ON
+      is_signed_var: false
+      len: 2
+      name: BrakingSts
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18f0090b:
+    id: 18f0090b
+    name: gw_17_18f0090b
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 56
+      description: "\u05B5-12.5~12.5m/s2"
+      is_signed_var: false
+      len: 8
+      name: Longitudinal_acceleration
+      offset: -12.5
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: m/s2
+      precision: 0.1
+      type: double
+  18fdcd2a:
+    id: 18fdcd2a
+    name: vcu_04_18fdcd2a
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 4
+      enum:
+        0: WIPERCONTROL_
+      is_signed_var: false
+      len: 4
+      name: WiperControl
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 45
+      enum:
+        0: WASHCONTROL_OF
+        1: WASHCONTROL_O
+      is_signed_var: false
+      len: 3
+      name: WashControl
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18fe412a:
+    id: 18fe412a
+    name: vcu_06_18fe412a
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 4
+      enum:
+        0: LOW_BEAM_HEADLIGHTS_
+        1: LOW_BEAM_HEADLIGHTS_
+      is_signed_var: false
+      len: 2
+      name: Low_beam_headlights
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 6
+      enum:
+        0: HEADLIGHTS_
+        1: HEADLIGHTS_
+      is_signed_var: false
+      len: 2
+      name: Headlights
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 8
+      enum:
+        0: FRONT_FOG_LAMP_
+        1: FRONT_FOG_LAMP_
+      is_signed_var: false
+      len: 2
+      name: Front_fog_lamp
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 12
+      enum:
+        0: LEFT_TURN_SIGNAL_
+        1: LEFT_TURN_SIGNAL_
+      is_signed_var: false
+      len: 2
+      name: Left_turn_signal
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 14
+      enum:
+        0: RIGHT_TURN_INDICATOR_LIGHT_
+        1: RIGHT_TURN_INDICATOR_LIGHT_
+      is_signed_var: false
+      len: 2
+      name: Right_turn_indicator_light
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 16
+      enum:
+        0: POSITION_LIGHTS_
+        1: POSITION_LIGHTS_
+      is_signed_var: false
+      len: 2
+      name: Position_lights
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 34
+      enum:
+        0: DOUBLE_FLASH_LIGHTS_
+        1: DOUBLE_FLASH_LIGHTS_
+      is_signed_var: false
+      len: 2
+      name: Double_flash_lights
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 56
+      is_signed_var: false
+      len: 4
+      name: Counter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 60
+      is_signed_var: false
+      len: 4
+      name: Checksum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+  18fead0b:
+    id: 18fead0b
+    name: gw_14_18fead0b
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: FL_brake_pressure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: Kpa
+      precision: 5.0
+      type: double
+    - bit: 8
+      is_signed_var: false
+      len: 8
+      name: FR_brake_pressure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: Kpa
+      precision: 5.0
+      type: double
+    - bit: 16
+      is_signed_var: false
+      len: 8
+      name: RL_brake_pressure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: Kpa
+      precision: 5.0
+      type: double
+    - bit: 24
+      is_signed_var: false
+      len: 8
+      name: RR_brake_pressure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: Kpa
+      precision: 5.0
+      type: double
+  18febf0b:
+    id: 18febf0b
+    name: gw_15_18febf0b
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 16
+      name: Longitudinal_velocity
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255.99609375]'
+      physical_unit: km/h
+      precision: 0.00390625
+      type: double
+    - bit: 16
+      is_signed_var: false
+      len: 8
+      name: FL_wheel_speed
+      offset: -7.8125
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: km/h
+      precision: 0.0625
+      type: double
+    - bit: 24
+      is_signed_var: false
+      len: 8
+      name: FR_wheel_speed
+      offset: -7.8125
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: km/h
+      precision: 0.0625
+      type: double
+    - bit: 32
+      is_signed_var: false
+      len: 8
+      name: RL_wheel_speed
+      offset: -7.8125
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: km/h
+      precision: 0.0625
+      type: double
+    - bit: 40
+      is_signed_var: false
+      len: 8
+      name: RR_wheel_speed
+      offset: -7.8125
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: km/h
+      precision: 0.0625
+      type: double
+  18fec117:
+    id: 18fec117
+    name: gw_20_18fec117
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      description: "\u05B50-0xFFFF"
+      is_signed_var: false
+      len: 32
+      name: Total_mileage_info
+      offset: 0.0
+      order: intel
+      physical_range: '[0|4294967295]'
+      physical_unit: m
+      precision: 5.0
+      type: double
+  18fefa2d:
+    id: 18fefa2d
+    name: vcu_03_18fefa2d
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 0
+      enum:
+        0: EPBREQ_
+        1: EPBREQ_EPB
+        2: EPBREQ_EPB
+      is_signed_var: false
+      len: 2
+      name: EPBReq
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 8
+      enum:
+        0: AUTOHOLDREQ_
+        1: AUTOHOLDREQ_AUTO_HOLD
+        2: AUTOHOLDREQ_AUTO_HOLD
+      is_signed_var: false
+      len: 2
+      name: AutoHoldReq
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 16
+      is_signed_var: false
+      len: 16
+      name: LoadMass
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: t
+      precision: 0.01
+      type: double
+  18ff0824:
+    id: 18ff0824
+    name: gw_04_18ff0824
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 37
+      enum:
+        1: STATE_OF_VEHICLE_STOP
+        2: STATE_OF_VEHICLE_READY
+        3: STATE_OF_VEHICLE_GO
+      is_signed_var: false
+      len: 3
+      name: State_of_vehicle
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ff0f24:
+    id: 18ff0f24
+    name: gw_07_18ff0f24
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 29
+      enum:
+        0: START_IGNITION_
+        1: START_IGNITION_
+      is_signed_var: false
+      len: 1
+      name: START_ignition
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ff1424:
+    id: 18ff1424
+    name: gw_08_18ff1424
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 40
+      enum:
+        0: ELECTRONIC_PARKING_STATE_
+        1: ELECTRONIC_PARKING_STATE_
+      is_signed_var: false
+      len: 3
+      name: Electronic_parking_state
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ff1724:
+    id: 18ff1724
+    name: gw_06_18ff1724
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 20
+      enum:
+        0: AUTOHOLD_STATUS_INDICATOR_
+        1: AUTOHOLD_STATUS_INDICATOR_
+      is_signed_var: false
+      len: 2
+      name: AutoHold_status_indicator
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ff1924:
+    id: 18ff1924
+    name: gw_05_18ff1924
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      enum:
+        0: BRAKE_LIGHT_CONTROL_
+        1: BRAKE_LIGHT_CONTROL_
+      is_signed_var: false
+      len: 2
+      name: Brake_light_control
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 40
+      enum:
+        0: LIFT_FAULT_CODE_
+        1: LIFT_FAULT_CODE_
+      is_signed_var: false
+      len: 4
+      name: Lift_fault_code
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 44
+      description: "PTO\u05F4\u032C"
+      enum:
+        0: PTO_WORKING_STATE_
+        1: PTO_WORKING_STATE_
+        2: PTO_WORKING_STATE_
+        3: PTO_WORKING_STATE_
+        4: PTO_WORKING_STATE_
+      is_signed_var: false
+      len: 4
+      name: PTO_working_state
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ff2df3:
+    id: 18ff2df3
+    name: gw_11_18ff2df3
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 56
+      enum:
+        0: DCDC_CONTROLLER_
+        1: DCDC_CONTROLLER_
+        2: DCDC_CONTROLLER_
+        3: DCDC_CONTROLLER_
+      is_signed_var: false
+      len: 2
+      name: DCDC_controller
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ff30f4:
+    id: 18ff30f4
+    name: gw_12_18ff30f4
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 16
+      name: Total_battery_voltage
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: V
+      precision: 0.1
+      type: double
+    - bit: 16
+      is_signed_var: false
+      len: 16
+      name: Total_battery_current
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: A
+      precision: 0.05
+      type: double
+    - bit: 32
+      is_signed_var: false
+      len: 8
+      name: Battery_capacity_SOC
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: '%'
+      precision: 0.4
+      type: double
+    - bit: 44
+      enum:
+        0: BATTERY_SYSTEM_STATUS_
+        2: BATTERY_SYSTEM_STATUS_
+        6: BATTERY_SYSTEM_STATUS_DCDC
+        12: BATTERY_SYSTEM_STATUS_
+        14: BATTERY_SYSTEM_STATUS_
+      is_signed_var: false
+      len: 4
+      name: Battery_system_status
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 56
+      description: '0x00'
+      is_signed_var: false
+      len: 6
+      name: Fault_code
+      offset: 0.0
+      order: intel
+      physical_range: '[0|63]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 62
+      enum:
+        0: LEVEL_OF_FAILURE_
+        1: LEVEL_OF_FAILURE_
+        2: LEVEL_OF_FAILURE_
+        3: LEVEL_OF_FAILURE_
+      is_signed_var: false
+      len: 2
+      name: Level_of_failure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ff32f4:
+    id: 18ff32f4
+    name: gw_13_18ff32f4
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: Single_cell_MaxTemp
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 24
+      is_signed_var: false
+      len: 8
+      name: Single_cell_Mintemp
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+  18ff422a:
+    id: 18ff422a
+    name: vcu_05_18ff422a
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 16
+      enum:
+        0: LIFTING_CONTROL_OF_THE_CARGO_BOX_
+        1: LIFTING_CONTROL_OF_THE_CARGO_BOX_
+        2: LIFTING_CONTROL_OF_THE_CARGO_BOX_
+        3: LIFTING_CONTROL_OF_THE_CARGO_BOX_
+      is_signed_var: false
+      len: 4
+      name: Lifting_control_of_the_cargo_box
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 20
+      enum:
+        0: HORN_CONTROL_
+        1: HORN_CONTROL_
+      is_signed_var: false
+      len: 4
+      name: Horn_control
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 24
+      enum:
+        0: LIGHTING_ENABLEMENT_
+        1: LIGHTING_ENABLEMENT_
+      is_signed_var: false
+      len: 2
+      name: Lighting_enablement
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 26
+      enum:
+        0: GEAR_ENABLE_
+        1: GEAR_ENABLE_
+      is_signed_var: false
+      len: 2
+      name: Gear_enable
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 28
+      enum:
+        0: LIFT_ENABLE_
+        1: LIFT_ENABLE_
+      is_signed_var: false
+      len: 2
+      name: Lift_enable
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 36
+      enum:
+        0: INTER_AXIS_LOCKING_THRESHOLD_
+        1: INTER_AXIS_LOCKING_THRESHOLD_
+      is_signed_var: false
+      len: 2
+      name: Inter_axis_locking_threshold
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ff452a:
+    id: 18ff452a
+    name: vcu_08_18ff452a
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 0
+      enum:
+        0: DEFROSTING_
+        1: DEFROSTING_
+      is_signed_var: false
+      len: 2
+      name: defrosting
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 2
+      enum:
+        0: HEATING_HEATING_ENABLED_
+        2: HEATING_HEATING_ENABLED_
+      is_signed_var: false
+      len: 2
+      name: Heating_heating_enabled
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 4
+      enum:
+        0: COOLING_GEAR_
+        2: COOLING_GEAR_
+        3: COOLING_GEAR_
+      is_signed_var: false
+      len: 2
+      name: Cooling_gear
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 6
+      enum:
+        0: HEATING_GEAR_
+      is_signed_var: false
+      len: 2
+      name: Heating_gear
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ffc017:
+    id: 18ffc017
+    name: gw_23_18ffc017
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      description: "\u05B50-1000kpa"
+      is_signed_var: false
+      len: 8
+      name: Fa_brake_pressure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: Kpa
+      precision: 4.0
+      type: double
+    - bit: 8
+      description: "\u05B50-1000KPA"
+      is_signed_var: false
+      len: 8
+      name: Ra_brake_pressure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: Kpa
+      precision: 4.0
+      type: double
+    - bit: 16
+      description: "\u05B50to32V"
+      is_signed_var: false
+      len: 8
+      name: Voltage_24V_supply
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: V
+      precision: 0.5
+      type: double
+    - bit: 28
+      enum:
+        0: ON_GEAR_SIGNAL_
+        1: ON_GEAR_SIGNAL_NO
+      is_signed_var: false
+      len: 2
+      name: ON_gear_signal
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 62
+      enum:
+        0: TOTAL_FIRE_SIGNAL_
+        1: TOTAL_FIRE_SIGNAL_
+      is_signed_var: false
+      len: 2
+      name: Total_fire_signal
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ffcc17:
+    id: 18ffcc17
+    name: gw_19_18ffcc17
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 56
+      enum:
+        0: FEEDBACK_SLOW_HANDLE_GEAR_
+        1: FEEDBACK_SLOW_HANDLE_GEAR_
+        2: FEEDBACK_SLOW_HANDLE_GEAR_
+        3: FEEDBACK_SLOW_HANDLE_GEAR_
+      is_signed_var: false
+      len: 3
+      name: Feedback_slow_handle_gear
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ffda2a:
+    id: 18ffda2a
+    name: vcu_02_18ffda2a
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 0
+      enum:
+        0: ADCONTROLMODE_
+        1: ADCONTROLMODE_
+        3: ADCONTROLMODE_
+      is_signed_var: false
+      len: 3
+      name: ADControlMode
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 40
+      enum:
+        0: SLOWSPDLEVERGEARCONTROL_1
+        1: SLOWSPDLEVERGEARCONTROL_16
+        2: SLOWSPDLEVERGEARCONTROL_17
+        3: SLOWSPDLEVERGEARCONTROL_256
+      is_signed_var: false
+      len: 3
+      name: SlowSpdLeverGearControl
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ffdc24:
+    id: 18ffdc24
+    name: gw_01_18ffdc24
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: Pedal_opening
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: '-'
+      precision: 0.4
+      type: double
+    - bit: 8
+      is_signed_var: false
+      len: 16
+      name: Vehicle_speed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: '-'
+      precision: 0.00390625
+      type: double
+    - bit: 24
+      enum:
+        0: DRIVER_COMMANDS_GEAR_N
+        1: DRIVER_COMMANDS_GEAR_D
+        2: DRIVER_COMMANDS_GEAR_R
+        3: DRIVER_COMMANDS_GEAR_L
+      is_signed_var: false
+      len: 4
+      name: Driver_commands_gear
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 28
+      enum:
+        0: CURRENT_GEAR_N
+        1: CURRENT_GEAR_D
+        2: CURRENT_GEAR_R
+        3: CURRENT_GEAR_L
+      is_signed_var: false
+      len: 4
+      name: Current_gear
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 32
+      is_signed_var: false
+      len: 8
+      name: Actual_AccPedalPos
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: '-'
+      precision: 0.4
+      type: double
+    - bit: 40
+      is_signed_var: false
+      len: 8
+      name: Responds_AccepedalPos
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: '-'
+      precision: 0.4
+      type: double
+    - bit: 48
+      is_signed_var: false
+      len: 8
+      name: counter
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 56
+      enum:
+        0: DRIVING_MODE_FEEDBACK_
+        1: DRIVING_MODE_FEEDBACK_
+        2: DRIVING_MODE_FEEDBACK_
+      is_signed_var: false
+      len: 3
+      name: Driving_mode_feedback
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 59
+      enum:
+        0: AUTOPILOT_EXIT_REASONS_
+        1: AUTOPILOT_EXIT_REASONS_
+        2: AUTOPILOT_EXIT_REASONS_
+        3: AUTOPILOT_EXIT_REASONS_
+        4: AUTOPILOT_EXIT_REASONS_
+        5: AUTOPILOT_EXIT_REASONS_
+        6: AUTOPILOT_EXIT_REASONS_
+        7: AUTOPILOT_EXIT_REASONS_
+      is_signed_var: false
+      len: 3
+      name: Autopilot_exit_reasons
+      offset: 0.0
+      order: intel
+      physical_range: '[0|7]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 62
+      enum:
+        0: EMERGENCY_STOP_
+        1: EMERGENCY_STOP_
+      is_signed_var: false
+      len: 2
+      name: Emergency_stop
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  18ffe117:
+    id: 18ffe117
+    name: gw_22_18ffe117
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      enum:
+        0: SMALL_LIGHT_STATUS_
+        1: SMALL_LIGHT_STATUS_
+      is_signed_var: false
+      len: 2
+      name: Small_light_status
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  19ff5417:
+    id: 19ff5417
+    name: gw_21_19ff5417
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 6
+      enum:
+        0: STATE_OF_LIFT_
+        1: STATE_OF_LIFT_
+      is_signed_var: false
+      len: 1
+      name: State_of_lift
+      offset: 0.0
+      order: intel
+      physical_range: '[0|1]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 12
+      enum:
+        0: INTERAXIS_LOCK_THRESHOLD_STATE_
+        1: INTERAXIS_LOCK_THRESHOLD_STATE_
+      is_signed_var: false
+      len: 2
+      name: Interaxis_lock_threshold_state
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  19ffca24:
+    id: 19ffca24
+    name: gw_03_19ffca24
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 40
+      enum:
+        0: GEARBOX_SYSTEM_FAILURE_
+        1: GEARBOX_SYSTEM_FAILURE_
+        2: GEARBOX_SYSTEM_FAILURE_
+      is_signed_var: false
+      len: 4
+      name: Gearbox_system_failure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 44
+      enum:
+        0: EPB_SYSTEM_FAILURE_
+        1: EPB_SYSTEM_FAILURE_
+        2: EPB_SYSTEM_FAILURE_
+      is_signed_var: false
+      len: 4
+      name: EPB_system_failure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 48
+      enum:
+        0: STEERING_SYSTEM_FAILURE_
+        1: STEERING_SYSTEM_FAILURE_
+        2: STEERING_SYSTEM_FAILURE_
+      is_signed_var: false
+      len: 4
+      name: Steering_system_failure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 52
+      enum:
+        0: HIGH_VOLTAGE_SYSTEM_FAULT_
+        1: HIGH_VOLTAGE_SYSTEM_FAULT_
+      is_signed_var: false
+      len: 4
+      name: High_voltage_system_fault
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 56
+      enum:
+        0: BRAKE_SYSTEM_FAILURE_
+        1: BRAKE_SYSTEM_FAILURE_
+        2: BRAKE_SYSTEM_FAILURE_
+      is_signed_var: false
+      len: 4
+      name: Brake_system_failure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 60
+      enum:
+        0: DRIVE_SYSTEM_FAULT_
+        1: DRIVE_SYSTEM_FAULT_
+        2: DRIVE_SYSTEM_FAULT_
+        3: DRIVE_SYSTEM_FAULT_
+      is_signed_var: false
+      len: 4
+      name: Drive_system_fault
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  19ffcb24:
+    id: 19ffcb24
+    name: gw_02_19ffcb24
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 11
+      name: Average_powerConsumption
+      offset: -80.0
+      order: intel
+      physical_range: '[0|2047]'
+      physical_unit: kwh/km
+      precision: 0.1
+      type: double
+    - bit: 16
+      is_signed_var: false
+      len: 11
+      name: Instantaneous_powerConsumption
+      offset: -100.0
+      order: intel
+      physical_range: '[0|2047]'
+      physical_unit: kwh/km
+      precision: 0.1
+      type: double
+  19fff103:
+    id: 19fff103
+    name: gw_18_19fff103
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 56
+      description: '0'
+      enum:
+        0: FAULT_CODE_
+      is_signed_var: false
+      len: 6
+      name: Fault_code
+      offset: 0.0
+      order: intel
+      physical_range: '[0|63]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 62
+      enum:
+        0: LEVEL_OF_FAILURE_
+        1: LEVEL_OF_FAILURE_
+        2: LEVEL_OF_FAILURE_
+        3: LEVEL_OF_FAILURE_
+      is_signed_var: false
+      len: 2
+      name: Level_of_failure
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  8fe6e0b:
+    id: 8fe6e0b
+    name: gw_16_8fe6e0b
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 0
+      description: "\u05B50~0xFAFF"
+      is_signed_var: false
+      len: 16
+      name: FL_wheelSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: '-'
+      precision: 0.00390625
+      type: double
+    - bit: 16
+      description: "\u05B50~0xFAFF"
+      is_signed_var: false
+      len: 16
+      name: FR_wheelSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: '-'
+      precision: 0.00390625
+      type: double
+    - bit: 32
+      description: "\u05B50~0xFAFF"
+      is_signed_var: false
+      len: 16
+      name: RL_WheelSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: '-'
+      precision: 0.00390625
+      type: double
+    - bit: 48
+      description: "\u05B50~0xFAFF"
+      is_signed_var: false
+      len: 16
+      name: RR_wheelSpeed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: '-'
+      precision: 0.00390625
+      type: double
+  cff12fa:
+    id: cff12fa
+    name: gw_25_cff12fa
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 8
+      description: "\u05B5100-4900"
+      is_signed_var: false
+      len: 16
+      name: Wheel_steering_Angle
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+  cff272d:
+    id: cff272d
+    name: eps_01_cff272d
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 16
+      name: EPSSteerAngReq
+      offset: -40.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: deg
+      precision: 0.1
+      type: double
+    - bit: 16
+      enum:
+        0: EPSCTRLREQ_
+        1: EPSCTRLREQ_
+      is_signed_var: false
+      len: 2
+      name: EPSCtrlReq
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  cff5182:
+    id: cff5182
+    name: gw_09_cff5182
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 8
+      is_signed_var: false
+      len: 16
+      name: Actual_motor_torque
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: Nm
+      precision: 1.0
+      type: int
+    - bit: 24
+      is_signed_var: false
+      len: 16
+      name: Motor_speed
+      offset: 0.0
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: rmp
+      precision: 0.25
+      type: double
+    - bit: 40
+      is_signed_var: false
+      len: 8
+      name: Main_motor_temp
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 48
+      is_signed_var: false
+      len: 8
+      name: Main_motor_borad_temp
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 56
+      enum:
+        0: FAULT_CODE_
+      is_signed_var: false
+      len: 6
+      name: Fault_code
+      offset: 0.0
+      order: intel
+      physical_range: '[0|63]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 62
+      enum:
+        0: FAILURELEVEL_
+        1: "FAILURELEVEL_\u04BA"
+        2: FAILURELEVEL_
+        3: FAILURELEVEL_
+      is_signed_var: false
+      len: 2
+      name: FailureLevel
+      offset: 0.0
+      order: intel
+      physical_range: '[0|3]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+  cff5183:
+    id: cff5183
+    name: gw_10_cff5183
+    protocol_type: report
+    sender: GW
+    vars:
+    - bit: 40
+      is_signed_var: false
+      len: 8
+      name: Slave_motor_temp
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 48
+      is_signed_var: false
+      len: 8
+      name: Slave_motor_board_temp
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+  cffd12a:
+    id: cffd12a
+    name: vcu_01_cffd12a
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 0
+      is_signed_var: false
+      len: 8
+      name: ACCpedalPosReq
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: '%'
+      precision: 0.4
+      type: double
+    - bit: 8
+      enum:
+        0: GEARREQ_N
+        32: GEARREQ_D
+        64: GEARREQ_R
+        96: GEARREQ_L
+      is_signed_var: false
+      len: 8
+      name: GearReq
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 16
+      enum:
+        0: BRAKEACTIVEREQ_
+        1: BRAKEACTIVEREQ_
+      is_signed_var: false
+      len: 4
+      name: BrakeActiveReq
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 20
+      enum:
+        0: ACCACTIVESTS_
+        1: ACCACTIVESTS_
+      is_signed_var: false
+      len: 4
+      name: ACCactiveSts
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
+    - bit: 24
+      is_signed_var: false
+      len: 16
+      name: DecelerationReq
+      offset: -15.687
+      order: intel
+      physical_range: '[0|65535]'
+      physical_unit: m/s2
+      precision: 0.000488281
+      type: double
+    - bit: 48
+      is_signed_var: false
+      len: 8
+      name: MsgCnt
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+    - bit: 56
+      is_signed_var: false
+      len: 8
+      name: Checkcum
+      offset: 0.0
+      order: intel
+      physical_range: '[0|255]'
+      physical_unit: ''
+      precision: 1.0
+      type: int
+  df205f6:
+    id: df205f6
+    name: vcu_07_df205f6
+    protocol_type: control
+    sender: VCU
+    vars:
+    - bit: 4
+      enum:
+        0: VEHICLE_POWER_SUPPLY_CTRL_
+        2: VEHICLE_POWER_SUPPLY_CTRL_
+        3: VEHICLE_POWER_SUPPLY_CTRL_REDAY
+      is_signed_var: false
+      len: 4
+      name: Vehicle_Power_supply_ctrl
+      offset: 0.0
+      order: intel
+      physical_range: '[0|15]'
+      physical_unit: ''
+      precision: 1.0
+      type: enum
