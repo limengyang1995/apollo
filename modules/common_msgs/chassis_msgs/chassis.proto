@@ -62,6 +62,13 @@ message Chassis {
     BUMPER_PRESSED = 2;
   }
 
+  enum SteerMode {
+    FRONT_AXLE = 0;
+    FULL_BRIDGE = 1;
+    REAR_AXLE = 2;
+    STEER_MODE_INVALID = 3;
+  }
+
   optional bool engine_started = 3;
 
   // Engine speed in RPM.
@@ -92,6 +99,7 @@ message Chassis {
   // Clockwise: positive
   // CountClockwise:  negative
   optional float rear_steering_percentage = 42 [default = nan];
+  optional SteerMode steer_mode = 44 [default = FRONT_AXLE];
 
   // Applied steering torque in [Nm].
   optional float steering_torque_nm = 12 [default = nan];
@@ -154,6 +162,7 @@ message Chassis {
   // CountClockwise: positive
   optional float steering_percentage_cmd = 37 [default = nan];
   optional float rear_steering_percentage_cmd = 43 [default = nan];
+  optional SteerMode steer_mode_cmd = 45 [default = FRONT_AXLE];
 
 
   optional BumperEvent front_bumper_event = 38;
@@ -189,6 +198,8 @@ message ChassisGPS {
   optional GpsQuality quality = 18;
   optional int32 num_satellites = 19;
   optional double gps_speed = 20;
+  optional double pitch = 21;
+  optional double roll = 22;
 }
 
 enum GpsQuality {

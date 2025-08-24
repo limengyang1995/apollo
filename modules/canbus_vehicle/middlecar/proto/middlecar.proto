@@ -1,0 +1,547 @@
+syntax = "proto2";
+
+package apollo.canbus;
+
+message Vcu_errormsg1_681 {
+// Report Message
+  enum Vcu_dc24errorlevelType {
+    VCU_DC24ERRORLEVEL_NO_FAULT = 0;
+    VCU_DC24ERRORLEVEL_MINOR_FAULT = 1;
+    VCU_DC24ERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_DC24ERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_lowvoltageboxerrorlevelType {
+    VCU_LOWVOLTAGEBOXERRORLEVEL_NO_FAULT = 0;
+    VCU_LOWVOLTAGEBOXERRORLEVEL_MINOR_FAULT = 1;
+    VCU_LOWVOLTAGEBOXERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_LOWVOLTAGEBOXERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_imuerrorlevelType {
+    VCU_IMUERRORLEVEL_NO_FAULT = 0;
+    VCU_IMUERRORLEVEL_MINOR_FAULT = 1;
+    VCU_IMUERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_IMUERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_canbuserrorType {
+    VCU_CANBUSERROR_FCANBUS_FAULT = 0;
+    VCU_CANBUSERROR_RCANBUS_FAULT = 1;
+    VCU_CANBUSERROR_FRCANBUS_FAULT = 2;
+  }
+  enum Vcu_vehicleerrorlevelType {
+    VCU_VEHICLEERRORLEVEL_NO_FAULT = 0;
+    VCU_VEHICLEERRORLEVEL_MINOR_FAULT = 1;
+    VCU_VEHICLEERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_VEHICLEERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_frontmotorerrorlevelType {
+    VCU_FRONTMOTORERRORLEVEL_NO_FAULT = 0;
+    VCU_FRONTMOTORERRORLEVEL_MINOR_FAULT = 1;
+    VCU_FRONTMOTORERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_FRONTMOTORERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_rearmotorerrorlevelType {
+    VCU_REARMOTORERRORLEVEL_NO_FAULT = 0;
+    VCU_REARMOTORERRORLEVEL_MINOR_FAULT = 1;
+    VCU_REARMOTORERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_REARMOTORERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_rightbatteryerrorlevelType {
+    VCU_RIGHTBATTERYERRORLEVEL_NO_FAULT = 0;
+    VCU_RIGHTBATTERYERRORLEVEL_MINOR_FAULT = 1;
+    VCU_RIGHTBATTERYERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_RIGHTBATTERYERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_dc12_1200werrorlevelType {
+    VCU_DC12_1200WERRORLEVEL_NO_FAULT = 0;
+    VCU_DC12_1200WERRORLEVEL_MINOR_FAULT = 1;
+    VCU_DC12_1200WERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_DC12_1200WERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_rightpowererrorlevelType {
+    VCU_RIGHTPOWERERRORLEVEL_NO_FAULT = 0;
+    VCU_RIGHTPOWERERRORLEVEL_MINOR_FAULT = 1;
+    VCU_RIGHTPOWERERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_RIGHTPOWERERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_leftpowererrorlevelType {
+    VCU_LEFTPOWERERRORLEVEL_NO_FAULT = 0;
+    VCU_LEFTPOWERERRORLEVEL_MINOR_FAULT = 1;
+    VCU_LEFTPOWERERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_LEFTPOWERERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_fsderrorlevelType {
+    VCU_FSDERRORLEVEL_FCANBUS_FAULT = 0;
+    VCU_FSDERRORLEVEL_RCANBUS_FAULT = 1;
+    VCU_FSDERRORLEVEL_FRCANBUS_FAULT = 2;
+  }
+  enum Vcu_frontaxleerrorlevelType {
+    VCU_FRONTAXLEERRORLEVEL_NO_FAULT = 0;
+    VCU_FRONTAXLEERRORLEVEL_MINOR_FAULT = 1;
+    VCU_FRONTAXLEERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_FRONTAXLEERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_chassiscontrolboxlevelType {
+    VCU_CHASSISCONTROLBOXLEVEL_NO_FAULT = 0;
+    VCU_CHASSISCONTROLBOXLEVEL_MINOR_FAULT = 1;
+    VCU_CHASSISCONTROLBOXLEVEL_GENERAL_FAULT = 2;
+    VCU_CHASSISCONTROLBOXLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_rearaxleerrorlevelType {
+    VCU_REARAXLEERRORLEVEL_NO_FAULT = 0;
+    VCU_REARAXLEERRORLEVEL_MINOR_FAULT = 1;
+    VCU_REARAXLEERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_REARAXLEERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_leftbatterylevelType {
+    VCU_LEFTBATTERYLEVEL_NO_FAULT = 0;
+    VCU_LEFTBATTERYLEVEL_MINOR_FAULT = 1;
+    VCU_LEFTBATTERYLEVEL_GENERAL_FAULT = 2;
+    VCU_LEFTBATTERYLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_dc12_600wlevelType {
+    VCU_DC12_600WLEVEL_NO_FAULT = 0;
+    VCU_DC12_600WLEVEL_MINOR_FAULT = 1;
+    VCU_DC12_600WLEVEL_GENERAL_FAULT = 2;
+    VCU_DC12_600WLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_frontepslevelType {
+    VCU_FRONTEPSLEVEL_NO_FAULT = 0;
+    VCU_FRONTEPSLEVEL_MINOR_FAULT = 1;
+    VCU_FRONTEPSLEVEL_GENERAL_FAULT = 2;
+    VCU_FRONTEPSLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_rearepslevelType {
+    VCU_REAREPSLEVEL_NO_FAULT = 0;
+    VCU_REAREPSLEVEL_MINOR_FAULT = 1;
+    VCU_REAREPSLEVEL_GENERAL_FAULT = 2;
+    VCU_REAREPSLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_frontbrakelevelType {
+    VCU_FRONTBRAKELEVEL_NO_FAULT = 0;
+    VCU_FRONTBRAKELEVEL_MINOR_FAULT = 1;
+    VCU_FRONTBRAKELEVEL_GENERAL_FAULT = 2;
+    VCU_FRONTBRAKELEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_rearbrakelevelType {
+    VCU_REARBRAKELEVEL_NO_FAULT = 0;
+    VCU_REARBRAKELEVEL_MINOR_FAULT = 1;
+    VCU_REARBRAKELEVEL_GENERAL_FAULT = 2;
+    VCU_REARBRAKELEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_loaderrorlevelType {
+    VCU_LOADERRORLEVEL_NO_FAULT = 0;
+    VCU_LOADERRORLEVEL_MINOR_FAULT = 1;
+    VCU_LOADERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_LOADERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Vcu_remoteerrorlevelType {
+    VCU_REMOTEERRORLEVEL_NO_FAULT = 0;
+    VCU_REMOTEERRORLEVEL_MINOR_FAULT = 1;
+    VCU_REMOTEERRORLEVEL_GENERAL_FAULT = 2;
+    VCU_REMOTEERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  // DCDC_24V_fault_level [] [0|3]
+  optional Vcu_dc24errorlevelType vcu_dc24errorlevel = 1;
+  // Fault_level_of_low-voltage_distribution_box [] [0|3]
+  optional Vcu_lowvoltageboxerrorlevelType vcu_lowvoltageboxerrorlevel = 2;
+  // IMU_fault_level [] [0|3]
+  optional Vcu_imuerrorlevelType vcu_imuerrorlevel = 3;
+  // CAN_bus_fault [] [0|3]
+  optional Vcu_canbuserrorType vcu_canbuserror = 4;
+  // Vehicle_fault_level [] [0|0]
+  optional Vcu_vehicleerrorlevelType vcu_vehicleerrorlevel = 5;
+  // Fault_level_of_front_drive_motor [] [0|3]
+  optional Vcu_frontmotorerrorlevelType vcu_frontmotorerrorlevel = 6;
+  // Fault_level_of_rear_drive_motor [] [0|3]
+  optional Vcu_rearmotorerrorlevelType vcu_rearmotorerrorlevel = 7;
+  // Right_battery_pack_fault_level [] [0|3]
+  optional Vcu_rightbatteryerrorlevelType vcu_rightbatteryerrorlevel = 8;
+  // 1200w_DCDC_12V_fault_level [] [0|3]
+  optional Vcu_dc12_1200werrorlevelType vcu_dc12_1200werrorlevel = 9;
+  // Fault_level_of_right_battery_box [] [0|0]
+  optional Vcu_rightpowererrorlevelType vcu_rightpowererrorlevel = 10;
+  // Left_battery_box_fault_level [] [0|0]
+  optional Vcu_leftpowererrorlevelType vcu_leftpowererrorlevel = 11;
+  // FSD_module_fault_level [] [0|0]
+  optional Vcu_fsderrorlevelType vcu_fsderrorlevel = 12;
+  // Front_axle_fault_level [] [0|0]
+  optional Vcu_frontaxleerrorlevelType vcu_frontaxleerrorlevel = 13;
+  // Fault_level_of_chassis_control_box [] [0|0]
+  optional Vcu_chassiscontrolboxlevelType vcu_chassiscontrolboxlevel = 14;
+  // Rear_axle_fault_level [] [0|0]
+  optional Vcu_rearaxleerrorlevelType vcu_rearaxleerrorlevel = 15;
+  // Left_battery_pack_fault_level [] [0|3]
+  optional Vcu_leftbatterylevelType vcu_leftbatterylevel = 16;
+  // 600W_DCDC_12V_fault_level [] [0|3]
+  optional Vcu_dc12_600wlevelType vcu_dc12_600wlevel = 17;
+  // Front_EPS_fault_level [] [0|3]
+  optional Vcu_frontepslevelType vcu_frontepslevel = 18;
+  // rear_EPS_fault_level [] [0|3]
+  optional Vcu_rearepslevelType vcu_rearepslevel = 19;
+  // Front_brake_fault_level [] [0|3]
+  optional Vcu_frontbrakelevelType vcu_frontbrakelevel = 20;
+  // Rear_brake_fault_level [] [0|3]
+  optional Vcu_rearbrakelevelType vcu_rearbrakelevel = 21;
+  // Load_fault_level [] [0|3]
+  optional Vcu_loaderrorlevelType vcu_loaderrorlevel = 22;
+  // Remote_control_fault_level [] [0|3]
+  optional Vcu_remoteerrorlevelType vcu_remoteerrorlevel = 23;
+}
+
+message Vcu_errormsg2_682 {
+// Report Message
+  enum Vcu_dc24onlineType {
+    VCU_DC24ONLINE_OFFLINE = 0;
+    VCU_DC24ONLINE_ONLINE = 1;
+  }
+  enum Vcu_lowvoltageboxonlineType {
+    VCU_LOWVOLTAGEBOXONLINE_OFFLINE = 0;
+    VCU_LOWVOLTAGEBOXONLINE_ONLINE = 1;
+  }
+  enum Vcu_imuonlineType {
+    VCU_IMUONLINE_OFFLINE = 0;
+    VCU_IMUONLINE_ONLINE = 1;
+  }
+  enum Vcu_loadonlineType {
+    VCU_LOADONLINE_OFFLINE = 0;
+    VCU_LOADONLINE_ONLINE = 1;
+  }
+  enum Vcu_errorcodeType {
+    VCU_ERRORCODE_OFFLINE = 0;
+    VCU_ERRORCODE_ONLINE = 1;
+  }
+  enum Vcu_shortrangremote_onlineType {
+    VCU_SHORTRANGREMOTE_ONLINE_OFFLINE = 0;
+    VCU_SHORTRANGREMOTE_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_frontmotor_onlineType {
+    VCU_FRONTMOTOR_ONLINE_OFFLINE = 0;
+    VCU_FRONTMOTOR_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_fronteps_onlineType {
+    VCU_FRONTEPS_ONLINE_OFFLINE = 0;
+    VCU_FRONTEPS_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_frontbrake_onlineType {
+    VCU_FRONTBRAKE_ONLINE_OFFLINE = 0;
+    VCU_FRONTBRAKE_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_leftbattery_onlineType {
+    VCU_LEFTBATTERY_ONLINE_OFFLINE = 0;
+    VCU_LEFTBATTERY_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_dc12_600w_onlineType {
+    VCU_DC12_600W_ONLINE_OFFLINE = 0;
+    VCU_DC12_600W_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_dc12_1200w_onlineType {
+    VCU_DC12_1200W_ONLINE_OFFLINE = 0;
+    VCU_DC12_1200W_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_rearmotor_onlineType {
+    VCU_REARMOTOR_ONLINE_OFFLINE = 0;
+    VCU_REARMOTOR_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_reareps_onlineType {
+    VCU_REAREPS_ONLINE_OFFLINE = 0;
+    VCU_REAREPS_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_rearbrake_onlineType {
+    VCU_REARBRAKE_ONLINE_OFFLINE = 0;
+    VCU_REARBRAKE_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_rightbattery_onlineType {
+    VCU_RIGHTBATTERY_ONLINE_OFFLINE = 0;
+    VCU_RIGHTBATTERY_ONLINE_ONLINE = 1;
+  }
+  enum Vcu_fsd_onlineType {
+    VCU_FSD_ONLINE_OFFLINE = 0;
+    VCU_FSD_ONLINE_ONLINE = 1;
+  }
+  // DC24V_online_status [] [0|0]
+  optional Vcu_dc24onlineType vcu_dc24online = 1;
+  // Low_voltage_distribution_box_online_status [] [0|0]
+  optional Vcu_lowvoltageboxonlineType vcu_lowvoltageboxonline = 2;
+  // IMU_online_status [] [0|0]
+  optional Vcu_imuonlineType vcu_imuonline = 3;
+  // Load_online_status [] [0|0]
+  optional Vcu_loadonlineType vcu_loadonline = 4;
+  // Life_signals [] [0|0]
+  optional int32 vcu_onlineroulingcounter = 5;
+  // Vehicle_fault_code [] [0|65535]
+  optional Vcu_errorcodeType vcu_errorcode = 6;
+  // Close_range_remote_control_online_status [] [0|1]
+  optional Vcu_shortrangremote_onlineType vcu_shortrangremote_online = 7;
+  // Front_drive_motor_online_status [] [0|1]
+  optional Vcu_frontmotor_onlineType vcu_frontmotor_online = 8;
+  // Front_EPS_online_status [] [0|1]
+  optional Vcu_fronteps_onlineType vcu_fronteps_online = 9;
+  // Front_brake_online_status [] [0|1]
+  optional Vcu_frontbrake_onlineType vcu_frontbrake_online = 10;
+  // Left_battery_pack_online_status [] [0|1]
+  optional Vcu_leftbattery_onlineType vcu_leftbattery_online = 11;
+  // 600W_DCDC_12V_online_status [] [0|1]
+  optional Vcu_dc12_600w_onlineType vcu_dc12_600w_online = 12;
+  // 1200W_DCDC_12V_online_status [] [0|1]
+  optional Vcu_dc12_1200w_onlineType vcu_dc12_1200w_online = 13;
+  // Rear_drive_motor_online_status [] [0|1]
+  optional Vcu_rearmotor_onlineType vcu_rearmotor_online = 14;
+  // Rear_EPS_online_status [] [0|1]
+  optional Vcu_reareps_onlineType vcu_reareps_online = 15;
+  // Rear_brake_online_status [] [0|1]
+  optional Vcu_rearbrake_onlineType vcu_rearbrake_online = 16;
+  // Right_battery_pack_online_status [] [0|1]
+  optional Vcu_rightbattery_onlineType vcu_rightbattery_online = 17;
+  // FSD_online_status [] [0|1]
+  optional Vcu_fsd_onlineType vcu_fsd_online = 18;
+}
+
+message Vcu_fsd_status1_685 {
+// Report Message
+  enum Vcu_fsd_workstatusType {
+    VCU_FSD_WORKSTATUS_NORMAL_OPERATION = 0;
+    VCU_FSD_WORKSTATUS_LIMPING = 1;
+    VCU_FSD_WORKSTATUS_FAULT_PARKING = 2;
+  }
+  enum Vcu_fsd_touchborderType {
+    VCU_FSD_TOUCHBORDER_NO_CONTACT = 0;
+    VCU_FSD_TOUCHBORDER_CONTACT = 1;
+  }
+  enum Vcu_fsd_steermodeType {
+    VCU_FSD_STEERMODE_FRONT_AXLE_STEERING = 0;
+    VCU_FSD_STEERMODE_FULL_BRIDGE_STEERING = 1;
+    VCU_FSD_STEERMODE_REAR_AXLE_STEERING = 2;
+  }
+  enum Vcu_fsd_parkingstatusType {
+    VCU_FSD_PARKINGSTATUS_NOT_PARKED = 0;
+    VCU_FSD_PARKINGSTATUS_PARKING = 1;
+  }
+  enum Vcu_fsd_cmdsourceType {
+    VCU_FSD_CMDSOURCE_NOT_SELECTED = 0;
+    VCU_FSD_CMDSOURCE_FSD = 1;
+    VCU_FSD_CMDSOURCE_CLOSE_RANGE_REMOTE_CONTROL = 2;
+  }
+  enum Vcu_fsd_gear_positionType {
+    VCU_FSD_GEAR_POSITION_N = 0;
+    VCU_FSD_GEAR_POSITION_D = 1;
+    VCU_FSD_GEAR_POSITION_R = 2;
+  }
+  enum Vcu_fsd_spectionmodeType {
+    VCU_FSD_SPECTIONMODE_BENCH_MODE = 0;
+    VCU_FSD_SPECTIONMODE_ECONOMIC_MODEL = 1;
+    VCU_FSD_SPECTIONMODE_STANDARD_MODE = 2;
+    VCU_FSD_SPECTIONMODE_SAND_MODE = 3;
+    VCU_FSD_SPECTIONMODE_RAMP_MODE = 4;
+    VCU_FSD_SPECTIONMODE_MUD_MODE = 5;
+  }
+  enum Vcu_fsd_hvType {
+    VCU_FSD_HV_HIGH_VOLTAGE_NOT_APPLIED = 0;
+    VCU_FSD_HV_HIGH_VOLTAGE = 1;
+  }
+  enum Vcu_fsd_standbyType {
+    VCU_FSD_STANDBY_STANDBY = 0;
+    VCU_FSD_STANDBY_NOT_IN_STANDBY_MODE = 1;
+  }
+  // work_status [] [0|0]
+  optional Vcu_fsd_workstatusType vcu_fsd_workstatus = 1;
+  // Safe_edge_contact_state [] [0|0]
+  optional Vcu_fsd_touchborderType vcu_fsd_touchborder = 2;
+  // steering_mode [] [0|0]
+  optional Vcu_fsd_steermodeType vcu_fsd_steermode = 3;
+  // Vehicle_power_consumption [] [0|127]
+  optional int32 vcu_fsd_vehsoc = 4;
+  // Parking_brake_status [] [0|2]
+  optional Vcu_fsd_parkingstatusType vcu_fsd_parkingstatus = 5;
+  // Current_control_source [] [0|3]
+  optional Vcu_fsd_cmdsourceType vcu_fsd_cmdsource = 6;
+  // Life_signals [] [0|15]
+  optional int32 vcu_fsd_roulingcounter = 7;
+  // gear [] [0|6]
+  optional Vcu_fsd_gear_positionType vcu_fsd_gear_position = 8;
+  // Special_mode_feedback [] [0|15]
+  optional Vcu_fsd_spectionmodeType vcu_fsd_spectionmode = 9;
+  // High_voltage_status_feedback [] [0|1]
+  optional Vcu_fsd_hvType vcu_fsd_hv = 10;
+  // Standby_state_feedback [] [0|1]
+  optional Vcu_fsd_standbyType vcu_fsd_standby = 11;
+}
+
+message Vcu_fsd_status2_686 {
+// Report Message
+  // Vehicle_roll_angle [] [0|0]
+  optional double vcu_fsd_vehroll = 1;
+  // Vehicle_pitch_angle [] [0|0]
+  optional double vcu_fsd_vehpitch = 2;
+  // Current_rear_axle_virtual_steering_wheel_angle [] [-800|1247]
+  optional int32 vcu_fsd_vehrearangle = 3;
+  // Current_vehicle_speed [] [0|102.3]
+  optional double vcu_fsd_vehspeed = 4;
+  // Life_signals [] [0|15]
+  optional int32 vcu_fsd_roulingcounter = 5;
+  // Current_virtual_steering_wheel_angle_of_front_axle [] [-800|1247]
+  optional int32 vcu_fsd_vehfrontangle = 6;
+}
+
+message Fsd_vcu_cmd1_6a0 {
+// Control Message
+  enum Fsd_vcu_cmdsourceType {
+    FSD_VCU_CMDSOURCE_NOT_SELECTED = 0;
+    FSD_VCU_CMDSOURCE_FSD = 1;
+    FSD_VCU_CMDSOURCE_CLOSE_RANGE_REMOTE_CONTROL = 2;
+  }
+  enum Fsd_vcu_specialmodeType {
+    FSD_VCU_SPECIALMODE_BENCH_MODE = 0;
+    FSD_VCU_SPECIALMODE_ECONOMIC_MODEL = 1;
+    FSD_VCU_SPECIALMODE_STANDARD_MODE = 2;
+    FSD_VCU_SPECIALMODE_SAND_MODE = 3;
+    FSD_VCU_SPECIALMODE_RAMP_MODE = 4;
+    FSD_VCU_SPECIALMODE_MUD_MODE = 5;
+  }
+  enum Fsd_vcu_steermodeType {
+    FSD_VCU_STEERMODE_FRONT_AXLE_STEERING = 0;
+    FSD_VCU_STEERMODE_FULL_BRIDGE_STEERING = 1;
+    FSD_VCU_STEERMODE_REAR_AXLE_STEERING = 2;
+  }
+  enum Fsd_vcu_emergstopType {
+    FSD_VCU_EMERGSTOP_NO_EMERGENCY_STOP = 0;
+    FSD_VCU_EMERGSTOP_EMERGENCY_STOP = 1;
+  }
+  enum Fsd_vcu_targearType {
+    FSD_VCU_TARGEAR_N = 0;
+    FSD_VCU_TARGEAR_D = 1;
+    FSD_VCU_TARGEAR_R = 2;
+  }
+  enum Fsd_vcu_parkType {
+    FSD_VCU_PARK_PARKING = 0;
+    FSD_VCU_PARK_RELEASE_PARKING = 1;
+  }
+  // Rear_axle_virtual_steering_wheel_angle [] [-800|1247]
+  optional int32 fsd_vcu_tarvehrearangle = 1;
+  // Brake_opening_degree [] [0|100]
+  optional int32 fsd_vcu_brakepec = 2;
+  // CmdSource [] [0|0]
+  optional Fsd_vcu_cmdsourceType fsd_vcu_cmdsource = 3;
+  // Special_Mode [] [0|15]
+  optional Fsd_vcu_specialmodeType fsd_vcu_specialmode = 4;
+  // steering_mode [] [0|3]
+  optional Fsd_vcu_steermodeType fsd_vcu_steermode = 5;
+  // Target_speed [] [0|0]
+  optional double fsd_vcu_tarvehspeed = 6;
+  // Front_axle_virtual_steering_wheel_angle [] [-800|1247]
+  optional int32 fsd_vcu_tarvehfrontangle = 7;
+  // Maximum_speed_limit [] [0|127]
+  optional int32 fsd_vcu_maxvehspeedlmt = 8;
+  // Emergency_stop [] [0|1]
+  optional Fsd_vcu_emergstopType fsd_vcu_emergstop = 9;
+  // Target_gear [] [0|3]
+  optional Fsd_vcu_targearType fsd_vcu_targear = 10;
+  // parking [] [0|3]
+  optional Fsd_vcu_parkType fsd_vcu_park = 11;
+  // Life_signals [] [0|15]
+  optional int32 fsd_vcu_roulingcounter = 12;
+}
+
+message Fsd_vcu_cmd2_6a2 {
+// Control Message
+  enum Fsd_vcu_loadonlineType {
+    FSD_VCU_LOADONLINE_OFFLINE = 0;
+    FSD_VCU_LOADONLINE_ONLINE = 1;
+  }
+  enum Fsd_vcu_fsderrorlevelType {
+    FSD_VCU_FSDERRORLEVEL_NO_FAULT = 0;
+    FSD_VCU_FSDERRORLEVEL_MINOR_FAULT = 1;
+    FSD_VCU_FSDERRORLEVEL_GENERAL_FAULT = 2;
+    FSD_VCU_FSDERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Fsd_vcu_loaderrorlevelType {
+    FSD_VCU_LOADERRORLEVEL_NO_FAULT = 0;
+    FSD_VCU_LOADERRORLEVEL_MINOR_FAULT = 1;
+    FSD_VCU_LOADERRORLEVEL_GENERAL_FAULT = 2;
+    FSD_VCU_LOADERRORLEVEL_SERIOUS_FAULT = 3;
+  }
+  enum Fsd_vcu_positionlampType {
+    FSD_VCU_POSITIONLAMP_DISABLE = 0;
+    FSD_VCU_POSITIONLAMP_ENABLE = 1;
+  }
+  enum Fsd_vcu_cameracleaningType {
+    FSD_VCU_CAMERACLEANING_DISABLE = 0;
+    FSD_VCU_CAMERACLEANING_ENABLE = 1;
+  }
+  enum Fsd_vcu_infraredlampType {
+    FSD_VCU_INFRAREDLAMP_DISABLE = 0;
+    FSD_VCU_INFRAREDLAMP_ENABLE = 1;
+  }
+  enum Fsd_vcu_foglampType {
+    FSD_VCU_FOGLAMP_DISABLE = 0;
+    FSD_VCU_FOGLAMP_ENABLE = 1;
+  }
+  enum Fsd_vcu_rearlampType {
+    FSD_VCU_REARLAMP_DISABLE = 0;
+    FSD_VCU_REARLAMP_ENABLE = 1;
+  }
+  enum Fsd_vcu_headlampType {
+    FSD_VCU_HEADLAMP_DISABLE = 0;
+    FSD_VCU_HEADLAMP_ENABLE = 1;
+  }
+  enum Fsd_vcu_nearlylampType {
+    FSD_VCU_NEARLYLAMP_DISABLE = 0;
+    FSD_VCU_NEARLYLAMP_ENABLE = 1;
+  }
+  enum Fsd_vcu_hornType {
+    FSD_VCU_HORN_DISABLE = 0;
+    FSD_VCU_HORN_ENABLE = 1;
+  }
+  enum Fsd_vcu_leftturnlampType {
+    FSD_VCU_LEFTTURNLAMP_DISABLE = 0;
+    FSD_VCU_LEFTTURNLAMP_ENABLE = 1;
+  }
+  enum Fsd_vcu_rightturnlampType {
+    FSD_VCU_RIGHTTURNLAMP_DISABLE = 0;
+    FSD_VCU_RIGHTTURNLAMP_ENABLE = 1;
+  }
+  enum Fsd_vcu_standbyenableType {
+    FSD_VCU_STANDBYENABLE_DISABLE = 0;
+    FSD_VCU_STANDBYENABLE_ENABLE = 1;
+  }
+  // Reserved_acceleration_control [] [0|0]
+  optional double fsd_vcu_acceleration = 1;
+  // Load_online_status [] [0|0]
+  optional Fsd_vcu_loadonlineType fsd_vcu_loadonline = 2;
+  // FSD_fault_level [] [0|0]
+  optional Fsd_vcu_fsderrorlevelType fsd_vcu_fsderrorlevel = 3;
+  // Load_fault_level [] [0|0]
+  optional Fsd_vcu_loaderrorlevelType fsd_vcu_loaderrorlevel = 4;
+  // position_light [] [0|0]
+  optional Fsd_vcu_positionlampType fsd_vcu_positionlamp = 5;
+  // Camera_cleaning [] [0|0]
+  optional Fsd_vcu_cameracleaningType fsd_vcu_cameracleaning = 6;
+  // infrared_lamp [] [0|0]
+  optional Fsd_vcu_infraredlampType fsd_vcu_infraredlamp = 7;
+  // fog_light [] [0|0]
+  optional Fsd_vcu_foglampType fsd_vcu_foglamp = 8;
+  // reversing_light [] [0|0]
+  optional Fsd_vcu_rearlampType fsd_vcu_rearlamp = 9;
+  // high_beam [] [0|1]
+  optional Fsd_vcu_headlampType fsd_vcu_headlamp = 10;
+  // low_beam [] [0|1]
+  optional Fsd_vcu_nearlylampType fsd_vcu_nearlylamp = 11;
+  // horn [] [0|1]
+  optional Fsd_vcu_hornType fsd_vcu_horn = 12;
+  // Left_Turn_lamp [] [0|1]
+  optional Fsd_vcu_leftturnlampType fsd_vcu_leftturnlamp = 13;
+  // Right_turn_lamp [] [0|1]
+  optional Fsd_vcu_rightturnlampType fsd_vcu_rightturnlamp = 14;
+  // Standby_Enable [] [0|1]
+  optional Fsd_vcu_standbyenableType fsd_vcu_standbyenable = 15;
+  // Life_signals [] [0|15]
+  optional int32 fsd_vcu_roulingcounter = 16;
+}
+
+message Middlecar {
+  optional Vcu_errormsg1_681 vcu_errormsg1_681 = 1; // report message
+  optional Vcu_errormsg2_682 vcu_errormsg2_682 = 2; // report message
+  optional Vcu_fsd_status1_685 vcu_fsd_status1_685 = 3; // report message
+  optional Vcu_fsd_status2_686 vcu_fsd_status2_686 = 4; // report message
+  optional Fsd_vcu_cmd1_6a0 fsd_vcu_cmd1_6a0 = 5; // control message
+  optional Fsd_vcu_cmd2_6a2 fsd_vcu_cmd2_6a2 = 6; // control message
+}
