@@ -283,7 +283,7 @@ Chassis MiddlecarController::chassis() {
         if (chassis_detail.vcu_fsd_status2_686().has_vcu_fsd_vehrearangle()) {
             chassis_.set_rear_steering_percentage(
                     static_cast<float>(
-                            chassis_detail.vcu_fsd_status2_686().vcu_fsd_vehrearangle() * 100.0
+                            -chassis_detail.vcu_fsd_status2_686().vcu_fsd_vehrearangle() * 100.0
                             / (vehicle_params_.max_steer_angle() * 180 / M_PI)));
         } else {
             chassis_.set_steering_percentage(0);
@@ -504,6 +504,7 @@ void MiddlecarController::Speed(double speed) {
     // TODO(ALL): CHECK YOUR VEHICLE WHETHER SUPPORT THIS DRIVE MODE
     */
     fsd_vcu_cmd1_6a0_->set_fsd_vcu_tarvehspeed(speed * 3.6);
+    fsd_vcu_cmd1_6a0_->set_fsd_vcu_maxvehspeedlmt(20);
 }
 
 // middlecar default, +470 ~ -470 or other, left:+, right:-
@@ -518,7 +519,7 @@ void MiddlecarController::Steer(double angle) {
     }
     /* ADD YOUR OWN CAR CHASSIS OPERATION
      */
-    fsd_vcu_cmd1_6a0_->set_fsd_vcu_tarvehfrontangle(vehicle_params_.max_steer_angle() / M_PI * 180.0 * angle / 100.0);
+    fsd_vcu_cmd1_6a0_->set_fsd_vcu_tarvehfrontangle(-vehicle_params_.max_steer_angle() / M_PI * 180.0 * angle / 100.0);
 }
 
 // middlecar default, steering with new angle and angle speed
@@ -654,23 +655,25 @@ bool MiddlecarController::CheckChassisError() {
     // drive fault
     // brake fault
     */
-    if (chassis_detail.has_vcu_errormsg1_681()){
+    if (chassis_detail.has_vcu_errormsg1_681()) {
         if (chassis_detail.vcu_errormsg1_681().has_vcu_vehicleerrorlevel()) {
-            if(chassis_detail.vcu_errormsg1_681().vcu_vehicleerrorlevel() == Vcu_errormsg1_681::VCU_VEHICLEERRORLEVEL_GENERAL_FAULT ||
-               chassis_detail.vcu_errormsg1_681().vcu_vehicleerrorlevel() == Vcu_errormsg1_681::VCU_VEHICLEERRORLEVEL_SERIOUS_FAULT){ 
+            if (chassis_detail.vcu_errormsg1_681().vcu_vehicleerrorlevel()
+                        == Vcu_errormsg1_681::VCU_VEHICLEERRORLEVEL_GENERAL_FAULT
+                || chassis_detail.vcu_errormsg1_681().vcu_vehicleerrorlevel()
+                        == Vcu_errormsg1_681::VCU_VEHICLEERRORLEVEL_SERIOUS_FAULT) {
                 chassis_.set_error_code(Chassis::CHASSIS_ERROR);
                 return true;
-            }else{
+            } else {
                 chassis_.set_error_code(Chassis::NO_ERROR);
             }
-        }else{
+        } else {
             chassis_.set_error_code(Chassis::CHASSIS_CAN_LOST);
             return true;
         }
-    }else{
+    } else {
         chassis_.set_error_code(Chassis::CHASSIS_CAN_LOST);
         return true;
-        }
+    }
     return false;
 }
 
@@ -691,6 +694,13 @@ void MiddlecarController::SecurityDogThreadFunc() {
     int64_t start = 0;
     int64_t end = 0;
     while (can_sender_->IsRunning()) {
+        if (rolling_counter < 16) {
+            ++rolling_counter;
+        } else {
+            rolling_counter = 0;
+        }
+        fsd_vcu_cmd1_6a0_->set_fsd_vcu_roulingcounter(rolling_counter);
+        can_sender_->Update();
         start = ::apollo::cyber::Time::Now().ToMicrosecond();
         const Chassis::DrivingMode mode = driving_mode();
         bool emergency_mode = false;

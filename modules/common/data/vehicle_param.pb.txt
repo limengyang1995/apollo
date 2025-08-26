@@ -3,22 +3,22 @@ vehicle_param {
   vehicle_id {
       other_unique_id: "chitu001"
   }
-  front_edge_to_center: 2.58
-  back_edge_to_center: 0.7
-  left_edge_to_center: 0.8
-  right_edge_to_center: 0.8
+  front_edge_to_center: 1.417
+  back_edge_to_center: 0.263
+  left_edge_to_center: 0.499
+  right_edge_to_center: 0.499
 
-  length: 3.28
-  width: 1.6
-  height: 1.9
-  min_turn_radius: 4.2
+  length: 1.68
+  width: 0.998
+  height: 0.600
+  min_turn_radius: 4.0
   max_acceleration: 2.0
-  max_deceleration: -2.0
-  max_steer_angle: 0.52
-  max_steer_angle_rate: 0.25
-  steer_ratio: 1.0
-  wheel_base: 2.2
-  wheel_rolling_radius: 0.277
+  max_deceleration: -9.0
+  max_steer_angle: 5.32
+  max_steer_angle_rate: 5.32
+  steer_ratio: 17.0
+  wheel_base: 1.15
+  wheel_rolling_radius: 0.241
   max_abs_speed_when_stopped: 0.2
   brake_deadzone: 6.0
   throttle_deadzone: 0.0

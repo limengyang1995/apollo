@@ -34,113 +34,112 @@ namespace canbus {
 namespace middlecar {
 
 class MiddlecarController final : public VehicleController<::apollo::canbus::Middlecar> {
- public:
+public:
+    MiddlecarController() {};
 
-  MiddlecarController() {};
+    virtual ~MiddlecarController();
 
-  virtual ~MiddlecarController();
+    ::apollo::common::ErrorCode Init(
+            const VehicleParameter& params,
+            CanSender<::apollo::canbus::Middlecar>* const can_sender,
+            MessageManager<::apollo::canbus::Middlecar>* const message_manager) override;
 
-  ::apollo::common::ErrorCode Init(
-      const VehicleParameter& params,
-      CanSender<::apollo::canbus::Middlecar> *const can_sender,
-      MessageManager<::apollo::canbus::Middlecar> *const message_manager) override;
+    bool Start() override;
 
-  bool Start() override;
+    /**
+     * @brief stop the vehicle controller.
+     */
+    void Stop() override;
 
-  /**
-   * @brief stop the vehicle controller.
-   */
-  void Stop() override;
+    /**
+     * @brief calculate and return the chassis.
+     * @returns a copy of chassis. Use copy here to avoid multi-thread issues.
+     */
+    Chassis chassis() override;
 
-  /**
-   * @brief calculate and return the chassis.
-   * @returns a copy of chassis. Use copy here to avoid multi-thread issues.
-   */
-  Chassis chassis() override;
+    /**
+     * @brief add the sender message.
+     */
+    void AddSendMessage() override;
 
-  /**
-   * @brief add the sender message.
-   */
-  void AddSendMessage() override;
+private:
+    // main logical function for operation the car enter or exit the auto driving
+    void Emergency() override;
+    ::apollo::common::ErrorCode EnableAutoMode() override;
+    ::apollo::common::ErrorCode DisableAutoMode() override;
+    ::apollo::common::ErrorCode EnableSteeringOnlyMode() override;
+    ::apollo::common::ErrorCode EnableSpeedOnlyMode() override;
+    ::apollo::common::ErrorCode EnableCloudMode() override;
 
- private:
-  // main logical function for operation the car enter or exit the auto driving
-  void Emergency() override;
-  ::apollo::common::ErrorCode EnableAutoMode() override;
-  ::apollo::common::ErrorCode DisableAutoMode() override;
-  ::apollo::common::ErrorCode EnableSteeringOnlyMode() override;
-  ::apollo::common::ErrorCode EnableSpeedOnlyMode() override;
-  ::apollo::common::ErrorCode EnableCloudMode() override;
+    // NEUTRAL, REVERSE, DRIVE
+    void Gear(Chassis::GearPosition state) override;
 
-  // NEUTRAL, REVERSE, DRIVE
-  void Gear(Chassis::GearPosition state) override;
+    // brake with new acceleration
+    // acceleration:0.00~99.99, unit:
+    // acceleration_spd: 60 ~ 100, suggest: 90
+    void Brake(double acceleration) override;
 
-  // brake with new acceleration
-  // acceleration:0.00~99.99, unit:
-  // acceleration_spd: 60 ~ 100, suggest: 90
-  void Brake(double acceleration) override;
+    // drive with old acceleration
+    // gas:0.00~99.99 unit:
+    void Throttle(double throttle) override;
 
-  // drive with old acceleration
-  // gas:0.00~99.99 unit:
-  void Throttle(double throttle) override;
+    // drive with acceleration/deceleration
+    // acc:-7.0~5.0 unit:m/s^2
+    void Acceleration(double acc) override;
 
-  // drive with acceleration/deceleration
-  // acc:-7.0~5.0 unit:m/s^2
-  void Acceleration(double acc) override;
+    // drive with speed
+    // speed:-xx.0~xx.0 unit:m/s
+    void Speed(double speed);
 
-  // drive with speed
-  // speed:-xx.0~xx.0 unit:m/s
-  void Speed(double speed);
+    // steering with old angle speed
+    // angle:-99.99~0.00~99.99, unit:, left:+, right:-
+    void Steer(double angle) override;
 
-  // steering with old angle speed
-  // angle:-99.99~0.00~99.99, unit:, left:+, right:-
-  void Steer(double angle) override;
+    // steering with new angle speed
+    // angle:-99.99~0.00~99.99, unit:, left:+, right:-
+    // angle_spd:0.00~99.99, unit:deg/s
+    void Steer(double angle, double angle_spd) override;
 
-  // steering with new angle speed
-  // angle:-99.99~0.00~99.99, unit:, left:+, right:-
-  // angle_spd:0.00~99.99, unit:deg/s
-  void Steer(double angle, double angle_spd) override;
+    // set Electrical Park Brake
+    void SetEpbBreak(const control::ControlCommand& command) override;
+    void SetBeam(const common::VehicleSignal& vehicle_signal) override;
+    void SetHorn(const common::VehicleSignal& vehicle_signal) override;
+    void SetTurningSignal(const common::VehicleSignal& vehicle_signal) override;
 
-  // set Electrical Park Brake
-  void SetEpbBreak(const control::ControlCommand& command) override;
-  void SetBeam(const common::VehicleSignal& vehicle_signal) override;
-  void SetHorn(const common::VehicleSignal& vehicle_signal) override;
-  void SetTurningSignal(const common::VehicleSignal& vehicle_signal) override;
+    // set Chassis Command
+    common::ErrorCode HandleCustomOperation(const external_command::ChassisCommand& command) override;
 
-  // set Chassis Command
-  common::ErrorCode HandleCustomOperation(
-      const external_command::ChassisCommand& command) override;
+    // response vid
+    bool VerifyID() override;
+    bool CheckVin();
+    void GetVin();
+    void ResetVin();
+    void ResetProtocol();
+    bool CheckChassisError();
 
-  // response vid
-  bool VerifyID() override;
-  bool CheckVin();
-  void GetVin();
-  void ResetVin();
-  void ResetProtocol();
-  bool CheckChassisError();
+private:
+    void SecurityDogThreadFunc();
+    virtual bool CheckResponse(const int32_t flags, bool need_wait);
+    void set_chassis_error_mask(const int32_t mask);
+    int32_t chassis_error_mask();
+    Chassis::ErrorCode chassis_error_code();
+    void set_chassis_error_code(const Chassis::ErrorCode& error_code);
 
- private:
-  void SecurityDogThreadFunc();
-  virtual bool CheckResponse(const int32_t flags, bool need_wait);
-  void set_chassis_error_mask(const int32_t mask);
-  int32_t chassis_error_mask();
-  Chassis::ErrorCode chassis_error_code();
-  void set_chassis_error_code(const Chassis::ErrorCode& error_code);
+private:
+    // control protocol
+    Fsdvcucmd16a0* fsd_vcu_cmd1_6a0_ = nullptr;
+    Fsdvcucmd26a2* fsd_vcu_cmd2_6a2_ = nullptr;
 
- private:
-  // control protocol
-  Fsdvcucmd16a0* fsd_vcu_cmd1_6a0_ = nullptr;
-  Fsdvcucmd26a2* fsd_vcu_cmd2_6a2_ = nullptr;
+    Chassis chassis_;
+    std::unique_ptr<std::thread> thread_;
+    bool is_chassis_error_ = false;
+    int rolling_counter = 0;
 
-  Chassis chassis_;
-  std::unique_ptr<std::thread> thread_;
-  bool is_chassis_error_ = false;
+    std::mutex chassis_error_code_mutex_;
+    Chassis::ErrorCode chassis_error_code_ = Chassis::NO_ERROR;
 
-  std::mutex chassis_error_code_mutex_;
-  Chassis::ErrorCode chassis_error_code_ = Chassis::NO_ERROR;
-
-  std::mutex chassis_mask_mutex_;
-  int32_t chassis_error_mask_ = 0;
+    std::mutex chassis_mask_mutex_;
+    int32_t chassis_error_mask_ = 0;
 };
 
 }  // namespace middlecar

@@ -414,6 +414,8 @@ ErrorCode VehicleController<SensorType>::Update(const ControlCommand &control_co
         // pad_msg_time_diff: s
         const double pad_msg_time_diff = current_timestamp - control_command.pad_msg().header().timestamp_sec();
         // Execute action to transform driving mode
+        AERROR << "pad msg delay: " << pad_msg_time_diff << " current: " << current_timestamp
+               << " control: " << control_command.pad_msg().header().timestamp_sec();
         if ((FLAGS_chassis_debug_mode || (pad_msg_time_diff < FLAGS_pad_msg_delay_interval))
             && !is_chassis_communication_error_) {
             if (control_command.pad_msg().action() == control::DrivingAction::VIN_REQ) {
@@ -461,12 +463,13 @@ ErrorCode VehicleController<SensorType>::Update(const ControlCommand &control_co
     // AERROR << "enter";
     if (driving_mode() == Chassis::COMPLETE_AUTO_DRIVE || driving_mode() == Chassis::AUTO_SPEED_ONLY) {
         // AERROR << "enter set acc: " << control_command.acceleration();
-        //  Gear(control_command.gear_location());
+        Gear(control_command.gear_location());
         //  Throttle(control_command.throttle());
         // Acceleration(control_command.acceleration());
+        // AINFO << "Receive speed command: " << control_command.speed();
         Speed(control_command.speed());
         Brake(control_command.brake());
-        // SetEpbBreak(control_command);
+        SetEpbBreak(control_command);
         SetLimits();
     }
 
