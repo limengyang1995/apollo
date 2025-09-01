@@ -1,6 +1,6 @@
 load("//tools:apollo_package.bzl", "apollo_cc_binary", "apollo_cc_library", "apollo_cc_test", "apollo_component", "apollo_package")
 load("//tools:cpplint.bzl", "cpplint")
-load("//tools/platform:build_defs.bzl", "if_aarch64", "if_gpu")
+load("//tools/platform:build_defs.bzl", "if_aarch64")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -105,7 +105,7 @@ apollo_cc_library(
         "submodules/evaluator_submodule.cc",
         "submodules/predictor_submodule.cc",
         "submodules/submodule_output.cc",
-    ] + if_aarch64(["common/affine_transform.cc"]),
+    ], 
     hdrs = [
         "common/environment_features.h",
         "common/feature_output.h",
@@ -171,7 +171,7 @@ apollo_cc_library(
         "submodules/evaluator_submodule.h",
         "submodules/predictor_submodule.h",
         "submodules/submodule_output.h",
-    ] + if_aarch64(["common/affine_transform.h"]),
+    ], 
     copts = ["-fopenmp"] + PREDICTION_COPTS,
     linkopts = ["-lgomp"],
     deps = [
@@ -207,10 +207,7 @@ apollo_cc_library(
         "@npp",
         "@opencv//:highgui",
         "@opencv//:imgcodecs",
-    ] + if_gpu(
-        ["@libtorch_gpu"],
-        ["@libtorch_cpu"],
-    ),
+    ] 
 )
 
 apollo_cc_binary(
@@ -224,32 +221,6 @@ apollo_cc_binary(
     ],
 )
 
-apollo_cc_binary(
-    name = "vector_net_offline_data",
-    srcs = ["pipeline/vector_net_offline_data.cc"],
-    copts = [
-        "-DMODULE_NAME=\\\"prediction\\\"",
-    ],
-    deps = [
-        ":apollo_prediction",
-    ],
-)
-
-apollo_cc_binary(
-    name = "records_to_offline_data",
-    srcs = ["pipeline/records_to_offline_data.cc"],
-    copts = [
-        "-DMODULE_NAME=\\\"prediction\\\"",
-    ],
-    linkopts = [
-        "-lgomp",
-    ],
-    deps = [
-        ":apollo_prediction",
-        "@boost",
-        "@com_google_absl//:absl",
-    ],
-)
 
 apollo_cc_binary(
     name = "evaluator_submodule.so",
