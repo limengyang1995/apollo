@@ -1,7 +1,7 @@
 vehicle_param {
-  brand: CHITU
+  brand: AUTEL
   vehicle_id {
-      other_unique_id: "chitu001"
+      other_unique_id: "middlecar001"
   }
   front_edge_to_center: 1.417
   back_edge_to_center: 0.263
