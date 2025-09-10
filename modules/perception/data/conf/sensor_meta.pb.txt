@@ -1,36 +1,8 @@
 sensor_meta {
-    name: "vanjeelidar_up"
+    name: "rslidar"
     type: VELODYNE_128
     orientation: PANORAMIC
     is_main_sensor: true
-}
-sensor_meta {
-    name: "velodyne64"
-    type: VELODYNE_64
-    orientation: PANORAMIC 
-}
-sensor_meta {
-    name: "velodyne16"
-    type: VELODYNE_16
-    orientation: FRONT
-}
-
-sensor_meta {
-    name: "vanjeelidar_left"
-    type: VELODYNE_16
-    orientation: FRONT
-}
-
-sensor_meta {
-    name: "vanjeelidar_right"
-    type: VELODYNE_16
-    orientation: FRONT
-}
-
-sensor_meta {
-    name: "radar_front"
-    type: LONG_RANGE_RADAR
-    orientation: FRONT
 }
 
 sensor_meta {

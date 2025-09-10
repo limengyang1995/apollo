@@ -6,7 +6,7 @@ module_config {
         config {
           name : "compensator"
           config_file_path : "modules/drivers/lidar/compensator/conf/compensator.pb.txt"
-          readers {channel: "/apollo/sensor/lidar/fusion/PointCloud2"}
+          readers {channel: "/apollo/sensor/rslidar/PointCloud2"}
         }
     }
 }

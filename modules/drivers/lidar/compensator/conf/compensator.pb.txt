@@ -1,4 +1,4 @@
 world_frame_id: "world"
 target_frame_id: "novatel"
-transform_query_timeout: 0.15
+transform_query_timeout: 0.1
 output_channel: "/apollo/sensor/lidar/compensator/PointCloud2"

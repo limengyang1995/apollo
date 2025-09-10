@@ -24,7 +24,7 @@ namespace middlecar {
 
 using ::apollo::drivers::canbus::Byte;
 
-const int32_t Fsdvcucmd26a2::ID = 0x6A2;
+const int32_t Fsdvcucmd26a2::ID = 0x2A2;
 
 // public
 Fsdvcucmd26a2::Fsdvcucmd26a2() { Reset(); }

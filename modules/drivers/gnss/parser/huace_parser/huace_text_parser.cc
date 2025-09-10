@@ -95,7 +95,7 @@ bool HuaCeTextParser::PrepareMessage() {
   if (fields.empty()) {
     return false;
   }
-  auto valid_fields = [&]() -> bool {
+  /*auto valid_fields = [&]() -> bool {
     for (size_t i = 1; i < fields.size(); ++i) {
       if (fields[i].empty()) {
         fields[i] = "0";
@@ -109,15 +109,15 @@ bool HuaCeTextParser::PrepareMessage() {
       }
     }
     return true;
-  };
+  };*/
   if (fields[0] == protocol_.GPCHC) {
     if (fields.size() < protocol_.GPCHC_SIZE) {
       AERROR << "GPCHC message format error: " << data_start;
       return false;
     }
-    if (!valid_fields()) {
-      return false;
-    }
+    //if (!valid_fields()) {
+    //  return false;
+    //}
     PrepareMessageGPCHC(fields);
     return true;
   } else if (fields[0] == protocol_.GPCHCX) {
@@ -125,9 +125,9 @@ bool HuaCeTextParser::PrepareMessage() {
       AERROR << "GPCHCX message format error:" << data_start;
       return false;
     }
-    if (!valid_fields()) {
-      return false;
-    }
+    //if (!valid_fields()) {
+    //  return false;
+    //}
     PrepareMessageGPCHCX(fields);
     return true;
   }
@@ -136,11 +136,17 @@ bool HuaCeTextParser::PrepareMessage() {
 
 void HuaCeTextParser::PrepareMessageGPCHC(
     const std::vector<std::string> &fields) {
+  if (fields.size() < 24) {  // 假设 GPCHC 协议有 24 个字段
+    AERROR << "Invalid GPCHC message: field count=" << fields.size();
+    return;  
+  }
   decode_message_.messageID = fields[0];
   decode_message_.GPSWeek = std::stoi(fields[1]);
   decode_message_.GPSTime = std::stod(fields[2]);
   decode_message_.gps_timestamp_sec =
       decode_message_.GPSWeek * SECONDS_PER_WEEK + decode_message_.GPSTime;
+  decode_message_.unix_timestamp_sec =
+      apollo::drivers::util::gps2unix(decode_message_.gps_timestamp_sec);
   decode_message_.Heading = std::stod(fields[3]);
   decode_message_.Pitch = std::stod(fields[4]);
   decode_message_.Roll = std::stod(fields[5]);

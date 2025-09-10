@@ -1,23 +1,10 @@
 extrinsic_file {
     frame_id: "novatel"
-    child_frame_id: "vanjeelidar_up"
-    file_path: "modules/drivers/lidar/vanjeelidar/params/vanjee_up_novatel_extrinsics.yaml"
+    child_frame_id: "rslidar"
+    file_path: "modules/drivers/lidar/rslidar/params/rslidar_novatel_extrinsics.yaml"
     enable: true
 }
 
-extrinsic_file {
-    frame_id: "novatel"
-    child_frame_id: "vanjeelidar_left"
-    file_path: "modules/drivers/lidar/vanjeelidar/params/vanjee_left_novatel_extrinsics.yaml"
-    enable: true
-}
-
-extrinsic_file {
-    frame_id: "novatel"
-    child_frame_id: "vanjeelidar_right"
-    file_path: "modules/drivers/lidar/vanjeelidar/params/vanjee_right_novatel_extrinsics.yaml"
-    enable: true
-}
 extrinsic_file {
     frame_id: "localization"
     child_frame_id: "novatel"
