@@ -533,6 +533,7 @@ void MiddlecarController::Steer(double angle, double angle_spd) {
     }
     /* ADD YOUR OWN CAR CHASSIS OPERATION
      */
+    fsd_vcu_cmd1_6a0_->set_fsd_vcu_tarvehfrontangle(-vehicle_params_.max_steer_angle() / M_PI * 180.0 * angle / 100.0);
 }
 
 void MiddlecarController::SetEpbBreak(const ControlCommand& command) {
