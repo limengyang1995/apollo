@@ -880,6 +880,7 @@ bool RTNet::Init(const std::map<std::string, std::vector<int>> &shapes) {
   cudaDeviceProp prop;
   cudaGetDeviceProperties(&prop, gpu_id_);
   bool int8_mode = checkInt8(prop.name, calibrator_);
+  int8_mode = false;
 
 #ifdef NV_TENSORRT_MAJOR
 #if NV_TENSORRT_MAJOR != 8

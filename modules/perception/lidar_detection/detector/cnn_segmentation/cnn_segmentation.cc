@@ -379,7 +379,51 @@ void CNNSegmentation::GetObjectsFromSppEngine(
     ++valid;
   }
   objects->resize(valid);
+  
+  int pedestrian_count = 0;
+  int vehicle_count = 0; 
+  int bicycle_count = 0;
+  int unknown_count = 0;
 
+  for (size_t i = 0; i < valid; ++i) {
+    auto& object = objects->at(i);
+    if (model_param_.do_classification()) {
+      switch (object->type) {
+        case base::ObjectType::PEDESTRIAN:
+          pedestrian_count++;
+          AINFO << " Pedestrian #" << i << " - confidence: " << object->confidence 
+                << ", points: " << object->lidar_supplement.cloud.size();
+          break;
+        case base::ObjectType::VEHICLE:
+          vehicle_count++;
+          AINFO << " Vehicle #" << i << " - confidence: " << object->confidence
+                << ", points: " << object->lidar_supplement.cloud.size();
+          break;
+        case base::ObjectType::BICYCLE:
+          bicycle_count++;
+          AINFO << " Bicycle #" << i << " - confidence: " << object->confidence
+                << ", points: " << object->lidar_supplement.cloud.size();
+          break;
+        case base::ObjectType::UNKNOWN:
+        default:
+          unknown_count++;
+          AINFO << "Unknown #" << i << " - confidence: " << object->confidence
+                << ", points: " << object->lidar_supplement.cloud.size();
+          break;
+      }
+
+      if (object->type_probs.size() >= static_cast<int>(base::ObjectType::MAX_OBJECT_TYPE)) {
+        AINFO << " Type probabilities - Pedestrian: " 
+              << object->type_probs[static_cast<int>(base::ObjectType::PEDESTRIAN)]
+              << ", Vehicle: " << object->type_probs[static_cast<int>(base::ObjectType::VEHICLE)]
+              << ", Bicycle: " << object->type_probs[static_cast<int>(base::ObjectType::BICYCLE)]
+              << ", Unknown: " << object->type_probs[static_cast<int>(base::ObjectType::UNKNOWN)];
+      }
+    } else {
+      AINFO << "Object #" << i << " - confidence: " << object->confidence
+            << ", points: " << object->lidar_supplement.cloud.size() << " (no classification)";
+    }
+  }
   // add additional object seg logic with segmentor if cnnseg miss detects
   if (model_param_.fill_recall_with_segmentor()) {
     mask.GetValidIndices(&lidar_frame_ref_->secondary_indices);

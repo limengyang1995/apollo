@@ -371,13 +371,13 @@ bool CenterPointDetection::Detect(const LidarDetectorOptions &options,
   SetPointsInROI(&frame->segmented_objects);
 
   postprocess_time_ = timer.toc(true);
-  /* AERROR<< "down sample: " << downsample_time_ << "\t"
+   AERROR<< "down sample: " << downsample_time_ << "\t"
         << "fuse: " << fuse_time_ << "\t"
         << "shuffle: " << shuffle_time_ << "\t"
         << "cloud_to_array: " << cloud_to_array_time_ << "\t"
         << "inference: " << inference_time_ << "\t"
         << "postprocess: " << postprocess_time_ << "\t"
-        << "nms: " << nms_time_ << "\t"; */
+        << "nms: " << nms_time_ << "\t"; 
 
   std::stringstream ssstr;
   ssstr << "[CenterPointDetection AfterNMS] "
