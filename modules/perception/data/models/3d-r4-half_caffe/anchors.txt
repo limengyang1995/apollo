@@ -1,1 +1,0 @@
-/opt/apollo/neo/share/modules/perception/data/models/3d-r4-half_caffe/anchors.txt
