@@ -43,9 +43,9 @@ void BaseMapNodePool::Initial(const BaseMapConfig* map_config,
 }
 
 void BaseMapNodePool::Release() {
-  if (node_reset_workers_.valid()) {
-    node_reset_workers_.get();
-  }
+  // if (node_reset_workers_.valid()) {
+  //   node_reset_workers_.get();
+  // }
   for (BaseMapNode* node : free_list_) {
     FinalizeMapNode(node);
     DellocMapNode(node);
@@ -60,11 +60,11 @@ void BaseMapNodePool::Release() {
 }
 
 BaseMapNode* BaseMapNodePool::AllocMapNode() {
-  if (free_list_.empty()) {
-    if (node_reset_workers_.valid()) {
-      node_reset_workers_.wait();
-    }
-  }
+  // if (free_list_.empty()) {
+  //   if (node_reset_workers_.valid()) {
+  //     node_reset_workers_.wait();
+  //   }
+  // }
   boost::unique_lock<boost::mutex> lock(mutex_);
   if (free_list_.empty()) {
     if (is_fixed_size_) {

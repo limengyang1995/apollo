@@ -121,6 +121,105 @@ void NdtMapNode::Reduce(NdtMapNode* map_node, const NdtMapNode& map_node_new) {
       static_cast<const NdtMapMatrix&>(*map_node_new.map_matrix_));
 }
 
+/**
+ * @brief 将XY栅格内容保存为文本文件
+ *
+ * @param path 文件所在目录的路径
+ * @return true
+ * @return false
+ */
+bool NdtMapNode::SaveText(const std::string& path) const {
+    const MapNodeIndex& index = GetMapNodeIndex();  // 节点index
+    // 构造文件名
+    std::string file_name = "MapNode_" + std::to_string(index.m_) + "_" + std::to_string(index.n_) + ".txt";
+    if (path.back() != '/') {
+        file_name = path + "/" + file_name;
+    } else {
+        file_name = path + file_name;
+    }
+    std::cout << "[NdtMapNode::SaveText] file_name = " << file_name << "\n";
+
+    std::fstream file(file_name, std::ios::out);
+    if (file.is_open()) {
+        std::deque<std::string> txt_que;
+        // NdtMapMatrix* matrix = dynamic_cast<NdtMapMatrix*>(map_matrix_.get());
+
+        std::shared_ptr<NdtMapMatrix> matrix = std::dynamic_pointer_cast<NdtMapMatrix>(map_matrix_);
+
+        // 有数据的栅格数量
+        int valid_grid_num = matrix->CheckValidGrid();
+        std::cout << "[NdtMapNode::SaveText] valid_grid_num = " << valid_grid_num << "\n";
+
+        // 栅格数据转文本
+        matrix->CreateText(txt_que);
+
+        for (auto& data : txt_que) {
+            file << data << std::endl;
+        }
+        file.close();
+        std::cout << "[NdtMapNode::SaveText] save map_node txt succeed!\n";
+    } else {
+        std::cerr << "Unable to open file: " << file_name << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool NdtMapNode::SaveByCereal() {
+  SaveIntensityImage();
+  SaveAltitudeImage();
+
+  std::string path = map_config_->map_folder_path_;
+
+  char buf[1024];
+  std::vector<std::string> paths;
+
+  paths.push_back(path);
+
+  snprintf(buf, sizeof(buf), "/map");
+  paths.push_back(buf);
+  path = path + buf;
+
+  snprintf(buf, sizeof(buf), "/%03u",
+           map_node_config_->node_index_.resolution_id_);
+  paths.push_back(buf);
+  path = path + buf;
+
+  paths.push_back(map_node_config_->node_index_.zone_id_ > 0 ? "/north"
+                                                             : "/south");
+  path = path + paths.back();
+
+  snprintf(buf, sizeof(buf), "/%02d",
+           abs(map_node_config_->node_index_.zone_id_));
+  paths.push_back(buf);
+  path = path + buf;
+
+  snprintf(buf, sizeof(buf), "/%08d", map_node_config_->node_index_.m_);
+  paths.push_back(buf);
+  path = path + buf;
+
+  if (!CreateMapDirectoryRecursively(paths)) {
+    return false;
+  }
+
+  snprintf(buf, sizeof(buf), "/%08d", map_node_config_->node_index_.n_);
+  path = path + buf;
+  std::string path_name = path + ".json";
+
+  std::ofstream os(path_name);
+  if(!os.is_open()) {
+    std::cerr << "can not open file: " << path_name << "\n";
+    return false;
+  }
+ // kx cereal
+//   cereal::JSONOutputArchive archive(os);
+//   archive(*this);
+
+  return true;
+}
+
+
 }  // namespace pyramid_map
 }  // namespace msf
 }  // namespace localization

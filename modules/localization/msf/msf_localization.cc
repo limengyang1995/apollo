@@ -31,7 +31,6 @@ namespace apollo {
 namespace localization {
 
 using apollo::common::Status;
-#define PI 3.1415926535897932346
 
 MSFLocalization::MSFLocalization()
     : monitor_logger_(
@@ -74,9 +73,9 @@ void MSFLocalization::InitParams() {
   localization_param_.imu_lidar_max_delay_time = FLAGS_lidar_imu_max_delay_time;
   localization_param_.if_use_avx = FLAGS_if_use_avx;
 
-  ADEBUG << "map: " << localization_param_.map_path;
-  ADEBUG << "lidar_extrin: " << localization_param_.lidar_extrinsic_file;
-  ADEBUG << "lidar_height: " << localization_param_.lidar_height_file;
+  AINFO << "map: " << localization_param_.map_path;
+  AINFO << "lidar_extrin: " << localization_param_.lidar_extrinsic_file;
+  AINFO << "lidar_height: " << localization_param_.lidar_height_file;
 
   localization_param_.utm_zone_id = FLAGS_local_utm_zone_id;
   // try load zone id from local_map folder
@@ -87,7 +86,7 @@ void MSFLocalization::InitParams() {
       AWARN << "Can't load utm zone id from map folder, use default value.";
     }
   }
-  ADEBUG << "utm zone id: " << localization_param_.utm_zone_id;
+  AINFO << "utm zone id: " << localization_param_.utm_zone_id;
 
   // vehicle imu extrinsic
   imu_vehicle_quat_.x() = FLAGS_imu_vehicle_qx;
@@ -104,7 +103,7 @@ void MSFLocalization::InitParams() {
     double qz = 0.0;
     double qw = 0.0;
 
-    ADEBUG << "Vehile imu file: " << FLAGS_vehicle_imu_file;
+    AINFO << "Vehile imu file: " << FLAGS_vehicle_imu_file;
     if (LoadImuVehicleExtrinsic(FLAGS_vehicle_imu_file, &qx, &qy, &qz, &qw,
                                 &imu_vehicle_translation_)) {
       imu_vehicle_quat_.x() = qx;
@@ -115,7 +114,7 @@ void MSFLocalization::InitParams() {
       AWARN << "Can't load imu vehicle quat from file, use default value.";
     }
   }
-  ADEBUG << "imu_vehicle_quat: " << imu_vehicle_quat_.x() << " "
+  AINFO << "imu_vehicle_quat: " << imu_vehicle_quat_.x() << " "
         << imu_vehicle_quat_.y() << " " << imu_vehicle_quat_.z() << " "
         << imu_vehicle_quat_.w();
 
@@ -140,7 +139,7 @@ void MSFLocalization::InitParams() {
     double uncertainty_x = 0.0;
     double uncertainty_y = 0.0;
     double uncertainty_z = 0.0;
-    ADEBUG << "Ant imu lever arm file: " << FLAGS_ant_imu_leverarm_file;
+    AINFO << "Ant imu lever arm file: " << FLAGS_ant_imu_leverarm_file;
     ACHECK(LoadGnssAntennaExtrinsic(FLAGS_ant_imu_leverarm_file, &offset_x,
                                     &offset_y, &offset_z, &uncertainty_x,
                                     &uncertainty_y, &uncertainty_z));
@@ -153,7 +152,7 @@ void MSFLocalization::InitParams() {
     localization_param_.imu_to_ant_offset.uncertainty_y = uncertainty_y;
     localization_param_.imu_to_ant_offset.uncertainty_z = uncertainty_z;
 
-    ADEBUG << localization_param_.imu_to_ant_offset.offset_x << " "
+    AINFO << localization_param_.imu_to_ant_offset.offset_x << " "
           << localization_param_.imu_to_ant_offset.offset_y << " "
           << localization_param_.imu_to_ant_offset.offset_z << " "
           << localization_param_.imu_to_ant_offset.uncertainty_x << " "
@@ -252,6 +251,7 @@ void MSFLocalization::OnRawImuCache(
   if (imu_msg) {
     std::unique_lock<std::mutex> lock(mutex_imu_msg_);
     raw_imu_msg_ = const_cast<std::shared_ptr<drivers::gnss::Imu> &>(imu_msg);
+
   }
 }
 
@@ -338,7 +338,7 @@ void MSFLocalization::CompensateImuVehicleExtrinsic(
   // set heading according to rotation of vehicle
   posepb_loc->set_heading(common::math::QuaternionToHeading(
       quat_vehicle_world.w(), quat_vehicle_world.x(), quat_vehicle_world.y(),
-      quat_vehicle_world.z()) );
+      quat_vehicle_world.z()));
 
   // set euler angles according to rotation of vehicle
   apollo::common::Point3D *eulerangles = posepb_loc->mutable_euler_angles();

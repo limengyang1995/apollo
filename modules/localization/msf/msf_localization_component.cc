@@ -100,9 +100,19 @@ bool MSFLocalizationComponent::InitIO() {
   return true;
 }
 
+std::ofstream imu_file("/apollo_workspace/data/bag/imu_data_msg.txt", std::ios::out | std::ios::app); 
 bool MSFLocalizationComponent::Proc(
     const std::shared_ptr<drivers::gnss::Imu>& imu_msg) {
   localization_.OnRawImuCache(imu_msg);
+  // test imu data save
+  imu_file<<std::setprecision(18)<<imu_msg->measurement_time()<<","
+                                 <<imu_msg->linear_acceleration().x()<<","
+                                 <<imu_msg->linear_acceleration().y()<<","
+                                 <<imu_msg->linear_acceleration().z()<<","
+                                 <<imu_msg->angular_velocity().x()<<","
+                                 <<imu_msg->angular_velocity().y()<<","
+                                 <<imu_msg->angular_velocity().z()<<std::endl;
+
   return true;
 }
 
@@ -175,6 +185,8 @@ void LocalizationMsgPublisher::PublishPoseBroadcastTF(
 
 void LocalizationMsgPublisher::PublishPoseBroadcastTopic(
     const LocalizationEstimate& localization) {
+
+  std::cout<<"publish /apollo/localization/pose"<<std::endl;
   double cur_system_time = localization.header().timestamp_sec();
   if (pre_system_time_ > 0.0 && cur_system_time - pre_system_time_ > 0.02) {
     AERROR << std::setprecision(16)

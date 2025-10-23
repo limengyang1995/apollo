@@ -30,6 +30,11 @@ class NdtMapNodeConfig : public BaseMapNodeConfig {
   ~NdtMapNodeConfig();
 
   std::shared_ptr<BaseMapNodeConfig> Clone();
+  template <class Archive>
+  void serialize( Archive & ar )
+  {
+    ar( node_index_,map_version_ );
+  }
 };
 
 }  // namespace pyramid_map

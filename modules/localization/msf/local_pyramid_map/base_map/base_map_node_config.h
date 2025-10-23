@@ -56,6 +56,14 @@ class BaseMapNodeConfig {
   size_t body_size_ = 0;
   bool has_map_version_ = true;
   bool has_body_md5_ = true;
+
+  // kx cereal
+  // template <class Archive>
+  // void serialize( Archive & ar )
+  // {
+  //   ar(node_index_);
+  // }
+
 };
 
 }  // namespace pyramid_map

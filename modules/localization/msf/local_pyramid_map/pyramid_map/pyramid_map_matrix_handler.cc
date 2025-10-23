@@ -42,7 +42,7 @@ PyramidMapMatrixHandlerSelector::AllocPyramidMapMatrixHandler(
       return new PyramidLosslessMapMatrixHandler();
     case MapVersion::UNKNOWN:
     default:
-      ADEBUG << "Unknown map version!";
+      AINFO << "Unknown map version!";
   }
   return nullptr;
 }

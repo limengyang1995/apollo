@@ -28,6 +28,10 @@
 #include "modules/localization/msf/local_pyramid_map/base_map/base_map_node_config.h"
 #include "modules/localization/msf/local_pyramid_map/base_map/base_map_node_index.h"
 
+#include "modules/localization/msf/cereal/include/cereal/archives/json.hpp"
+#include "modules/localization/msf/cereal/include/cereal/types/vector.hpp"
+#include "modules/localization/msf/cereal/include/cereal/types/string.hpp"
+
 namespace apollo {
 namespace localization {
 namespace msf {
@@ -64,6 +68,8 @@ class BaseMapNode {
   /**@brief Load the map node from the disk. */
   bool Load();
   bool Load(const char* filename);
+
+  virtual bool SaveByCereal();
 
   /**@brief Given the global coordinate, get the local 2D coordinate of the map
    * cell matrix.

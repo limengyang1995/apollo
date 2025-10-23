@@ -108,7 +108,7 @@ void LocalizationGnssProcess::RawObservationProcess(
       "user %u time:%12.3f sat_num:%d obs_delay:%12.3f%16.3f%16.3f%16.3f\n",
       raw_obs.receiver_id(), raw_obs.gnss_second_s(), raw_obs.sat_obs_num(),
       obs_delay, obs_xyz[0], obs_xyz[1], obs_xyz[2]);
-  ADEBUG << message;
+  AINFO << message;
 
   EpochObservationMsg raw_obs_msg;
   GnssMagTransfer::Transfer(raw_obs, &raw_obs_msg);
@@ -151,7 +151,7 @@ void LocalizationGnssProcess::RawEphemerisProcess(
   ++eph_counter;
   // printf("received a gnss ephemeris: %d!\n", eph_counter);
   if (DuplicateEph(gnss_orbit)) {
-    ADEBUG << "received an existed gnss ephemeris!";
+    AINFO << "received an existed gnss ephemeris!";
     return;
   }
 
@@ -299,7 +299,7 @@ inline void LocalizationGnssProcess::LogPnt(const GnssPntResultMsg &rover_pnt,
            rover_pnt.pdop(), ratio, rover_pnt.vel_x_m(), rover_pnt.vel_y_m(),
            rover_pnt.vel_z_m(), rover_pnt.std_pos_x_m(),
            rover_pnt.std_pos_y_m(), rover_pnt.std_pos_z_m());
-  ADEBUG << print_infor;
+  AINFO << print_infor;
 }
 
 bool LocalizationGnssProcess::GnssPosition(EpochObservationMsg *raw_rover_obs) {

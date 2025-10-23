@@ -1,0 +1,26 @@
+module_config {
+  module_library : "modules/localization/multisf/libmultisf_component.so"
+  components {
+    class_name : "Multisf"
+    config {
+      name : "multisf"
+      config_file_path: "modules/localization/multisf/conf/multisf.pb.txt"
+      flag_file_path: "modules/localization/multisf/conf/multisf.conf"
+      readers: [
+        {
+          channel: "/apollo/sensor/gnss/imu"
+          qos_profile: {
+            depth : 20
+          }
+          pending_queue_size: 200
+        }
+      ]
+    }
+  }
+}
+
+
+
+
+
+        

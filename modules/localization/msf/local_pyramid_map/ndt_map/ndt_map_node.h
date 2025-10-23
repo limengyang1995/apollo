@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include <deque>
+#include <fstream>
 #include "Eigen/Core"
 
 #include "modules/localization/msf/common/util/file_utility.h"
@@ -59,10 +61,24 @@ class NdtMapNode : public BaseMapNode {
    * The result is saved in map_node. */
   static void Reduce(NdtMapNode* map_node, const NdtMapNode& map_node_new);
 
+  /**@brief 将XY栅格内容保存为文本文件 */
+  bool SaveText(const std::string& path) const;
+
   /**@brief The number of cells with elements.*/
   unsigned int num_valid_cells_;
   /**@brief The number of single cells with elements. */
   unsigned int num_valid_single_cells_;
+
+    // kx cereal
+  // template <class Archive>
+  // void serialize( Archive & ar )
+  // {
+  //   ar(index_, map_node_config_);
+  // }
+
+  bool SaveByCereal();
+
+
 };
 
 }  // namespace pyramid_map

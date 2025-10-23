@@ -92,7 +92,7 @@ void LocalizationLidar::SetVelodyneExtrinsic(const Eigen::Affine3d& pose) {
 
 void LocalizationLidar::SetVehicleHeight(double height) {
   vehicle_lidar_height_ = height;
-  ADEBUG << "Set height: " << vehicle_lidar_height_;
+  AINFO << "Set height: " << vehicle_lidar_height_;
 }
 
 void LocalizationLidar::SetValidThreshold(float valid_threashold) {
@@ -124,7 +124,7 @@ int LocalizationLidar::Update(const unsigned int frame_idx,
     map_.LoadMapArea(pose.translation(), resolution_id_, zone_id_,
                      search_range_x_, search_range_y_);
     is_map_loaded_ = true;
-    ADEBUG << "Reflectance locator map first loading is done.";
+    AINFO << "Reflectance locator map first loading is done.";
   }
 
   Eigen::Affine3d imu_pose = pose;

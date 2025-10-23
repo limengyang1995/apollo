@@ -168,6 +168,13 @@ int main(int argc, char** argv) {
     const EigenAffine3dVec& pcd_poses_i = pcd_poses[i];
     for (unsigned int frame_idx = 0; frame_idx < pcd_poses_i.size();
          ++frame_idx) {
+      // 超过200帧停止，for debug
+      if (frame_idx > 200) {
+        std::string folder_path = "/apollo_workspace/data/apollo_data/test_matrix_file/";
+        ndt_map.SaveNodeText(folder_path);
+        break;
+      }
+
       apollo::localization::msf::velodyne::VelodyneFrame velodyne_frame;
       std::string pcd_file_path = absl::StrCat(
           pcd_folder_paths[i], "/", pcd_indices[i][frame_idx], ".pcd");

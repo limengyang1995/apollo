@@ -75,7 +75,7 @@ BaseMapNode* BaseMap::GetMapNodeSafe(const MapNodeIndex& index) {
   boost::unique_lock<boost::recursive_mutex> lock2(map_load_mutex_);
   success = map_node_cache_lvl2_->Get(index, &node);
   if (success) {
-    node->SetIsReserved(true);
+    // node->SetIsReserved(true); // 20250707注释
     map_node_cache_lvl1_->Put(index, node);
     lock2.unlock();
     return node;
@@ -86,7 +86,8 @@ BaseMapNode* BaseMap::GetMapNodeSafe(const MapNodeIndex& index) {
   std::cerr << "GetMapNodeSafe: This node don't exist in cache! " << std::endl
             << "load this node from disk now!" << index << std::endl;
 
-  LoadMapNodeThreadSafety(index, true);
+  LoadMapNodeThreadSafety(index, false);
+  std::cout << "[BaseMap::GetMapNodeSafe] LoadMapNodeThreadSafety end!\n";
 
   boost::unique_lock<boost::recursive_mutex> lock3(map_load_mutex_);
   map_node_cache_lvl2_->Get(index, &node);
@@ -213,9 +214,9 @@ void BaseMap::PreloadMapNodes(std::set<MapNodeIndex>* map_ids) {
   // load form disk sync
   std::vector<std::future<void>> preload_futures;
   itr = map_ids->begin();
-  ADEBUG << "Preload map node size: " << map_ids->size();
+  AINFO << "Preload map node size: " << map_ids->size();
   while (itr != map_ids->end()) {
-    ADEBUG << "Preload map node: " << *itr << std::endl;
+    AINFO << "Preload map node: " << *itr << std::endl;
     boost::unique_lock<boost::recursive_mutex> lock3(map_load_mutex_);
     map_preloading_task_index_.insert(*itr);
     lock3.unlock();
@@ -230,21 +231,24 @@ void BaseMap::LoadMapNodeThreadSafety(const MapNodeIndex& index,
   BaseMapNode* map_node = nullptr;
   while (map_node == nullptr) {
     map_node = map_node_pool_->AllocMapNode();
+    std::cout << "[BaseMap::LoadMapNodeThreadSafety] AllocMapNode(): map_node = " << map_node << "\n";
     if (map_node == nullptr) {
       boost::unique_lock<boost::recursive_mutex> lock(map_load_mutex_);
       BaseMapNode* node_remove = map_node_cache_lvl2_->ClearOne();
+      std::cout << "[BaseMap::LoadMapNodeThreadSafety] ClearOne(): node_remove = " << node_remove << "\n";
       lock.unlock();
       if (node_remove) {
-        map_node_pool_->FreeMapNode(node_remove);
+        map_node_pool_->FreeMapNodeTask(node_remove);
+        std::cout << "[BaseMap::LoadMapNodeThreadSafety] FreeMapNodeTask(node_remove) end!\n";
       }
     }
   }
   map_node->SetMapNodeIndex(index);
 
   if (!map_node->Load()) {
-    ADEBUG << "Created map node: " << index;
+    AINFO << "Created map node: " << index;
   } else {
-    ADEBUG << "Loaded map node: " << index;
+    AINFO << "Loaded map node: " << index;
   }
   map_node->SetIsReserved(is_reserved);
   boost::unique_lock<boost::recursive_mutex> lock(map_load_mutex_);
@@ -256,7 +260,8 @@ void BaseMap::LoadMapNodeThreadSafety(const MapNodeIndex& index,
   }
   lock.unlock();
   if (node_remove) {
-    map_node_pool_->FreeMapNode(node_remove);
+    map_node_pool_->FreeMapNodeTask(node_remove);
+    std::cout << "[BaseMap::LoadMapNodeThreadSafety] after preloading set erase, FreeMapNodeTask(node_remove) end! node_remove = " << node_remove << "\n";
   }
 }
 

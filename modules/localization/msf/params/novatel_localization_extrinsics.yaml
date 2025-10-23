@@ -1,9 +1,9 @@
 child_frame_id: novatel
 transform:
   translation:
-    x: 0.07
-    y: 2.365
-    z: 0.735
+    x: 0.0
+    y: 0.0
+    z: 0.0
   rotation:
     x: 0.0
     y: 0.0

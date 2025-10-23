@@ -1,1 +1,0 @@
-/opt/apollo/neo/share/modules/perception/data/models/cnnseg64_caffe/BUILD

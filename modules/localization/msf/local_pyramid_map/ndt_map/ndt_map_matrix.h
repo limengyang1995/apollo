@@ -20,11 +20,15 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <string>
+#include <sstream>
+#include <deque>
 
 #include "Eigen/Eigenvalues"
 
 #include "modules/localization/msf/local_pyramid_map/base_map/base_map_config.h"
 #include "modules/localization/msf/local_pyramid_map/base_map/base_map_matrix.h"
+
 
 namespace apollo {
 namespace localization {
@@ -70,6 +74,15 @@ class NdtMapSingleCell {
   void CentroidEigenSolver(const Eigen::Matrix3f& centroid_cov);
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  /**@brief 数据转文本 for debug */
+  void CreateText(std::deque<std::string>& txt_que);
+
+  template <class Archive>
+  void serialize( Archive & ar )
+  {
+    ar( intensity_, intensity_var_, count_, is_icov_available_);
+  }
 
  public:
   /**@brief The average intensity value. */
@@ -125,6 +138,16 @@ class NdtMapCells {
 
   /**@brief Combine two MapCell instances (Reduce). */
   static void Reduce(NdtMapCells* cell, const NdtMapCells& cell_new);
+
+  /**@brief 数据转文本 for debug */
+  void CreateText(std::deque<std::string>& txt_que);
+
+    // kx cereal
+  // template <class Archive>
+  // void serialize( Archive & ar )
+  // {
+  //   ar( cells_, max_altitude_index_, min_altitude_index_);
+  // }
 
  public:
   /**@brief The multiple altitudes of the cell. */
@@ -190,6 +213,18 @@ class NdtMapMatrix : public BaseMapMatrix {
 
   /**@brief Combine two NdtMapMatrix instances (Reduce). */
   static void Reduce(NdtMapMatrix* cells, const NdtMapMatrix& cells_new);
+
+  /**@brief 数据转文本 for debug */
+  void CreateText(std::deque<std::string>& txt_que);
+
+  /**@brief 检查XY栅格中存在有效数据的栅格数量 for debug */
+  size_t CheckValidGrid();
+
+  template <class Archive>
+  void serialize( Archive & ar )
+  {
+    ar( rows_, cols_, map3d_cells_);
+  }
 
  private:
   /**@brief The number of rows. */

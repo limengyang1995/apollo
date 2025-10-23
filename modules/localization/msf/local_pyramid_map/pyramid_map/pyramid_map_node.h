@@ -21,6 +21,9 @@
 
 #include "modules/localization/msf/local_pyramid_map/base_map/base_map_node.h"
 #include "modules/localization/msf/local_pyramid_map/pyramid_map/pyramid_map_matrix.h"
+#include "modules/localization/msf/cereal/include/cereal/archives/json.hpp"
+
+
 
 namespace apollo {
 namespace localization {
@@ -84,7 +87,7 @@ class PyramidMapNode : public BaseMapNode {
   float GetIntensityVarSafe(const Eigen::Vector3d& coordinate,
                             unsigned int level = 0) const;
   /**@brief Given the 3D global coordinate,
-   * get the map cell's average altitude with check. */
+   * get the map cell"s average altitude with check. */
   float GetAltitudeSafe(const Eigen::Vector3d& coordinate,
                         unsigned int level = 0) const;
   /**@brief Given the 3D global coordinate,

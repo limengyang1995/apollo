@@ -78,6 +78,9 @@ class MapNodeCache {
   /**@brief return cache's max capacity. */
   unsigned Capacity() { return lru_map_nodes_.capacity(); }
 
+  /**@brief 取得缓存中所有的key*/
+  void GetAllKey(std::vector<Key>& key_list);
+
  private:
   /**@brief do something before remove an element from cache.
    * Return true if the element can be removed. Return false if the element
@@ -113,7 +116,7 @@ template <class Key, class Element, class MapLRUCache>
 Element* MapNodeCache<Key, Element, MapLRUCache>::Put(const Key& key,
                                                       Element* value) {
   if (value == nullptr) {
-    ADEBUG << "LRUCache Warning: put a NULL";
+    AINFO << "LRUCache Warning: put a NULL";
     return nullptr;
   }
 
@@ -154,27 +157,53 @@ Element* MapNodeCache<Key, Element, MapLRUCache>::Remove(const Key& key) {
 template <class Key, class Element, class MapLRUCache>
 Element* MapNodeCache<Key, Element, MapLRUCache>::ClearOne() {
   auto* node_remove = lru_map_nodes_.Last();
+  std::cout << "[MapNodeCache::ClearOne] node_remove = " << node_remove << "\n";
   if (!node_remove) {
+    std::cout << "[MapNodeCache::ClearOne] node_remove is null, return nullptr!\n";
     return nullptr;
   }
   while (node_remove != lru_map_nodes_.First()) {
     if (destroy_func_(node_remove->val)) {
       lru_map_nodes_.Remove(node_remove->key);
+      std::cout << "[MapNodeCache::ClearOne] Remove node: node_remove = " << node_remove << "\n";
       return node_remove->val;
     }
+    std::cout << "[MapNodeCache::ClearOne] cannot remove node: " << node_remove << ", continue while loop!\n";
     node_remove = node_remove->prev;
   }
   if (node_remove == lru_map_nodes_.First() &&
       destroy_func_(node_remove->val)) {
     lru_map_nodes_.Remove(node_remove->key);
+    std::cout << "[MapNodeCache::ClearOne] Remove first node: node_remove = " << node_remove << "\n";
     return node_remove->val;
   }
+
+  std::cout << "[MapNodeCache::ClearOne] reach end, return nullptr!\n";
   return nullptr;
 }
 
 template <class Key, class Element, class MapLRUCache>
 bool MapNodeCache<Key, Element, MapLRUCache>::IsExist(const Key& key) {
   return lru_map_nodes_.Prioritize(key);
+}
+
+/**@brief 取得缓存中所有的key*/
+template <class Key, class Element, class MapLRUCache>
+void MapNodeCache<Key, Element, MapLRUCache>::GetAllKey(std::vector<Key>& key_list) {
+    auto* node = lru_map_nodes_.First();
+    if (node == nullptr) {
+        return;
+    }
+
+    // 遍历缓存
+    for (int i = 1; i < lru_map_nodes_.capacity(); ++i) {
+        key_list.emplace_back(node->key);
+
+        node = node->next;  // 指向下一个节点
+        if (node == nullptr) {
+            break;
+        }
+    }
 }
 
 }  // namespace msf

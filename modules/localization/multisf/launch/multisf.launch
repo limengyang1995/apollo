@@ -1,0 +1,7 @@
+<cyber>
+  <module>
+    <name>multisf</name>
+    <dag_conf>modules/localization/multisf/dag/multisf.dag</dag_conf>
+    <process_name>multisf</process_name>
+  </module>
+</cyber>

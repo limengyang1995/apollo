@@ -62,6 +62,11 @@ class MapNodeIndex {
 
   friend std::ostream& operator<<(std::ostream& cout,
                                   const MapNodeIndex& index);
+  template <class Archive>
+  void serialize( Archive & ar )
+  {
+    ar( resolution_id_,zone_id_, m_, n_ );
+  }
 
   /**@brief The ID of the resolution.
    * Should be less than BaseMapConfig::_map_resolutions.size(). */

@@ -30,6 +30,9 @@ class NdtMap : public BaseMap {
  public:
   explicit NdtMap(NdtMapConfig* config);
   ~NdtMap();
+
+  /** @brief 将地图节点数据保存为文本文件 */
+  void SaveNodeText(const std::string& path);
 };
 
 }  // namespace pyramid_map

@@ -63,7 +63,7 @@ void BaseMapNode::InitMapMatrix(const BaseMapConfig* map_config) {
 void BaseMapNode::Finalize() {
   if (is_changed_) {
     Save();
-    ADEBUG << "Save Map Node to disk: " << map_node_config_->node_index_ << ".";
+    AINFO << "Save Map Node to disk: " << map_node_config_->node_index_ << ".";
   }
 }
 
@@ -115,6 +115,7 @@ bool BaseMapNode::Save() {
 
   snprintf(buf, sizeof(buf), "/%08d", map_node_config_->node_index_.n_);
   path = path + buf;
+  std::string path_name = path + ".json";
 
   FILE* file = fopen(path.c_str(), "wb");
   if (file) {
@@ -234,10 +235,11 @@ bool BaseMapNode::CreateBinary(FILE* file) const {
   // write binary
   binary_size += static_cast<unsigned int>(body_buffer.size());
   fwrite(&buffer[0], 1, binary_size, file);
-
   return true;
 }
-
+bool BaseMapNode::SaveByCereal(){
+  return true;
+}
 size_t BaseMapNode::GetBinarySize() const {
   // It is uncompressed binary size.
   return GetBodyBinarySize() + GetHeaderBinarySize();
@@ -281,7 +283,7 @@ size_t BaseMapNode::LoadBodyBinary(std::vector<unsigned char>* buf) {
     return 0;
   }
   uncompressed_file_body_size_ = buf_uncompressed.size();
-  ADEBUG << "map node compress ratio: "
+  AINFO << "map node compress ratio: "
         << static_cast<float>(buf->size()) /
                static_cast<float>(uncompressed_file_body_size_);
 
@@ -289,13 +291,14 @@ size_t BaseMapNode::LoadBodyBinary(std::vector<unsigned char>* buf) {
 }
 
 size_t BaseMapNode::CreateBodyBinary(std::vector<unsigned char>* buf) const {
-  if (compression_strategy_ == nullptr) {
-    size_t body_size = GetBodyBinarySize();
-    buf->resize(body_size);
-    file_body_binary_size_ =
-        map_matrix_handler_->CreateBinary(map_matrix_, &(*buf)[0], body_size);
-    return file_body_binary_size_;
-  }
+  // 注释kx
+  // if (compression_strategy_ == nullptr) {
+  //   size_t body_size = GetBodyBinarySize();
+  //   buf->resize(body_size);
+  //   file_body_binary_size_ =
+  //       map_matrix_handler_->CreateBinary(map_matrix_, &(*buf)[0], body_size);
+  //   return file_body_binary_size_;
+  // }
   std::vector<unsigned char> buf_uncompressed;
   // Compute the uncompression binary body size
   size_t body_size = GetBodyBinarySize();
@@ -306,8 +309,10 @@ size_t BaseMapNode::CreateBodyBinary(std::vector<unsigned char>* buf) const {
     return 0;
   }
 
-  compression_strategy_->Encode(&buf_uncompressed, buf);
-  file_body_binary_size_ = buf->size();
+  // kx test
+  buf = &buf_uncompressed;
+  // compression_strategy_->Encode(&buf_uncompressed, buf);
+  // file_body_binary_size_ = buf->size();
 
   return buf->size();
 }

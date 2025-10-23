@@ -242,6 +242,54 @@ void NdtMapSingleCell::CentroidEigenSolver(
   }
 }
 
+/**
+ * @brief 数据转文本 for debug
+ *
+ * @param txt_que
+ */
+void NdtMapSingleCell::CreateText(std::deque<std::string>& txt_que) {
+    const std::string front_space = "		";
+
+    // intensity
+    std::stringstream ss;
+    ss << front_space << "intensity: " << std::setprecision(6) << intensity_;
+    txt_que.emplace_back(ss.str());
+
+    // intensity_var
+    ss.str("");
+    ss << front_space << "intensity_var: " << std::setprecision(6) << intensity_var_;
+    txt_que.emplace_back(ss.str());
+
+    // count
+    ss.str("");
+    ss << front_space << "count: " << count_;
+    txt_que.emplace_back(ss.str());
+
+    // centroid
+    ss.str("");
+    ss << front_space << "centroid: {" << std::setprecision(9) << centroid_.transpose() << "}";
+    txt_que.emplace_back(ss.str());
+
+    // centroid_average_cov
+    ss.str("");
+    ss << front_space << "centroid_average_cov: {" << std::setprecision(6);
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (i != 0 && j != 0) {
+                ss << ", ";
+            }
+            ss << centroid_average_cov_(i, j);
+        }
+    }
+    ss << "}";
+    txt_que.emplace_back(ss.str());
+
+    // is_icov_available
+    ss.str("");
+    ss << front_space << "is_icov_available: " << static_cast<int>(is_icov_available_);
+    txt_que.emplace_back(ss.str());
+}
+
 NdtMapCells::NdtMapCells() {
   max_altitude_index_ = static_cast<int>(-1e10);
   min_altitude_index_ = static_cast<int>(1e10);
@@ -409,6 +457,59 @@ void NdtMapCells::Reduce(NdtMapCells* cell, const NdtMapCells& cell_new) {
   }
 }
 
+/**
+ * @brief 数据转文本 for debug
+ *
+ * @param txt_que
+ */
+void NdtMapCells::CreateText(std::deque<std::string>& txt_que) {
+    const std::string front_space = "	";
+
+    std::stringstream ss;
+    // 如果 single_cell_size 为0，则说明没有数据
+    int size = cells_.size();
+    if (size == 0) {
+        ss << front_space << "single_cell_size: " << size;
+        txt_que.emplace_back(ss.str());
+        return;
+    }
+
+    // min_altitude_index
+    ss.str("");
+    ss << front_space << "min_altitude_index: " << min_altitude_index_;
+    txt_que.emplace_back(ss.str());
+
+    // max_altitude_index
+    ss.str("");
+    ss << front_space << "max_altitude_index: " << max_altitude_index_;
+    txt_que.emplace_back(ss.str());
+
+    // single_cell_size
+    ss.str("");
+    ss << front_space << "single_cell_size: " << size;
+    txt_que.emplace_back(ss.str());
+
+    // NdtMapSingleCell
+    for (auto& cell : cells_) {
+        ss.str("");
+        ss << front_space << "NdtMapSingleCell: {";
+        txt_que.emplace_back(ss.str());
+
+        // altitude_index
+        ss.str("");
+        ss << front_space << front_space << "altitude_index: " << cell.first;
+        txt_que.emplace_back(ss.str());
+
+        // other members
+        cell.second.CreateText(txt_que);
+
+        // end of NdtMapSingleCell
+        ss.str("");
+        ss << front_space << "}";
+        txt_que.emplace_back(ss.str());
+    }
+}
+
 NdtMapMatrix::NdtMapMatrix() {
   rows_ = 0;
   cols_ = 0;
@@ -522,6 +623,75 @@ bool NdtMapMatrix::GetIntensityImg(cv::Mat* intensity_img) const {
     }
   }
   return true;
+}
+
+/**
+ * @brief 数据转文本 for debug
+ *
+ * @param txt_que
+ */
+void NdtMapMatrix::CreateText(std::deque<std::string>& txt_que) {
+    txt_que.clear();
+
+    const std::string front_space = "	";
+    // 遍历XY栅格
+    for (unsigned int i = 0; i < rows_; ++i) {
+        for (unsigned int j = 0; j < cols_; ++j) {
+            auto& map_Cells = map3d_cells_[i * cols_ + j];
+
+            std::stringstream ss;
+            // // 如果 single_cell_size 为0，则说明没有数据
+            // int size = map_Cells.cells_.size();
+            // if (size == 0) {
+            //     continue;
+            // }
+
+            // NdtMapCells
+            ss << "NdtMapCells: {";
+            txt_que.emplace_back(ss.str());
+
+            // row
+            ss.str("");
+            ss << front_space << "row: " << i;
+            txt_que.emplace_back(ss.str());
+
+            // col
+            ss.str("");
+            ss << front_space << "col: " << j;
+            txt_que.emplace_back(ss.str());
+
+            // other members
+            map_Cells.CreateText(txt_que);  // 栅格数据转文本
+
+            // end of NdtMapCells
+            ss.str("");
+            ss << "}";
+            txt_que.emplace_back(ss.str());
+        }
+    }
+}
+
+/**
+ * @brief 检查XY栅格中存在有效数据的栅格数量 for debug
+ *
+ */
+size_t NdtMapMatrix::CheckValidGrid() {
+    int count = 0;
+
+    // 遍历XY栅格
+    for (unsigned int i = 0; i < rows_; ++i) {
+        for (unsigned int j = 0; j < cols_; ++j) {
+            auto& map_Cells = map3d_cells_[i * cols_ + j];
+
+            // 如果 single_cell_size 为0，则说明没有数据
+            int size = map_Cells.cells_.size();
+            if (size != 0) {
+                count++;
+            }
+        }
+    }
+
+    return count;
 }
 
 }  // namespace pyramid_map

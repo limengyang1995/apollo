@@ -55,14 +55,18 @@ class BaseMapNodePool {
    * @param <map_node> The released MapNode object.
    * */
   void FreeMapNode(BaseMapNode* map_node);
+    /**@brief The task function of the thread pool for release node.
+   * @param <map_node> The released MapNode object.
+   * */
+  void FreeMapNodeTask(BaseMapNode* map_node);
   /**@brief Get the size of pool. */
   unsigned int GetPoolSize() { return pool_size_; }
 
  private:
-  /**@brief The task function of the thread pool for release node.
-   * @param <map_node> The released MapNode object.
-   * */
-  void FreeMapNodeTask(BaseMapNode* map_node);
+  // /**@brief The task function of the thread pool for release node.
+  //  * @param <map_node> The released MapNode object.
+  //  * */
+  // void FreeMapNodeTask(BaseMapNode* map_node);
   /**@brief new a map node. */
   virtual BaseMapNode* AllocNewMapNode() = 0;
   /**@brief init a map node. */

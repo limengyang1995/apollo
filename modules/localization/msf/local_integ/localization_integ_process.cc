@@ -64,7 +64,7 @@ Status LocalizationIntegProcess::Init(const LocalizationIntegParam &param) {
   } else {
     gnss_antenna_extrinsic_ = TransformD::Identity();
   }
-  ADEBUG << "gnss and imu lever arm: "
+  AINFO << "gnss and imu lever arm: "
         << gnss_antenna_extrinsic_.translation()(0) << " "
         << gnss_antenna_extrinsic_.translation()(1) << " "
         << gnss_antenna_extrinsic_.translation()(2);
@@ -80,9 +80,19 @@ Status LocalizationIntegProcess::Init(const LocalizationIntegParam &param) {
   return Status::OK();
 }
 
+// test imu data
+std::ofstream imu_file("/apollo_workspace/data/bag/imu_data.txt", std::ios::out | std::ios::app); 
 void LocalizationIntegProcess::RawImuProcess(const ImuData &imu_msg) {
   integ_state_ = IntegState::NOT_INIT;
   double cur_imu_time = imu_msg.measurement_time;
+  // test imu data save
+  imu_file<<std::setprecision(18)<<imu_msg.measurement_time<<","
+                                 <<imu_msg.fb[0]<<","
+                                 <<imu_msg.fb[1]<<","
+                                 <<imu_msg.fb[2]<<","
+                                 <<imu_msg.wibb[0]<<","
+                                 <<imu_msg.wibb[1]<<","
+                                 <<imu_msg.wibb[2]<<std::endl;
 
   if (cur_imu_time < 3000) {
     AERROR << "the imu time is error: " << cur_imu_time;
@@ -135,13 +145,13 @@ void LocalizationIntegProcess::RawImuProcess(const ImuData &imu_msg) {
     }
 
     if (cur_imu_time - 0.5 > pre_imu_time) {
-      ADEBUG << "SINS has completed alignment!" << std::endl;
+      AINFO << "SINS has completed alignment!" << std::endl;
       pre_imu_time = cur_imu_time;
     }
   } else {
     delay_output_counter_ = 0;
     if (cur_imu_time - 0.5 > pre_imu_time) {
-      ADEBUG << "SINS is aligning!" << std::endl;
+      AINFO << "SINS is aligning!" << std::endl;
       pre_imu_time = cur_imu_time;
     }
   }
@@ -291,7 +301,7 @@ void LocalizationIntegProcess::StopThreadLoop() {
 }
 
 void LocalizationIntegProcess::MeasureDataThreadLoop() {
-  ADEBUG << "Started measure data process thread";
+  AINFO << "Started measure data process thread";
   while (keep_running_.load()) {
     {
       std::unique_lock<std::mutex> lock(measure_data_queue_mutex_);
@@ -322,7 +332,7 @@ void LocalizationIntegProcess::MeasureDataThreadLoop() {
 
     MeasureDataProcessImpl(measure);
   }
-  ADEBUG << "Exited measure data process thread";
+  AINFO << "Exited measure data process thread";
 }
 
 void LocalizationIntegProcess::MeasureDataProcessImpl(
